@@ -100,7 +100,7 @@ class ProductsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        mapi=MarketsApi.get_market_object(api_connection, market_enum)
+        mapi=MarketsApi.get_market_obj(api_connection, market_enum)
         print(mapi)
         logger.info("Fetching products in market " +mapi['name'])
         qry_payload = {
