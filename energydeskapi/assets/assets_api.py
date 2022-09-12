@@ -24,6 +24,22 @@ class Asset:
         self.vendor=None
         self.is_active=True
 
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.asset_id is not None: dict['asset_id'] = self.asset_id
+        if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
+        if self.description is not None: dict['description'] = self.description
+        if self.asset_type is not None: dict['asset_type'] = self.asset_type
+        if self.grid_company is not None: dict['grid_company'] = self.grid_company
+        if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
+        if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
+        if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
+        if self.meter_id is not None: dict['meter_id'] = self.meter_id
+        if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
+        if self.vendor is not None: dict['vendor'] = self.vendor
+        if self.is_active is not None: dict['is_active'] = self.is_active
+        return dict
 
 
 class AssetsApi:
@@ -54,13 +70,12 @@ class AssetsApi:
         """
         logger.info("Registering " + str(len(asset_list) )+ " assets")
         for asset in asset_list:
-            payload={}
-            if asset.asset_id is not None: payload['asset_id']=asset.asset_id
-            if asset.extern_asset_id is not None: payload['extern_asset_id'] = asset.extern_asset_id
-            if asset.description is not None: payload['description'] = asset.description
-            if asset.asset_manager is not None: payload['asset_manager'] = asset.asset_manager
+            payload=asset.get_dict()
             json_res=api_connection.exec_post_url('/api/assets/asset/', payload)
-
+            if json_res is None:
+                logger.error("Problems registering asset "  + asset.description)
+            else:
+                logger.info("Asset registered " + asset.description)
 
     @staticmethod
     def get_asset_types(api_connection):
