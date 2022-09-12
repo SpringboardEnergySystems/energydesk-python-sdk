@@ -28,6 +28,27 @@ class Product:
         self.market = None
         self.market_place = None
 
+    def get_dict(self):
+        dict = {}
+        if self.ticker is not None: dict['ticker'] = self.ticker
+        if self.vendor_ticker is not None: dict['vendor_ticker'] = self.vendor_ticker
+        if self.description is not None: dict['description'] = self.description
+        if self.area is not None: dict['area'] = self.area
+        if self.denomination is not None: dict['denomination'] = self.denomination
+        if self.base_peak is not None: dict['base_peak'] = self.base_peak
+        if self.spread is not None: dict['spread'] = self.spread
+        if self.otc is not None: dict['otc'] = self.otc
+        if self.delivery_from is not None: dict['delivery_from'] = self.delivery_from
+        if self.delivery_until is not None: dict['delivery_until'] = self.delivery_until
+        if self.contract_size is not None: dict['contract_size'] = self.contract_size
+        if self.traded_from is not None: dict['traded_from'] = self.traded_from
+        if self.traded_until is not None: dict['traded_until'] = self.traded_until
+        if self.instrument_type is not None: dict['instrument_type'] = self.instrument_type
+        if self.commodity_type is not None: dict['commodity_type'] = self.commodity_type
+        if self.block_size_category is not None: dict['block_size_category'] = self.block_size_category
+        if self.market is not None: dict['market'] = self.market
+        if self.block_size_category is not None: dict['block_size_category'] = self.block_size_category
+        return dict
 class ProductsApi:
     """Class for products in markets
 
@@ -41,29 +62,12 @@ class ProductsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         :param asset_list: list of assets
+
         :type asset_list: str, required
         """
         logger.info("Registering " + str(len(product_list) )+ " products")
         for product in product_list:
-            payload={}
-            if product.ticker is not None: payload['ticker']=product.ticker
-            if product.vendor_ticker is not None: payload['vendor_ticker']=product.vendor_ticker
-            if product.description is not None: payload['description'] = product.description
-            if product.area is not None: payload['area'] = product.area
-            if product.denomination is not None: payload['denomination'] = product.denomination
-            if product.base_peak is not None: payload['base_peak'] = product.base_peak
-            if product.spread is not None: payload['spread'] = product.spread
-            if product.otc is not None: payload['otc'] = product.otc
-            if product.delivery_from is not None: payload['delivery_from'] = product.delivery_from
-            if product.delivery_until is not None: payload['delivery_until'] = product.delivery_until
-            if product.contract_size is not None: payload['contract_size'] = product.contract_size
-            if product.traded_from is not None: payload['traded_from'] = product.traded_from
-            if product.traded_until is not None: payload['traded_until'] = product.traded_until
-            if product.instrument_type is not None: payload['instrument_type'] = product.instrument_type
-            if product.commodity_type is not None: payload['commodity_type'] = product.commodity_type
-            if product.block_size_category is not None: payload['block_size_category'] = product.block_size_category
-            if product.market is not None: payload['market'] = product.market
-            if product.block_size_category is not None: payload['block_size_category'] = product.block_size_category
+            payload=product.get_dict()
             json_res=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
             if json_res is None:
                 return False
