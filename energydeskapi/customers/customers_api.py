@@ -106,7 +106,6 @@ class CustomersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching company " + str(registry_number))
         json_res=api_connection.exec_get_url('/api/customers/company_from_registry_number?registry_number=' + registry_number )
         if json_res is None:
             return None
