@@ -6,7 +6,7 @@ import pytz, environ
 from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
 
-def load_env(current_dir=None):
+def load_env(current_dir):
     """ Loads environment file
     """
     logging.info("Loading environment")
@@ -16,8 +16,8 @@ def load_env(current_dir=None):
     load_dotenv(dotenv_path)
 
 
-def init_api():
-    load_env()
+def init_api(current_dir=None):
+    load_env(current_dir)
     env = environ.Env()
     tok = env.str('ENERGYDESK_TOKEN')
     url= env.str('ENERGYDESK_URL')
