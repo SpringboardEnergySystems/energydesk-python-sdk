@@ -2,7 +2,7 @@ import requests
 import json
 import logging
 import pandas as pd
-from energydeskapi.customers.customers_api import CustomerApi
+from energydeskapi.customers.customers_api import CustomersApi
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -24,7 +24,7 @@ class TreasuryApi:
     @staticmethod
     def register_treasury_bank(api_connection, registry_number, treasury_system_name):
         logger.info("Fetching treasury bank list")
-        company=CustomerApi.get_company_from_registry_number( api_connection,registry_number)
+        company=CustomersApi.get_company_from_registry_number( api_connection,registry_number)
         print(company)
         comp_url=api_connection.get_base_url() + "/api/customers/company/" + str(company['pk']) + "/"
         print(comp_url)
