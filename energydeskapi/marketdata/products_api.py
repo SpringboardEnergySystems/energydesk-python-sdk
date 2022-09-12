@@ -30,6 +30,7 @@ class Product:
 
     def get_dict(self):
         dict = {}
+        dict['pk']=self.pk
         if self.ticker is not None: dict['ticker'] = self.ticker
         if self.vendor_ticker is not None: dict['vendor_ticker'] = self.vendor_ticker
         if self.description is not None: dict['description'] = self.description
