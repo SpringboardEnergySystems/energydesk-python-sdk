@@ -22,6 +22,8 @@ class Asset:
         self.meter_id=""
         self.sub_meter_id=""
         self.vendor=None
+        self.is_main_meter=True
+        self.location="0,0"
         self.is_active=True
 
     def get_dict(self):
@@ -38,7 +40,9 @@ class Asset:
         if self.meter_id is not None: dict['meter_id'] = self.meter_id
         if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
         if self.vendor is not None: dict['vendor'] = self.vendor
+        if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
         if self.is_active is not None: dict['is_active'] = self.is_active
+        if self.location is not None: dict['location'] = self.location
         return dict
 
 
