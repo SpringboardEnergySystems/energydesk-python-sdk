@@ -2,7 +2,7 @@ import requests
 import json
 import logging
 import pandas as pd
-from energydeskapi.customers.customer_api import CustomerApi
+from energydeskapi.customers.customers_api import CustomerApi
 
 logger = logging.getLogger(__name__)
 #  Change

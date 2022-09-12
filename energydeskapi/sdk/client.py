@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.api_connection import ApiConnection
-from energydeskapi.customers.customer_api import CustomerApi
+from energydeskapi.customers.customers_api import CustomerApi
 from os.path import join, dirname
 from dotenv import load_dotenv
 import pytz, environ

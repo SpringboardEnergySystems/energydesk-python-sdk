@@ -5,7 +5,7 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-class CustomerApi:
+class CustomersApi:
     """Class for user profiles and companies
 
     """
@@ -94,6 +94,10 @@ class CustomerApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_company_url(api_connection, company_pk):
+        return api_connection.get_base_url() + '/api/customers/company/' + str(company_pk) + "/"
 
     @staticmethod
     def get_company_from_registry_number(api_connection, registry_number):

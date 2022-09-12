@@ -5,7 +5,7 @@ import copy
 from random import randrange
 import random
 from energydeskapi.sdk.api_connection import ApiConnection
-from energydeskapi.customers.customer_api import CustomerApi
+from energydeskapi.customers.customers_api import CustomerApi
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
