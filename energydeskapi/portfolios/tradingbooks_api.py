@@ -7,15 +7,13 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 #  Change
 
-fields = ['pk', 'description', 'asset', 'manager', 'commodity_types', 'contract_types', 'traders']
 class TradingBook():
     def __init__(self):
         self.pk=0
         self.description=None
         self.asset=None
         self.manager=None
-        self.commodity_type=None
-        self.contract_types=None
+        self.contract_types=[]
         self.commodity_types=[]
         self.trades=[]
     def get_dict(self):
@@ -24,7 +22,6 @@ class TradingBook():
         if self.description is not None: dict['description'] = self.description
         if self.asset is not None: dict['asset'] = self.asset
         if self.manager is not None: dict['manager'] = self.manager
-        if self.commodity_type is not None: dict['commodity_type'] = self.commodity_type
         if self.contract_types is not None: dict['contract_types'] = self.contract_types
         if self.commodity_types is not None: dict['commodity_types'] = self.commodity_types
         if self.trades is not None: dict['trades'] = self.trades
