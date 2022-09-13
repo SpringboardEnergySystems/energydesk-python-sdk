@@ -100,6 +100,8 @@ class ContractsApi:
         json_res=api_connection.exec_post_url('/api/portfoliomanager/register_contracts/',json_records)
         print(json_res)
 
+
+
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
         logger.info("Fetching trading books")
