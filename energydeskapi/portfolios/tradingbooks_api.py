@@ -13,7 +13,7 @@ class TradingBook():
         self.pk=0
         self.description=None
         self.asset=None
-        self.manage=None
+        self.manager=None
         self.commodity_type=None
         self.contract_types=None
         self.commodity_types=[]
@@ -23,7 +23,7 @@ class TradingBook():
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
         if self.asset is not None: dict['asset'] = self.asset
-        if self.manage is not None: dict['manage'] = self.manage
+        if self.manager is not None: dict['manager'] = self.manager
         if self.commodity_type is not None: dict['commodity_type'] = self.commodity_type
         if self.contract_types is not None: dict['contract_types'] = self.contract_types
         if self.commodity_types is not None: dict['commodity_types'] = self.commodity_types
