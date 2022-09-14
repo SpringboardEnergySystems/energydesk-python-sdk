@@ -154,6 +154,10 @@ class CustomersApi:
         return api_connection.get_base_url() + '/api/customers/company/' + str(company_pk) + "/"
 
     @staticmethod
+    def get_country_url(api_connection, country_pk):
+        return api_connection.get_base_url() + '/api/customers/country/' + str(country_pk) + "/"
+
+    @staticmethod
     def get_company_from_registry_number(api_connection, registry_number):
         """Fetches all company objects with URL relations. Will only return companies for which the user has rights
 
