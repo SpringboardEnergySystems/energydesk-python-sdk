@@ -54,6 +54,8 @@ class CustomersApi:
             return df
         return None
 
+    # This should e identical to create_assets (i.e. create_companies) taking a list of class Company
+    # def create_companies(api_connection, companies): looping through companies and getting get_dict() to insert into API
     def register_company(api_connection, company):
         json_res = api_connection.exec_post_url('/api/customers/register_company', company)
         if json_res is None:
