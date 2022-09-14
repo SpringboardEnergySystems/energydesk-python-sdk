@@ -48,7 +48,7 @@ def create_company(api_conn):
 
 def update_company(api_conn):
     c = Company()
-    c.pk=1  # Important to specify key of existing company being updated
+    c.pk=717  # Important to specify key of existing company being updated
     c.name = "fliselegger AS"
     c.registry_number = "146389752"
     c.company_type = CustomersApi.get_company_type_url(api_conn, CompanyTypeEnum.SERVICE_COMPANY)
@@ -69,5 +69,5 @@ if __name__ == '__main__':
     #list_users(api_conn)
     #register_companies(api_conn)
     #create_company(api_conn)
-    #query_companies(api_conn)
-    update_company(api_conn)
+    query_companies(api_conn)
+    #update_company(api_conn)
