@@ -102,6 +102,32 @@ class ApiConnection(object):
                 raise TokenException("Token is invalid")
             return None
 
+    def exec_patch_url(self, trailing_url, payload, extra_headers={}):
+        """Posts content from URL
+
+        :param trailing_url: description...
+        :type trailing_url: str, required
+        :param payload: description...
+        :type payload: str, required
+        :param extra_headers: description...
+        :type extra_headers: str, required
+        """
+        headers=self.get_authorization_header()
+        for key in extra_headers:
+            headers[key]=extra_headers[key]
+        server_url= self.get_base_url() + trailing_url
+        logger.debug("Calling URL " + str(server_url))
+        logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
+        result = requests.patch(server_url, json=payload,   headers=headers)
+        if result.status_code<202:
+            json_data = result.json()
+            return json_data
+        else:
+            logger.error("Problens calling EnergyDesk API- (patch) " + str(result) + " " + result.text)
+            if result.status_code==401:
+                raise TokenException("Token is invalid")
+            return None
+
     def exec_get_url(self, trailing_url,  extra_headers={}):
         """Returns content from URL
 
