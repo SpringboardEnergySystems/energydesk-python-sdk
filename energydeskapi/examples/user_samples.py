@@ -3,7 +3,7 @@ import sys
 import requests
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.customers.user_api import UsersApi, User
+from energydeskapi.customers.users_api import UsersApi, User
 from energydeskapi.types.company_enum_types import CompanyTypeEnum, CompanyRoleEnum,UserRoleEnum
 
 logging.basicConfig(level=logging.INFO,
