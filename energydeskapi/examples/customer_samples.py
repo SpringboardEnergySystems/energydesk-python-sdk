@@ -46,6 +46,19 @@ def create_company(api_conn):
     CustomersApi.create_companies(api_conn, [c])
 
 
+def update_company(api_conn):
+    c = Company()
+    c.name = "rørlegger AS"
+    c.registry_number = "146389752"
+    c.company_type = CustomersApi.get_company_type_url(api_conn, CompanyTypeEnum.SERVICE_COMPANY)
+    c.company_roles = [CustomersApi.get_company_role_url(api_conn, CompanyRoleEnum.BRP)]
+    c.address = "rørleggergata 43"
+    c.postal_code = "0723"
+    c.city = "Oslo"
+    c.country = ""
+    c.location = "65.436824,10.982431"
+    # print(c.get_dict())
+    CustomersApi.update_company(api_conn, c)
 
 if __name__ == '__main__':
 
@@ -55,4 +68,5 @@ if __name__ == '__main__':
     #list_users(api_conn)
     #register_companies(api_conn)
     #create_company(api_conn)
-    query_companies(api_conn)
+    #query_companies(api_conn)
+    update_company(api_conn)

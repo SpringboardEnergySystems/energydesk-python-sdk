@@ -68,9 +68,9 @@ class CustomersApi:
         payload = company.get_dict()
         json_res = api_connection.exec_patch_url('/api/customers/company/', payload)
         if json_res is None:
-            logger.error("Problems registering company " + company.name)
+            logger.error("Problems updating company " + company.name)
         else:
-            logger.info("Company registered " + company.name)
+            logger.info("Company updated " + company.name)
 
     @staticmethod
     def create_companies(api_connection, companies):
