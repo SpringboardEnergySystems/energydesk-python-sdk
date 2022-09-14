@@ -66,7 +66,7 @@ class CustomersApi:
     @staticmethod
     def update_company(api_connection, company):
         payload = company.get_dict()
-        json_res = api_connection.exec_patch_url('/api/customers/company/', payload)
+        json_res = api_connection.exec_patch_url('/api/customers/company/' + str(company.pk) + "/", payload)
         if json_res is None:
             logger.error("Problems updating company " + company.name)
         else:

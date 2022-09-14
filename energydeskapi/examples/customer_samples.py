@@ -48,7 +48,8 @@ def create_company(api_conn):
 
 def update_company(api_conn):
     c = Company()
-    c.name = "rørlegger AS"
+    c.pk=1  # Important to specify key of existing company being updated
+    c.name = "fliselegger AS"
     c.registry_number = "146389752"
     c.company_type = CustomersApi.get_company_type_url(api_conn, CompanyTypeEnum.SERVICE_COMPANY)
     c.company_roles = [CustomersApi.get_company_role_url(api_conn, CompanyRoleEnum.BRP)]
