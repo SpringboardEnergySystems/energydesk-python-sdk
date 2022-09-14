@@ -64,7 +64,7 @@ class AssetsApi:
 
     # This function returns a single price (avg) for the period requested
     @staticmethod
-    def register_assets(api_connection, asset_list):
+    def create_assets(api_connection, asset_list):
         """ Registers assets
 
         :param api_connection: class with API token for use with API

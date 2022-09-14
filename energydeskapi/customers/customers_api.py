@@ -5,6 +5,24 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
+class Company:
+    def __init__(self):
+        self.pk=0
+        self.name=None
+        self.registry_number=None
+        self.company_type=""
+        self.company_roles=None
+        self.address=None
+        self.postal_code=None
+        self.city=None
+        self.country=None
+        self.location=""
+        self.sub_meter_id=""
+        self.vendor=None
+        self.is_main_meter=True
+        self.location="0,0"
+        self.is_active=True
+
 class CustomersApi:
     """Class for user profiles and companies
 
