@@ -71,6 +71,6 @@ class UsersApi:
             payload=user.get_dict()
             json_res=api_connection.exec_post_url('/api/customers/register_user', payload)
             if json_res is None:
-                logger.error("Problems registering company "  + user.username)
+                logger.error("Problems registering user "  + user.username)
             else:
-                logger.info("Company registered " + user.username)
+                logger.info("User registered " + user.username)
