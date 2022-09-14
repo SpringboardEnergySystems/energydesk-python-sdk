@@ -9,19 +9,28 @@ class Company:
     def __init__(self):
         self.pk=0
         self.name=None
-        self.registry_number=None
-        self.company_type=""
+        self.registry_number=""
+        self.company_type=None
         self.company_roles=None
         self.address=None
-        self.postal_code=None
+        self.postal_code=""
         self.city=None
         self.country=None
-        self.location=""
-        self.sub_meter_id=""
-        self.vendor=None
-        self.is_main_meter=True
         self.location="0,0"
-        self.is_active=True
+
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.name is not None: dict['name'] = self.name
+        if self.registry_number is not None: dict['registry_number'] = self.registry_number
+        if self.company_type is not None: dict['company_type'] = self.company_type
+        if self.company_roles is not None: dict['company_roles'] = self.company_roles
+        if self.address is not None: dict['address'] = self.address
+        if self.postal_code is not None: dict['postal_code'] = self.postal_code
+        if self.city is not None: dict['city'] = self.city
+        if self.country is not None: dict['country'] = self.country
+        if self.location is not None: dict['location'] = self.location
+        return dict
 
 class CustomersApi:
     """Class for user profiles and companies
@@ -53,6 +62,23 @@ class CustomersApi:
             df = pd.DataFrame(data=json_res)
             return df
         return None
+
+    def create_companies(api_connection, companies):
+        """ Registers assets
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param companies: list of companies
+        :type companies: str, required
+        """
+        logger.info("Registering " + str(len(companies) )+ " assets")
+        for company in companies:
+            payload=company.get_dict()
+            json_res=api_connection.exec_post_url('/api/customers/company/', payload)
+            if json_res is None:
+                logger.error("Problems registering company "  + company.name)
+            else:
+                logger.info("Company registered " + company.name)
 
     # This should e identical to create_assets (i.e. create_companies) taking a list of class Company
     # def create_companies(api_connection, companies): looping through companies and getting get_dict() to insert into API
