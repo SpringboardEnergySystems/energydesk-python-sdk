@@ -63,6 +63,16 @@ class CustomersApi:
             return df
         return None
 
+    @staticmethod
+    def update_company(api_connection, company):
+        payload = company.get_dict()
+        json_res = api_connection.exec_patch_url('/api/customers/company/', payload)
+        if json_res is None:
+            logger.error("Problems registering company " + company.name)
+        else:
+            logger.info("Company registered " + company.name)
+
+    @staticmethod
     def create_companies(api_connection, companies):
         """ Registers assets
 
