@@ -94,6 +94,9 @@ class AssetsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
+    @staticmethod
+    def get_asset_url(api_connection, asset_pk):
+        return api_connection.get_base_url() + '/api/assets/asset/' + str(asset_pk) + "/"
 
     @staticmethod
     def get_assets(api_connection):
