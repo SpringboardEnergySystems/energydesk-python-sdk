@@ -121,3 +121,17 @@ class AssetsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_assetsbytype_ext(api_connection, asset_type_enum):
+        """ Receives a list of assets with extended information
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        payload={"asset_type_enum": str(asset_type_enum.value)}
+        json_res = api_connection.exec_post_url('/api/assets/assetsbytype_ext/', payload)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
