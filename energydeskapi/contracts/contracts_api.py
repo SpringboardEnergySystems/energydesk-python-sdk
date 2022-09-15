@@ -52,6 +52,24 @@ class Contract:
     def add_delivery_period(self, delivery_from, delivery_until):
         self.deliveries.append({'delivery_from':convert_datime_to_utcstr(delivery_from),
                                 'delivery_until':convert_datime_to_utcstr(delivery_until)})
+    def getdict(self):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.asset_id is not None: dict['asset_id'] = self.asset_id
+        if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
+        if self.description is not None: dict['description'] = self.description
+        if self.asset_type is not None: dict['asset_type'] = self.asset_type
+        if self.grid_company is not None: dict['grid_connection'] = self.grid_company
+        if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
+        if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
+        if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
+        if self.meter_id is not None: dict['meter_id'] = self.meter_id
+        if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
+        if self.vendor is not None: dict['vendor'] = self.vendor
+        if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
+        if self.is_active is not None: dict['is_active'] = self.is_active
+        if self.location is not None: dict['location'] = self.location
+        return dict
 class ContractsApi:
     """Description...
 
@@ -124,6 +142,19 @@ class ContractsApi:
         json_res = api_connection.exec_post_url('/api/portfoliomanager/query_contracts_ext/', query_payload)
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_commodity_type_url(api_connection, commodity_type_enum):
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatus/' + str(commodity_type_enum.value) + "/"
+
+    @staticmethod
+    def get_contract_type_url(api_connection, contract_type_enum):
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracttype/' + str(contract_type_enum.value) + "/"
+
+
+    @staticmethod
+    def get_contract_url(api_connection, contract_pk):
+        return api_connection.get_base_url() + '/api/contracts/contract/' + str(contract_pk) + "/"
 
     @staticmethod
     def list_contract_statuses(api_connection):

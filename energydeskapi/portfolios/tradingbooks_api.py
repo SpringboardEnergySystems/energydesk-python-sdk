@@ -15,7 +15,7 @@ class TradingBook():
         self.manager=None
         self.contract_types=[]
         self.commodity_types=[]
-        self.trades=[]
+        self.traders=[]
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
@@ -24,7 +24,7 @@ class TradingBook():
         if self.manager is not None: dict['manager'] = self.manager
         if self.contract_types is not None: dict['contract_types'] = self.contract_types
         if self.commodity_types is not None: dict['commodity_types'] = self.commodity_types
-        if self.trades is not None: dict['trades'] = self.trades
+        if self.traders is not None: dict['traders'] = self.traders
         return dict
 
 class TradingBooksApi:
