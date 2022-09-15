@@ -31,7 +31,7 @@ class CurveApi:
             "period_from": from_period,
             "period_until": until_period,
         }
-        json_res=api_connection.exec_post_url('/api/curvemanager/get_period_price/', qry_payload)
+        json_res=api_connection.exec_post_url('/api/curvemanager/get-period-price/', qry_payload)
         if json_res is not None:
             curve_price = float(json_res['price'])
             return curve_price
@@ -60,7 +60,7 @@ class CurveApi:
             "period_from": from_period,
             "period_until": until_period,
         }
-        json_res = api_connection.exec_post_url('/api/curvemanager/get_forward_curve/', qry_payload)
+        json_res = api_connection.exec_post_url('/api/curvemanager/get-forward-curve/', qry_payload)
 
         result = requests.post(server_url, json=qry_payload,   headers=headers)
         if result.status_code==200:

@@ -21,7 +21,7 @@ class SchedulerApi:
 
     @staticmethod
     def get_scheduled_jobs_df(api_connection):
-        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobsext/')
+        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduled-jobs-ext/')
         if json_res is None:
             return None
         print(json_res)

@@ -26,7 +26,7 @@ class TreasuryApi:
         logger.info("Fetching treasury bank list")
         company=CustomersApi.get_company_from_registry_number( api_connection,registry_number)
         print(company)
-        comp_url=api_connection.get_base_url() + "/api/customers/company/" + str(company['pk']) + "/"
+        comp_url=api_connection.get_base_url() + "/api/customers/companies/" + str(company['pk']) + "/"
         print(comp_url)
         payload={"treasury_system_name":treasury_system_name,
                  "internal_company": comp_url}

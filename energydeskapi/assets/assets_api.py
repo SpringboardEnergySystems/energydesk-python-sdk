@@ -53,11 +53,11 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_type_url(api_connection, asset_type_enum):
-        return api_connection.get_base_url() + '/api/assets/assettype/' + str(asset_type_enum.value) + "/"
+        return api_connection.get_base_url() + '/api/assets/assettypes/' + str(asset_type_enum.value) + "/"
 
     @staticmethod
     def get_asset_type(api_connection, asset_type_enum):
-        json_res = api_connection.exec_get_url('/api/assets/assettype/' + str(asset_type_enum.value)) + "/"
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum.value)) + "/"
         if json_res is None:
             return None
         return json_res
@@ -75,7 +75,7 @@ class AssetsApi:
         logger.info("Registering " + str(len(asset_list) )+ " assets")
         for asset in asset_list:
             payload=asset.get_dict()
-            json_res=api_connection.exec_post_url('/api/assets/asset/', payload)
+            json_res=api_connection.exec_post_url('/api/assets/assets/', payload)
             if json_res is None:
                 logger.error("Problems registering asset "  + asset.description)
             else:
@@ -88,7 +88,7 @@ class AssetsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/assets/assettype/')
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/')
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -96,7 +96,7 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_url(api_connection, asset_pk):
-        return api_connection.get_base_url() + '/api/assets/asset/' + str(asset_pk) + "/"
+        return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
 
     @staticmethod
     def get_assets(api_connection):
@@ -105,7 +105,7 @@ class AssetsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/assets/asset/')
+        json_res = api_connection.exec_get_url('/api/assets/assets/')
         print(json_res)
         if json_res is None:
             return None
@@ -119,7 +119,7 @@ class AssetsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/assets/assets-extended/')
+        json_res = api_connection.exec_get_url('/api/assets/assets-ext/')
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -133,7 +133,7 @@ class AssetsApi:
         :type api_connection: str, required
         """
         payload={"asset_type_enum": str(asset_type_enum.value)}
-        json_res = api_connection.exec_post_url('/api/assets/assets-by-type-extended/', payload)
+        json_res = api_connection.exec_post_url('/api/assets/assets-by-type-ext/', payload)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)

@@ -88,7 +88,7 @@ class ProductsApi:
             "market_name": mapi['name'],
             #"tradingdate_from": None,
         }
-        json_res=api_connection.exec_post_url('/api/markets/query_products/',qry_payload)
+        json_res=api_connection.exec_post_url('/api/markets/query-products/',qry_payload)
         if json_res is None:
             return None
         return json_res
@@ -108,7 +108,7 @@ class ProductsApi:
             "market_name": mapi['name'],
             #"tradingdate_from": None,
         }
-        json_res=api_connection.exec_post_url('/api/markets/query_products_ext/',qry_payload)
+        json_res=api_connection.exec_post_url('/api/markets/query-products-ext/',qry_payload)
         if json_res is None:
             return None
         #df = pd.DataFrame(data=json_res)
