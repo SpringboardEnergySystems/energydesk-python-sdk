@@ -133,7 +133,7 @@ class AssetsApi:
         :type api_connection: str, required
         """
         payload={"asset_type_enum": str(asset_type_enum.value)}
-        json_res = api_connection.exec_post_url('/api/assets/assets-by-type-ext/', payload)
+        json_res = api_connection.exec_post_url('/api/assets/assets-by-type-extended/', payload)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
