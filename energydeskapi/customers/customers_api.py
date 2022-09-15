@@ -121,14 +121,14 @@ class CustomersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching company list")
-        json_res=api_connection.exec_get_url('/api/customers/company')
+        json_res=api_connection.exec_get_url('/api/customers/companies')
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
     def get_company_type_url(api_connection, company_type_enum):
-        return api_connection.get_base_url() + '/api/customers/companytype/' + str(company_type_enum.value) + "/"
+        return api_connection.get_base_url() + '/api/customers/companytypes/' + str(company_type_enum.value) + "/"
 
     @staticmethod
     def get_company_role_url(api_connection, company_role_enum):
