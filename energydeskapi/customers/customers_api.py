@@ -41,7 +41,7 @@ class CustomersApi:
     @staticmethod
     def update_company(api_connection, company):
         payload = company.get_dict()
-        json_res = api_connection.exec_patch_url('/api/customers/company/' + str(company.pk) + "/", payload)
+        json_res = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
         if json_res is None:
             logger.error("Problems updating company " + company.name)
         else:
@@ -59,7 +59,7 @@ class CustomersApi:
         logger.info("Registering " + str(len(companies) )+ " companies")
         for company in companies:
             payload=company.get_dict()
-            json_res=api_connection.exec_post_url('/api/customers/company/', payload)
+            json_res=api_connection.exec_post_url('/api/customers/companies/', payload)
             if json_res is None:
                 logger.error("Problems registering company "  + company.name)
             else:
@@ -68,7 +68,7 @@ class CustomersApi:
     # This should e identical to create_assets (i.e. create_companies) taking a list of class Company
     # def create_companies(api_connection, companies): looping through companies and getting get_dict() to insert into API
     def register_company(api_connection, company):
-        json_res = api_connection.exec_post_url('/api/customers/register_company', company)
+        json_res = api_connection.exec_post_url('/api/customers/register-company', company)
         if json_res is None:
             return False
         print(json_res)
@@ -82,7 +82,7 @@ class CustomersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching company types")
-        json_res=api_connection.exec_get_url('/api/customers/companytype/')
+        json_res=api_connection.exec_get_url('/api/customers/companytypes/')
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -96,7 +96,7 @@ class CustomersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching companylist")
-        json_res=api_connection.exec_get_url('/api/customers/get_all_companies')
+        json_res=api_connection.exec_get_url('/api/customers/companies-extended')
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res["companies"])
@@ -132,15 +132,15 @@ class CustomersApi:
 
     @staticmethod
     def get_company_role_url(api_connection, company_role_enum):
-        return api_connection.get_base_url() + '/api/customers/companyrole/' + str(company_role_enum.value) + "/"
+        return api_connection.get_base_url() + '/api/customers/companyroles/' + str(company_role_enum.value) + "/"
 
     @staticmethod
     def get_company_url(api_connection, company_pk):
-        return api_connection.get_base_url() + '/api/customers/company/' + str(company_pk) + "/"
+        return api_connection.get_base_url() + '/api/customers/companies/' + str(company_pk) + "/"
 
     @staticmethod
     def get_country_url(api_connection, country_pk):
-        return api_connection.get_base_url() + '/api/customers/country/' + str(country_pk) + "/"
+        return api_connection.get_base_url() + '/api/customers/countries/' + str(country_pk) + "/"
 
     @staticmethod
     def get_company_from_registry_number(api_connection, registry_number):
@@ -149,7 +149,7 @@ class CustomersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res=api_connection.exec_get_url('/api/customers/company_from_registry_number?registry_number=' + registry_number )
+        json_res=api_connection.exec_get_url('/api/customers/company-by-registrynumber?registry_number=' + registry_number )
         if json_res is None:
             return None
         return json_res

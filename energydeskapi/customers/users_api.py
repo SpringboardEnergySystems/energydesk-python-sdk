@@ -46,6 +46,19 @@ class UsersApi:
         return None
 
     @staticmethod
+    def get_user_by_role(api_connection, user_role_enum):
+        """Fetches user profile
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user profiles by role ")
+        json_res=api_connection.exec_get_url('/api/energydesk/getuserprofile/')
+        if json_res is not None:
+            return json_res
+        return None
+
+    @staticmethod
     def get_users(api_connection):
         """Fetches user profile
 
@@ -53,7 +66,7 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching user profile")
-        json_res=api_connection.exec_get_url('/api/customers/users/traders')
+        json_res=api_connection.exec_get_url('/api/customers/users')
         if json_res is not None:
             df = pd.DataFrame(data=json_res)
             return df
@@ -69,7 +82,7 @@ class UsersApi:
         logger.info("Registering " + str(len(users) )+ " users")
         for user in users:
             payload=user.get_dict()
-            json_res=api_connection.exec_post_url('/api/customers/register_user', payload)
+            json_res=api_connection.exec_post_url('/api/customers/register-user', payload)
             if json_res is None:
                 logger.error("Problems registering user "  + user.username)
             else:
