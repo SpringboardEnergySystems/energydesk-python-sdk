@@ -53,7 +53,7 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching users by role ")
-        json_res=api_connection.exec_post_url('/api/customers/users-by-role/', payload={"user_role_enum": str(user_role_enum.value)})
+        json_res=api_connection.exec_post_url('/api/customers/users-by-role', payload={"user_role_enum": str(user_role_enum.value)})
         if json_res is not None:
             return json_res
         return None
