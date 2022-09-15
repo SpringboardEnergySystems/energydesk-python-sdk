@@ -46,14 +46,14 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_user_by_role(api_connection, user_role_enum):
+    def get_users_by_role(api_connection, user_role_enum):
         """Fetches user profile
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching user profiles by role ")
-        json_res=api_connection.exec_get_url('/api/energydesk/getuserprofile/')
+        logger.info("Fetching users by role ")
+        json_res=api_connection.exec_post_url('/api/customers/users-by-role/', payload={"user_role_enum": str(user_role_enum.value)})
         if json_res is not None:
             return json_res
         return None
