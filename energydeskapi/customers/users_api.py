@@ -74,3 +74,7 @@ class UsersApi:
                 logger.error("Problems registering user "  + user.username)
             else:
                 logger.info("User registered " + user.username)
+
+    @staticmethod
+    def get_user_url(api_connection, user_pk):
+        return api_connection.get_base_url() + '/api/customers/profiles/' + str(user_pk) + "/"
