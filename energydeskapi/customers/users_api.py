@@ -40,7 +40,7 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching user profile")
-        json_res=api_connection.exec_get_url('/api/energydesk/getuserprofile/')
+        json_res=api_connection.exec_get_url('/api/energydesk/get-user-profile/')
         if json_res is not None:
             return json_res
         return None

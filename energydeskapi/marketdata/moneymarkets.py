@@ -20,7 +20,7 @@ class MoneyMarkets:
         """
         logger.info("Fetching spot forex rates")
         headers = {'Authorization': 'Token ' + token}
-        server_url= base_url + '/api/moneymarkets/spot_forex_rates/'
+        server_url= base_url + '/api/moneymarkets/spot-forex-rates/'
         qry_payload = {
             "period_from": "2019-01-01",
             "period_until": "2022-06-01",
@@ -47,7 +47,7 @@ class MoneyMarkets:
         t="LqXReN1nGU4MUKzuz2kKkIrS1yI0tR"
 
         headers = {'Authorization': 'Bearer ' +t}
-        server_url=base_url + '/api/moneymarkets/zero_coupon_rates/'
+        server_url=base_url + '/api/moneymarkets/zero-coupon-rates/'
         qry_payload = {
             "period_from": "2019-01-01",
             "period_until": "2022-06-01",

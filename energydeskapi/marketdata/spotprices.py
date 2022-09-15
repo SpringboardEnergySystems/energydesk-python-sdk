@@ -26,7 +26,7 @@ class SpotPrices:
         """
         logger.info("Fetching spot prices")
         headers = {'Authorization': 'Token ' + token}
-        server_url = base_url + '/api/markets/spot_prices_in_period/'
+        server_url = base_url + '/api/markets/spot-prices-in-period/'
 
         qry_payload = {
             "market_place": market_place,

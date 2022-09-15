@@ -17,7 +17,7 @@ class GeneralApi:
         :type api_connection: str, required
         """
         logger.info("Fetching ticker text")
-        json_res=api_connection.exec_get_url('/api/energydesk/tickerinfo/')
+        json_res=api_connection.exec_get_url('/api/energydesk/ticker-info/')
         if json_res is not None:
             return json_res['common_ticker']
         return ""

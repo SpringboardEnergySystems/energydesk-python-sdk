@@ -61,7 +61,7 @@ class MarketsApi:
 
     @staticmethod
     def get_blocksize_category_url(api_connection, blocksize_category_enum):
-        return api_connection.get_base_url() +'/api/markets/blocksizecategory/' + str(blocksize_category_enum.value) + "/"
+        return api_connection.get_base_url() +'/api/markets/blocksizecategories/' + str(blocksize_category_enum.value) + "/"
 
     @staticmethod
     def get_blocksize_category_obj(api_connection, blocksize_category_enum):
@@ -71,7 +71,7 @@ class MarketsApi:
         :type api_connection: str, required
         """
 
-        json_res=api_connection.exec_get_url('/api/markets/blocksizecategory/' + str(blocksize_category_enum.value) + "/")
+        json_res=api_connection.exec_get_url('/api/markets/blocksizecategories/' + str(blocksize_category_enum.value) + "/")
         if json_res is None:
             return None
         return json_res

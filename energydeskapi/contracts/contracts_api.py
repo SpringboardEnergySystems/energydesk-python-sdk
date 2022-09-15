@@ -86,7 +86,7 @@ class ContractsApi:
             #trbook=TradingBooksApi.load_tradingbook_by_pk(api_connection, contract.trading_book)
             contract_record={
                    "external_contract_id": contract.external_contract_id,
-                   "trading_book": api_connection.get_base_url() + "/api/portfoliomanager/tradingbook/" +
+                   "trading_book": api_connection.get_base_url() + "/api/portfoliomanager/tradingbooks/" +
                                       str(contract.trading_book) + "/",
                    "trade_date": contract.trade_date,
                    "trade_time": contract.trade_datetime,
@@ -95,13 +95,13 @@ class ContractsApi:
                     "quantity": contract.quantity,
                    "trading_fee": gen_json_money(contract.trading_fee),
                    "clearing_fee": gen_json_money(contract.clearing_fee),
-                   "contract_type": api_connection.get_base_url() + "/api/portfoliomanager/contracttype/" +
+                   "contract_type": api_connection.get_base_url() + "/api/portfoliomanager/contracttypes/" +
                                       str(contract.contract_type.value) + "/",
-                   "commodity_type": api_connection.get_base_url() + "/api/portfoliomanager/commoditytype/" +
+                   "commodity_type": api_connection.get_base_url() + "/api/markets/commoditytypes/" +
                                       str(contract.commodity_type.value) + "/",
-                   "instrument_type": api_connection.get_base_url() + "/api/portfoliomanager/instrumenttype/" +
+                   "instrument_type": api_connection.get_base_url() + "/api/markets/instrumenttypes/" +
                                       str(contract.instrument_type.value) + "/",
-                   "contract_status": api_connection.get_base_url() + "/api/portfoliomanager/contractstatus/" +
+                   "contract_status": api_connection.get_base_url() + "/api/portfoliomanager/contractstatuses/" +
                                       str(contract.contract_status.value) + "/",
                    "buy_or_sell": contract.buy_or_sell,
                    "counterpart": contract.counterpart,
@@ -115,7 +115,7 @@ class ContractsApi:
             json_records.append(contract_record)
 
 
-        json_res=api_connection.exec_post_url('/api/portfoliomanager/register_contracts/',json_records)
+        json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
         print(json_res)
 
 
@@ -123,7 +123,7 @@ class ContractsApi:
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbook/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
         for r in json_res:
             if r['pk']==pk:
                 return r
@@ -132,24 +132,24 @@ class ContractsApi:
     @staticmethod
     def query_contracts(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
         logger.info("Fetching contracts")
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/query_contracts/', query_payload)
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts/', query_payload)
         print(json_res)
         return None
 
     @staticmethod
     def query_contracts_df(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
         logger.info("Fetching contracts")
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/query_contracts_ext/', query_payload)
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts-ext/', query_payload)
         df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
-        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatus/' + str(commodity_type_enum.value) + "/"
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(commodity_type_enum.value) + "/"
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
-        return api_connection.get_base_url() + '/api/portfoliomanager/contracttype/' + str(contract_type_enum.value) + "/"
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
 
 
     @staticmethod
@@ -159,27 +159,27 @@ class ContractsApi:
     @staticmethod
     def list_contract_statuses(api_connection):
         logger.info("Fetching contract statues")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractstatus/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractstatuses/')
         df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
     def list_contract_types(api_connection):
         logger.info("Fetching contract types")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttype/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttypes/')
         df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
     def list_commodity_types(api_connection):
         logger.info("Fetching commodity types")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/commoditytype/')
+        json_res = api_connection.exec_get_url('/api/markets/commoditytypes/')
         df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
     def list_instrument_types(api_connection):
         logger.info("Fetching instrument types")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/instrumenttype/')
+        json_res = api_connection.exec_get_url('/api/markets/instrumenttypes/')
         df = pd.DataFrame(data=json_res)
         return df

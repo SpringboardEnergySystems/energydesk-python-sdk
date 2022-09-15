@@ -35,7 +35,7 @@ class TradingBooksApi:
     @staticmethod
     def fetch_tradingbooks(api_connection):
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbook/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
         print(json_res)
         if json_res is None:
             return None
@@ -45,7 +45,7 @@ class TradingBooksApi:
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbook/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
         for r in json_res:
             if r['pk']==pk:
                 return r
@@ -63,7 +63,7 @@ class TradingBooksApi:
         logger.info("Registering " + str(len(tradingbooks) )+ " tadingbooks")
         for book in tradingbooks:
             payload=book.get_dict()
-            json_res=api_connection.exec_post_url('/api/portfoliomanager/tradingbook/', payload)
+            json_res=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
             if json_res is None:
                 logger.error("Problems registering asset "  + book.description)
             else:
