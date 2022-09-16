@@ -32,6 +32,18 @@ class UsersApi:
     """Class for user profiles and companies
 
     """
+
+    @staticmethod
+    def update_user(api_connection, user):
+        payload = user.get_dict()
+        json_res = api_connection.exec_post_url('/api/customers/update-user-profile', payload)
+        if json_res is None:
+            logger.error("Problems updating user " + user.username)
+            False
+        else:
+            logger.info("User profile updated " + user.username)
+            return True
+
     @staticmethod
     def get_user_profile(api_connection):
         """Fetches user profile
