@@ -76,7 +76,7 @@ class Contract:
         if self.counterpart is not None: dict['counterpart'] = self.counterpart
         if self.marketplace is not None: dict['marketplace'] = self.marketplace
         if self.trader is not None: dict['trader'] = self.trader
-        if self.standard_product is not None: dict['standard_product'] = api_conn.get_base_url() + "/api/markets/marketproduct/" + str(
+        if self.standard_product is not None: dict['standard_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.standard_product) + "/"
         if len(self.deliveries) > 0:
             dict["periods"] = self.deliveries
