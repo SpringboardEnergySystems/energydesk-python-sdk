@@ -89,7 +89,21 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_companies_ext_df(api_connection):
+    def get_company_roles_df(api_connection):
+        """Fetches all company types in system with basic key+ name infmation
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching company roles")
+        json_res=api_connection.exec_get_url('/api/customers/companyroles/')
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
+    def get_companies_df(api_connection):
         """Fetches all companies in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API
