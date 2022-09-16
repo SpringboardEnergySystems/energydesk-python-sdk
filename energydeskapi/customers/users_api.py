@@ -55,7 +55,7 @@ class UsersApi:
         role_pk = user_role_enum if isinstance(user_role_enum, int) else user_role_enum.value
 
         logger.info("Fetching users by role ")
-        json_res=api_connection.exec_post_url('/api/customers/users-by-role', payload={"user_role_enum": str(role_pk)})
+        json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-role', payload={"user_role_enum": str(role_pk)})
         if json_res is not None:
             return json_res
         return None
@@ -76,7 +76,7 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching profile with key " + str(pk))
-        json_res=api_connection.exec_get_url('/api/customers/profiles/' + str(pk) + "/")
+        json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-key', payload={"profile_key": str(pk)})
         if json_res is None:
             return None
         return json_res
