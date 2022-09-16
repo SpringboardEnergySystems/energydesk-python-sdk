@@ -9,6 +9,8 @@ class Company:
     def __init__(self):
         self.pk=0
         self.name=None
+        self.alias = None
+        self.lei_code = None
         self.registry_number=""
         self.company_type=None
         self.company_roles=None
@@ -22,6 +24,8 @@ class Company:
         dict = {}
         dict['pk']=self.pk
         if self.name is not None: dict['name'] = self.name
+        if self.alias is not None: dict['alias'] = self.alias
+        if self.lei_code is not None: dict['lei_code'] = self.lei_code
         if self.registry_number is not None: dict['registry_number'] = self.registry_number
         if self.company_type is not None: dict['company_type'] = self.company_type
         if self.company_roles is not None: dict['company_roles'] = self.company_roles
