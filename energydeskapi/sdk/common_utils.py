@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def load_env(current_dir):
     """ Loads environment file
     """
-    logging.info("Loading environment")
+    logging.info("Loading environment from "+ str(current_dir))
     if current_dir is None:
         current_dir=dirname(__file__)
     dotenv_path = join(current_dir, '.env')
