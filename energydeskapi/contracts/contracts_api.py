@@ -60,7 +60,7 @@ class Contract:
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
-        dict["last_update_time"]=convert_datime_to_utcstr(datetime.now())[0],
+        dict['last_update_time']=convert_datime_to_utcstr(datetime.now()),
         if self.trade_datetime is not None: dict['trade_time'] = self.trade_datetime
         if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
