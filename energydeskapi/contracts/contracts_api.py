@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
+from energydeskapi.marketdata.markets_api import MarketsApi
 from moneyed.l10n import format_money
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
@@ -52,23 +53,23 @@ class Contract:
     def add_delivery_period(self, delivery_from, delivery_until):
         self.deliveries.append({'delivery_from':convert_datime_to_utcstr(delivery_from),
                                 'delivery_until':convert_datime_to_utcstr(delivery_until)})
-    def getdict(self):
+    def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
-        if self.asset_id is not None: dict['asset_id'] = self.asset_id
-        if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
-        if self.description is not None: dict['description'] = self.description
-        if self.asset_type is not None: dict['asset_type'] = self.asset_type
-        if self.grid_company is not None: dict['grid_connection'] = self.grid_company
-        if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
-        if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
-        if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
-        if self.meter_id is not None: dict['meter_id'] = self.meter_id
-        if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
-        if self.vendor is not None: dict['vendor'] = self.vendor
-        if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
-        if self.is_active is not None: dict['is_active'] = self.is_active
-        if self.location is not None: dict['location'] = self.location
+        if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
+        if self.trading_book is not None: dict['trading_book'] = self.trading_book
+        if self.trade_date is not None: dict['trade_date'] = self.trade_date
+        if self.trade_datetime is not None: dict['trade_datetime'] = self.trade_datetime
+        if self.contract_price is not None: dict['contract_price'] = self.contract_price
+        if self.quantity is not None: dict['quantity'] = self.quantity
+        if self.trading_fee is not None: dict['trading_fee'] = self.trading_fee
+        if self.clearing_fee is not None: dict['clearing_fee'] = self.clearing_fee
+        if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
+        if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn, self.contract_status)
+        if self.instrument_type is not None: dict['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,
+                                                                                                      self.instrument_type)
+        if self.commodity_type is not None: dict['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn,
+                                                                                                      self.commodity_type)
         return dict
 class ContractsApi:
     """Description...
@@ -118,6 +119,12 @@ class ContractsApi:
         json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
         print(json_res)
 
+    @staticmethod
+    def get_contract_type_url(api_connection, contract_type_enum):
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
+    @staticmethod
+    def get_contract_status_url(api_connection, contract_status_enum):
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(contract_status_enum.value) + "/"
 
 
     @staticmethod
