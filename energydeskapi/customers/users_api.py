@@ -18,12 +18,13 @@ class User:
 
     def get_dict(self):
         dict = {}
+        role_pk =  self.user_role if isinstance( self.user_role, int) else  self.user_role.value
         dict['pk']=self.pk
         if self.username is not None: dict['username'] = self.username
         if self.email is not None: dict['email'] = self.email
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
-        if self.user_role is not None: dict['user_role'] = self.user_role.value
+        if self.user_role is not None: dict['user_role'] = role_pk
         if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
         return dict
