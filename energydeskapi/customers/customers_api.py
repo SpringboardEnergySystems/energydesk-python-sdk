@@ -154,7 +154,9 @@ class CustomersApi:
 
     @staticmethod
     def get_company_type_url(api_connection, company_type_enum):
-        return api_connection.get_base_url() + '/api/customers/companytypes/' + str(company_type_enum.value) + "/"
+        # Will accept both integers of the actual enum type
+        type_pk = company_type_enum if isinstance(company_type_enum, int) else company_type_enum.value
+        return api_connection.get_base_url() + '/api/customers/companytypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_company_role_url(api_connection, company_role_enum):
