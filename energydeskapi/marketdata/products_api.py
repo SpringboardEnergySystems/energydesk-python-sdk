@@ -94,14 +94,14 @@ class ProductsApi:
         return json_res
 
     @staticmethod
-    def get_products_verbose(api_connection, market_enum):
+    def get_products_df(api_connection, market_enum):
         """Fetches all company objects with URL relations. Will only return companies for which the user has rights
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         mapi=MarketsApi.get_market_obj(api_connection, market_enum)
-        print(mapi)
+
         logger.info("Fetching products in market " +mapi['name'])
         qry_payload = {
             #"market_place": None,

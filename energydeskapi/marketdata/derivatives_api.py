@@ -38,7 +38,7 @@ class DerivativesApi:
         return markets
 
     @staticmethod
-    def fetch_products(api_connection, market_place, market_name, traded_from_date):
+    def get_products_df(api_connection, market_place, market_name, traded_from_date):
         """Fetches products within a specified date
 
         :param api_connection: class with API token for use with API
@@ -58,7 +58,6 @@ class DerivativesApi:
         }
         json_res=api_connection.exec_post_url('/api/markets/query-products-ext/', qry_payload)
         if json_res is not None:
-            print(json_res)
             df = pd.DataFrame(data=json_res)
             logger.debug("Products " + str(df))
             return df
