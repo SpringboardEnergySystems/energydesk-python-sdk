@@ -12,10 +12,10 @@ class Company:
         self.registry_number=""
         self.company_type=None
         self.company_roles=None
-        self.address=None
+        self.address=""
         self.postal_code=""
-        self.city=None
-        self.country=None
+        self.city=""
+        self.country=""
         self.location="0,0"
 
     def get_dict(self):
