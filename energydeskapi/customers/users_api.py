@@ -66,7 +66,7 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching user profile")
-        json_res=api_connection.exec_get_url('/api/customers/users')
+        json_res=api_connection.exec_get_url('/api/customers/profiles')
         if json_res is not None:
             df = pd.DataFrame(data=json_res)
             return df
