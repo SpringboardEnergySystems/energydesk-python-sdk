@@ -82,6 +82,14 @@ class UsersApi:
         return json_res
 
     @staticmethod
+    def get_users_by_key_df(api_connection, user_profile_key):
+        dict=UsersApi.get_profile_by_key(api_connection, user_profile_key)
+        if dict is not None:
+            df = pd.DataFrame(data=dict)
+            return df
+        return None
+
+    @staticmethod
     def get_users(api_connection):
         """Fetches user profile
 
