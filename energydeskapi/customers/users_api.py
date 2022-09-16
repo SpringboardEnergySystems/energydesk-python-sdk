@@ -34,7 +34,7 @@ class UsersApi:
     """
 
     @staticmethod
-    def update_user(api_connection, user):
+    def update_userprofile(api_connection, user):
         payload = user.get_dict()
         json_res = api_connection.exec_post_url('/api/customers/update-user-profile', payload)
         if json_res is None:
