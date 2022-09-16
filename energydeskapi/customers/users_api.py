@@ -67,6 +67,7 @@ class UsersApi:
             df = pd.DataFrame(data=dict)
             return df
         return None
+
     @staticmethod
     def get_users(api_connection):
         """Fetches user profile
