@@ -52,6 +52,10 @@ class TradingBooksApi:
         return None
 
     @staticmethod
+    def get_tradingbook_url(api_connection, tradingbook_pk):
+        return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(tradingbook_pk) + "/"
+
+    @staticmethod
     def register_tradingbooks(api_connection, tradingbooks):
         """ Registers assets
 
