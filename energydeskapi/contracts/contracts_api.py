@@ -31,6 +31,7 @@ class Contract:
                  trader,
                  standard_product=None
                  ):
+        self.pk=0
         self.external_contract_id=external_contract_id
         self.trading_book=trading_book
         self.contract_price=contract_price
@@ -59,11 +60,12 @@ class Contract:
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = self.trading_book
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
+        dict["last_update_time"]=convert_datime_to_utcstr(datetime.now()),
         if self.trade_datetime is not None: dict['trade_datetime'] = self.trade_datetime
-        if self.contract_price is not None: dict['contract_price'] = self.contract_price
+        if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
-        if self.trading_fee is not None: dict['trading_fee'] = self.trading_fee
-        if self.clearing_fee is not None: dict['clearing_fee'] = self.clearing_fee
+        if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
+        if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
         if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn, self.contract_status)
         if self.instrument_type is not None: dict['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,
