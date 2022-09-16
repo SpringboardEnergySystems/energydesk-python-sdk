@@ -92,41 +92,9 @@ class ContractsApi:
         #print(format_money(price, locale='en_DE'))
         json_records=[]
         for contract in contracts:
-
-            #trbook=TradingBooksApi.load_tradingbook_by_pk(api_connection, contract.trading_book)
-            contract_record={
-                   "external_contract_id": contract.external_contract_id,
-                   "trading_book": api_connection.get_base_url() + "/api/portfoliomanager/tradingbooks/" +
-                                      str(contract.trading_book) + "/",
-                   "trade_date": contract.trade_date,
-                   "trade_time": contract.trade_datetime,
-                   "last_update_time":convert_datime_to_utcstr(datetime.now()),
-                   "contract_price": gen_json_money(contract.contract_price),
-                    "quantity": contract.quantity,
-                   "trading_fee": gen_json_money(contract.trading_fee),
-                   "clearing_fee": gen_json_money(contract.clearing_fee),
-                   "contract_type": api_connection.get_base_url() + "/api/portfoliomanager/contracttypes/" +
-                                      str(contract.contract_type.value) + "/",
-                   "commodity_type": api_connection.get_base_url() + "/api/markets/commoditytypes/" +
-                                      str(contract.commodity_type.value) + "/",
-                   "instrument_type": api_connection.get_base_url() + "/api/markets/instrumenttypes/" +
-                                      str(contract.instrument_type.value) + "/",
-                   "contract_status": api_connection.get_base_url() + "/api/portfoliomanager/contractstatuses/" +
-                                      str(contract.contract_status.value) + "/",
-                   "buy_or_sell": contract.buy_or_sell,
-                   "counterpart": contract.counterpart,
-                    "marketplace": contract.maketplace,
-                    "trader": contract.trader}
-            if contract.standard_product is not None:
-                contract_record['standard_product']=api_connection.get_base_url() + "/api/markets/marketproduct/" + str(contract.standard_product) + "/"
-            if len(contract.deliveries) > 0:
-                contract_record["periods"]= contract.deliveries
-            print(contract_record)
-            json_records.append(contract_record)
-
-
+            json_records.append(contract.get_dict(api_connection))
         json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
-        print(json_res)
+
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
