@@ -27,7 +27,7 @@ class Contract:
                  contract_status,
                  buy_or_sell,
                  counterpart,
-                 maketplace,
+                 marketplace,
                  trader,
                  standard_product=None
                  ):
@@ -45,7 +45,7 @@ class Contract:
         self.contract_status=contract_status
         self.buy_or_sell=buy_or_sell
         self.counterpart=counterpart
-        self.maketplace=maketplace
+        self.marketplace=marketplace
         self.trader=trader
         self.standard_product=standard_product
         self.deliveries=[]
@@ -70,6 +70,15 @@ class Contract:
                                                                                                       self.instrument_type)
         if self.commodity_type is not None: dict['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn,
                                                                                                       self.commodity_type)
+        if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
+        if self.counterpart is not None: dict['counterpart'] = self.counterpart
+        if self.marketplace is not None: dict['marketplace'] = self.marketplace
+        if self.trader is not None: dict['trader'] = self.trader
+        if self.standard_product is not None: dict['standard_product'] = api_conn.get_base_url() + "/api/markets/marketproduct/" + str(
+                self.standard_product) + "/"
+        if len(self.deliveries) > 0:
+            dict["periods"] = self.deliveries
+
         return dict
 class ContractsApi:
     """Description...
