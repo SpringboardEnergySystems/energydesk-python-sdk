@@ -79,7 +79,7 @@ class UsersApi:
         json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-key', payload={"profile_key": str(pk)})
         if json_res is None:
             return None
-        return json_res
+        return json_res[0]
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
