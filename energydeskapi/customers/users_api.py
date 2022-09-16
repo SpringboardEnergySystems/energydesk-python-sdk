@@ -61,6 +61,13 @@ class UsersApi:
         return None
 
     @staticmethod
+    def get_users_by_role_df(api_connection, user_role_enum):
+        dict=UsersApi.get_users_by_role(api_connection, user_role_enum)
+        if dict is not None:
+            df = pd.DataFrame(data=dict)
+            return df
+        return None
+    @staticmethod
     def get_users(api_connection):
         """Fetches user profile
 
