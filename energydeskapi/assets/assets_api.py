@@ -53,11 +53,13 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_type_url(api_connection, asset_type_enum):
-        return api_connection.get_base_url() + '/api/assets/assettypes/' + str(asset_type_enum.value) + "/"
+        atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
+        return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod
     def get_asset_type(api_connection, asset_type_enum):
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum.value)) + "/"
+        atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum)) + "/"
         if json_res is None:
             return None
         return json_res
