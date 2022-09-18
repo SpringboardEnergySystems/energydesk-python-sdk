@@ -128,6 +128,19 @@ class AssetsApi:
         return df
 
     @staticmethod
+    def get_asset_by_description(api_connection, description):
+        """Fetches a specific company as long as the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching assets with description " + str(description))
+        json_res=api_connection.exec_get_url('/api/assets/assets-by-filter/', {'description':description})
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_asset_by_key(api_connection, pk):
         """Fetches a specific company as long as the user has rights
 
