@@ -135,7 +135,7 @@ class AssetsApi:
         :type api_connection: str, required
         """
         logger.info("Fetching assets with description " + str(description))
-        json_res=api_connection.exec_get_url('/api/assets/assets-by-filter/', {'description':description})
+        json_res=api_connection.exec_post_url('/api/assets/assets-by-filter/', {'description':description})
         if json_res is None:
             return None
         return json_res
