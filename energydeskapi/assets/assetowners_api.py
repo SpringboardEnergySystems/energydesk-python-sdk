@@ -11,7 +11,7 @@ class AssetOwnersApi:
 
     # Create a json file from NetworkX DiGraph defining ownerships
     @staticmethod
-    def save_ownerships(api_connection, ownership_graph_json):
+    def save_ownerships(api_connection, asset_manager_pk, ownership_graph_jsonstr):
         """Saves ownership of asset
 
         :param api_connection: class with API token for use with API
@@ -19,7 +19,11 @@ class AssetOwnersApi:
         :param ownership_graph_json: description...
         :type ownership_graph_json: str, required
         """
-        json_res=api_connection.exec_post_url('/api/asset-ownership/save-ownership-graph/', ownership_graph_json)
+        payload={
+            "ownership_graph": ownership_graph_jsonstr,
+            "asset_manager_pk": asset_manager_pk
+        }
+        json_res=api_connection.exec_post_url('/api/asset-ownership/save-ownership-graph/', payload)
 
     @staticmethod
     def load_ownerships(api_connection):
