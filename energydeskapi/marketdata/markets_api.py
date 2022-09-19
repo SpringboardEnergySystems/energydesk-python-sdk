@@ -44,7 +44,8 @@ class MarketsApi:
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
-        return api_connection.get_base_url() +'/api/markets/commoditytypes/' + str(commodity_type_enum.value) + "/"
+        comm_type = commodity_type_enum if isinstance(commodity_type_enum, int) else commodity_type_enum.value
+        return api_connection.get_base_url() +'/api/markets/commoditytypes/' + str(comm_type) + "/"
 
     @staticmethod
     def get_commodity_type_obj(api_connection, commodity_type_enum):

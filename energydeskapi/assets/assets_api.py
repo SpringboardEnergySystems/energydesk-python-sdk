@@ -53,11 +53,13 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_type_url(api_connection, asset_type_enum):
-        return api_connection.get_base_url() + '/api/assets/assettypes/' + str(asset_type_enum.value) + "/"
+        atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
+        return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod
     def get_asset_type(api_connection, asset_type_enum):
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum.value)) + "/"
+        atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum)) + "/"
         if json_res is None:
             return None
         return json_res
@@ -124,6 +126,32 @@ class AssetsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_asset_by_description(api_connection, description):
+        """Fetches a specific company as long as the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching assets with description " + str(description))
+        json_res=api_connection.exec_post_url('/api/assets/assets-by-filter/', {'description':description})
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_asset_by_key(api_connection, pk):
+        """Fetches a specific company as long as the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching assets with key " + str(pk))
+        json_res=api_connection.exec_get_url('/api/assets/assets/' + str(pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_assetsbytype_ext(api_connection, asset_type_enum):
