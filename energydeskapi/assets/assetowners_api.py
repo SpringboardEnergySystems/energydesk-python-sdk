@@ -24,6 +24,8 @@ class AssetOwnersApi:
             "asset_manager_pk": asset_manager_pk
         }
         json_res=api_connection.exec_post_url('/api/asset-ownership/save-ownership-graph/', payload)
+        logger.info(json_res.text)
+
 
     @staticmethod
     def load_ownerships(api_connection):
