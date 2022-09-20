@@ -53,7 +53,7 @@ class TradingBooksApi:
                 strval=strval[:-1]  #Get rid of the last ,
             return strval
         logger.info("Fetching trading books by filter")
-        payload={'commodities':commodities_as_str()}
+        payload={'commodity_types':commodities_as_str()}
         json_res = api_connection.exec_post_url('/api/portfoliomanager/tradingbooks-by-filter/',payload)
         print(json_res)
         if json_res is None:
