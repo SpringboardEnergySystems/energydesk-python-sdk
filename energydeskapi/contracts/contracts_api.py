@@ -51,6 +51,7 @@ class Contract:
         self.trader=trader
         self.standard_product=standard_product
         self.deliveries=[]
+        self.tags=[]
 
     def add_delivery_period(self, delivery_from, delivery_until):
         self.deliveries.append({'delivery_from':convert_datime_to_utcstr(delivery_from),
