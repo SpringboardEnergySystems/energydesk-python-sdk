@@ -5,6 +5,7 @@ import pandas as pd
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from moneyed.l10n import format_money
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
@@ -75,8 +76,8 @@ class Contract:
         if self.commodity_type is not None: dict['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn,
                                                                                                       self.commodity_type)
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
-        if self.counterpart is not None: dict['counterpart'] = self.counterpart
-        if self.marketplace is not None: dict['marketplace'] = self.marketplace
+        if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
+        if self.marketplace is not None: dict['marketplace'] = CustomersApi.get_company_url(api_conn, self.marketplace)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.standard_product is not None: dict['standard_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.standard_product) + "/"
