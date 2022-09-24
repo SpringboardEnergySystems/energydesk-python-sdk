@@ -19,6 +19,7 @@ class Asset:
         self.power_supplier=None
         self.asset_owner=None
         self.asset_manager=None
+        self.price_area= None
         self.meter_id=""
         self.sub_meter_id=""
         self.vendor=None
@@ -42,6 +43,7 @@ class Asset:
         if self.vendor is not None: dict['vendor'] = self.vendor
         if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
         if self.is_active is not None: dict['is_active'] = self.is_active
+        if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
         return dict
 

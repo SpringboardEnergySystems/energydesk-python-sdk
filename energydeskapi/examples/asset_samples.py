@@ -15,7 +15,7 @@ def query_asset_info(api_conn):
     print("Asset types", df)
     df=AssetsApi.get_assets_ext(api_conn)
     print("Asset list", df)
-    u=AssetsApi.get_asset_type_url(api_conn, AssetTypeEnum.HYDRO)
+    u=AssetsApi.get_asset_type_url(api_conn, 0)
     print(u)
 
 

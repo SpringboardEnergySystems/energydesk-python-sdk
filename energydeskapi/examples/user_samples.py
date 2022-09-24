@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def list_users(api_conn):
-    df=UsersApi.get_users(api_conn)
+    df=UsersApi.get_users_by_role(api_conn,0)
     print(df)
 
 
@@ -32,8 +32,8 @@ def create_user(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #user_profile=CustomersApi.get_user_profile(api_conn)
-    #print(user_profile)
+    user_profile=UsersApi.get_user_profile(api_conn)
+    print(user_profile)
     list_users(api_conn)
     #register_companies(api_conn)
     #create_company(api_conn)

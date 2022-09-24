@@ -43,6 +43,25 @@ class TradingBooksApi:
         return df
 
     @staticmethod
+    def get_tradingbooks_by_commodityfilter(api_connection, commodities):
+        def commodities_as_str():
+            strval=""
+            for c in commodities:
+                com = c if isinstance(c, int) else c.value
+                strval=strval + str(com) + ","
+            if len(strval)>1:
+                strval=strval[:-1]  #Get rid of the last ,
+            return strval
+        logger.info("Fetching trading books by filter")
+        payload={'commodity_types':commodities_as_str()}
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/tradingbooks-by-filter/',payload)
+        print(json_res)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
         logger.info("Fetching trading books")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')

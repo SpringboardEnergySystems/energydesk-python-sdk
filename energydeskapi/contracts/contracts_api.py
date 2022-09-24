@@ -5,6 +5,8 @@ import pandas as pd
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.customers.customers_api import CustomersApi
+from energydeskapi.customers.users_api import UsersApi
 from moneyed.l10n import format_money
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
@@ -13,22 +15,22 @@ logger = logging.getLogger(__name__)
 #  Change
 class Contract:
     def __init__(self,
-                 external_contract_id,
-                 trading_book,
-                 contract_price,
-                 contract_qty,
-                 trading_fee,
-                 clearing_fee,
-                 trade_date,
-                 trade_datetime,
-                 contract_type,
-                 commodity_type,
-                 instrument_type,
-                 contract_status,
-                 buy_or_sell,
-                 counterpart,
-                 marketplace,
-                 trader,
+                 external_contract_id=None,
+                 trading_book=None,
+                 contract_price=None,
+                 contract_qty=None,
+                 trading_fee=None,
+                 clearing_fee=None,
+                 trade_date=None,
+                 trade_datetime=None,
+                 contract_type=None,
+                 commodity_type=None,
+                 instrument_type=None,
+                 contract_status=None,
+                 buy_or_sell=None,
+                 counterpart=None,
+                 marketplace=None,
+                 trader=None,
                  standard_product=None
                  ):
         self.pk=0
@@ -50,6 +52,7 @@ class Contract:
         self.trader=trader
         self.standard_product=standard_product
         self.deliveries=[]
+        self.tags=[]
 
     def add_delivery_period(self, delivery_from, delivery_until):
         self.deliveries.append({'delivery_from':convert_datime_to_utcstr(delivery_from),
@@ -73,9 +76,9 @@ class Contract:
         if self.commodity_type is not None: dict['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn,
                                                                                                       self.commodity_type)
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
-        if self.counterpart is not None: dict['counterpart'] = self.counterpart
-        if self.marketplace is not None: dict['marketplace'] = self.marketplace
-        if self.trader is not None: dict['trader'] = self.trader
+        if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
+        if self.marketplace is not None: dict['marketplace'] = CustomersApi.get_company_url(api_conn, self.marketplace)
+        if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.standard_product is not None: dict['standard_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.standard_product) + "/"
         if len(self.deliveries) > 0:

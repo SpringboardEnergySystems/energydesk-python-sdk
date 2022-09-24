@@ -59,6 +59,19 @@ class UsersApi:
         return None
 
     @staticmethod
+    def get_api_token(api_connection):
+        """Fetches user profile
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching API token")
+        json_res=api_connection.exec_get_url('/api/energydesk/get-api-token/')
+        if json_res is not None:
+            return json_res
+        return None
+
+    @staticmethod
     def get_users_by_role(api_connection, user_role_enum):
         """Fetches user profile
 
