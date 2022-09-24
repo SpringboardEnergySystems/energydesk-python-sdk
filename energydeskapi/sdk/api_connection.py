@@ -144,8 +144,10 @@ class ApiConnection(object):
         logger.info("...with payload " + " and headers " + str(headers))
         result = requests.get(server_url,  headers=headers)
         if result.status_code<202:
-            print(result.text)
-            json_data = result.json()
+            try:
+                json_data = result.json()
+            except:
+                return None
             return json_data
         else:
             logger.error("Problens calling EnergyDesk API " + str(result) )
