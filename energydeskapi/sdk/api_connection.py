@@ -144,6 +144,7 @@ class ApiConnection(object):
         logger.info("...with payload " + " and headers " + str(headers))
         result = requests.get(server_url,  headers=headers)
         if result.status_code<202:
+            print(result)
             json_data = result.json()
             return json_data
         else:
