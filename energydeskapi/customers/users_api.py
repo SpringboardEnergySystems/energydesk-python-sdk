@@ -95,6 +95,18 @@ class UsersApi:
         return None
 
     @staticmethod
+    def get_profile_by_username(api_connection, username):
+        """Fetches a specific company as long as the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching profile with username " + str(username))
+        json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-username', payload={"username": str(username)})
+        if json_res is None:
+            return None
+        return json_res[0]
+
     def get_profile_by_key(api_connection, pk):
         """Fetches a specific company as long as the user has rights
 
@@ -114,6 +126,7 @@ class UsersApi:
             df = pd.DataFrame(data=dict)
             return df
         return None
+
 
     @staticmethod
     def get_users(api_connection):
