@@ -128,7 +128,7 @@ class ApiConnection(object):
                 raise TokenException("Token is invalid")
             return None
 
-    def exec_get_url(self, trailing_url,  extra_headers={}):
+    def exec_get_url(self, trailing_url,  parameters=[], extra_headers={}):
         """Returns content from URL
 
         :param trailing_url: description...
@@ -139,7 +139,12 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
+        pams=""
+        for par in parameters:
+            pams=pams + par + "&"
         server_url= self.get_base_url() + trailing_url
+        if pams!="":
+            server_url=server_url+  + "?" + pams + "&"
         logger.info("Calling URL " + str(server_url))
         logger.info("...with payload " + " and headers " + str(headers))
         result = requests.get(server_url,  headers=headers)
