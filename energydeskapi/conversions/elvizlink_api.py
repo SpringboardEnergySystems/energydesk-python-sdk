@@ -70,15 +70,14 @@ class ElvizLinksApi:
             return False
 
         comp_url = api_connection.get_base_url() + "/api/customers/companies/" + str(company['pk']) + "/"
-        payload = {"elviz_company_id": elviz_company_id,
-                   "elviz_company_name": elviz_company_name,
-                   "energydesk_company": comp_url}
-        print("Updating " + str(payload))
-        existing = ElvizLinksApi.lookup_company_mapping(api_connection, elviz_company_id)
+        payload = {"elviz_user_id": elviz_user_id,
+                   "elviz_userr_name": elviz_userr_name,
+                   "enegydesk_username": enegydesk_username}
+        existing = ElvizLinksApi.lookup_user_mapping(api_connection, enegydesk_username)
         if existing is None:
-            json_res = api_connection.exec_post_url('/api/elvizmapping/companies/', payload)
+            json_res = api_connection.exec_post_url('/api/elvizmapping/users/', payload)
         else:
-            json_res = api_connection.exec_patch_url('/api/elvizmapping/companies/'
+            json_res = api_connection.exec_patch_url('/api/elvizmapping/users/'
                                                      + str(existing['pk']) + "/", payload)
         print(json_res)
         return True
