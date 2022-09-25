@@ -144,7 +144,7 @@ class ApiConnection(object):
             pams=pams + par + "&"
         server_url= self.get_base_url() + trailing_url
         if pams!="":
-            server_url=server_url+  + "?" + pams + "&"
+            server_url=server_url + "?" + pams
         logger.info("Calling URL " + str(server_url))
         logger.info("...with payload " + " and headers " + str(headers))
         result = requests.get(server_url,  headers=headers)
