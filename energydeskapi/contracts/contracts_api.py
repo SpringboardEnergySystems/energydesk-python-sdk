@@ -133,6 +133,13 @@ class ContractsApi:
         return df
 
     @staticmethod
+    def list_contracts(api_connection):
+        logger.info("Listing contracts")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/')
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(commodity_type_enum.value) + "/"
 
