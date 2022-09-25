@@ -135,7 +135,7 @@ class ContractsApi:
     @staticmethod
     def list_contracts(api_connection, parameters=[]):
         logger.info("Listing contracts")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/', parameters)
         df = pd.DataFrame(data=json_res)
         return df
 
