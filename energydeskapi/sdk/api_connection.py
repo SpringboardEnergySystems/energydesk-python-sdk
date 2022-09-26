@@ -139,27 +139,13 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        # pams=""
-        # param_dict = {}
-        # for par in parameters:
-        #     pams=pams + par + "&"
-        #     el=par.split("=")
-        #     if len(el)==2:
-        #         param_dict[el[0]] = el[1]
         server_url= self.get_base_url() + trailing_url
-
-        # if pams!="":
-        #     server_url=server_url + "?contract_type=3"
-        # if server_url[-1:]=="&":
-        #     server_url=server_url[:-1]
         logger.info("Calling URL " + str(server_url))
         logger.info("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
         else:
             result = requests.get(server_url, headers=headers)
-        print(result.status_code)
-        print(result.text)
         if result.status_code<202:
             try:
                 json_data = result.json()
