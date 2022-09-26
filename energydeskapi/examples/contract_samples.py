@@ -18,6 +18,16 @@ def get_contract_types(api_conn):
     df=ContractsApi.list_contract_statuses(api_conn)
     print(df)
 
+def query_paginated_contracts(api_conn):
+    parameters={}
+    parameters['contract_type']=3
+    head={'Authorization': 'Token 0a60f84e67763bb3214b4b1bfad522d2f947a4f3'}
+    import requests
+    fullurl="http://127.0.0.1:8001/api/portfoliomanager/contracts/"
+    result = requests.get(fullurl, headers=head, params=parameters)
+    print(result)
+    #ContractsApi.list_contracts(api_conn, parameters)
+
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contract_types(api_conn)
+    query_paginated_contracts(api_conn)
