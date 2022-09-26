@@ -142,6 +142,9 @@ class ApiConnection(object):
         pams=""
         for par in parameters:
             pams=pams + par + "&"
+            el=par.split("=")
+            if len(el)==2:
+                headers[el[0]] = el[1]
         server_url= self.get_base_url() + trailing_url
         if pams!="":
             server_url=server_url + "?" + pams
