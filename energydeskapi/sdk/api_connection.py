@@ -149,7 +149,7 @@ class ApiConnection(object):
         server_url= self.get_base_url() + trailing_url
 
         if pams!="":
-            server_url=server_url + "?" + pams
+            server_url=server_url + "?contract_type=3"
         if server_url[-1:]=="&":
             server_url=server_url[:-1]
         logger.info("Calling URL " + str(server_url))
