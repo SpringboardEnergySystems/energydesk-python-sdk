@@ -140,19 +140,21 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key]=extra_headers[key]
         pams=""
-        #for par in parameters:
+        param_dict = {}
+        for par in parameters:
             #pams=pams + par + "&"
-            #el=par.split("=")
-            #if len(el)==2:
-                #headers[el[0]] = el[1]
+            el=par.split("=")
+            if len(el)==2:
+                param_dict[el[0]] = el[1]
         server_url= self.get_base_url() + trailing_url
+
         if pams!="":
             server_url=server_url + "?" + pams
         if server_url[-1:]=="&":
             server_url=server_url[:-1]
         logger.info("Calling URL " + str(server_url))
         logger.info("...with payload " + " and headers " + str(headers))
-        result = requests.get(server_url,  headers=headers, params=parameters)
+        result = requests.get(server_url,  headers=headers, params=param_dict)
         if result.status_code<202:
             try:
                 json_data = result.json()
