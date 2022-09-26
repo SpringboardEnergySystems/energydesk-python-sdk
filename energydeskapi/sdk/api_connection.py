@@ -142,7 +142,7 @@ class ApiConnection(object):
         pams=""
         param_dict = {}
         for par in parameters:
-            #pams=pams + par + "&"
+            pams=pams + par + "&"
             el=par.split("=")
             if len(el)==2:
                 param_dict[el[0]] = el[1]
