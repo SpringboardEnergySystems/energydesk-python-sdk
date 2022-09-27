@@ -120,7 +120,7 @@ class ElvizLinksApi:
 
         tbook_url=TradingBooksApi.get_tradingbook_url(api_connection, edeskbook)
         payload = {"elviz_portfolio_id": elviz_portfolio_id,
-                   "elviz_portfolio_name": elviz_portfolio_name,
+                   "elviz_portfolio_Name": elviz_portfolio_name,
                    "energydesk_trading_book": tbook_url}
         existing = ElvizLinksApi.lookup_portfolio_mapping(api_connection, elviz_portfolio_id)
         if existing is None:
