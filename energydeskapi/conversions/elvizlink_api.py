@@ -123,6 +123,7 @@ class ElvizLinksApi:
                    "elviz_portfolio_Name": elviz_portfolio_name,
                    "energydesk_trading_book": tbook_url}
         existing = ElvizLinksApi.lookup_portfolio_mapping(api_connection, elviz_portfolio_id)
+        print(existing)
         if existing is None:
             json_res = api_connection.exec_post_url('/api/elvizmapping/portfolios/', payload)
         else:
