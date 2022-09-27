@@ -72,7 +72,7 @@ class ElvizLinksApi:
         profile_url = api_connection.get_base_url() + "/api/customers/profiles/" + str(edeskuser['pk']) + "/"
         payload = {"elviz_user_id": elviz_user_id,
                    "elviz_user_name": elviz_userr_name,
-                   "enegydesk_username": profile_url}
+                   "energydesk_profile": profile_url}
         existing = ElvizLinksApi.lookup_user_mapping(api_connection, enegydesk_username)
         if existing is None:
             json_res = api_connection.exec_post_url('/api/elvizmapping/users/', payload)
