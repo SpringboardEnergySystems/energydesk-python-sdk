@@ -102,23 +102,31 @@ class ElvizLinksApi:
         return None
 
     @staticmethod
+    def lookup_portfolio_mapping(api_connection, elviz_portfolio_id):
+        logger.info("Looking up users mapping with id " + str(elviz_portfolio_id))
+        json_res = api_connection.exec_get_url('/api/elvizmapping/portfolios/')
+        for comp in json_res:
+            if comp['elviz_portfolio_id'] == elviz_portfolio_id:
+                print("Found portfolio ", comp)
+                return comp
+        return None
+    @staticmethod
     def upsert_portfolio_mapping(api_connection, tradingbook, elviz_portfolio_id, elviz_portfolio_name):
         logger.info("Register or update user mapping")
         edeskbook = ElvizLinksApi.lookup_tadingbook(api_connection, tradingbook)
         if edeskbook is None:
             logger.error("Cannot map a portfolio that is not stored internally with name " + str(tradingbook))
             return False
-        return True
 
-        profile_url = api_connection.get_base_url() + "/api/customers/profiles/" + str(edeskuser['pk']) + "/"
-        payload = {"elviz_user_id": elviz_user_id,
-                   "elviz_user_name": elviz_userr_name,
-                   "energydesk_profile": profile_url}
-        existing = ElvizLinksApi.lookup_user_mapping(api_connection, enegydesk_username)
+        tbook_url=TradingBooksApi.get_tradingbook_url(api_connection, edeskbook)
+        payload = {"elviz_portfolio_id": elviz_portfolio_id,
+                   "elviz_portfolio_name": elviz_portfolio_name,
+                   "energydesk_trading_book": tbook_url}
+        existing = ElvizLinksApi.lookup_portfolio_mapping(api_connection, elviz_portfolio_id)
         if existing is None:
-            json_res = api_connection.exec_post_url('/api/elvizmapping/users/', payload)
+            json_res = api_connection.exec_post_url('/api/elvizmapping/portfolios/', payload)
         else:
-            json_res = api_connection.exec_patch_url('/api/elvizmapping/users/'
+            json_res = api_connection.exec_patch_url('/api/elvizmapping/portfolios/'
                                                      + str(existing['pk']) + "/", payload)
         print(json_res)
         return True
