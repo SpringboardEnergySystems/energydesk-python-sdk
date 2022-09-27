@@ -93,11 +93,12 @@ class ElvizLinksApi:
     def lookup_tadingbook(api_connection, tradingbook_name):
         logger.info("Looking up tradingbook " + str(tradingbook_name))
         df = TradingBooksApi.fetch_tradingbooks(api_connection)
-        print(df)
+        #print(df)
         for index,row in df.iterrows():
             if row['description'] == tradingbook_name:
                 print("Found tradingbook_name ", tradingbook_name)
                 return row['pk']
+        print("Did not find", tradingbook_name)
         return None
 
     @staticmethod
