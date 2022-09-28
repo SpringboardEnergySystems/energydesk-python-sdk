@@ -55,8 +55,8 @@ class Contract:
         self.tags=[]
 
     def add_delivery_period(self, delivery_from, delivery_until):
-        self.deliveries.append({'period_from':convert_datime_to_utcstr(delivery_from),
-                                'period_until':convert_datime_to_utcstr(delivery_until)})
+        self.deliveries.append({'delivery_from':convert_datime_to_utcstr(delivery_from),
+                                'delivery_until':convert_datime_to_utcstr(delivery_until)})
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
