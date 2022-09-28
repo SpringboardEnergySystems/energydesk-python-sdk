@@ -183,3 +183,14 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/markets/instrumenttypes/')
         df = pd.DataFrame(data=json_res)
         return df
+
+    def fetch_standard_contract(api_connection, contract_pk):
+        logger.info("Fetching full contract")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + contract_pk + "/")
+
+        return json_res
+
+    def fetch_bilateral_contract(api_connection, contract_pk):
+        logger.info("Fetching full bilat contract")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + contract_pk + "/")
+        return json_res
