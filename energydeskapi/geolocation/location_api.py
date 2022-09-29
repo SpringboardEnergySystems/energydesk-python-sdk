@@ -17,7 +17,7 @@ class LocationApi:
         :type api_connection: str, required
         """
         logger.info("Fetching main area geojson")
-        json_res=api_connection.exec_get_url('/api/location/get-main-area/')
+        json_res=api_connection.exec_get_url('/api/locations/mainareas/')
         if json_res is not None:
             return json_res
         return None
@@ -31,7 +31,7 @@ class LocationApi:
         :type api_connection: str, required
         """
         logger.info("Fetching local area geojson")
-        json_res=api_connection.exec_get_url('/api/location/locations/?location_type=' + str(type_pk))
+        json_res=api_connection.exec_get_url('/api/locations/localareas/?location_type=' + str(type_pk))
         if json_res is not None:
             return json_res
         return None

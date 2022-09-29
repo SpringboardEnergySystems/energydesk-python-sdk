@@ -1,7 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.geolocation.location_api import LocationApi
-
+from energydeskapi.types.location_enum_types import LocationTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -11,8 +11,8 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_areas(api_conn):
-    df=LocationApi.get_main_production_area(api_conn)
-    print("Main area", df)
+    df=LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
+    print("Loc area", df)
 
 
 
