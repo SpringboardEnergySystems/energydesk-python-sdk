@@ -28,12 +28,17 @@ class TradingBook():
         return dict
 
 class TradingBooksApi:
-    """Description...
+    """Class for tradingbooks
 
       """
 
     @staticmethod
     def fetch_tradingbooks(api_connection):
+        """Fetches all tradingbooks
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Fetching trading books")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
         #print(json_res)
@@ -44,6 +49,13 @@ class TradingBooksApi:
 
     @staticmethod
     def get_tradingbooks_by_commodityfilter(api_connection, commodities):
+        """Fetches tradingbooks from commodity filter
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param commodities: all commodities
+        :type commodities: str, required
+        """
         def commodities_as_str():
             strval=""
             for c in commodities:
@@ -63,6 +75,13 @@ class TradingBooksApi:
 
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
+        """Loads tradingbooks from key
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: personal key of tradingbook
+        :type pk: str, required
+        """
         logger.info("Fetching trading books")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
         for r in json_res:
@@ -72,16 +91,23 @@ class TradingBooksApi:
 
     @staticmethod
     def get_tradingbook_url(api_connection, tradingbook_pk):
+        """Fetches tradingbooks from key
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param tradingbook_pk: personal key of tradingbook
+        :type tradingbook_pk: str, required
+        """
         return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(tradingbook_pk) + "/"
 
     @staticmethod
     def register_tradingbooks(api_connection, tradingbooks):
-        """ Registers assets
+        """Registers tradingbooks
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param asset_list: list of assets
-        :type asset_list: str, required
+        :param tradingbooks: list of tradingbooks
+        :type tradingbooks: str, required
         """
         logger.info("Registering " + str(len(tradingbooks) )+ " tadingbooks")
         for book in tradingbooks:
