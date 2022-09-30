@@ -116,8 +116,8 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self.get_base_url() + trailing_url
-        logger.debug("Calling URL " + str(server_url))
-        logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
+        logger.info("Calling URL " + str(server_url))
+        logger.info("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.patch(server_url, json=payload,   headers=headers)
         if result.status_code<202:
             json_data = result.json()
