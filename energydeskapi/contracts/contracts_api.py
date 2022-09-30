@@ -124,7 +124,7 @@ class ContractsApi:
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
-        """Gets the url for the contract type
+        """Gets a contract type from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -134,7 +134,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
     @staticmethod
     def get_contract_status_url(api_connection, contract_status_enum):
-        """Gets the url for a contract status
+        """Gets a contract status from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

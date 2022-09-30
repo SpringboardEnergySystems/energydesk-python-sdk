@@ -8,16 +8,28 @@ from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 logger = logging.getLogger(__name__)
 #  Change
 class ElvizLinksApi:
-    """Description...
+    """Class for converting elviz
 
-      """
+    """
     @staticmethod
     def get_company_mappings(api_connection):
+        """Gets company mappings
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Looking up company mappings")
         return api_connection.exec_get_url('/api/elvizmapping/companies/')
 
     @staticmethod
     def lookup_company_mapping(api_connection, elviz_company_id):
+        """Looks up company mapping from an elviz company id
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param elviz_company_id: id of an elviz company
+        :type elviz_company_id: str, required
+        """
         logger.info("Looking up company mapping with id " + str(elviz_company_id))
         json_res = api_connection.exec_get_url('/api/elvizmapping/companies/')
         for comp in json_res:
@@ -27,6 +39,17 @@ class ElvizLinksApi:
         return None
     @staticmethod
     def upsert_company_mapping(api_connection, registry_number, elviz_company_id, elviz_company_name):
+        """Registers or updates a company mapping
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param registry_number: registry number of a company from brreg
+        :type registry_number: str, required
+        :param elviz_company_id: id of an elviz company
+        :type elviz_company_id: str, required
+        :param elviz_company_name: name of an elviz company
+        :type elviz_company_name: str, required
+        """
         logger.info("Register or update company mappingrs")
         company=CustomersApi.get_company_from_registry_number( api_connection,registry_number)
         if company is None:
@@ -49,11 +72,23 @@ class ElvizLinksApi:
 
     @staticmethod
     def get_user_mappings(api_connection):
+        """Gets user mappings
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Looking up user mappings")
         return api_connection.exec_get_url('/api/elvizmapping/users/')
 
     @staticmethod
     def lookup_user_mapping(api_connection, elviz_user_id):
+        """Looks up user mapping from an elviz user id
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param elviz_user_id: id of an elviz user
+        :type elviz_user_id: str, required
+        """
         logger.info("Looking up users mapping with id " + str(elviz_user_id))
         json_res = api_connection.exec_get_url('/api/elvizmapping/users/')
         for comp in json_res:
@@ -64,6 +99,17 @@ class ElvizLinksApi:
 
     @staticmethod
     def upsert_user_mapping(api_connection, enegydesk_username, elviz_user_id, elviz_userr_name):
+        """Registers or updates a user mapping
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param enegydesk_username: username of an energydesk user
+        :type enegydesk_username: str, required
+        :param elviz_user_id: id of an elviz user
+        :type elviz_user_id: str, required
+        :param elviz_userr_name: username of an elviz user
+        :type elviz_userr_name: str, required
+        """
         logger.info("Register or update user mapping")
         edeskuser = UsersApi.get_profile_by_username(api_connection, enegydesk_username)
         if edeskuser is None:
@@ -86,11 +132,23 @@ class ElvizLinksApi:
 
     @staticmethod
     def get_portfolio_mappings(api_connection):
+        """Gets portfolio mappings
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Looking up portfolio mappings")
         return api_connection.exec_get_url('/api/elvizmapping/portfolios/')
 
     @staticmethod
     def lookup_tadingbook(api_connection, tradingbook_name):
+        """Looks up tradingbooks from name
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param tradingbook_name: name of a tradingbook
+        :type tradingbook_name: str, required
+        """
         logger.info("Looking up tradingbook " + str(tradingbook_name))
         df = TradingBooksApi.fetch_tradingbooks(api_connection)
         #print(df)
@@ -103,6 +161,13 @@ class ElvizLinksApi:
 
     @staticmethod
     def lookup_portfolio_mapping(api_connection, elviz_portfolio_id):
+        """Looks up portfolio mappings from elviz portfolio id
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param elviz_portfolio_id: id of an elviz portfolio
+        :type elviz_portfolio_id: str, required
+        """
         logger.info("Looking up users mapping with id " + str(elviz_portfolio_id))
         json_res = api_connection.exec_get_url('/api/elvizmapping/portfolios/')
         for comp in json_res:
@@ -112,6 +177,17 @@ class ElvizLinksApi:
         return None
     @staticmethod
     def upsert_portfolio_mapping(api_connection, tradingbook, elviz_portfolio_id, elviz_portfolio_name):
+        """Registers or updates a portfolio mapping
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param tradingbook: name of a tradingbook
+        :type tradingbook: str, required
+        :param elviz_portfolio_id: id of an elviz portfolio
+        :type elviz_portfolio_id: str, required
+        :param elviz_portfolio_name: name of an elviz portfolio
+        :type elviz_portfolio_name: str, required
+        """
         logger.info("Register or update user mapping")
         edeskbook = ElvizLinksApi.lookup_tadingbook(api_connection, tradingbook)
         if edeskbook is None:
