@@ -10,10 +10,12 @@ class LocalArea:
          self.title=None,
          self.description=None
          self.area_type=None
+         self.geom=None
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
         if self.title is not None: dict['title'] = self.title
+        if self.geom is not None: dict['geom'] = self.geom
         if self.area_type is not None: dict['area_type'] = LocationApi.get_location_type_url(api_conn,self.area_type)
         if self.description is not None: dict['description'] = self.description
         return dict
