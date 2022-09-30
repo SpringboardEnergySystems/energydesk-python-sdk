@@ -36,6 +36,25 @@ class LocationApi:
             return json_res
         return None
 
+    @staticmethod
+    def get_location_types(api_connection):
+
+        """Fetches local area
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching geolocatioin")
+        json_res=api_connection.exec_get_url('/api/locations/locationtypes/')
+        if json_res is not None:
+            return json_res
+        return None
+
+
+    @staticmethod
+    def get_location_types_df(api_connection):
+        json_res=LocationApi.get_location_types(api_connection)
+        return None if json_res is None else pd.DataFrame(data=json_res)
 
     @staticmethod
     def get_geolocation_details(api_connection, locarea_pk):
