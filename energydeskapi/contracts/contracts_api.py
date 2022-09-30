@@ -150,7 +150,7 @@ class ContractsApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param pk: personal key to the tradingbook
+        :param pk: personal key to a tradingbook
         :type pk: str, required
         """
         logger.info("Fetching trading books")
@@ -215,35 +215,45 @@ class ContractsApi:
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
-        """Gets the url for the commodity type
+        """Gets commodity type from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param commodity_type_enum: description...
+        :param commodity_type_enum: type of commodity
         :type commodity_type_enum: str, required
         """
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(commodity_type_enum.value) + "/"
 
     @staticmethod
     def get_contract_url(api_connection, contract_pk):
-        """Gets the url for a contract
+        """Gets contract from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param commodity_type_enum: description...
-        :type commodity_type_enum: str, required
+        :param contract_pk: personal key to a contract
+        :type contract_pk: str, required
         """
         return api_connection.get_base_url() + '/api/contracts/contract/' + str(contract_pk) + "/"
 
     @staticmethod
     def list_contract_statuses(api_connection):
-        logger.info("Fetching contract statues")
+        """Lists the statuses of contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching contract statuses")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contractstatuses/')
         df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
     def list_contract_types(api_connection):
+        """Lists the types of contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Fetching contract types")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttypes/')
         df = pd.DataFrame(data=json_res)
@@ -251,6 +261,11 @@ class ContractsApi:
 
     @staticmethod
     def list_commodity_types(api_connection):
+        """Lists the types of commodities
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Fetching commodity types")
         json_res = api_connection.exec_get_url('/api/markets/commoditytypes/')
         df = pd.DataFrame(data=json_res)
@@ -258,18 +273,37 @@ class ContractsApi:
 
     @staticmethod
     def list_instrument_types(api_connection):
+        """Lists the types of instruments
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Fetching instrument types")
         json_res = api_connection.exec_get_url('/api/markets/instrumenttypes/')
         df = pd.DataFrame(data=json_res)
         return df
 
     def fetch_standard_contract(api_connection, contract_pk):
+        """Fetches standard contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_pk: personal key to a contract
+        :type contract_pk: str, required
+        """
         logger.info("Fetching full contract")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
 
         return json_res
 
     def fetch_bilateral_contract(api_connection, contract_pk):
+        """Fetches bilateral contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_pk: personal key to a contract
+        :type contract_pk: str, required
+        """
         logger.info("Fetching full bilat contract")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
