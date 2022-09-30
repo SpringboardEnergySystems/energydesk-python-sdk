@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def test_clearing_data(api_conn):
-    ClearingApi.query_clearing_report_data(api_conn, 1, ClearingReportTypeEnum.TRANSACTIONS, "2021-01-01", "2023-01-01")
+    ClearingApi.query_clearing_report_data(api_conn, 711, ClearingReportTypeEnum.TRANSACTIONS, "2021-01-01", "2023-01-01")
 
 def fetch_clearing_reports(api_conn):
     df=ClearingApi.get_clearing_reports(api_conn)
