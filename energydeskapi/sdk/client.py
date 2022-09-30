@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.api_connection import ApiConnection
-from energydeskapi.customers.customers_api import CustomerApi
+from energydeskapi.customers.customers_api import CustomersApi
 from os.path import join, dirname
 from dotenv import load_dotenv
 import pytz, environ
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     #price=CurveApi.get_period_price(api_conn, "2023-01-01", "2023-04-01","NO1", "EUR")
     #print(price)
-    user_profile=CustomerApi.get_user_profile(api_conn)
+    user_profile=CustomersApi.get_user_profile(api_conn)
     print(user_profile)
     #AssetsApi.get_asset_types(api_conn)
-    CustomerApi.get_companies(api_conn)
+    CustomersApi.get_companies(api_conn)

@@ -9,11 +9,13 @@ from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from moneyed.l10n import format_money
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
-from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from datetime import datetime
 logger = logging.getLogger(__name__)
 #  Change
 class Contract:
+    """ Class for contracts
+
+    """
     def __init__(self,
                  external_contract_id=None,
                  trading_book=None,
@@ -55,9 +57,21 @@ class Contract:
         self.tags=[]
 
     def add_delivery_period(self, delivery_from, delivery_until):
+        """ Delivery period
+
+        :param delivery_from: delivery period from
+        :type delivery_from: str, required
+        :param delivery_until: delivery period to
+        :type delivery_until: str, required
+        """
         self.deliveries.append({'period_from':convert_datime_to_utcstr(delivery_from),
                                 'period_until':convert_datime_to_utcstr(delivery_until)})
     def get_dict(self, api_conn):
+        """ Creates dictionary from data stored in self
+
+        :param api_conn: class with API token for use with API
+        :type api_conn: str, required
+        """
         dict = {}
         dict['pk'] = self.pk
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
@@ -86,13 +100,20 @@ class Contract:
 
         return dict
 class ContractsApi:
-    """Description...
+    """Class for contracts in api
 
-      """
+    """
 
     @staticmethod
     def register_contract(api_connection,
                           contracts):
+        """Registers contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contracts: contracts to be registered
+        :type contracts: str, required
+        """
         logger.info("Registering contract")
         #print(format_money(price, locale='en_DE'))
         json_records=[]
@@ -103,14 +124,35 @@ class ContractsApi:
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
+        """Gets the url for the contract type
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_type_enum: type of contract
+        :type contract_type_enum: str, required
+        """
         return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
     @staticmethod
     def get_contract_status_url(api_connection, contract_status_enum):
+        """Gets the url for a contract status
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_status_enum: status of contract
+        :type contract_status_enum: str, required
+        """
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(contract_status_enum.value) + "/"
 
 
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
+        """Gets tradingbook from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: personal key to the tradingbook
+        :type pk: str, required
+        """
         logger.info("Fetching trading books")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
         for r in json_res:
@@ -120,6 +162,13 @@ class ContractsApi:
 
     @staticmethod
     def query_contracts(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
+        """Queries contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param query_payload: payload used in query (default {"trading_book_key":0, "last_trades_count": 10})
+        :type query_payload: str
+        """
         logger.info("Fetching contracts")
         json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts/', query_payload)
         print(json_res)
@@ -127,6 +176,13 @@ class ContractsApi:
 
     @staticmethod
     def query_contracts_df(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
+        """Queries contracts and shows more info
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param query_payload: payload used in query (default {"trading_book_key":0, "last_trades_count": 10})
+        :type query_payload: str
+        """
         logger.info("Fetching contracts")
         json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts-ext/', query_payload)
         df = pd.DataFrame(data=json_res)
@@ -134,26 +190,49 @@ class ContractsApi:
 
     @staticmethod
     def list_contracts(api_connection, parameters={}):
+        """Lists contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param parameters: description...
+        :type parameters: str
+        """
         logger.info("Listing contracts")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts', parameters)
         return json_res
     @staticmethod
     def list_contracts_df(api_connection, parameters=[]):
+        """Lists contracts and shows more info
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param parameters: description...
+        :type parameters: str
+        """
         json_res=ContractsApi.list_contracts(api_connection, parameters)
         df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
+        """Gets the url for the commodity type
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param commodity_type_enum: description...
+        :type commodity_type_enum: str, required
+        """
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(commodity_type_enum.value) + "/"
 
     @staticmethod
-    def get_contract_type_url(api_connection, contract_type_enum):
-        return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
-
-
-    @staticmethod
     def get_contract_url(api_connection, contract_pk):
+        """Gets the url for a contract
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param commodity_type_enum: description...
+        :type commodity_type_enum: str, required
+        """
         return api_connection.get_base_url() + '/api/contracts/contract/' + str(contract_pk) + "/"
 
     @staticmethod

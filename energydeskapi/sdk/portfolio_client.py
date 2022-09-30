@@ -5,11 +5,12 @@ import copy
 from random import randrange
 import random
 from energydeskapi.sdk.api_connection import ApiConnection
-from energydeskapi.customers.customers_api import CustomerApi
+from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
-from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum, CommodityTypeEnum, InstrumentTypeEnum
+from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum
+from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum
 from os.path import join, dirname
 from moneyed import EUR
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
@@ -38,8 +39,8 @@ if __name__ == '__main__':
     api_conn.set_token(tok, "Token")
 
 
-    ndaq_pk=CustomerApi.get_company_by_name(api_conn, "Nasdaq OMX")
-    prof=CustomerApi.get_user_profile(api_conn)
+    ndaq_pk=CustomersApi.get_company_by_name(api_conn, "Nasdaq OMX")
+    prof=CustomersApi.get_user_profile(api_conn)
     my_user_keey=prof['pk']
 
     all_prod_df=DerivativesApi.fetch_products(api_conn, "Nasdaq OMX", "Nordic Power", convert_datime_to_utcstr(datetime.today()))
