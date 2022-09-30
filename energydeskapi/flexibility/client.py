@@ -1,6 +1,11 @@
 import requests
 from datetime import datetime, timedelta
 def cancel_dispatch(date):
+    """Cancels dispatches
+
+    :param date: date for when to cancel dispatch
+    :type date: str, required
+    """
     token="ebb44e807b185d0b4a410fec4b971fda9d8e4cad"
     headers = {'Authorization': 'Token ' + token}
     server_url = 'https://smartflex.springboard.energy/api/flexoptimizer/cancel_dispatch/'
