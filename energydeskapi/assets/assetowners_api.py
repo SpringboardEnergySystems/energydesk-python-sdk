@@ -39,7 +39,7 @@ class AssetOwnersApi:
 
     @staticmethod
     def get_asset_ownerships(api_connection):
-        """Receives ownership of assets
+        """Fetches ownership of all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -52,7 +52,7 @@ class AssetOwnersApi:
 
     @staticmethod
     def get_asset_ownerships_pivoted(api_connection):
-        """Description...
+        """Fetches pivoted ownerships of all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -65,7 +65,7 @@ class AssetOwnersApi:
 
     @staticmethod
     def all_asset_ownership_paths(api_connection):
-        """Receives the path of every asset ownerships
+        """Fetches the path all asset ownerships
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

@@ -55,11 +55,25 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_type_url(api_connection, asset_type_enum):
+        """Fetches asset type from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset_type_enum: type of asset
+        :type asset_type_enum: str, required
+        """
         atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
         return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod
     def get_asset_type(api_connection, asset_type_enum):
+        """Fetches asset type from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset_type_enum: type of asset
+        :type asset_type_enum: str, required
+        """
         atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
         json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum)) + "/"
         if json_res is None:
@@ -69,7 +83,7 @@ class AssetsApi:
     # This function returns a single price (avg) for the period requested
     @staticmethod
     def create_assets(api_connection, asset_list):
-        """ Registers assets
+        """Registers assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -87,7 +101,7 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_types(api_connection):
-        """ Receives the type of assets
+        """Fetches the type of all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -100,11 +114,18 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_url(api_connection, asset_pk):
+        """Fetches asset from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset_pk: personal key of asset
+        :type asset_pk: str, required
+        """
         return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
 
     @staticmethod
     def get_assets(api_connection):
-        """ Receives the type of assets
+        """Fetches all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -118,7 +139,7 @@ class AssetsApi:
 
     @staticmethod
     def get_assets_ext(api_connection):
-        """ Receives a list of assets with extended information
+        """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -131,10 +152,12 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_by_description(api_connection, description):
-        """Fetches a specific company as long as the user has rights
+        """Fetches assets from description
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param description: description of asset
+        :type description: str, required
         """
         logger.info("Fetching assets with description " + str(description))
         json_res=api_connection.exec_post_url('/api/assets/assets-by-filter/', {'description':description})
@@ -144,10 +167,12 @@ class AssetsApi:
 
     @staticmethod
     def get_asset_by_key(api_connection, pk):
-        """Fetches a specific company as long as the user has rights
+        """Fetches asset from key
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param pk: personal key of asset
+        :type pk: str, required
         """
         logger.info("Fetching assets with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/assets/assets/' + str(pk) + "/")
@@ -157,10 +182,12 @@ class AssetsApi:
 
     @staticmethod
     def get_assetsbytype_ext(api_connection, asset_type_enum):
-        """ Receives a list of assets with extended information
+        """Fetches assets from types with extended information
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param asset_type_enum: type of asset
+        :type asset_type_enum: str, required
         """
         payload={"asset_type_enum": str(asset_type_enum.value)}
         json_res = api_connection.exec_post_url('/api/assets/assets-by-type-extended/', payload)
