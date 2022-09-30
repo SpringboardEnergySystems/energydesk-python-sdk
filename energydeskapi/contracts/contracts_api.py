@@ -124,7 +124,7 @@ class ContractsApi:
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
-        """Gets a contract type from url
+        """Fetches contract type from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -134,7 +134,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
     @staticmethod
     def get_contract_status_url(api_connection, contract_status_enum):
-        """Gets a contract status from url
+        """Fetches contract status from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -146,7 +146,7 @@ class ContractsApi:
 
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
-        """Gets tradingbook from pk
+        """Fetches tradingbooks from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -176,7 +176,7 @@ class ContractsApi:
 
     @staticmethod
     def query_contracts_df(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
-        """Queries contracts and shows more info
+        """Queries contracts and shows in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -215,7 +215,7 @@ class ContractsApi:
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
-        """Gets commodity type from url
+        """Fetches commodity type from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -226,7 +226,7 @@ class ContractsApi:
 
     @staticmethod
     def get_contract_url(api_connection, contract_pk):
-        """Gets contract from url
+        """Fetches contract from url
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
