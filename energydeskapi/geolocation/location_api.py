@@ -4,6 +4,19 @@ import logging
 import pandas as pd
 logger = logging.getLogger(__name__)
 
+class LocalArea:
+    def __init__(self):
+         self.pk=0,
+         self.title=None,
+         self.description=None
+         self.area_type=None
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.title is not None: dict['title'] = self.title
+        if self.area_type is not None: dict['area_type'] = LocationApi.get_location_type_url(api_conn,self.area_type)
+        if self.description is not None: dict['description'] = self.description
+        return dict
 
 class LocationApi:
     """Class for user profiles and companies
@@ -21,6 +34,26 @@ class LocationApi:
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def get_location_type_url(api_connection, location_type_enum):
+        type_pk = location_type_enum if isinstance(location_type_enum, int) else location_type_enum.value
+        return api_connection.get_base_url() + '/api/locations/locationtypes/' + str(
+            type_pk) + "/"
+
+    @staticmethod
+    def upsert_local_areas(api_connection, local_areas):
+        """Upsert local area
+        Inserts (new) or updated existing local area
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        for loc in local_areas:
+            if loc.pk==0:
+                json_res = api_connection.exec_post_url('/api/locations/localareas/', loc.get_dict())
+            else:
+                json_res = api_connection.exec_patch_url('/api/locations/localareas/', loc.get_dict())
+            print(json_res)
 
     @staticmethod
     def get_local_areas(api_connection, location_type_enum):
