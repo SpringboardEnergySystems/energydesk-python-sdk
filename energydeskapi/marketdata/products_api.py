@@ -58,13 +58,12 @@ class ProductsApi:
     # This function returns a single price (avg) for the period requested
     @staticmethod
     def register_products(api_connection, product_list):
-        """ Registers assets
+        """Registers products
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param asset_list: list of assets
-
-        :type asset_list: str, required
+        :param product_list: list of products
+        :type product_list: str, required
         """
         logger.info("Registering " + str(len(product_list) )+ " products")
         for product in product_list:
@@ -75,10 +74,12 @@ class ProductsApi:
             print(json_res)
     @staticmethod
     def get_products(api_connection, market_enum):
-        """Fetches all company objects with URL relations. Will only return companies for which the user has rights
+        """Fetches products from markets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param market_enum: markets
+        :type market_enum: str, required
         """
         mapi=MarketsApi.get_market_obj(api_connection, market_enum)
         print(mapi)
@@ -95,10 +96,12 @@ class ProductsApi:
 
     @staticmethod
     def get_products_df(api_connection, market_enum):
-        """Fetches all company objects with URL relations. Will only return companies for which the user has rights
+        """Fetches products from markets and shows in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param market_enum: markets
+        :type market_enum: str, required
         """
         mapi=MarketsApi.get_market_obj(api_connection, market_enum)
 

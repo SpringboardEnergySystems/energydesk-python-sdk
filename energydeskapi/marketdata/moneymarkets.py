@@ -5,7 +5,7 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 class MoneyMarkets:
-    """Description...
+    """Class for money markets
 
     """
 

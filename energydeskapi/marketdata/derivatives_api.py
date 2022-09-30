@@ -7,9 +7,9 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 #  Change
 class DerivativesApi:
-    """Description...
+    """Class for derivatives
 
-      """
+    """
 
     @staticmethod
     def fetch_markets(api_connection, market_place="Nasdaq OMX"):

@@ -5,9 +5,9 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 class Fundamentals:
-    """Description...
+    """Class for fundamentals
 
-      """
+    """
 
     @staticmethod
     def query_unavailable_production(base_url, token, period_from, period_until):
