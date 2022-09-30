@@ -36,6 +36,13 @@ class UsersApi:
 
     @staticmethod
     def update_userprofile(api_connection, user):
+        """Updates user profiles
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param user: object of user
+        :type user: str, required
+        """
         payload = user.get_dict()
         json_res = api_connection.exec_post_url('/api/customers/update-userprofile', payload)
         if json_res is None:
@@ -60,7 +67,7 @@ class UsersApi:
 
     @staticmethod
     def get_api_token(api_connection):
-        """Fetches user profile
+        """Fetches API token
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -73,10 +80,12 @@ class UsersApi:
 
     @staticmethod
     def get_users_by_role(api_connection, user_role_enum):
-        """Fetches user profile
+        """Fetches users from roles
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param user_role_enum: role of user
+        :type user_role_enum: str, required
         """
         role_pk = user_role_enum if isinstance(user_role_enum, int) else user_role_enum.value
 
@@ -88,6 +97,13 @@ class UsersApi:
 
     @staticmethod
     def get_users_by_role_df(api_connection, user_role_enum):
+        """Fetches users from roles and shows in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param user_role_enum: role of user
+        :type user_role_enum: str, required
+        """
         dict=UsersApi.get_users_by_role(api_connection, user_role_enum)
         if dict is not None:
             df = pd.DataFrame(data=dict)
@@ -96,10 +112,12 @@ class UsersApi:
 
     @staticmethod
     def get_profile_by_username(api_connection, username):
-        """Fetches a specific company as long as the user has rights
+        """Fetches profile from username
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param username: username of user
+        :type username: str, required
         """
         logger.info("Fetching profile with username " + str(username))
         json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-username', payload={"username": str(username)})
@@ -108,10 +126,12 @@ class UsersApi:
         return json_res[0]
 
     def get_profile_by_key(api_connection, pk):
-        """Fetches a specific company as long as the user has rights
+        """Fetches user profile from key
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param pk: personal key of profile
+        :type pk: str, required
         """
         logger.info("Fetching profile with key " + str(pk))
         json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-key', payload={"profile_key": str(pk)})
@@ -121,6 +141,13 @@ class UsersApi:
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
+        """Fetches user profile from key and shows in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param user_profile_key: personal key of user profile
+        :type user_profile_key: str, required
+        """
         dict=UsersApi.get_profile_by_key(api_connection, user_profile_key)
         if dict is not None:
             df = pd.DataFrame(data=dict)
@@ -130,7 +157,7 @@ class UsersApi:
 
     @staticmethod
     def get_users(api_connection):
-        """Fetches user profile
+        """Fetches user profiles
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -144,10 +171,12 @@ class UsersApi:
 
     @staticmethod
     def create_users(api_connection, users):
-        """Fetches user profile
+        """Creates users from payload
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param users: payload of user profile containing username, email, firstname, lastname, user role and company registry number
+        :type users: str, required
         """
         logger.info("Registering " + str(len(users) )+ " users")
         for user in users:
@@ -160,7 +189,7 @@ class UsersApi:
 
     @staticmethod
     def get_user_roles_df(api_connection):
-        """Fetches all company types in system with basic key+ name infmation
+        """Fetches all user roles and shows in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -174,4 +203,11 @@ class UsersApi:
 
     @staticmethod
     def get_user_url(api_connection, user_pk):
+        """Fetches user from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param user_pk: personal key of user
+        :type user_pk: str, required
+        """
         return api_connection.get_base_url() + '/api/customers/profiles/' + str(user_pk) + "/"

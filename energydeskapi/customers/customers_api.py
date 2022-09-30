@@ -44,6 +44,13 @@ class CustomersApi:
 
     @staticmethod
     def update_company(api_connection, company):
+        """Updates companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company: company object
+        :type company: str, required
+        """
         payload = company.get_dict()
         json_res = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
         if json_res is None:
@@ -53,7 +60,7 @@ class CustomersApi:
 
     @staticmethod
     def create_companies(api_connection, companies):
-        """ Registers assets
+        """Registers companies
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -72,6 +79,13 @@ class CustomersApi:
     # This should e identical to create_assets (i.e. create_companies) taking a list of class Company
     # def create_companies(api_connection, companies): looping through companies and getting get_dict() to insert into API
     def register_company(api_connection, company):
+        """Registers company
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company: company
+        :type company: str, required
+        """
         json_res = api_connection.exec_post_url('/api/customers/register-company', company)
         if json_res is None:
             return False
@@ -94,7 +108,7 @@ class CustomersApi:
 
     @staticmethod
     def get_company_roles_df(api_connection):
-        """Fetches all company types in system with basic key+ name infmation
+        """Fetches all company roles in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -122,6 +136,13 @@ class CustomersApi:
 
     @staticmethod
     def get_company_by_name(api_connection, company_name):
+        """Fetches companies from name
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_name: name of a company
+        :type company_name: str, required
+        """
         df = CustomersApi.get_companies_ext_df(api_connection)
         dfres = df.loc[df['company_name'] == company_name]
         if len(dfres.index)==0:
@@ -136,6 +157,8 @@ class CustomersApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param pk: personal key of company
+        :type pk: str, required
         """
         logger.info("Fetching company with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/customers/companies/' + str(pk) + "/")
@@ -158,20 +181,48 @@ class CustomersApi:
 
     @staticmethod
     def get_company_type_url(api_connection, company_type_enum):
+        """Fetches company types from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_type_enum: type of company
+        :type company_type_enum: str, required
+        """
         # Will accept both integers of the actual enum type
         type_pk = company_type_enum if isinstance(company_type_enum, int) else company_type_enum.value
         return api_connection.get_base_url() + '/api/customers/companytypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_company_role_url(api_connection, company_role_enum):
+        """Fetches company roles from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_role_enum: role of company
+        :type company_role_enum: str, required
+        """
         return api_connection.get_base_url() + '/api/customers/companyroles/' + str(company_role_enum.value) + "/"
 
     @staticmethod
     def get_company_url(api_connection, company_pk):
+        """Fetches companies from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_pk: personal key of company
+        :type company_pk: str, required
+        """
         return api_connection.get_base_url() + '/api/customers/companies/' + str(company_pk) + "/"
 
     @staticmethod
     def get_country_url(api_connection, country_pk):
+        """Fetches countries from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param country_pk: personal key of country
+        :type country_pk: str, required
+        """
         return api_connection.get_base_url() + '/api/customers/countries/' + str(country_pk) + "/"
 
     @staticmethod
