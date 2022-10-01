@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO,
 def get_areas(api_conn):
     #df=LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
     #print("Loc area", df)
-    geomdata=ocationApi.generate_default_map(api_conn, "COUNTRY", "SRB")
+    geomdata=LocationApi.generate_default_map(api_conn, "COUNTRY", "SRB")
     print(geomdata)
 
 
