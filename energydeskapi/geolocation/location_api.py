@@ -40,6 +40,22 @@ class LocationApi:
         return None
 
     @staticmethod
+    def generate_default_map(api_connection, map_type="COUNTRY", param="NOR"):
+        """Fetches main area of company
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Generate default geojson")
+        payload={
+            "map_type":map_type,
+            "param":param
+        }
+        json_res=api_connection.exec_post_url('/api/locations/mainareas/', payload)
+        if json_res is not None:
+            return json_res
+        return None
+
+    @staticmethod
     def get_location_type_url(api_connection, location_type_enum):
         """Fetches location type from url
 
