@@ -123,7 +123,7 @@ class ApiConnection(object):
             json_data = result.json()
             return json_data
         else:
-            logger.error("Problens calling EnergyDesk API- (patch) " + str(result) + " " + result.text)
+            logger.error("Problens calling EnergyDesk API- (patch) " + str(result) + " " )
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             return None
