@@ -50,7 +50,7 @@ class LocationApi:
             "map_type":map_type,
             "param":param
         }
-        json_res=api_connection.exec_post_url('/api/locations/mainareas/', payload)
+        json_res=api_connection.exec_post_url('/api/locations/generate-default-map/', payload)
         if json_res is not None:
             return json_res
         return None
