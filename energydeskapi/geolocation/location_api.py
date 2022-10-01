@@ -10,7 +10,7 @@ class LocalArea:
          self.title=None,
          self.description=None
          self.area_type=None
-         self.geom=None
+         self.geom="None"
          self.is_main_area=True
     def get_dict(self, api_conn):
         dict = {}
