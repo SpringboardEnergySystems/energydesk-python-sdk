@@ -177,6 +177,12 @@ class ContractsApi:
         return df
 
     @staticmethod
+    def get_contract(api_connection, contract_pk):
+        logger.info("Loading contract with pk " + str(contract_pk))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/' + str(contract_pk) + "/")
+        return json_res
+
+    @staticmethod
     def list_contracts(api_connection, parameters={}):
         """Lists contracts
 
@@ -189,7 +195,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts', parameters)
         return json_res
     @staticmethod
-    def list_contracts_df(api_connection, parameters=[]):
+    def list_contracts_df(api_connection, parameters={}):
         """Lists contracts and shows in a dataframe
 
         :param api_connection: class with API token for use with API
