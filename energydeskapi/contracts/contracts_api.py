@@ -190,7 +190,7 @@ class ContractsApi:
         return json_res
     @staticmethod
     def list_contracts_df(api_connection, parameters=[]):
-        """Lists contracts and shows more info
+        """Lists contracts and shows in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
