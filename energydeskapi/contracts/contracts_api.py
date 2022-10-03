@@ -57,21 +57,9 @@ class Contract:
         self.tags=[]
 
     def add_delivery_period(self, delivery_from, delivery_until):
-        """ Delivery period
-
-        :param delivery_from: delivery period from
-        :type delivery_from: str, required
-        :param delivery_until: delivery period to
-        :type delivery_until: str, required
-        """
         self.deliveries.append({'period_from':convert_datime_to_utcstr(delivery_from),
                                 'period_until':convert_datime_to_utcstr(delivery_until)})
     def get_dict(self, api_conn):
-        """ Creates dictionary from data stored in self
-
-        :param api_conn: class with API token for use with API
-        :type api_conn: str, required
-        """
         dict = {}
         dict['pk'] = self.pk
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
