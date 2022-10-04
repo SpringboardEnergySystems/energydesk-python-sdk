@@ -42,6 +42,9 @@ class AssetDataApi:
         json_res=AssetDataApi.get_assetgroup_forecast(api_connection, assets)
         if json_res is not None:
             df = pd.DataFrame(data=eval(json_res))
+            df['date']= pd.to_datetime(df['date'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'])
+            df.index=df['timestamp']
             return df
         return None
 
