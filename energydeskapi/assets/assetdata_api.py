@@ -37,4 +37,11 @@ class AssetDataApi:
         }
         json_res = api_connection.exec_post_url('/api/assetdata/query-summed-timeseries/', payload)
         return json_res
+    @staticmethod
+    def get_assetgroup_forecast_df(api_connection, assets):
+        json_res=AssetDataApi.get_assetgroup_forecast(api_connection, assets)
+        if json_res is not None:
+            df = pd.DataFrame(data=eval(json_res))
+            return df
+        return None
 
