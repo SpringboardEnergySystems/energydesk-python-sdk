@@ -100,6 +100,16 @@ class LocationApi:
         return None
 
     @staticmethod
+    def get_local_areas_df(api_connection,  location_type_enum):
+        """Fetches all location types and shows in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=LocationApi.get_local_areas(api_connection, location_type_enum)
+        return None if json_res is None else pd.DataFrame(data=json_res)
+
+    @staticmethod
     def get_location_types(api_connection):
         """Fetches all location types
 
