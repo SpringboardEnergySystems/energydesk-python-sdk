@@ -231,3 +231,11 @@ class CustomersApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_company_status(api_connection, status):
+        param = {"is_active": status}
+        json_res = CustomersApi.get_companies(api_connection, param)
+        if json_res is None:
+            return None
+        return json_res

@@ -36,6 +36,11 @@ def load_company_from_regnumber(api_conn):
    # json_companies = CustomersApi.get_companies(api_conn, param)
     print(json_companies)
 
+def query_company_status(api_conn):
+    status = "1"
+    json_companies=CustomersApi.get_company_status(api_conn, status)
+    print(json_companies)
+
 def list_users(api_conn):
     df=CustomersApi.get_users(api_conn)
     print(df)
@@ -81,5 +86,6 @@ if __name__ == '__main__':
     #create_company(api_conn)
     #query_companies(api_conn)
     #load_company_from_regnumber(api_conn)
-    query_company_pk_by_name(api_conn)
+    #query_company_pk_by_name(api_conn)
+    query_company_status(api_conn)
     #update_company(api_conn)
