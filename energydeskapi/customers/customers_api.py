@@ -107,6 +107,11 @@ class CustomersApi:
         return df
 
     @staticmethod
+    def get_companies(api_connection, parameters={}):
+        json_res=api_connection.exec_get_url('/api/customers/companies/', parameters)
+        return json_res
+
+    @staticmethod
     def get_company_roles_df(api_connection):
         """Fetches all company roles in system with basic key+ name infmation
 
@@ -121,21 +126,21 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_companies_df(api_connection):
+    def get_companies_df(api_connection, parameters={}):
         """Fetches all companies in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching companylist")
-        json_res=api_connection.exec_get_url('/api/customers/companies-extended')
+        json_res=CustomersApi.get_companies(api_connection, parameters)
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res["companies"])
+        df = pd.DataFrame(data=json_res["results"])
         return df
 
     @staticmethod
-    def get_company_by_name(api_connection, company_name):
+    def get_company_pk_by_name(api_connection, company_name):
         """Fetches companies from name
 
         :param api_connection: class with API token for use with API
@@ -143,13 +148,14 @@ class CustomersApi:
         :param company_name: name of a company
         :type company_name: str, required
         """
-        df = CustomersApi.get_companies_ext_df(api_connection)
-        dfres = df.loc[df['company_name'] == company_name]
-        if len(dfres.index)==0:
-            logger.warning("No company named " + str(company_name))
-            return None
-        comppk = dfres['pk'].values[-1]
-        return comppk
+        parameters={
+           "name":company_name
+        }
+        res=CustomersApi.get_companies(api_connection, parameters)
+        if res is None or len(res)==0:
+            return 0
+        company_key = res[0]['pk']
+        return company_key
 
     @staticmethod
     def get_company_by_key(api_connection, pk):
