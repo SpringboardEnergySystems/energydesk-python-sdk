@@ -93,8 +93,8 @@ class ContractsApi:
     """
 
     @staticmethod
-    def register_contract(api_connection,
-                          contracts):
+    def upsert_contract(api_connection,
+                          contract):
         """Registers contracts
 
         :param api_connection: class with API token for use with API
@@ -105,10 +105,10 @@ class ContractsApi:
         logger.info("Registering contract")
         #print(format_money(price, locale='en_DE'))
         json_records=[]
-        for contract in contracts:
-            json_records.append(contract.get_dict(api_connection))
-        json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
-
+        #json_records.append(contract.get_dict(api_connection))
+        #json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", json_records)
+        return json_res
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
