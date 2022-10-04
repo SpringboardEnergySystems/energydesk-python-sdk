@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_asset_info(api_conn):
-    df=AssetDataApi.get_assetgroup_forecast(api_conn, [1,2,3])
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn, [1,2,3])
     print(df)
 
 if __name__ == '__main__':
