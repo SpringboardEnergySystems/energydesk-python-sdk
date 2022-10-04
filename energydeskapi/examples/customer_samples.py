@@ -13,18 +13,28 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_companies(api_conn):
-    json_companies=CustomersApi.get_companies(api_conn)
-    all_companies_df=CustomersApi.get_companies_ext_df(api_conn)
-    print(all_companies_df)
+    param={"page":25,
+           "page_size":1}
+    json_companies=CustomersApi.get_companies(api_conn, param)
+    print(json_companies)
+
 
 
 def query_company_types(api_conn):
     df=CustomersApi.get_company_types_df(api_conn)
     print(df)
 
-def load_company_from_regnumber(api_conn, regnumber):
-    comp=CustomersApi.get_company_from_registry_number(api_conn, regnumber)
-    print(comp)
+def query_company_pk_by_name(api_conn):
+    comp_name = "Arna Kraftselskap AS"
+    json_companies = CustomersApi.get_company_pk_by_name(api_conn, comp_name)
+    print(json_companies)
+
+def load_company_from_regnumber(api_conn):
+    regnumber = "982974011"
+    json_companies=CustomersApi.get_company_from_registry_number(api_conn, regnumber)
+    param = {"registry_number": regnumber}
+   # json_companies = CustomersApi.get_companies(api_conn, param)
+    print(json_companies)
 
 def list_users(api_conn):
     df=CustomersApi.get_users(api_conn)
@@ -69,5 +79,7 @@ if __name__ == '__main__':
     #list_users(api_conn)
     #register_companies(api_conn)
     #create_company(api_conn)
-    query_companies(api_conn)
+    #query_companies(api_conn)
+    #load_company_from_regnumber(api_conn)
+    query_company_pk_by_name(api_conn)
     #update_company(api_conn)

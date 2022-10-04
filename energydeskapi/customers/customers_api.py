@@ -154,7 +154,7 @@ class CustomersApi:
         res=CustomersApi.get_companies(api_connection, parameters)
         if res is None or len(res)==0:
             return 0
-        company_key = res[0]['pk']
+        company_key = res['results'][0]['pk']
         return company_key
 
     @staticmethod
@@ -168,19 +168,6 @@ class CustomersApi:
         """
         logger.info("Fetching company with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/customers/companies/' + str(pk) + "/")
-        if json_res is None:
-            return None
-        return json_res
-
-    @staticmethod
-    def get_companies(api_connection):
-        """Fetches all company objects with URL relations. Will only return companies for which the user has rights
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        """
-        logger.info("Fetching company list")
-        json_res=api_connection.exec_get_url('/api/customers/companies')
         if json_res is None:
             return None
         return json_res
@@ -238,7 +225,9 @@ class CustomersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res=api_connection.exec_get_url('/api/customers/companies-by-registrynumber?registry_number=' + registry_number )
+        param = {"registry_number": registry_number}
+        json_res = CustomersApi.get_companies(api_connection, param)
+        #json_res=api_connection.exec_get_url('/api/customers/companies-by-registrynumber?registry_number=' + registry_number )
         if json_res is None:
             return None
         return json_res
