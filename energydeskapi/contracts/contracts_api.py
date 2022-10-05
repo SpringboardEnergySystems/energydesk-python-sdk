@@ -104,10 +104,13 @@ class ContractsApi:
         """
         logger.info("Registering contract")
         #print(format_money(price, locale='en_DE'))
-        json_records=[]
+        #json_records=[]
         #json_records.append(contract.get_dict(api_connection))
-        #json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", json_records)
+
+        if contract.pk>0:
+            json_res = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
+        else:
+            json_res = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
         return json_res
 
     @staticmethod

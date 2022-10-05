@@ -11,3 +11,8 @@ class ContractStatusEnum(Enum):
 class ContractTypeEnum(Enum):
     FINANCIAL = 1
     PHYSICAL = 2
+
+
+class GosEnergySources(Enum):
+    HYDRO = 1
+    NORWEGIAN_HYDRO = 2
