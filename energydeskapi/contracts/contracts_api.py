@@ -57,10 +57,12 @@ class Contract:
         self.tags=[]
 
     def add_delivery_period(self, delivery_from, delivery_until):
-        self.deliveries.append({'period_from':convert_datime_to_utcstr(delivery_from),
-                                'period_until':convert_datime_to_utcstr(delivery_until),
-                                'price':gen_json_money(self.contract_price),
-                                'quantity':self.quantity})
+        if isinstance(delivery_from, str):
+            self.deliveries.append({'period_from': delivery_from,
+                                    'period_until': delivery_until})
+        else:
+            self.deliveries.append({'period_from':convert_datime_to_utcstr(delivery_from),
+                                    'period_until':convert_datime_to_utcstr(delivery_until)})
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk

@@ -133,6 +133,7 @@ class CustomersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching companylist")
+        parameters['page_size']=1000
         json_res=CustomersApi.get_companies(api_connection, parameters)
         if json_res is None:
             return None
@@ -228,9 +229,11 @@ class CustomersApi:
         param = {"registry_number": registry_number}
         json_res = CustomersApi.get_companies(api_connection, param)
         #json_res=api_connection.exec_get_url('/api/customers/companies-by-registrynumber?registry_number=' + registry_number )
-        if json_res is None:
-            return None
-        return json_res
+        if json_res is not None:
+            if len(json_res['results'])==0:
+                return None
+            return json_res['results'][0]
+        return None
 
     @staticmethod
     def get_company_status(api_connection, status):

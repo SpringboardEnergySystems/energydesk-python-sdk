@@ -150,7 +150,7 @@ class ElvizLinksApi:
         :type tradingbook_name: str, required
         """
         logger.info("Looking up tradingbook " + str(tradingbook_name))
-        df = TradingBooksApi.fetch_tradingbooks(api_connection)
+        df = TradingBooksApi.get_tradingbooks_df(api_connection)
         #print(df)
         for index,row in df.iterrows():
             if row['description'] == tradingbook_name:

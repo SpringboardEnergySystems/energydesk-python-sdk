@@ -60,7 +60,7 @@ class TradingBooksApi:
         return df
 
     @staticmethod
-    def get_tradingbooks_by_commodityfilter(api_connection, commodities):
+    def get_tradingbooks_by_commodityfilter(api_connection, commodities,parameters={}):
         """Fetches tradingbooks from commodity filter
 
         :param api_connection: class with API token for use with API
@@ -77,10 +77,18 @@ class TradingBooksApi:
                 strval=strval[:-1]  #Get rid of the last ,
             return strval
 
-        parameters={"commodity_types":commodities_as_str()}
-        df = TradingBooksApi.get_tradingbooks(api_connection, parameters)
-        return df
+        parameters["commodity_types"]=commodities_as_str()
+        res = TradingBooksApi.get_tradingbooks(api_connection, parameters)
+        return res
 
+    @staticmethod
+    def get_tradingbooks_by_commodityfilter_df(api_connection, commodities, parameters={}):
+        parameters['page_size']=100
+        json_res = TradingBooksApi.get_tradingbooks_by_commodityfilter(api_connection,commodities, parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res['results'])
+        return df
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
         """Loads tradingbooks from key
