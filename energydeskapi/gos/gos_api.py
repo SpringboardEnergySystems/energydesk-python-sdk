@@ -91,7 +91,7 @@ class GosApi:
         return json_res
 
     @staticmethod
-    def get_certificates(api_connection):
+    def get_certificates(api_connection, parameters={}):
         """Fetches certificates from server
 
         :param api_connection: class with API token for use with API
@@ -99,7 +99,7 @@ class GosApi:
         :param contract_status_enum: status of contract
         :type contract_status_enum: str, required
         """
-        json_res = api_connection.exec_get_url('/api/gos/certificates/')
+        json_res = api_connection.exec_get_url('/api/gos/certificates/', parameters)
         return json_res
     @staticmethod
     def get_certificate_by_key(api_connection, key):
