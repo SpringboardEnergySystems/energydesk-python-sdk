@@ -229,7 +229,7 @@ class CustomersApi:
         json_res = CustomersApi.get_companies(api_connection, param)
         #json_res=api_connection.exec_get_url('/api/customers/companies-by-registrynumber?registry_number=' + registry_number )
         if json_res is None:
-            return None
+            return json_res['results'][0]
         return json_res
 
     @staticmethod
