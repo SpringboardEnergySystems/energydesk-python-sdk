@@ -76,13 +76,9 @@ class TradingBooksApi:
             if len(strval)>1:
                 strval=strval[:-1]  #Get rid of the last ,
             return strval
-        logger.info("Fetching trading books by filter")
-        payload={'commodity_types':commodities_as_str()}
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/tradingbooks-by-filter/',payload)
-        print(json_res)
-        if json_res is None:
-            return None
-        df = pd.DataFrame(data=json_res)
+
+        parameters={"commodity_types":commodities_as_str()}
+        df = TradingBooksApi.get_tradingbooks(api_connection, parameters)
         return df
 
     @staticmethod
