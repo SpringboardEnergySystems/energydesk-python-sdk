@@ -84,7 +84,7 @@ class TradingBooksApi:
     @staticmethod
     def get_tradingbooks_by_commodityfilter_df(api_connection, commodities, parameters={}):
         parameters['page_size']=100
-        json_res = TradingBooksApi.get_tradingbooks(api_connection,commodities, parameters)
+        json_res = TradingBooksApi.get_tradingbooks_by_commodityfilter(api_connection,commodities, parameters)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res['results'])
