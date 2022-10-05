@@ -228,9 +228,11 @@ class CustomersApi:
         param = {"registry_number": registry_number}
         json_res = CustomersApi.get_companies(api_connection, param)
         #json_res=api_connection.exec_get_url('/api/customers/companies-by-registrynumber?registry_number=' + registry_number )
-        if json_res is None:
+        if json_res is not None:
+            if len(json_res['results'])==0:
+                return None
             return json_res['results'][0]
-        return json_res
+        return None
 
     @staticmethod
     def get_company_status(api_connection, status):
