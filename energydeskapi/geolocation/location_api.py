@@ -84,6 +84,18 @@ class LocationApi:
             print(json_res)
 
     @staticmethod
+    def get_local_area_url(api_connection, key):
+        """Fetches location type from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param location_type_enum: type of location
+        :type location_type_enum: str, required
+        """
+        return api_connection.get_base_url() + '/api/locations/localareas/' + str(
+            key) + "/"
+
+    @staticmethod
     def get_local_areas(api_connection, location_type_enum):
         """Fetches local area from url
 

@@ -3,9 +3,11 @@ from energydeskapi.contracts.contracts_api import ContractsApi, Contract
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from moneyed import EUR
+from energydeskapi.geolocation.location_api import LocationApi
+from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
-from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum
+from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum, GosEnergySources
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
 logging.basicConfig(level=logging.INFO,
@@ -36,7 +38,7 @@ def get_sample_contract(api_conn, commodity):
     trading_book=2
     company = 2
     trader=2
-    c=Contract("EXT ID SAMPLE d3s667",
+    c=Contract("EXT ID SAMPLE 137312381263",
                trading_book,
                FormattedMoney(232.30, EUR),5,
                FormattedMoney(2.1, EUR),
@@ -50,14 +52,33 @@ def get_sample_contract(api_conn, commodity):
                company,
                company,
                trader)
+
+    return c
 def register_sample_contract(api_conn):
+    deliv_start = (datetime.today() + timedelta(days=100)).replace(hour=0, minute=0, second=0, microsecond=0)
+    deliv_end = (datetime.today() + timedelta(days=400)).replace(hour=0, minute=0, second=0, microsecond=0)
+    main_contract=get_sample_contract(api_conn, CommodityTypeEnum.GOs)
+    main_contract.add_delivery_period(deliv_start,deliv_end )
 
+    res = LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
     go_contract=GoContract()
-    go_contract.main_contract=get_sample_contract(api_conn, CommodityTypeEnum.GOs)
-    go_contract.certificates.append()
-    res=ContractsApi.upsert_contract(api_conn, c)
-    print(res)
+    go_contract.main_contract=main_contract
+    cert=GosApi.get_certificate_by_key(api_conn,4)
+    go_contract.certificates.append(cert)
+    go_contract.energy_source=GosApi.get_energysource_by_key(api_conn, GosEnergySources.HYDRO)
+    go_contract.underlying_source=LocationApi.get_local_area_url(api_conn, res[3]['pk'])
+    go_contract.invoice_with_mva=False
+    go_contract.extra_info="blablabla"
+    go_contract.invoice_date= convert_datime_to_utcstr(deliv_start)[:10]
+    go_contract.delivery_date = convert_datime_to_utcstr(deliv_start)[:10]
 
+
+    print(go_contract.get_dict(api_conn))
+    GosApi.upsert_contract(api_conn, go_contract)
+
+def load_contracts(api_conn):
+    res=GosApi.get_contracts(api_conn)
+    print(res)
 
 def test_certificates(api_conn):
     res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
@@ -76,4 +97,4 @@ def query_paginated_contracts(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    test_certificates(api_conn)
+    load_contracts(api_conn)

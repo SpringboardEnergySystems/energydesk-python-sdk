@@ -20,6 +20,7 @@ class GoContract:
         self.pk=0
         self.main_contract=None
         self.certificates=None
+        self.extra_info = None
         self.underlying_source=None
         self.energy_source = None
         self.invoice_date = None
@@ -28,14 +29,15 @@ class GoContract:
         self.certificates=[]
 
     def add_certificates(self, certificate):
-        self.certificates.append({'period_from':convert_datime_to_utcstr(delivery_from),
-                                'period_until':convert_datime_to_utcstr(delivery_until)})
+        self.certificates.append(certificate)
+
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
         if self.underlying_source is not None: dict['underlying_source'] = self.underlying_source
-        if self.main_contract is not None: dict['main_contract'] = self.main_contract
+        if self.main_contract is not None: dict['main_contract'] = self.main_contract.get_dict(api_conn)
         if self.energy_source is not None: dict['energy_source'] = self.energy_source
+        if self.extra_info is not None: dict['extra_info'] = self.extra_info
         if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
         if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date
         if self.delivery_date is not None: dict['delivery_date'] = self.delivery_date
@@ -58,12 +60,11 @@ class GosApi:
         :param contracts: contracts to be registered
         :type contracts: str, required
         """
-        logger.info("Registering contract")
-        #print(format_money(price, locale='en_DE'))
-        json_records=[]
-        #json_records.append(contract.get_dict(api_connection))
-        #json_res=api_connection.exec_post_url('/api/portfoliomanager/register-contracts/',json_records)
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/contracts/' + str(go_contract.pk) + "/", json_records)
+        logger.info("Registering GoO contract")
+        if go_contract.pk>0:
+            json_res = api_connection.exec_patch_url('/api/gos/gocontracts/' + str(go_contract.pk) + "/", go_contract.get_dict(api_connection))
+        else:
+            json_res = api_connection.exec_post_url('/api/gos/gocontracts/',go_contract.get_dict(api_connection))
         return json_res
 
     @staticmethod
@@ -78,6 +79,18 @@ class GosApi:
         return api_connection.get_base_url() + '/api/gos/certificates/' + str(certificate_pk) + "/"
 
     @staticmethod
+    def get_contracts(api_connection, parameters={}):
+        """Fetches certificates from server
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_status_enum: status of contract
+        :type contract_status_enum: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/gos/gocontracts/', parameters)
+        return json_res
+
+    @staticmethod
     def get_certificates(api_connection):
         """Fetches certificates from server
 
@@ -87,6 +100,31 @@ class GosApi:
         :type contract_status_enum: str, required
         """
         json_res = api_connection.exec_get_url('/api/gos/certificates/')
+        return json_res
+    @staticmethod
+    def get_certificate_by_key(api_connection, key):
+        """Fetches certificates from server
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_status_enum: status of contract
+        :type contract_status_enum: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/gos/certificates/' + str(key) + "/")
+        return json_res
+
+
+    @staticmethod
+    def get_energysource_by_key(api_connection, energy_source_enum):
+        """Fetches certificates from server
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_status_enum: status of contract
+        :type contract_status_enum: str, required
+        """
+        esource_key = energy_source_enum if isinstance(energy_source_enum, int) else energy_source_enum.value
+        json_res = api_connection.exec_get_url('/api/gos/energysources/' + str(esource_key) + "/")
         return json_res
 
     @staticmethod
