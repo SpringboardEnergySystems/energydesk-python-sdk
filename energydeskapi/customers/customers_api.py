@@ -133,6 +133,7 @@ class CustomersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching companylist")
+        parameters['page_size']=1000
         json_res=CustomersApi.get_companies(api_connection, parameters)
         if json_res is None:
             return None
