@@ -131,11 +131,9 @@ class AssetsApi:
         :type api_connection: str, required
         """
         json_res = api_connection.exec_get_url('/api/assets/assets/')
-        print(json_res)
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res)
-        return df
+        return json_res
 
     @staticmethod
     def get_assets_ext(api_connection):
