@@ -166,7 +166,7 @@ class GosApi:
         """
         return api_connection.get_base_url() + '/api/gos/sourcecollection/' + str(source_collection_pk) + "/"
     @staticmethod
-    def get_source_collections(api_connection, parameters):
+    def get_source_collections(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/gos/sourcecollection/', parameters)
         return json_res
 
