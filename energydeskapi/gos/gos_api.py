@@ -168,10 +168,10 @@ class GosApi:
         """
         asset_url_list=[]
         for a in asset_list:
-            asset_url_list.append(AssetsApi.get_asset_url(a))
+            asset_url_list.append(AssetsApi.get_asset_url(api_connection, a))
 
         payload={
-            "local_area": LocationApi.get_local_area_url(local_area_pk),
+            "local_area": LocationApi.get_local_area_url(api_connection, local_area_pk),
             "assets_in_area":asset_url_list
         }
         json_res = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
