@@ -156,6 +156,21 @@ class GosApi:
         return json_res
 
     @staticmethod
+    def get_source_collection_url(api_connection, source_collection_pk):
+        """Fetches url for certificates
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param certificate_pk: type of contract
+        :type certificate_pk: integer, required
+        """
+        return api_connection.get_base_url() + '/api/gos/sourcecollection/' + str(source_collection_pk) + "/"
+    @staticmethod
+    def get_source_collections(api_connection, parameters):
+        json_res = api_connection.exec_get_url('/api/gos/sourcecollection/', parameters)
+        return json_res
+
+    @staticmethod
     def register_source_collection(api_connection, local_area_pk, asset_list):
         """Registers a souce collection
 
