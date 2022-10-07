@@ -87,7 +87,10 @@ class TradingBooksApi:
         json_res = TradingBooksApi.get_tradingbooks_by_commodityfilter(api_connection,commodities, parameters)
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res['results'])
+        tmp=json_res['results']
+        if isinstance(tmp,str):
+            tmp=json.loads(tmp)
+        df = pd.DataFrame(data=tmp)
         return df
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
