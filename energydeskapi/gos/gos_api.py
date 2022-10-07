@@ -7,6 +7,8 @@ from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
+from energydeskapi.geolocation.location_api import LocationApi
+from energydeskapi.assets.assets_api import AssetsApi
 from moneyed.l10n import format_money
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from datetime import datetime
@@ -152,3 +154,31 @@ class GosApi:
         }
         json_res = api_connection.exec_post_url('/api/gos/certificates/', payload)
         return json_res
+
+    @staticmethod
+    def register_source_collection(api_connection, local_area_pk, asset_list):
+        """Registers a souce collection
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param local_area_pk: Key for local aeea
+        :type local_area_pk: integer, required
+        :param asset_list: list of asset primary keys
+        :type asset_list: lst, required
+        """
+        asset_url_list=[]
+        for a in asset_list:
+            asset_url_list.append(AssetsApi.get_asset_url(a))
+
+        payload={
+            "local_area": LocationApi.get_local_area_url(local_area_pk),
+            "assets_in_area":asset_url_list
+        }
+        json_res = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
+        return json_res
+    @staticmethod
+    def get_source_data(api_connection):
+        json_res=api_connection.exec_get_url('/api/gos/allsourcedata')
+        if json_res is not None:
+            return json_res
+        return None

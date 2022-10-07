@@ -82,6 +82,7 @@ class LocationApi:
             else:
                 json_res = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
             print(json_res)
+            return json_res
 
     @staticmethod
     def get_local_area_url(api_connection, key):
@@ -111,7 +112,8 @@ class LocationApi:
             return json_res
         return None
 
-    @staticmethod
+
+
     def get_local_areas_df(api_connection,  location_type_enum):
         """Fetches all location types and shows in a dataframe
 
