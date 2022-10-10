@@ -130,7 +130,8 @@ class ContractsApi:
         :param contract_type_enum: type of contract
         :type contract_type_enum: str, required
         """
-        return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(contract_type_enum.value) + "/"
+        type_pk = contract_type_enum if isinstance(contract_type_enum, int) else contract_type_enum.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(type_pk) + "/"
     @staticmethod
     def get_contract_status_url(api_connection, contract_status_enum):
         """Fetches contract status from url
@@ -140,7 +141,8 @@ class ContractsApi:
         :param contract_status_enum: status of contract
         :type contract_status_enum: str, required
         """
-        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(contract_status_enum.value) + "/"
+        type_pk = contract_status_enum if isinstance(contract_status_enum, int) else contract_status_enum.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(type_pk) + "/"
 
 
     @staticmethod
@@ -227,7 +229,8 @@ class ContractsApi:
         :param commodity_type_enum: type of commodity
         :type commodity_type_enum: str, required
         """
-        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(commodity_type_enum.value) + "/"
+        type_pk = commodity_type_enum if isinstance(commodity_type_enum, int) else commodity_type_enum.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(type_pk) + "/"
 
     @staticmethod
     def get_contract_url(api_connection, contract_pk):
