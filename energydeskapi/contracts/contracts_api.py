@@ -2,6 +2,7 @@ import requests
 import json
 import logging
 import pandas as pd
+from energydeskapi.sdk.common_utils import parse_enum_type
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -141,10 +142,7 @@ class ContractsApi:
         :param contract_status_enum: status of contract
         :type contract_status_enum: str, required
         """
-        print(contract_status_enum)
-        type_pk = contract_status_enum if isinstance(contract_status_enum, int) else contract_status_enum.value
-        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(type_pk) + "/"
-
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(contract_status_enum)) + "/"
 
     @staticmethod
     def load_tradingbook_by_pk(api_connection, pk):
@@ -230,8 +228,8 @@ class ContractsApi:
         :param commodity_type_enum: type of commodity
         :type commodity_type_enum: str, required
         """
-        type_pk = commodity_type_enum if isinstance(commodity_type_enum, int) else commodity_type_enum.value
-        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(type_pk) + "/"
+
+        return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(commodity_type_enum)) + "/"
 
     @staticmethod
     def get_contract_url(api_connection, contract_pk):

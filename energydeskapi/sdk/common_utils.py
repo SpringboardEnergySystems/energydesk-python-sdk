@@ -24,3 +24,12 @@ def init_api(current_dir=None):
     api_conn=ApiConnection(url)
     api_conn.set_token(tok, "Token")
     return api_conn
+
+#For input from apps using eithe enum, int or str representing the same enumeration
+def parse_enum_type(etype):
+    if isinstance(etype, int) :
+        return etype
+    elif isinstance(etype, str) :
+        return int(etype)
+    else:
+        return etype.value
