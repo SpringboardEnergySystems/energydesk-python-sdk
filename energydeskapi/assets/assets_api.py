@@ -124,16 +124,18 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
 
     @staticmethod
-    def get_assets(api_connection):
+    def get_assets(api_connection, parameters={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/assets/assets/')
-        if json_res is None:
-            return None
+        json_res = api_connection.exec_get_url('/api/customers/profiles/', parameters)
         return json_res
+        # json_res = api_connection.exec_get_url('/api/assets/assets/')
+        # if json_res is None:
+        #     return None
+        # return json_res
 
     @staticmethod
     def get_assets_ext(api_connection):
