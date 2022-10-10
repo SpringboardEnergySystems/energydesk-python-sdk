@@ -185,16 +185,13 @@ class GosApi:
     def get_source_collections(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/gos/sourcecollection/', parameters)
         return json_res
-
     @staticmethod
-    def get_source_collections_df(api_connection, parameters={}):
+    def get_source_collections_embedded(api_connection, parameters={}):
         logger.info("Fetching source collection")
-        parameters['page_size']=1000
-        json_res=GosApi.get_source_collections(api_connection, parameters)
-        if json_res is None:
-            return None
-        df = pd.DataFrame(data=json_res["results"])
-        return df
+        #parameters['page_size']=1000
+        json_res = api_connection.exec_get_url('/api/gos/sourcecollection/embedded/', parameters)
+        #json_res=GosApi.get_source_collections(api_connection, parameters)
+        return json_res
 
 
     @staticmethod
