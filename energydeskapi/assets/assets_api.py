@@ -130,7 +130,7 @@ class AssetsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/customers/profiles/', parameters)
+        json_res = api_connection.exec_get_url('/api/assets/assets/', parameters)
         return json_res
         # json_res = api_connection.exec_get_url('/api/assets/assets/')
         # if json_res is None:
