@@ -187,6 +187,17 @@ class GosApi:
         return json_res
 
     @staticmethod
+    def get_source_collections_df(api_connection, parameters={}):
+        logger.info("Fetching source collection")
+        parameters['page_size']=1000
+        json_res=GosApi.get_source_collections(api_connection, parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res["results"])
+        return df
+
+
+    @staticmethod
     def register_source_collection(api_connection, local_area_pk, asset_list):
         """Registers a souce collection
 
