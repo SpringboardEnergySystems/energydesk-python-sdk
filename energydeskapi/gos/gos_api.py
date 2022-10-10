@@ -113,6 +113,22 @@ class GosApi:
         """
         json_res = api_connection.exec_get_url('/api/gos/certificates/', parameters)
         return json_res
+
+    @staticmethod
+    def get_certificates_df(api_connection, parameters={}):
+        """Fetches all companies in system with basic key+ name infmation
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching companylist")
+        parameters['page_size']=1000
+        json_res=GosApi.get_certificates(api_connection, parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res["results"])
+        return df
+
     @staticmethod
     def get_certificate_by_key(api_connection, key):
         """Fetches certificates from server
