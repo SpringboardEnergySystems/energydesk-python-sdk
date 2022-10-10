@@ -156,18 +156,20 @@ class UsersApi:
 
 
     @staticmethod
-    def get_users(api_connection):
+    def get_users(api_connection, parameters={}):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching user profile")
-        json_res=api_connection.exec_get_url('/api/customers/profiles')
-        if json_res is not None:
-            df = pd.DataFrame(data=json_res)
-            return df
-        return None
+        json_res = api_connection.exec_get_url('/api/customers/profiles/', parameters)
+        return json_res
+        # json_res=api_connection.exec_get_url('/api/customers/profiles')
+        # if json_res is not None:
+        #     df = pd.DataFrame(data=json_res)
+        #     return df
+        # return None
 
     @staticmethod
     def create_users(api_connection, users):
