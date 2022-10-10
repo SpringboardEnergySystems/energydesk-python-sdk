@@ -141,6 +141,7 @@ class ContractsApi:
         :param contract_status_enum: status of contract
         :type contract_status_enum: str, required
         """
+        print(contract_status_enum)
         type_pk = contract_status_enum if isinstance(contract_status_enum, int) else contract_status_enum.value
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(type_pk) + "/"
 
