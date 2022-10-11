@@ -179,7 +179,7 @@ class UsersApi:
         #print(json_res)
         if json_res is not None:
              #df = pd.DataFrame(data=json_res['results'])
-             df = pd.json_normalize(json_res['results'], max_level=0)
+             df = pd.json_normalize(json_res['results'], max_level=1)
              print("USRS", df)
              return df
         return None
