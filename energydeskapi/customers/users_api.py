@@ -172,7 +172,14 @@ class UsersApi:
         #     df = pd.DataFrame(data=json_res)
         #     return df
         # return None
-
+    @staticmethod
+    def get_users_df(api_connection, parameters={}):
+        json_res=UsersApi.get_users_by_role(api_connection, parameters)
+        print(json_res)
+        if json_res is not None:
+             df = pd.DataFrame(data=json_res)
+             return df
+        return None
     @staticmethod
     def create_users(api_connection, users):
         """Creates users from payload
