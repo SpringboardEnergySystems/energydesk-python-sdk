@@ -43,6 +43,8 @@ class TradingBooksApi:
         """
         logger.info("Fetching trading books")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/', parameters)
+        if json_res is None:
+            return None
         return json_res
 
     @staticmethod

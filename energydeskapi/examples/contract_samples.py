@@ -59,8 +59,8 @@ def register_normal_contract(api_conn):
     deliv_start = (datetime.today() + timedelta(days=100)).replace(hour=0, minute=0, second=0, microsecond=0)
     deliv_end = (datetime.today() + timedelta(days=400)).replace(hour=0, minute=0, second=0, microsecond=0)
     main_contract=get_sample_contract(api_conn, CommodityTypeEnum.POWER)
-    main_contract.product_delivery_from=deliv_start
-    main_contract.product_delivery_until=deliv_end
+    main_contract.commodity_delivery_from=deliv_start
+    main_contract.commodity_delivery_until=deliv_end
     main_contract.product_code="ODD-PROD2022"
 
     #print(main_contract.get_dict(api_conn))

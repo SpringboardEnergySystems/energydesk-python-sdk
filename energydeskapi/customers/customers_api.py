@@ -109,6 +109,8 @@ class CustomersApi:
     @staticmethod
     def get_companies(api_connection, parameters={}):
         json_res=api_connection.exec_get_url('/api/customers/companies/', parameters)
+        if json_res is None:
+            return None
         return json_res
 
     @staticmethod
