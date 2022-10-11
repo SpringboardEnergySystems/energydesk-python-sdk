@@ -164,6 +164,8 @@ class UsersApi:
         """
         logger.info("Fetching user profile")
         json_res = api_connection.exec_get_url('/api/customers/profiles/', parameters)
+        if json_res is None:
+            return None
         return json_res
         # json_res=api_connection.exec_get_url('/api/customers/profiles')
         # if json_res is not None:
