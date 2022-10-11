@@ -178,7 +178,8 @@ class UsersApi:
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
         #print(json_res)
         if json_res is not None:
-             df = pd.DataFrame(data=json_res['results'])
+             #df = pd.DataFrame(data=json_res['results'])
+             df = pd.json_normalize(json_res['results'], max_level=0)
              print("USRS", df)
              return df
         return None
