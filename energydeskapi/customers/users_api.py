@@ -177,7 +177,7 @@ class UsersApi:
         json_res=UsersApi.get_users(api_connection, parameters)
         print(json_res)
         if json_res is not None:
-             df = pd.DataFrame(data=json_res)
+             df = pd.DataFrame(data=json_res['results'])
              return df
         return None
     @staticmethod
