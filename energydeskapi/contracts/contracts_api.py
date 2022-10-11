@@ -34,7 +34,7 @@ class Contract:
                  counterpart=None,
                  market=None,
                  trader=None,
-                 standard_product=None
+                 marketplace_product=None
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -53,9 +53,9 @@ class Contract:
         self.counterpart=counterpart
         self.market=market
         self.trader=trader
-        self.marketplace_product=standard_product
-        self.product_delivery_from = None
-        self.product_delivery_until = None
+        self.marketplace_product=marketplace_product
+        self.commodity_delivery_from = None
+        self.commodity_delivery_until = None
         self.product_code=None
         self.otc_multi_delivery_periods=[]
         self.tags=[]
@@ -77,11 +77,11 @@ class Contract:
         prod = {}
         if self.instrument_type is not None: prod['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,self.instrument_type)
         if self.commodity_type is not None: prod['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn, self.commodity_type)
-        if self.product_delivery_from is not None:prod['delivery_from'] = convert_datime_to_utcstr(self.product_delivery_from)
-        if self.product_delivery_until is not None: prod['delivery_until'] = convert_datime_to_utcstr(self.product_delivery_until)
+        if self.commodity_delivery_from is not None:prod['delivery_from'] = convert_datime_to_utcstr(self.commodity_delivery_from)
+        if self.commodity_delivery_until is not None: prod['delivery_until'] = convert_datime_to_utcstr(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         if self.product_code is not None:prod['product_code'] = self.product_code
-        dict['product']=prod
+        dict['commodity']=prod
 
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
