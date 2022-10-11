@@ -29,4 +29,5 @@ class UserRoleEnum(Enum):
     ADMIN = 1
     TRADER = 2
     RISKMANAGER =3
-    STAKEHOLDER = 4
+    MANAGER = 4
+    STAKEHOLDER = 5
