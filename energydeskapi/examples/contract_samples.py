@@ -8,7 +8,7 @@ from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
 from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum, GosEnergySources
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum
+from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -50,15 +50,29 @@ def get_sample_contract(api_conn, commodity):
                contract_status,
                "SELL",
                company,
-               company,
+               MarketEnum.NORDIC_POWER,
                trader)
 
     return c
+
+def register_normal_contract(api_conn):
+    deliv_start = (datetime.today() + timedelta(days=100)).replace(hour=0, minute=0, second=0, microsecond=0)
+    deliv_end = (datetime.today() + timedelta(days=400)).replace(hour=0, minute=0, second=0, microsecond=0)
+    main_contract=get_sample_contract(api_conn, CommodityTypeEnum.POWER)
+    main_contract.product_delivery_from=deliv_start
+    main_contract.product_delivery_until=deliv_end
+    main_contract.product_code="ODD-PROD2022"
+
+    #print(main_contract.get_dict(api_conn))
+    import json
+    print(json.dumps(main_contract.get_dict(api_conn), indent=2))
+    return ContractsApi.upsert_contract(api_conn, main_contract)
 def register_sample_contract(api_conn):
     deliv_start = (datetime.today() + timedelta(days=100)).replace(hour=0, minute=0, second=0, microsecond=0)
     deliv_end = (datetime.today() + timedelta(days=400)).replace(hour=0, minute=0, second=0, microsecond=0)
     main_contract=get_sample_contract(api_conn, CommodityTypeEnum.GOs)
-    main_contract.add_delivery_period(deliv_start,deliv_end )
+    main_contract.product_delivery_from=deliv_start
+    main_contract.product_delivery_until=deliv_end
 
     res = LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
     go_contract=GoContract()
@@ -101,4 +115,4 @@ def query_sources(api_conn):
     print(x)
 if __name__ == '__main__':
     api_conn=init_api()
-    query_sources(api_conn)
+    register_normal_contract(api_conn)

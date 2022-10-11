@@ -81,7 +81,6 @@ class LocationApi:
                 json_res = api_connection.exec_post_url('/api/locations/localareas/', loc.get_dict(api_connection))
             else:
                 json_res = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
-            print(json_res)
             return json_res
 
     @staticmethod

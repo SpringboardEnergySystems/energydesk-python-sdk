@@ -32,7 +32,7 @@ class Contract:
                  contract_status=None,
                  buy_or_sell=None,
                  counterpart=None,
-                 marketplace=None,
+                 market=None,
                  trader=None,
                  standard_product=None
                  ):
@@ -51,26 +51,38 @@ class Contract:
         self.contract_status=contract_status
         self.buy_or_sell=buy_or_sell
         self.counterpart=counterpart
-        self.marketplace=marketplace
+        self.market=market
         self.trader=trader
-        self.standard_product=standard_product
-        self.deliveries=[]
+        self.marketplace_product=standard_product
+        self.product_delivery_from = None
+        self.product_delivery_until = None
+        self.product_code=None
+        self.otc_multi_delivery_periods=[]
         self.tags=[]
 
-    def add_delivery_period(self, delivery_from, delivery_until):
+    def add_otc_delivery_period(self, delivery_from, delivery_until):
         if isinstance(delivery_from, str):
-            self.deliveries.append({'period_from': delivery_from,
+            self.otc_multi_delivery_periods.append({'period_from': delivery_from,
                                     'period_until': delivery_until,
                                     'price':gen_json_money(self.contract_price),
                                     'quantity': self.quantity})
         else:
-            self.deliveries.append({'period_from':convert_datime_to_utcstr(delivery_from),
+            self.otc_multi_delivery_periods.append({'period_from':convert_datime_to_utcstr(delivery_from),
                                     'period_until':convert_datime_to_utcstr(delivery_until),
                                     'price':gen_json_money(self.contract_price),
                                     'quantity': self.quantity})
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
+        prod = {}
+        if self.instrument_type is not None: prod['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,self.instrument_type)
+        if self.commodity_type is not None: prod['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn, self.commodity_type)
+        if self.product_delivery_from is not None:prod['delivery_from'] = convert_datime_to_utcstr(self.product_delivery_from)
+        if self.product_delivery_until is not None: prod['delivery_until'] = convert_datime_to_utcstr(self.product_delivery_until)
+        if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
+        if self.product_code is not None:prod['product_code'] = self.product_code
+        dict['product']=prod
+
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
@@ -81,19 +93,17 @@ class Contract:
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
-        if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn, self.contract_status)
-        if self.instrument_type is not None: dict['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,
-                                                                                                      self.instrument_type)
-        if self.commodity_type is not None: dict['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn,
-                                                                                                      self.commodity_type)
+        if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn,
+                                                                                                            self.contract_status)
+
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
-        if self.marketplace is not None: dict['marketplace'] = CustomersApi.get_company_url(api_conn, self.marketplace)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
-        if self.standard_product is not None: dict['standard_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
-                self.standard_product) + "/"
-        if len(self.deliveries) > 0:
-            dict["periods"] = self.deliveries
+        if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
+                self.marketplace_product) + "/"
+
+        if len(self.otc_multi_delivery_periods) > 0:
+            dict["periods"] = self.otc_multi_delivery_periods
 
         return dict
 class ContractsApi:
