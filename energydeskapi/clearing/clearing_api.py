@@ -38,14 +38,70 @@ class ClearingApi:
         return True
 
     @staticmethod
-    def get_clearing_reports(api_connection):
+    def get_clearing_report_records(api_connection, parameters={}):
+        """Fetches a list of clearing report records
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching clearing report records list")
+        json_res = api_connection.exec_get_url('/api/clearing/reportrecords/', parameters)
+        return json_res
+
+    @staticmethod
+    def get_clearing_report_records_embedded(api_connection, parameters={}):
+        """Fetches a list of embedded clearing report records
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching embedded clearing report records list")
+        json_res = api_connection.exec_get_url('/api/clearing/reportrecords/embedded/', parameters)
+        return json_res
+
+    @staticmethod
+    def get_clearing_report_records_df(api_connection, parameters={}):
+        """Fetches a list of embedded clearing report records
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching embedded clearing report records list")
+        json_res = api_connection.exec_get_url('/api/clearing/reportrecords/embedded/', parameters)
+        if json_res is None:
+            return None
+        all_record = []
+        for rec in json_res['results']:
+            records = json.loads(rec['content'])
+            for r in records:
+                all_record.append(r)
+        df = pd.DataFrame(data=all_record)
+        return df
+
+    @staticmethod
+    def get_clearing_reports(api_connection, parameters={}):
         """Fetches a list of clearing reports
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching clearing reports list")
-        json_res = api_connection.exec_get_url('/api/clearing/reports/')
+        json_res = api_connection.exec_get_url('/api/clearing/reports/', parameters)
+        print(json_res)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
+    def get_clearing_reports_embedded(api_connection, parameters={}):
+        """Fetches a list of embedded clearing reports
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching embedded clearing reports list")
+        json_res = api_connection.exec_get_url('/api/clearing/reports/embedded/', parameters)
         print(json_res)
         if json_res is None:
             return None
