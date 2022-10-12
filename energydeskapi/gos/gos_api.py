@@ -79,7 +79,17 @@ class GosApi:
         :type certificate_pk: integer, required
         """
         return api_connection.get_base_url() + '/api/gos/certificates/' + str(certificate_pk) + "/"
+    @staticmethod
+    def get_contracts_embedded(api_connection, parameters={}):
+        """Fetches certificates from server
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_status_enum: status of contract
+        :type contract_status_enum: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/gos/gocontracts/embedded/', parameters)
+        return json_res
     @staticmethod
     def get_contracts(api_connection, parameters={}):
         """Fetches certificates from server
