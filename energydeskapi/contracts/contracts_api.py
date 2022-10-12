@@ -59,6 +59,10 @@ class Contract:
         self.product_code=None
         self.otc_multi_delivery_periods=[]
         self.tags=[]
+        self.area="SYS"
+        self.base_peak = "BASE"
+        self.spread = False
+        self.otc = False
 
     def add_otc_delivery_period(self, delivery_from, delivery_until):
         if isinstance(delivery_from, str):
@@ -80,9 +84,15 @@ class Contract:
         if self.commodity_delivery_from is not None:prod['delivery_from'] = convert_datime_to_utcstr(self.commodity_delivery_from)
         if self.commodity_delivery_until is not None: prod['delivery_until'] = convert_datime_to_utcstr(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
-        if self.product_code is not None:prod['product_code'] = self.product_code
+        prod['area']=self.area
+        prod['base_peak'] = self.base_peak
+        prod['spread'] = self.spread
+        prod['otc'] = self.otc
+        if self.product_code is not None:
+            prod['product_code'] = self.product_code
+        else:
+            prod['otc'] = False
         dict['commodity']=prod
-
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
