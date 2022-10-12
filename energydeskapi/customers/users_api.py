@@ -89,7 +89,7 @@ class UsersApi:
         :type user_role_enum: str, required
         """
 
-        return UsersApi.get_users(api_connection, {"user_role__pk", parse_enum_type(user_role_enum)})
+        return UsersApi.get_users(api_connection, {"user_role__pk": parse_enum_type(user_role_enum)})
 
     @staticmethod
     def get_users_by_role_df(api_connection, user_role_enum):
@@ -100,11 +100,8 @@ class UsersApi:
         :param user_role_enum: role of user
         :type user_role_enum: str, required
         """
-        json_res= UsersApi.get_users(api_connection, {"user_role__pk", parse_enum_type(user_role_enum)})
-        if json_res is None:
-            return None
-        df = pd.json_normalize(json_res['results'], max_level=1)
-        return UsersApi.process_dataframe(df)
+        return UsersApi.get_users_df(api_connection, {"user_role__pk": parse_enum_type(user_role_enum)})
+
 
     @staticmethod
     def get_profile_by_username(api_connection, username):
@@ -115,7 +112,7 @@ class UsersApi:
         :param username: username of user
         :type username: str, required
         """
-        UsersApi.get_users(api_connection, {"user__username", str(username)})
+        UsersApi.get_users(api_connection, {"user__username": str(username)})
 
     def get_profile_by_key(api_connection, pk):
         """Fetches user profile from key
@@ -135,14 +132,15 @@ class UsersApi:
     @staticmethod
     def process_dataframe(df):
         dfsubset = df.rename(columns={"pk":"pk",
-                                      "user.username":"user.username",
+                                      "user.username":"username",
                                       "user_role.description": "user_role",
-                                      "user.email": "user.email",
-                                      "user.first_name": "user.first_name",
-                                      "user.last_name": "user.last_name",
+                                      "user.email": "email",
+                                      "user.first_name": "first_name",
+                                      "user.last_name": "last_name",
                                       "company.name":"company"
                                       })
-        return dfsubset
+
+        return dfsubset[['pk', 'username', 'user_role', 'email', 'first_name', 'last_name', 'company']]
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
@@ -153,7 +151,7 @@ class UsersApi:
         :param user_profile_key: personal key of user profile
         :type user_profile_key: str, required
         """
-        return UsersApi.get_users(api_connection, {"user_role__pk", str(user_profile_key)})
+        return UsersApi.get_profile_by_key(api_connection,user_profile_key)
 
 
 
@@ -169,11 +167,19 @@ class UsersApi:
         if json_res is None:
             return None
         return json_res
-        # json_res=api_connection.exec_get_url('/api/customers/profiles')
-        # if json_res is not None:
-        #     df = pd.DataFrame(data=json_res)
-        #     return df
-        # return None
+    @staticmethod
+    def get_users_df(api_connection, parameters={}):
+        """Fetches user profiles
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user profile")
+        json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
+        if json_res is None:
+            return None
+        df = pd.json_normalize(json_res['results'], max_level=1)
+        return UsersApi.process_dataframe(df)
     @staticmethod
     def get_users_df(api_connection, parameters={}):
         #json_res=UsersApi.get_users(api_connection, parameters)
