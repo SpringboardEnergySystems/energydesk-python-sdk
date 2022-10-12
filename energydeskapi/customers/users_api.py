@@ -2,6 +2,7 @@ import requests
 import json
 import logging
 import pandas as pd
+from energydeskapi.sdk.common_utils import parse_enum_type
 logger = logging.getLogger(__name__)
 
 
@@ -87,13 +88,8 @@ class UsersApi:
         :param user_role_enum: role of user
         :type user_role_enum: str, required
         """
-        role_pk = user_role_enum if isinstance(user_role_enum, int) else user_role_enum.value
 
-        logger.info("Fetching users by role ")
-        json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-role', payload={"user_role_enum": str(role_pk)})
-        if json_res is not None:
-            return json_res
-        return None
+        return UsersApi.get_users(api_connection, {"user_role__pk": parse_enum_type(user_role_enum)})
 
     @staticmethod
     def get_users_by_role_df(api_connection, user_role_enum):
@@ -104,11 +100,8 @@ class UsersApi:
         :param user_role_enum: role of user
         :type user_role_enum: str, required
         """
-        dict=UsersApi.get_users_by_role(api_connection, user_role_enum)
-        if dict is not None:
-            df = pd.DataFrame(data=dict)
-            return df
-        return None
+        return UsersApi.get_users_df(api_connection, {"user_role__pk": parse_enum_type(user_role_enum)})
+
 
     @staticmethod
     def get_profile_by_username(api_connection, username):
@@ -119,11 +112,7 @@ class UsersApi:
         :param username: username of user
         :type username: str, required
         """
-        logger.info("Fetching profile with username " + str(username))
-        json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-username', payload={"username": str(username)})
-        if json_res is None:
-            return None
-        return json_res[0]
+        UsersApi.get_users(api_connection, {"user__username": str(username)})
 
     def get_profile_by_key(api_connection, pk):
         """Fetches user profile from key
@@ -134,10 +123,24 @@ class UsersApi:
         :type pk: str, required
         """
         logger.info("Fetching profile with key " + str(pk))
-        json_res=api_connection.exec_post_url('/api/customers/userprofiles-by-key', payload={"profile_key": str(pk)})
+        json_res=api_connection.exec_get_url('/api/customers/profiles/' + str(pk) + "/")
         if json_res is None:
             return None
-        return json_res[0]
+        return json_res
+
+
+    @staticmethod
+    def process_dataframe(df):
+        dfsubset = df.rename(columns={"pk":"pk",
+                                      "user.username":"username",
+                                      "user_role.description": "user_role",
+                                      "user.email": "email",
+                                      "user.first_name": "first_name",
+                                      "user.last_name": "last_name",
+                                      "company.name":"company"
+                                      })
+
+        return dfsubset[['pk', 'username', 'user_role', 'email', 'first_name', 'last_name', 'company']]
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
@@ -148,11 +151,8 @@ class UsersApi:
         :param user_profile_key: personal key of user profile
         :type user_profile_key: str, required
         """
-        dict=UsersApi.get_profile_by_key(api_connection, user_profile_key)
-        if dict is not None:
-            df = pd.DataFrame(data=dict)
-            return df
-        return None
+        return UsersApi.get_profile_by_key(api_connection,user_profile_key)
+
 
 
     @staticmethod
@@ -167,12 +167,27 @@ class UsersApi:
         if json_res is None:
             return None
         return json_res
-        # json_res=api_connection.exec_get_url('/api/customers/profiles')
-        # if json_res is not None:
-        #     df = pd.DataFrame(data=json_res)
-        #     return df
-        # return None
+    @staticmethod
+    def get_users_df(api_connection, parameters={}):
+        """Fetches user profiles
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user profile")
+        json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
+        if json_res is None:
+            return None
+        df = pd.json_normalize(json_res['results'], max_level=1)
+        return UsersApi.process_dataframe(df)
+    @staticmethod
+    def get_users_df(api_connection, parameters={}):
+        #json_res=UsersApi.get_users(api_connection, parameters)
+        json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
+        if json_res is not None:
+             df = pd.json_normalize(json_res['results'], max_level=1)
+             return UsersApi.process_dataframe(df)
+        return None
     @staticmethod
     def create_users(api_connection, users):
         """Creates users from payload

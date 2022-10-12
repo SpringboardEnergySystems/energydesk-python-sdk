@@ -227,6 +227,18 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts', parameters)
         return json_res
     @staticmethod
+    def list_contracts_embedded(api_connection, parameters={}):
+        """Lists contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param parameters: description...
+        :type parameters: str
+        """
+        logger.info("Listing contracts embedded")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
+        return json_res
+    @staticmethod
     def list_contracts_df(api_connection, parameters={}):
         """Lists contracts and shows in a dataframe
 
@@ -235,7 +247,9 @@ class ContractsApi:
         :param parameters: description...
         :type parameters: str
         """
-        json_res=ContractsApi.list_contracts(api_connection, parameters)
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
+        print(json_res)
+        #json_res=ContractsApi.list_contracts(api_connection, parameters)
         df = pd.DataFrame(data=json_res)
         return df
 
