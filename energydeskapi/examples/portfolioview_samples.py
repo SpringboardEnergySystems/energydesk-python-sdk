@@ -12,6 +12,12 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
+def get_period_view(api_conn):
+    filter={
+        "trading_book":1
+    }
+    df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
+    print(df)
 def get_product_view(api_conn):
     filter={
         "trading_book":1
@@ -21,8 +27,8 @@ def get_product_view(api_conn):
     filter={
         "trading_book":3
     }
-    df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
-    print(df)
+    #df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
+    #print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_product_view(api_conn)
+    get_period_view(api_conn)
