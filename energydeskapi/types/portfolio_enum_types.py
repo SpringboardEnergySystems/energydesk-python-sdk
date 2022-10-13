@@ -8,3 +8,16 @@ class PortfolioTypeEnum(Enum):
     HEDGING_PORTFOLIO = 2
     REPORTING_PORTFOLIO = 3
 
+
+class PeriodViewResolutionEnum(Enum):
+    DAILY = 1
+    WEEKLY = 2
+    MONTHLY = 3
+    QUARTERLY = 4
+    YEARLY = 5
+
+class PeriodViewGroupingEnum(Enum):
+    ALL = 0
+    INSTRUMENT = 1
+    AREA = 2
+    TICKER = 3
