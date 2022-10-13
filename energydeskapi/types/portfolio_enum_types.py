@@ -10,14 +10,14 @@ class PortfolioTypeEnum(Enum):
 
 
 class PeriodViewResolutionEnum(Enum):
-    DAILY = 1
-    WEEKLY = 2
-    MONTHLY = 3
-    QUARTERLY = 4
-    YEARLY = 5
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+    MONTHLY = "MONTHLY"
+    QUARTERLY = "QUARTERLY"
+    YEARLY = "YEARLY"
 
 class PeriodViewGroupingEnum(Enum):
-    ALL = 0
-    INSTRUMENT = 1
-    AREA = 2
-    TICKER = 3
+    NONE = "NONE"
+    INSTRUMENT = "instrument"
+    AREA = "area"
+    TICKER = "ticker"
