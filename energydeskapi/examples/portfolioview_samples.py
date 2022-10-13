@@ -18,6 +18,9 @@ def get_period_view(api_conn):
     }
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
     print(df)
+    for index, row in df.iterrows():
+        print(index)
+    #print(df.to_json(orient=row))
 def get_product_view(api_conn):
     filter={
         "trading_book":1
