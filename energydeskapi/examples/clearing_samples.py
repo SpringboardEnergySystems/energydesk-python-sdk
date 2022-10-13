@@ -21,8 +21,9 @@ def fetch_clearing_report_records(api_conn):
     print(df)
 
 def fetch_embedded_clearing_report_records(api_conn):
-    filter = {"clearing_report_type": ClearingReportTypeEnum.ACCMVALUE.value}
-    df = ClearingApi.get_clearing_report_records_df(api_conn, filter)
+    filter = {"clearing_report_type": ClearingReportTypeEnum.CASHOPTIMIZATION.value,
+              "clearing_date": "2022-10-12"}
+    df = ClearingApi.get_clearing_report_records(api_conn, filter)
     print(df)
 
 def fetch_clearing_reports(api_conn):

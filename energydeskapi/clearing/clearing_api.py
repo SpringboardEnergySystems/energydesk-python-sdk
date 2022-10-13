@@ -45,8 +45,15 @@ class ClearingApi:
         :type api_connection: str, required
         """
         logger.info("Fetching clearing report records list")
-        json_res = api_connection.exec_get_url('/api/clearing/reportrecords/', parameters)
-        return json_res
+        json_res = api_connection.exec_get_url('/api/clearing/reports/', parameters)
+        if json_res is None:
+            return None
+        all_record = []
+        for rec in json_res['results']:
+            records = json.loads(rec['content'])
+            for r in records:
+                all_record.append(r)
+        return all_record
 
     @staticmethod
     def get_clearing_report_records_embedded(api_connection, parameters={}):
@@ -56,8 +63,15 @@ class ClearingApi:
         :type api_connection: str, required
         """
         logger.info("Fetching embedded clearing report records list")
-        json_res = api_connection.exec_get_url('/api/clearing/reportrecords/embedded/', parameters)
-        return json_res
+        json_res = api_connection.exec_get_url('/api/clearing/reports/embedded/', parameters)
+        if json_res is None:
+            return None
+        all_record = []
+        for rec in json_res['results']:
+            records = json.loads(rec['content'])
+            for r in records:
+                all_record.append(r)
+        return all_record
 
     @staticmethod
     def get_clearing_report_records_df(api_connection, parameters={}):
@@ -67,15 +81,8 @@ class ClearingApi:
         :type api_connection: str, required
         """
         logger.info("Fetching embedded clearing report records list")
-        json_res = api_connection.exec_get_url('/api/clearing/reportrecords/embedded/', parameters)
-        if json_res is None:
-            return None
-        all_record = []
-        for rec in json_res['results']:
-            records = json.loads(rec['content'])
-            for r in records:
-                all_record.append(r)
-        df = pd.DataFrame(data=all_record)
+        all_records = ClearingApi.get_clearing_report_records_embedded(api_connection, parameters)
+        df = pd.DataFrame(data=all_records)
         return df
 
     @staticmethod
