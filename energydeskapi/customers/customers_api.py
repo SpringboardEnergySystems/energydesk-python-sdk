@@ -108,6 +108,11 @@ class CustomersApi:
 
     @staticmethod
     def get_companies(api_connection, parameters={}):
+        """Fetches all companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         json_res=api_connection.exec_get_url('/api/customers/companies/', parameters)
         if json_res is None:
             return None
@@ -177,7 +182,7 @@ class CustomersApi:
 
     @staticmethod
     def get_company_type_url(api_connection, company_type_enum):
-        """Fetches company types from url
+        """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -190,7 +195,7 @@ class CustomersApi:
 
     @staticmethod
     def get_company_role_url(api_connection, company_role_enum):
-        """Fetches company roles from url
+        """Fetches url for company roles from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -201,7 +206,7 @@ class CustomersApi:
 
     @staticmethod
     def get_company_url(api_connection, company_pk):
-        """Fetches companies from url
+        """Fetches url for companies from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -212,7 +217,7 @@ class CustomersApi:
 
     @staticmethod
     def get_country_url(api_connection, country_pk):
-        """Fetches countries from url
+        """Fetches url for countries from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -239,6 +244,11 @@ class CustomersApi:
 
     @staticmethod
     def get_company_status(api_connection, status):
+        """Fetches companies based on if they're active or not
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         param = {"is_active": status}
         json_res = CustomersApi.get_companies(api_connection, param)
         if json_res is None:
