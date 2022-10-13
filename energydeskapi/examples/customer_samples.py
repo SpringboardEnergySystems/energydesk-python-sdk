@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_companies(api_conn):
-    param={"page":25,
+    param={"id":711,
            "page_size":1}
     json_companies=CustomersApi.get_companies(api_conn, param)
     print(json_companies)
@@ -27,6 +27,11 @@ def query_company_types(api_conn):
 def query_company_pk_by_name(api_conn):
     comp_name = "Arna Kraftselskap AS"
     json_companies = CustomersApi.get_company_pk_by_name(api_conn, comp_name)
+    print(json_companies)
+
+def query_company_by_pk(api_conn):
+    comp_pk = 711
+    json_companies = CustomersApi.get_company_by_key(api_conn, comp_pk)
     print(json_companies)
 
 def load_company_from_regnumber(api_conn):
@@ -85,7 +90,8 @@ if __name__ == '__main__':
     #register_companies(api_conn)
     #create_company(api_conn)
     #query_companies(api_conn)
+    query_company_by_pk(api_conn)
     #load_company_from_regnumber(api_conn)
     #query_company_pk_by_name(api_conn)
-    query_company_status(api_conn)
+    #query_company_status(api_conn)
     #update_company(api_conn)
