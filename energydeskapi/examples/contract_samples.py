@@ -114,7 +114,7 @@ def query_sources(api_conn):
     #print(x)
     x=GosApi.get_source_data(api_conn)
 
-    print(json.dumps(x, indent=2))
+    print(json.dumps(json.loads(x), indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
     query_sources(api_conn)
