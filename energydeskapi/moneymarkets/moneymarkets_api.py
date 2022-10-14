@@ -10,17 +10,40 @@ class MoneyMarketsApi:
     """
 
     @staticmethod
-    def get_fxblablabla(api_connection, parameters={}):
-        """Fetches all assets
+    def get_fxspot(api_connection):
+        """Fetches fxspot
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/assets/assets/', parameters)
+        json_res = api_connection.exec_get_url('/api/currencies/fxspot/')
         if json_res is None:
             return None
-        return json_res
-        # json_res = api_connection.exec_get_url('/api/assets/assets/')
-        # if json_res is None:
-        #     return None
-        # return json_res
+        df = pd.DataFrame(eval(json_res))
+        return df
+
+    @staticmethod
+    def get_fxtenors(api_connection):
+        """Fetches fxtenors
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/currencies/fxtenors/')
+        if json_res is None:
+            return None
+        df = pd.DataFrame(eval(json_res))
+        return df
+
+    @staticmethod
+    def get_yieldcurves(api_connection, parameters={}):
+        """Fetches yieldcurves
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/currencies/yieldcurves/', parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(eval(json_res))
+        return df
