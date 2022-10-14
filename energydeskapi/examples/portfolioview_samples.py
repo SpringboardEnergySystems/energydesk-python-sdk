@@ -21,6 +21,7 @@ def get_period_view(api_conn):
     }
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
     print(df)
+    print(df.to_json(orient='split'))
     #for index, row in df.iterrows():
     #    print(index)
     #print(df.to_json(orient=row))
