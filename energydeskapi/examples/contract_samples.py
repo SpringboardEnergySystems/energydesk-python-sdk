@@ -10,6 +10,7 @@ from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_d
 from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum, GosEnergySources
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
+import json
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -110,9 +111,10 @@ def query_paginated_contracts(api_conn):
     #ContractsApi.list_contracts(api_conn, parameters)
 def query_sources(api_conn):
     x=GosApi.get_source_collections(api_conn)
-    print(x)
-    x=GosApi.get_source_collections_embedded(api_conn)
-    print(x)
+    #print(x)
+    x=GosApi.get_source_data(api_conn)
+
+    print(json.dumps(json.loads(x), indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    register_normal_contract(api_conn)
+    query_sources(api_conn)

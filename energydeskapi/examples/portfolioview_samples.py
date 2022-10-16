@@ -17,7 +17,7 @@ def get_period_view(api_conn):
     filter={
         "trading_book":1,
         "resolution":PeriodViewResolutionEnum.YEARLY.value,
-        "groupby":PeriodViewGroupingEnum.TICKER.value
+        "groupby":PeriodViewGroupingEnum.ASSET.value
     }
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
     print(df)
