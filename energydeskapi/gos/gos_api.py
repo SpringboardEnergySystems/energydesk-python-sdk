@@ -226,8 +226,8 @@ class GosApi:
         json_res = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
         return json_res
     @staticmethod
-    def get_source_data(api_connection):
-        json_res=api_connection.exec_get_url('/api/gos/allsourcedata')
+    def get_source_data(api_connection,parameters={}):
+        json_res=api_connection.exec_get_url('/api/gos/sourcedata/', parameters)
         if json_res is not None:
             return json_res
         return None
