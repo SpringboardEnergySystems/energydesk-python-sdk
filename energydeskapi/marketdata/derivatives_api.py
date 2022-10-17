@@ -18,7 +18,7 @@ class DerivativesApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         :param market_place: Nasdaq OMX or other market
-        :type market_place: str, required
+        :type market_place: str
         """
         logger.info("Fetching market places")
         json_res = api_connection.exec_get_url('/api/markets/marketplaces/')
