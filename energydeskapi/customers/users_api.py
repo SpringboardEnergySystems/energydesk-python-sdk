@@ -112,7 +112,7 @@ class UsersApi:
         :param username: username of user
         :type username: str, required
         """
-        UsersApi.get_users(api_connection, {"user__username": str(username)})
+        return UsersApi.get_users(api_connection, {"user__username": str(username)})
 
     def get_profile_by_key(api_connection, pk):
         """Fetches user profile from key
