@@ -96,7 +96,7 @@ class ProductsApi:
 
     @staticmethod
     def get_products_df(api_connection, market_enum):
-        """Fetches products from markets and shows in a dataframe
+        """Fetches products from markets and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

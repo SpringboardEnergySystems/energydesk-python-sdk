@@ -200,7 +200,7 @@ class ContractsApi:
 
     @staticmethod
     def query_contracts_df(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
-        """Queries contracts and shows in a dataframe
+        """Queries contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -251,7 +251,7 @@ class ContractsApi:
         return json_res
     @staticmethod
     def list_contracts_df(api_connection, parameters={}):
-        """Lists contracts and shows in a dataframe
+        """Lists contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

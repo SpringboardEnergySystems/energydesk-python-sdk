@@ -114,7 +114,7 @@ class LocationApi:
 
 
     def get_local_areas_df(api_connection,  location_type_enum):
-        """Fetches local areas and shows in a dataframe
+        """Fetches local areas and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -140,7 +140,7 @@ class LocationApi:
 
     @staticmethod
     def get_location_types_df(api_connection):
-        """Fetches all location types and shows in a dataframe
+        """Fetches all location types and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
