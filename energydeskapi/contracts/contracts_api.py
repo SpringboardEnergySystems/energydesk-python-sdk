@@ -13,6 +13,10 @@ from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from datetime import datetime
 logger = logging.getLogger(__name__)
 #  Change
+def check_fix_date2str(dt):
+    if isinstance(dt, str):
+        return dt
+    return convert_datime_to_utcstr(dt)
 class Contract:
     """ Class for contracts
 
@@ -81,8 +85,8 @@ class Contract:
         prod = {}
         if self.instrument_type is not None: prod['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,self.instrument_type)
         if self.commodity_type is not None: prod['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn, self.commodity_type)
-        if self.commodity_delivery_from is not None:prod['delivery_from'] = convert_datime_to_utcstr(self.commodity_delivery_from)
-        if self.commodity_delivery_until is not None: prod['delivery_until'] = convert_datime_to_utcstr(self.commodity_delivery_until)
+        if self.commodity_delivery_from is not None:prod['delivery_from'] = check_fix_date2str(self.commodity_delivery_from)
+        if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
         prod['base_peak'] = self.base_peak
