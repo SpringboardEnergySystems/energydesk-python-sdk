@@ -5,6 +5,7 @@ import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.marketdata.spotprices_api import SpotPricesApi
 from energydeskapi.marketdata.products_api import ProductsApi
 from energydeskapi.types.market_enum_types import MarketEnum, CommodityTypeEnum, InstrumentTypeEnum
 from os.path import join, dirname
@@ -29,7 +30,9 @@ def query_market_types(api_conn):
     print(CommodityTypeEnum.CURRENCY, url)
     url=MarketsApi.get_instrument_type_url(api_conn, InstrumentTypeEnum.FWD)
     print(InstrumentTypeEnum.FWD, url)
-
+def get_spot_prices(api_conn):
+    df=SpotPricesApi.get_spot_prices_df(api_conn)
+    print(df)
 def manage_market_products(api_conn, ticker):
     res=ProductsApi.get_market_products(api_conn, {'market_ticker':ticker})
     print("Lookup ", ticker, " got ", res['results'])
@@ -39,4 +42,4 @@ def manage_market_products(api_conn, ticker):
         print(res)
 if __name__ == '__main__':
     api_conn=init_api()
-    manage_market_products(api_conn, "ENOQ4-14")
+    get_spot_prices(api_conn)
