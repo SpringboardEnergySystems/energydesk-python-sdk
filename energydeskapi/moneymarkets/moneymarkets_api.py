@@ -47,3 +47,16 @@ class MoneyMarketsApi:
             return None
         df = pd.DataFrame(eval(json_res))
         return df
+    @staticmethod
+    def get_fwdrates(api_connection, parameters={}):
+        """Fetches yieldcurves
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/currencies/fwdrates/', parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(eval(json_res))
+        return df
+
