@@ -57,7 +57,7 @@ class LocationApi:
 
     @staticmethod
     def get_location_type_url(api_connection, location_type_enum):
-        """Fetches location type from url
+        """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -85,24 +85,24 @@ class LocationApi:
 
     @staticmethod
     def get_local_area_url(api_connection, key):
-        """Fetches location type from url
+        """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param location_type_enum: type of location
-        :type location_type_enum: str, required
+        :param key: personal key
+        :type key: str, required
         """
         return api_connection.get_base_url() + '/api/locations/localareas/' + str(
             key) + "/"
 
     @staticmethod
     def get_local_areas(api_connection, location_type_enum):
-        """Fetches local area from url
+        """Fetches local area from location type pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         :param location_type_enum: type of location
-        :type location_type_enum: str, required
+        :type location_type_enum: str
         """
         type_pk = location_type_enum if isinstance(location_type_enum, int) else location_type_enum.value
         logger.info("Fetching local area geojson")
@@ -114,10 +114,12 @@ class LocationApi:
 
 
     def get_local_areas_df(api_connection,  location_type_enum):
-        """Fetches all location types and shows in a dataframe
+        """Fetches local areas and shows in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param location_type_enum: type of location
+        :type location_type_enum: str
         """
         json_res=LocationApi.get_local_areas(api_connection, location_type_enum)
         return None if json_res is None else pd.DataFrame(data=json_res)
@@ -148,7 +150,7 @@ class LocationApi:
 
     @staticmethod
     def get_geolocation_details(api_connection, locarea_pk):
-        """Fetches location details from url
+        """Fetches location details from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
