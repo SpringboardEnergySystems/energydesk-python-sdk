@@ -144,7 +144,7 @@ class ContractsApi:
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
-        """Fetches contract type from url
+        """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -155,7 +155,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(type_pk) + "/"
     @staticmethod
     def get_contract_status_url(api_connection, contract_status_enum):
-        """Fetches contract status from url
+        """Fetches url for contract status from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -200,8 +200,8 @@ class ContractsApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param query_payload: payload used in query (default {"trading_book_key":0, "last_trades_count": 10})
-        :type query_payload: str
+        :param query_payload: personal key to a contract
+        :type query_payload: str, required
         """
         logger.info("Fetching contracts")
         json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts-ext/', query_payload)
@@ -210,6 +210,13 @@ class ContractsApi:
 
     @staticmethod
     def get_contract(api_connection, contract_pk):
+        """Fetches contract from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_pk: payload used in query (default {"trading_book_key":0, "last_trades_count": 10})
+        :type contract_pk: str
+        """
         logger.info("Loading contract with pk " + str(contract_pk))
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/' + str(contract_pk) + "/")
         return json_res
@@ -220,7 +227,7 @@ class ContractsApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param parameters: description...
+        :param parameters: parameters to filter contracts
         :type parameters: str
         """
         logger.info("Listing contracts")
@@ -228,11 +235,11 @@ class ContractsApi:
         return json_res
     @staticmethod
     def list_contracts_embedded(api_connection, parameters={}):
-        """Lists contracts
+        """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param parameters: description...
+        :param parameters: parameters to filter contracts
         :type parameters: str
         """
         logger.info("Listing contracts embedded")
@@ -244,7 +251,7 @@ class ContractsApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param parameters: description...
+        :param parameters: parameters to filter contracts
         :type parameters: str
         """
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
@@ -255,7 +262,7 @@ class ContractsApi:
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
-        """Fetches commodity type from url
+        """Fetches url for a commodity type from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -267,7 +274,7 @@ class ContractsApi:
 
     @staticmethod
     def get_contract_url(api_connection, contract_pk):
-        """Fetches contract from url
+        """Fetches url for contracts from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
