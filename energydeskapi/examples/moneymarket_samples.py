@@ -14,8 +14,24 @@ def get_moneymarket_data(api_conn):
     #MoneyMarketsApi
     pass
 
+def fetch_fxspot(api_conn):
+    df = MoneyMarketsApi.get_fxspot(api_conn)
+    print(df)
+
+def fetch_fxtenors(api_conn):
+    df = MoneyMarketsApi.get_fxtenors(api_conn)
+    print(df)
+
+def fetch_yieldcurves(api_conn):
+    param = {"country": "NOK"}
+    df = MoneyMarketsApi.get_yieldcurves(api_conn, param)
+    print(df)
+
 
 if __name__ == '__main__':
 
     api_conn=init_api()
-    get_moneymarket_data(api_conn)
+    # get_moneymarket_data(api_conn)
+    #fetch_fxspot(api_conn)
+    fetch_fxtenors(api_conn)
+    #fetch_yieldcurves(api_conn)
