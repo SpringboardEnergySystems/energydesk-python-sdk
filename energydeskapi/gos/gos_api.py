@@ -63,6 +63,7 @@ class GosApi:
         :type contracts: str, required
         """
         logger.info("Registering GoO contract")
+        return []
         if go_contract.pk>0:
             json_res = api_connection.exec_patch_url('/api/gos/gocontracts/' + str(go_contract.pk) + "/", go_contract.get_dict(api_connection))
         else:
