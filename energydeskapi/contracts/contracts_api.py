@@ -95,7 +95,7 @@ class Contract:
         if self.product_code is not None:
             prod['product_code'] = self.product_code
         else:
-            prod['otc'] = False
+            prod['otc'] = True
         dict['commodity']=prod
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
