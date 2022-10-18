@@ -107,7 +107,7 @@ class LocationApi:
         """
         type_pk = location_type_enum if isinstance(location_type_enum, int) else location_type_enum.value
         logger.info("Fetching local area geojson")
-        json_res=api_connection.exec_get_url('/api/locations/localareas/?location_type=' + str(type_pk))
+        json_res=api_connection.exec_get_url('/api/locations/localareas/?location_type__pk=' + str(type_pk))
         if json_res is not None:
             return json_res
         return None
