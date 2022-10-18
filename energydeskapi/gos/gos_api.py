@@ -66,7 +66,7 @@ class GosApi:
         if go_contract.pk>0:
             json_res = api_connection.exec_patch_url('/api/gos/gocontracts/' + str(go_contract.pk) + "/", go_contract.get_dict(api_connection))
         else:
-            print(json.dumps(go_contract.get_dict(api_connection), indent=2))
+            #print(json.dumps(go_contract.get_dict(api_connection), indent=2))
             json_res = api_connection.exec_post_url('/api/gos/gocontracts/',go_contract.get_dict(api_connection))
         return json_res
 
