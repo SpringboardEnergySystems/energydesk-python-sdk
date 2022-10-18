@@ -97,7 +97,7 @@ class LocationApi:
             key) + "/"
 
     @staticmethod
-    def get_local_areas(api_connection, location_type_enum):
+    def get_local_areas(api_connection, parameters={}):
         """Fetches local area from location type pk
 
         :param api_connection: class with API token for use with API
@@ -105,9 +105,9 @@ class LocationApi:
         :param location_type_enum: type of location
         :type location_type_enum: str
         """
-        type_pk = location_type_enum if isinstance(location_type_enum, int) else location_type_enum.value
+
         logger.info("Fetching local area geojson")
-        json_res=api_connection.exec_get_url('/api/locations/localareas/?location_type__id=' + str(type_pk))
+        json_res=api_connection.exec_get_url('/api/locations/localareas/',parameters)
         if json_res is not None:
             return json_res
         return None
