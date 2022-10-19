@@ -23,3 +23,12 @@ class PeriodViewGroupingEnum(Enum):
     AREA = "area"
     TICKER = "ticker"
     ASSET = "asset"
+
+
+class Parameters(Enum):
+    netpos={"internal":"netpos", "display":"NetPos MW"}
+    sellpos = {"internal": "sellpos", "display": "SellPos MW"}
+    buypos = {"internal": "buypos", "display": "BuyPos MW"}
+    netvol = {"internal": "netvol", "display": "Vol MWh"}
+    buyvol = {"internal": "buyvol", "display": "Buy MWh"}
+    sellvol = {"internal": "sellvol", "display": "Sell MWh"}
