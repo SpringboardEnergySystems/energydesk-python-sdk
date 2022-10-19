@@ -141,6 +141,7 @@ class ContractsApi:
         #json_records.append(contract.get_dict(api_connection))
 
         if contract.pk>0:
+            print(json.dumps(contract.get_dict(api_connection), indent=2))
             json_res = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
         else:
             json_res = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
