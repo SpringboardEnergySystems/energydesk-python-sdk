@@ -3,8 +3,9 @@ from enum import Enum
 
 class MarketEnum(Enum):
     NORDIC_POWER = 1   # Key for the most commonly used markets
-    CURRENCY_MARKET = 2
-    GOs_MARKET = 3
+    GERMAN_POWER = 2
+    CURRENCY_MARKET = 3
+    GOs_MARKET = 4
 
 class CommodityTypeEnum(Enum):
     POWER = 1
