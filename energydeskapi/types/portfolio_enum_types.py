@@ -25,7 +25,7 @@ class PeriodViewGroupingEnum(Enum):
     ASSET = "asset"
 
 
-class Parameters(Enum):
+class ParametersEnum(Enum):
     netpos={"internal":"netpos", "display":"NetPos MW"}
     sellpos = {"internal": "sellpos", "display": "SellPos MW"}
     buypos = {"internal": "buypos", "display": "BuyPos MW"}
