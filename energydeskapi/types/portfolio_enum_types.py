@@ -38,6 +38,7 @@ class ParametersEnum(Enum):
     avgcostsell = {"internal": "avgcostsell", "display": "Buy Cost"}
     market = {"internal": "market", "display": "Market"}
     asset = {"internal": "asset", "display": "Underlying"}
+    area = {"internal": "area", "display": "Area"}
     instrument = {"internal": "instrument", "display": "Instr"}
     delivery_from = {"internal": "delivery_from", "display": "DelivFrom"}
     delivery_until = {"internal": "delivery_until", "display": "DelivTo"}
