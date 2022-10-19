@@ -43,5 +43,5 @@ class ParametersEnum(Enum):
     delivery_until = {"internal": "delivery_until", "display": "DelivTo"}
     hours = {"internal": "hours", "display": "Hours"}
     contracts = {"internal": "contracts", "display": "# Contracts"}
-
+    ticker={"internal": "tcker", "display": "Product"}
 
