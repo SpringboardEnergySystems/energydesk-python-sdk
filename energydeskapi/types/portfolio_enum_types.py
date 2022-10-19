@@ -23,3 +23,26 @@ class PeriodViewGroupingEnum(Enum):
     AREA = "area"
     TICKER = "ticker"
     ASSET = "asset"
+
+
+class ParametersEnum(Enum):
+    netpos={"internal":"netpos", "formatting":"float", "display":"NetPos MW"}
+    sellpos = {"internal": "sellpos","formatting":"float", "display": "SellPos MW"}
+    buypos = {"internal": "buypos", "formatting":"float","display": "BuyPos MW"}
+    netvol = {"internal": "netvol", "formatting":"float", "display": "Vol MWh"}
+    buyvol = {"internal": "buyvol", "formatting":"float", "display": "Buy MWh"}
+    sellvol = {"internal": "sellvol","formatting":"float",  "display": "Sell MWh"}
+
+    avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Cost"}
+    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Sell Cost"}
+    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Buy Cost"}
+    market = {"internal": "market", "formatting":"str","display": "Market"}
+    asset = {"internal": "asset", "formatting":"str", "display": "Underlying"}
+    area = {"internal": "area", "formatting":"str", "display": "Area"}
+    instrument = {"internal": "instrument", "formatting":"str", "display": "Instr"}
+    delivery_from = {"internal": "delivery_from", "formatting":"str", "display": "DelivFrom"}
+    delivery_until = {"internal": "delivery_until", "formatting":"str", "display": "DelivTo"}
+    hours = {"internal": "hours", "formatting":"str", "display": "Hours"}
+    contracts = {"internal": "contracts", "formatting":"str", "display": "# Contracts"}
+    ticker={"internal": "tcker","formatting":"str",  "display": "Product"}
+

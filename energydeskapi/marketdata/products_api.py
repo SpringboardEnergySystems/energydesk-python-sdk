@@ -55,6 +55,21 @@ class ProductsApi:
 
     """
 
+    @staticmethod
+    def get_market_products(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/marketproducts/', parameters)
+        if json_res is None:
+            return False
+        return json_res
+
+    @staticmethod
+    def generate_market_product_from_ticker(api_connection, market, market_ticker):
+        json_res = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
+                                                {'market_ticker':market_ticker, 'market':market})
+        if json_res is None:
+            return False
+        return json_res
+
     # This function returns a single price (avg) for the period requested
     @staticmethod
     def register_products(api_connection, product_list):
@@ -96,7 +111,7 @@ class ProductsApi:
 
     @staticmethod
     def get_products_df(api_connection, market_enum):
-        """Fetches products from markets and shows in a dataframe
+        """Fetches products from markets and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

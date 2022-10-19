@@ -26,7 +26,7 @@ class SchedulerApi:
 
     @staticmethod
     def get_scheduled_jobs_df(api_connection):
-        """Fetches scheduled jobs and shows in a dataframe
+        """Fetches scheduled jobs and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

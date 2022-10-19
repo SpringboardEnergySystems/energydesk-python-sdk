@@ -49,7 +49,7 @@ class TradingBooksApi:
 
     @staticmethod
     def get_tradingbooks_df(api_connection, parameters={}):
-        """Fetches all tradingbooks
+        """Fetches all tradingbooks and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -85,6 +85,13 @@ class TradingBooksApi:
 
     @staticmethod
     def get_tradingbooks_by_commodityfilter_df(api_connection, commodities, parameters={}):
+        """Fetches tradingbooks from commodity filter and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param commodities: all commodities
+        :type commodities: str, required
+        """
         parameters['page_size']=100
         json_res = TradingBooksApi.get_tradingbooks_by_commodityfilter(api_connection,commodities, parameters)
         if json_res is None:
@@ -112,7 +119,7 @@ class TradingBooksApi:
 
     @staticmethod
     def get_tradingbook_url(api_connection, tradingbook_pk):
-        """Fetches tradingbooks from key
+        """Fetches url for tradingbook from pk
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

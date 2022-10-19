@@ -12,7 +12,7 @@ class MarketsApi:
 
     @staticmethod
     def get_market_url(api_connection, market_enum):
-        """Fetches market from url
+        """Fetches url for market from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -35,7 +35,7 @@ class MarketsApi:
 
     @staticmethod
     def get_instrument_type_url(api_connection, instrument_type_enum):
-        """Fetches instrument type from url
+        """Fetches url for instrument type from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -60,7 +60,7 @@ class MarketsApi:
 
     @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
-        """Fetches commodity type from url
+        """Fetches url for commodity type from enum value
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

@@ -90,15 +90,16 @@ def register_sample_contract(api_conn):
 
     print(go_contract.get_dict(api_conn))
     GosApi.upsert_contract(api_conn, go_contract)
-
+import pandas as pd
 def load_contracts(api_conn):
-    res=GosApi.get_contracts(api_conn)
+    res=GosApi.get_contracts(api_conn, {'page_size':30})
     print(res)
-
-def test_certificates(api_conn):
-    res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
-    print(res)
-    rr=GosApi.get_certificates(api_conn)
+    df=pd.DataFrame(res)
+    print(df)
+def test_gos(api_conn):
+    #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
+    #print(res)
+    rr=GosApi.get_contracts(api_conn)
     print(rr)
 def query_paginated_contracts(api_conn):
     parameters={}
@@ -117,4 +118,4 @@ def query_sources(api_conn):
     print(json.dumps(json.loads(x), indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    query_sources(api_conn)
+    load_contracts(api_conn)

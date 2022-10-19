@@ -93,7 +93,7 @@ class UsersApi:
 
     @staticmethod
     def get_users_by_role_df(api_connection, user_role_enum):
-        """Fetches users from roles and shows in a dataframe
+        """Fetches users from roles and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -144,7 +144,7 @@ class UsersApi:
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
-        """Fetches user profile from key and shows in a dataframe
+        """Fetches user profile from key and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -219,7 +219,7 @@ class UsersApi:
 
     @staticmethod
     def get_user_roles_df(api_connection):
-        """Fetches all user roles and shows in a dataframe
+        """Fetches all user roles and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

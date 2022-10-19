@@ -95,7 +95,7 @@ class Contract:
         if self.product_code is not None:
             prod['product_code'] = self.product_code
         else:
-            prod['otc'] = False
+            prod['otc'] = True
         dict['commodity']=prod
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
@@ -201,7 +201,7 @@ class ContractsApi:
 
     @staticmethod
     def query_contracts_df(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
-        """Queries contracts and shows in a dataframe
+        """Queries contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -252,7 +252,7 @@ class ContractsApi:
         return json_res
     @staticmethod
     def list_contracts_df(api_connection, parameters={}):
-        """Lists contracts and shows in a dataframe
+        """Lists contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
