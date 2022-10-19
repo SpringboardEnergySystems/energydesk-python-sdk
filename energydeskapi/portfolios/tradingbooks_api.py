@@ -140,7 +140,7 @@ class TradingBooksApi:
         logger.info("Registering " + str(len(tradingbooks) )+ " tadingbooks")
         for book in tradingbooks:
             payload=book.get_dict()
-            json_res=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
             if json_res is None:
                 logger.error("Problems registering asset "  + book.description)
             else:

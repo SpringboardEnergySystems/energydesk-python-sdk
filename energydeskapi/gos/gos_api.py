@@ -73,11 +73,11 @@ class GosApi:
         """
 
         if go_contract.pk>0:
-            json_res = api_connection.exec_patch_url('/api/gos/gocontracts/' + str(go_contract.pk) + "/", go_contract.get_dict(api_connection))
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/gos/gocontracts/' + str(go_contract.pk) + "/", go_contract.get_dict(api_connection))
         else:
             #print(json.dumps(go_contract.get_dict(api_connection), indent=2))
-            json_res = api_connection.exec_post_url('/api/gos/gocontracts/',go_contract.get_dict(api_connection))
-        return json_res
+            success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/gocontracts/',go_contract.get_dict(api_connection))
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_certificate_url(api_connection, certificate_pk):
@@ -188,7 +188,7 @@ class GosApi:
             "shortname":certificate,
             "description":description
         }
-        json_res = api_connection.exec_post_url('/api/gos/certificates/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/certificates/', payload)
         return json_res
 
     @staticmethod
@@ -233,7 +233,7 @@ class GosApi:
             "local_area": LocationApi.get_local_area_url(api_connection, local_area_pk),
             "assets_in_area":asset_url_list
         }
-        json_res = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
         return json_res
     @staticmethod
     def get_source_data(api_connection,parameters={}):

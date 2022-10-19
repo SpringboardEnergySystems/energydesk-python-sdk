@@ -52,7 +52,7 @@ class CustomersApi:
         :type company: str, required
         """
         payload = company.get_dict()
-        json_res = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
+        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
         if json_res is None:
             logger.error("Problems updating company " + company.name)
         else:
@@ -70,7 +70,7 @@ class CustomersApi:
         logger.info("Registering " + str(len(companies) )+ " companies")
         for company in companies:
             payload=company.get_dict()
-            json_res=api_connection.exec_post_url('/api/customers/companies/', payload)
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/customers/companies/', payload)
             if json_res is None:
                 logger.error("Problems registering company "  + company.name)
             else:
@@ -86,7 +86,7 @@ class CustomersApi:
         :param company: company
         :type company: str, required
         """
-        json_res = api_connection.exec_post_url('/api/customers/register-company', company)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/register-company', company)
         if json_res is None:
             return False
         print(json_res)

@@ -32,7 +32,7 @@ class ClearingApi:
                    "clearing_report_type": crtype_pk,
                    "from_datetime": from_date,
                    "to_datetime": to_date}
-        json_res = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
         print(json_res)
 
         return True

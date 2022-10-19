@@ -56,7 +56,7 @@ class DerivativesApi:
             "market_name": market_name,
             "tradingdate_from": traded_from_date,
         }
-        json_res=api_connection.exec_post_url('/api/markets/query-products-ext/', qry_payload)
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/query-products-ext/', qry_payload)
         if json_res is not None:
             df = pd.DataFrame(data=json_res)
             logger.debug("Products " + str(df))
@@ -120,7 +120,7 @@ class DerivativesApi:
             "area": "ALL" if area is None else area
         }
         print(qry_payload)
-        json_res = api_connection.exec_post_url('/api/markets/area-product-prices/', qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/area-product-prices/', qry_payload)
         if json_res is None:
             return None
         #df = pd.read_json(result.json()['dataframe'], orient='records')
@@ -159,7 +159,7 @@ class DerivativesApi:
             "currency_code": "EUR",
             "ticker": ticker
         }
-        result = api_connection.exec_post_url('/api/markets/derivatives-prices-in-period/', qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/derivatives-prices-in-period/', qry_payload)
         #result = requests.post(server_url, json=qry_payload, headers=headers)
         if result.status_code!=200:
             logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)

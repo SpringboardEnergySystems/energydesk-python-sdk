@@ -95,12 +95,12 @@ class ApiConnection(object):
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<202:
             json_data = result.json()
-            return json_data
+            return True, json_data, result.status_code, None
         else:
             logger.error("Problens calling EnergyDesk API " + str(result.status_code))
             if result.status_code==401:
                 raise TokenException("Token is invalid")
-            return None
+            return False, None, result.status_code, result.text
 
     def exec_patch_url(self, trailing_url, payload, extra_headers={}):
         """Posts content from URL
@@ -121,12 +121,12 @@ class ApiConnection(object):
         result = requests.patch(server_url, json=payload,   headers=headers)
         if result.status_code<202:
             json_data = result.json()
-            return json_data
+            return True, json_data, result.status_code, None
         else:
             logger.error("Problens calling EnergyDesk API- (patch) " + str(result) + " " )
             if result.status_code==401:
                 raise TokenException("Token is invalid")
-            return None
+            return False, None, result.status_code, result.text
 
     def exec_get_url(self, trailing_url,  parameters={}, extra_headers={}):
         """Returns content from URL

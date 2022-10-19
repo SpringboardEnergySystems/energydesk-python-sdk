@@ -63,9 +63,9 @@ class ElvizLinksApi:
         print("Updating " + str(payload))
         existing=ElvizLinksApi.lookup_company_mapping(api_connection, elviz_company_id)
         if existing is None:
-            json_res = api_connection.exec_post_url('/api/elvizmapping/companies/',payload)
+            success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/elvizmapping/companies/',payload)
         else:
-            json_res = api_connection.exec_patch_url('/api/elvizmapping/companies/'
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/elvizmapping/companies/'
                                                      + str(existing['pk']) + "/", payload)
         print(json_res)
         return True
@@ -122,9 +122,9 @@ class ElvizLinksApi:
                    "energydesk_profile": profile_url}
         existing = ElvizLinksApi.lookup_user_mapping(api_connection, enegydesk_username)
         if existing is None:
-            json_res = api_connection.exec_post_url('/api/elvizmapping/users/', payload)
+            success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/elvizmapping/users/', payload)
         else:
-            json_res = api_connection.exec_patch_url('/api/elvizmapping/users/'
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/elvizmapping/users/'
                                                      + str(existing['pk']) + "/", payload)
         print(json_res)
         return True
@@ -201,9 +201,9 @@ class ElvizLinksApi:
         existing = ElvizLinksApi.lookup_portfolio_mapping(api_connection, elviz_portfolio_id)
         print(existing)
         if existing is None:
-            json_res = api_connection.exec_post_url('/api/elvizmapping/portfolios/', payload)
+            success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/elvizmapping/portfolios/', payload)
         else:
-            json_res = api_connection.exec_patch_url('/api/elvizmapping/portfolios/'
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/elvizmapping/portfolios/'
                                                      + str(existing['pk']) + "/", payload)
         print(json_res)
         return True

@@ -44,7 +44,7 @@ class TreasuryApi:
         print(comp_url)
         payload={"treasury_system_name":treasury_system_name,
                  "internal_company": comp_url}
-        json_res = api_connection.exec_post_url('/api/treasury/treasurybanks/',payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/treasury/treasurybanks/',payload)
         print(json_res)
 
         return True
