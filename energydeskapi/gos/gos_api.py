@@ -53,6 +53,15 @@ class GosApi:
     """
 
     @staticmethod
+    def lookup_go_contract_pk(api_connection,
+                          contract_pk):
+        json_res=api_connection.exec_get_url('/api/gos/contractlookup?contract_pk=' + str(contract_pk))
+        print(json_res)
+        if json_res is not None:
+            return json_res['results'][0]
+        return None
+
+    @staticmethod
     def upsert_contract(api_connection,
                           go_contract):
         """Registers GoO contracts
