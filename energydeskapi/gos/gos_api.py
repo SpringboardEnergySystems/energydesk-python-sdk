@@ -68,7 +68,7 @@ class GosApi:
         else:
             #print(json.dumps(go_contract.get_dict(api_connection), indent=2))
             success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/gocontracts/',go_contract.get_dict(api_connection))
-        return json_res
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_certificate_url(api_connection, certificate_pk):

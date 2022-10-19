@@ -66,9 +66,7 @@ class ProductsApi:
     def generate_market_product_from_ticker(api_connection, market, market_ticker):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
                                                 {'market_ticker':market_ticker, 'market':market})
-        if json_res is None:
-            return False
-        return json_res
+        return success, json_res, status_code, error_msg
 
     # This function returns a single price (avg) for the period requested
     @staticmethod
