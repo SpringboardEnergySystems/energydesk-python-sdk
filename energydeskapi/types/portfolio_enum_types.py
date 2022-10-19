@@ -32,3 +32,16 @@ class ParametersEnum(Enum):
     netvol = {"internal": "netvol", "display": "Vol MWh"}
     buyvol = {"internal": "buyvol", "display": "Buy MWh"}
     sellvol = {"internal": "sellvol", "display": "Sell MWh"}
+
+    avgcost = {"internal": "avgcost", "display": "Avg Cost"}
+    avgcostbuy = {"internal": "avgcostbuy", "display": "Sell Cost"}
+    avgcostsell = {"internal": "avgcostsell", "display": "Buy Cost"}
+    market = {"internal": "market", "display": "Market"}
+    asset = {"internal": "asset", "display": "Underlying"}
+    instrument = {"internal": "instrument", "display": "Instr"}
+    delivery_from = {"internal": "delivery_from", "display": "DelivFrom"}
+    delivery_until = {"internal": "delivery_until", "display": "DelivTo"}
+    hours = {"internal": "hours", "display": "Hours"}
+    contracts = {"internal": "contracts", "display": "# Contracts"}
+
+
