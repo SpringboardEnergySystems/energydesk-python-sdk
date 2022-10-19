@@ -45,7 +45,7 @@ class UsersApi:
         :type user: str, required
         """
         payload = user.get_dict()
-        json_res = api_connection.exec_post_url('/api/customers/update-userprofile', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/update-userprofile', payload)
         if json_res is None:
             logger.error("Problems updating user " + user.username)
             False
@@ -211,7 +211,7 @@ class UsersApi:
         logger.info("Registering " + str(len(users) )+ " users")
         for user in users:
             payload=user.get_dict()
-            json_res=api_connection.exec_post_url('/api/customers/register-user', payload)
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/customers/register-user', payload)
             if json_res is None:
                 logger.error("Problems registering user "  + user.username)
             else:

@@ -93,7 +93,7 @@ class AssetsApi:
         logger.info("Registering " + str(len(asset_list) )+ " assets")
         for asset in asset_list:
             payload=asset.get_dict()
-            json_res=api_connection.exec_post_url('/api/assets/assets/', payload)
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/assets/assets/', payload)
             if json_res is None:
                 logger.error("Problems registering asset "  + asset.description)
             else:
@@ -162,7 +162,7 @@ class AssetsApi:
         :type description: str, required
         """
         logger.info("Fetching assets with description " + str(description))
-        json_res=api_connection.exec_post_url('/api/assets/assets-by-filter/', {'description':description})
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/assets/assets-by-filter/', {'description':description})
         if json_res is None:
             return None
         return json_res
@@ -192,7 +192,7 @@ class AssetsApi:
         :type asset_type_enum: str, required
         """
         payload={"asset_type_enum": str(asset_type_enum.value)}
-        json_res = api_connection.exec_post_url('/api/assets/assets-by-type-extended/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assets/assets-by-type-extended/', payload)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)

@@ -35,7 +35,7 @@ class AssetDataApi:
             "datatype":"FORECAST"
 
         }
-        json_res = api_connection.exec_post_url('/api/assetdata/query-summed-timeseries/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/query-summed-timeseries/', payload)
         return json_res
     @staticmethod
     def get_assetgroup_forecast_df(api_connection, assets):

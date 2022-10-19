@@ -51,7 +51,7 @@ class LocationApi:
             "map_type":map_type,
             "param":param
         }
-        json_res=api_connection.exec_post_url('/api/locations/generate-default-map/', payload)
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/locations/generate-default-map/', payload)
         if json_res is not None:
             return json_res
         return None
@@ -79,9 +79,9 @@ class LocationApi:
         """
         for loc in local_areas:
             if int(loc.pk)==0:
-                json_res = api_connection.exec_post_url('/api/locations/localareas/', loc.get_dict(api_connection))
+                success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/locations/localareas/', loc.get_dict(api_connection))
             else:
-                json_res = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
+                success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
             return json_res
 
     @staticmethod

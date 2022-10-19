@@ -23,7 +23,7 @@ class AssetOwnersApi:
             "ownership_graph": ownership_graph_jsonstr,
             "asset_manager_pk": asset_manager_pk
         }
-        json_res=api_connection.exec_post_url('/api/asset-ownership/save-ownership-graph/', payload)
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/asset-ownership/save-ownership-graph/', payload)
         logger.info(str(json_res))
 
 

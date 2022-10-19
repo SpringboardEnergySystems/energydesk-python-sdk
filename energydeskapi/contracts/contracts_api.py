@@ -142,10 +142,11 @@ class ContractsApi:
 
         if contract.pk>0:
             print(json.dumps(contract.get_dict(api_connection), indent=2))
-            json_res = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
         else:
-            json_res = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
-        return json_res
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
+
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
@@ -195,7 +196,7 @@ class ContractsApi:
         :type query_payload: str
         """
         logger.info("Fetching contracts")
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts/', query_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/query-contracts/', query_payload)
         print(json_res)
         return None
 
@@ -209,7 +210,7 @@ class ContractsApi:
         :type query_payload: str, required
         """
         logger.info("Fetching contracts")
-        json_res = api_connection.exec_post_url('/api/portfoliomanager/query-contracts-ext/', query_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/query-contracts-ext/', query_payload)
         df = pd.DataFrame(data=json_res)
         return df
 

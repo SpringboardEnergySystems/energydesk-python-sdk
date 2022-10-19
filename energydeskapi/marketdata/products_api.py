@@ -64,7 +64,7 @@ class ProductsApi:
 
     @staticmethod
     def generate_market_product_from_ticker(api_connection, market, market_ticker):
-        json_res = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
                                                 {'market_ticker':market_ticker, 'market':market})
         if json_res is None:
             return False
@@ -83,7 +83,7 @@ class ProductsApi:
         logger.info("Registering " + str(len(product_list) )+ " products")
         for product in product_list:
             payload=product.get_dict()
-            json_res=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
             if json_res is None:
                 return False
             print(json_res)
@@ -104,7 +104,7 @@ class ProductsApi:
             "market_name": mapi['name'],
             #"tradingdate_from": None,
         }
-        json_res=api_connection.exec_post_url('/api/markets/query-products/',qry_payload)
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/query-products/',qry_payload)
         if json_res is None:
             return None
         return json_res
@@ -126,7 +126,7 @@ class ProductsApi:
             "market_name": mapi['name'],
             #"tradingdate_from": None,
         }
-        json_res=api_connection.exec_post_url('/api/markets/query-products-ext/',qry_payload)
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/query-products-ext/',qry_payload)
         if json_res is None:
             return None
         #df = pd.DataFrame(data=json_res)
