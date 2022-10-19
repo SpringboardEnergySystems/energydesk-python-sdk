@@ -57,7 +57,9 @@ class GosApi:
                           contract_pk):
         json_res=api_connection.exec_get_url('/api/gos/contractlookup?contract_pk=' + str(contract_pk))
         if json_res is not None:
+            logger.info("Looking up main contract " + str(contract_pk) + " resulting in GO " + str(json_res[0]['pk']))
             return json_res[0]['pk']
+        logger.warning("Looking up main contract " + str(contract_pk) + " failed")
         return 0
 
     @staticmethod
