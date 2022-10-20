@@ -149,6 +149,22 @@ class ContractsApi:
 
 
     @staticmethod
+    def bulk_insert_contracts(api_connection,
+                          contract_list):
+        """Registers multiple contracts in a list. REST API does not return contracts, reducing bandwidth
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_list: contracts to be registered
+        :type contracts: str, required
+        """
+        json_list=[]
+        for c in contract_list:
+            json_list.append(c.get_dict(api_connection))
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinset/',json_list)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
         """Fetches url for a contract type from enum value
 
