@@ -59,6 +59,18 @@ class ProductsApi:
     """
 
     @staticmethod
+    def get_commodity_definitioon_url(api_connection, commodity_deinition_pk):
+        """Fetches url for tradingbook from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param tradingbook_pk: personal key of tradingbook
+        :type tradingbook_pk: str, required
+        """
+        return api_connection.get_base_url() + '/api/markets/commoditydefinitions/' + str(commodity_deinition_pk) + "/"
+
+
+    @staticmethod
     def get_market_products(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/', parameters)
         if json_res is None:
@@ -71,7 +83,21 @@ class ProductsApi:
                                                 {'market_ticker':market_ticker, 'market':market})
         return success, json_res, status_code, error_msg
 
-    # This function returns a single price (avg) for the period requested
+    @staticmethod
+    def register_commodity(api_connection, commodity_definition):
+        """Registers products
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param product_list: list of products
+        :type product_list: str, required
+        """
+
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/commoditydefinitions/', commodity_definition)
+        if json_res is None:
+            return 0
+        print(json_res)
+        return json_res['pk']
     @staticmethod
     def register_products(api_connection, product_list):
         """Registers products
@@ -84,6 +110,11 @@ class ProductsApi:
         logger.info("Registering " + str(len(product_list) )+ " products")
         for product in product_list:
             payload=product.get_dict()
+            key=ProductsApi.register_commodity(payload['commodity_definition'])
+            if key==0:
+                return False
+            payload['commodity_definition']=ProductsApi.get_commodity_definitioon_url(key)
+            print("REG PROD ", payload)
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
             if json_res is None:
                 return False
