@@ -116,7 +116,7 @@ class ElvizLinksApi:
             logger.error("Cannot map a user that is not stored internally with name " + str(enegydesk_username))
             return False
 
-        profile_url = api_connection.get_base_url() + "/api/customers/profiles/" + str(edeskuser['pk']) + "/"
+        profile_url = api_connection.get_base_url() + "/api/customers/profiles/" + str(edeskuser['results'][0]['pk']) + "/"
         payload = {"elviz_user_id": elviz_user_id,
                    "elviz_user_name": elviz_userr_name,
                    "energydesk_profile": profile_url}
