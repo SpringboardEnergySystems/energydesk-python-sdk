@@ -110,10 +110,10 @@ class ProductsApi:
         logger.info("Registering " + str(len(product_list) )+ " products")
         for product in product_list:
             payload=product.get_dict()
-            key=ProductsApi.register_commodity(payload['commodity_definition'])
+            key=ProductsApi.register_commodity(api_connection,payload['commodity_definition'])
             if key==0:
                 return False
-            payload['commodity_definition']=ProductsApi.get_commodity_definitioon_url(key)
+            payload['commodity_definition']=ProductsApi.get_commodity_definitioon_url(api_connection, key)
             print("REG PROD ", payload)
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
             if json_res is None:
