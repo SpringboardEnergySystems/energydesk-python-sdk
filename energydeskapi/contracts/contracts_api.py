@@ -153,10 +153,10 @@ class ContractsApi:
                         dict):
         if dict['pk'] > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/contracts/' + str(dict['pk']) + "/", dict['pk'])
+                '/api/portfoliomanager/contracts/' + str(dict['pk']) + "/", dict)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/portfoliomanager/contracts/', dict['pk'])
+                '/api/portfoliomanager/contracts/', dict)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
