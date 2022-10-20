@@ -38,4 +38,4 @@ def get_product_view(api_conn):
     #print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_period_view(api_conn)
+    get_product_view(api_conn)
