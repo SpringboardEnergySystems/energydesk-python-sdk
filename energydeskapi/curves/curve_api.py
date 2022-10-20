@@ -62,11 +62,6 @@ class CurveApi:
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/get-forward-curve/', qry_payload)
 
-        result = requests.post(server_url, json=qry_payload,   headers=headers)
-        if result.status_code==200:
-            df = pd.read_json(result.json()['dataframe'], orient='records')
-            logger.debug("Zero coupon rates " + str(df))
-            return df
-        else:
-            logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)
-            return None
+        if json_res is not None:
+            return json_res
+        return None
