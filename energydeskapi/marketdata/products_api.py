@@ -30,25 +30,28 @@ class Product:
 
     def get_dict(self):
         dict = {}
+        commodity = {}
         dict['pk']=self.pk
-        if self.ticker is not None: dict['ticker'] = self.ticker
+        if self.ticker is not None: dict['maket_ticker'] = self.ticker
+        if self.ticker is not None: commodity['product_code'] = self.ticker
         if self.vendor_ticker is not None: dict['vendor_ticker'] = self.vendor_ticker
-        if self.description is not None: dict['description'] = self.description
-        if self.area is not None: dict['area'] = self.area
+        if self.description is not None: commodity['description'] = self.description
+        if self.area is not None: commodity['area'] = self.area
         if self.denomination is not None: dict['denomination'] = self.denomination
-        if self.base_peak is not None: dict['base_peak'] = self.base_peak
-        if self.spread is not None: dict['spread'] = self.spread
-        if self.otc is not None: dict['otc'] = self.otc
-        if self.delivery_from is not None: dict['delivery_from'] = self.delivery_from
-        if self.delivery_until is not None: dict['delivery_until'] = self.delivery_until
-        if self.contract_size is not None: dict['contract_size'] = self.contract_size
+        if self.base_peak is not None: commodity['base_peak'] = self.base_peak
+        if self.spread is not None: commodity['spread'] = self.spread
+        if self.otc is not None: commodity['otc'] = self.otc
+        if self.delivery_from is not None: commodity['delivery_from'] = self.delivery_from
+        if self.delivery_until is not None: commodity['delivery_until'] = self.delivery_until
+        if self.contract_size is not None: commodity['contract_size'] = self.contract_size
         if self.traded_from is not None: dict['traded_from'] = self.traded_from
         if self.traded_until is not None: dict['traded_until'] = self.traded_until
-        if self.instrument_type is not None: dict['instrument_type'] = self.instrument_type
-        if self.commodity_type is not None: dict['commodity_type'] = self.commodity_type
-        if self.block_size_category is not None: dict['block_size_category'] = self.block_size_category
-        if self.market is not None: dict['market'] = self.market
-        if self.block_size_category is not None: dict['block_size_category'] = self.block_size_category
+        if self.instrument_type is not None: commodity['instrument_type'] = self.instrument_type
+        if self.commodity_type is not None: commodity['commodity_type'] = self.commodity_type
+        if self.block_size_category is not None: commodity['block_size_category'] = self.block_size_category
+        if self.market is not None: commodity['market'] = self.market
+        if self.block_size_category is not None: commodity['block_size_category'] = self.block_size_category
+        dict['commodity_definition'] = commodity
         return dict
 class ProductsApi:
     """Class for products in markets
