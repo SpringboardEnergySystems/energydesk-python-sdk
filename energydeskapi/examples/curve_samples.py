@@ -21,23 +21,27 @@ logging.basicConfig(level=logging.INFO,
 def get_curves(api_conn):
     fromd="2022-10-01"
     untild = "2024-10-01"
-    def process_dframe(df):
-        print(df)
+    def process_dframe(df, name):
+
         df['date'] = pd.to_datetime(df['date'])
         df.index=df['date']
         df=df[['date', 'price']]
         df2 = df.resample('MS',  on='date').mean()
-        print(df2)
-        print(df)
+        df=df.drop(['date'], axis=1)
+        return df.rename({'price': name}, axis=1),df2.rename({'price': name}, axis=1)
+
 
     jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO1", "NOK")
 
     df = pd.DataFrame(data=eval(jsonres))
-    process_dframe(df)
+    daily, monthly=process_dframe(df, "NO1")
     jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO5", "NOK")
     if jsonres is not None:
         df = pd.DataFrame(data=eval(jsonres))
-        process_dframe(df)
+        daily_sub, monthly_sub=process_dframe(df,"NO5")
+        daily["NO5"]= daily_sub["NO5"]
+        monthly["NO5"] = monthly_sub["NO5"]
+    print(daily, monthly)
 
 if __name__ == '__main__':
     api_conn=init_api()
