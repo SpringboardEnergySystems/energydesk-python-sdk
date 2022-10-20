@@ -161,7 +161,7 @@ class ContractsApi:
         json_list=[]
         for c in contract_list:
             json_list.append(c.get_dict(api_connection))
-        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinset/',json_list)
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinsert/',json_list)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
