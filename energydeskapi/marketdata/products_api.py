@@ -32,7 +32,7 @@ class Product:
         dict = {}
         commodity = {}
         dict['pk']=self.pk
-        if self.ticker is not None: dict['maket_ticker'] = self.ticker
+        if self.ticker is not None: dict['market_ticker'] = self.ticker
         if self.ticker is not None: commodity['product_code'] = self.ticker
         if self.vendor_ticker is not None: dict['vendor_ticker'] = self.vendor_ticker
         if self.description is not None: commodity['description'] = self.description
