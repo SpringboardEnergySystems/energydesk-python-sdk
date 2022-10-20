@@ -125,6 +125,7 @@ class ContractsApi:
 
     """
 
+
     @staticmethod
     def upsert_contract(api_connection,
                           contract):
@@ -147,6 +148,16 @@ class ContractsApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
+    @staticmethod
+    def upsert_contract_from_dict(api_connection,
+                        dict):
+        if dict['pk'] > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/portfoliomanager/contracts/' + str(dict['pk']) + "/", dict['pk'])
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/portfoliomanager/contracts/', dict['pk'])
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
