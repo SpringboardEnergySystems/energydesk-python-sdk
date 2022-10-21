@@ -41,6 +41,20 @@ class LocationApi:
         return None
 
     @staticmethod
+    def get_default_zones(api_connection):
+        """Fetches main area of company
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching default zones")
+        json_res=api_connection.exec_get_url('/api/locations/default-zones/')
+        if json_res is not None:
+            return json_res
+        return None
+
+
+    @staticmethod
     def generate_default_map(api_connection, map_type, include_assets, zones=[], country=None):
         """Fetches main area of company
         :param api_connection: class with API token for use with API

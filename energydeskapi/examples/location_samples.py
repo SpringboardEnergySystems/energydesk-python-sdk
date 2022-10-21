@@ -14,6 +14,9 @@ logging.basicConfig(level=logging.INFO,
 def get_areas(api_conn):
     # df=LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
     #print("Loc area", df)
+    def_json=LocationApi.get_default_zones(api_conn)
+    print(def_json)
+    return
     geomdata=LocationApi.generate_default_map(api_conn,map_type="COUNTRY",include_assets=True, zones=['NO4'], country="DNK")
     print(geomdata)
 def test_gos(api_conn):
