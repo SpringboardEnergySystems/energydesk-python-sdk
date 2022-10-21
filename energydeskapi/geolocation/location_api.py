@@ -41,16 +41,20 @@ class LocationApi:
         return None
 
     @staticmethod
-    def generate_default_map(api_connection, map_type="COUNTRY", param="NOR"):
+    def generate_default_map(api_connection, map_type, include_assets, zones=[], country=None):
         """Fetches main area of company
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Generate default geojson")
+
         payload={
             "map_type":map_type,
-            "param":param
+            "add_bidding_zones": zones,
+            "show_assets":include_assets,
+            "country":country
         }
+
         success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/locations/generate-default-map/', payload)
         if json_res is not None:
             return json_res

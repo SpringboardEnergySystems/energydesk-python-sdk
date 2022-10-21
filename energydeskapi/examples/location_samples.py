@@ -12,16 +12,14 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_areas(api_conn):
-    df=LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
-    print("Loc area", df)
-
-    #geomdata=LocationApi.generate_default_map(api_conn, "COUNTRY", "DNK")
-    #print(geomdata)
+    # df=LocationApi.get_local_areas(api_conn, LocationTypeEnum.GOs_OFFER_AREA)
+    #print("Loc area", df)
+    geomdata=LocationApi.generate_default_map(api_conn,map_type="COUNTRY",include_assets=True, zones=['NO4'], country="DNK")
+    print(geomdata)
 def test_gos(api_conn):
     res=GosApi.get_source_data(api_conn)
     print(res)
 
 if __name__ == '__main__':
-
     api_conn=init_api()
-    test_gos(api_conn)
+    get_areas(api_conn)
