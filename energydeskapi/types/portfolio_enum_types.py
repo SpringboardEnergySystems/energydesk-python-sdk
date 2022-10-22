@@ -45,4 +45,6 @@ class ParametersEnum(Enum):
     hours = {"internal": "hours", "formatting":"str", "display": "Hours"}
     contracts = {"internal": "contracts", "formatting":"str", "display": "# Contracts"}
     ticker={"internal": "tcker","formatting":"str",  "display": "Product"}
+    price = {"internal": "price", "formatting": "float", "display": "Price"}
+    mtm = {"internal": "mtm", "formatting": "float", "display": "MtM"}
 
