@@ -40,8 +40,8 @@ class ParametersEnum(Enum):
     asset = {"internal": "asset", "formatting":"str", "display": "Underlying"}
     area = {"internal": "area", "formatting":"str", "display": "Area"}
     instrument = {"internal": "instrument", "formatting":"str", "display": "Instr"}
-    delivery_from = {"internal": "delivery_from", "formatting":"str", "display": "DelivFrom"}
-    delivery_until = {"internal": "delivery_until", "formatting":"str", "display": "DelivTo"}
+    delivery_from = {"internal": "delivery_from", "formatting":"date", "display": "DelivFrom"}
+    delivery_until = {"internal": "delivery_until", "formatting":"date", "display": "DelivTo"}
     hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
     ticker={"internal": "tcker","formatting":"str",  "display": "Product"}
