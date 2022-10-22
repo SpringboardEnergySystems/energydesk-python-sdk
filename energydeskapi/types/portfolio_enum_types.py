@@ -42,8 +42,8 @@ class ParametersEnum(Enum):
     instrument = {"internal": "instrument", "formatting":"str", "display": "Instr"}
     delivery_from = {"internal": "delivery_from", "formatting":"str", "display": "DelivFrom"}
     delivery_until = {"internal": "delivery_until", "formatting":"str", "display": "DelivTo"}
-    hours = {"internal": "hours", "formatting":"str", "display": "Hours"}
-    contracts = {"internal": "contracts", "formatting":"str", "display": "# Contracts"}
+    hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
+    contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
     ticker={"internal": "tcker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
     mtm = {"internal": "mtm", "formatting": "float", "display": "MtM"}
