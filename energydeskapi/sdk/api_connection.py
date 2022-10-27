@@ -45,14 +45,14 @@ class ApiConnection(object):
         response = requests.get(self.get_base_url() + '/api/energydesk/get-api-token/',{"user__username": str(username)},
                                 auth=HTTPBasicAuth(username, password))
         if response is None:
-            return False
+            return False, "Unknown Error"
         if 'token' not in response.json():
             logger.error("Failed login attempt " + str(username) + " " + response.text)
-            return False
+            return False, response.text
         tok=response.json()['token']
         print(response.json()['token'])
         self.set_token(tok, "Token")
-        return True
+        return True, "Login OK"
 
     def validate_token(self, token):
         """Validates a token
