@@ -32,7 +32,7 @@ def create_user(api_conn):
     UsersApi.create_users(api_conn, [u])
 
 def basic_auth(api_conn):
-    api_conn.validate_via_basic_auth("alfa", "beta")
+    api_conn.validate_via_basic_auth("s.r.eriksen@gmail.com", "xxx")
 
 
 if __name__ == '__main__':

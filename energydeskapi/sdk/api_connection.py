@@ -39,9 +39,17 @@ class ApiConnection(object):
 
     def validate_via_basic_auth(self, username, password):
         # Making a get request
-        response = requests.get(self.get_base_url() + '/api/energydesk/get-api-token/, ',
+        #response = requests.get(self.get_base_url() + '/api/customers/profiles/',{"user__username": str(username)},
+        #                        auth=HTTPBasicAuth(username, password))
+        #print(response.json())
+        response = requests.get(self.get_base_url() + '/api/energydesk/get-api-token/',{"user__username": str(username)},
                                 auth=HTTPBasicAuth(username, password))
-        print("Response", response)
+        if response is None:
+            return False
+        tok=response.json()['token']
+        print(response.json()['token'])
+        self.set_token(tok, "Token")
+        return True
 
     def validate_token(self, token):
         """Validates a token
