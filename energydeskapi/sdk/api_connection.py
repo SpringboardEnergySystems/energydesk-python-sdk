@@ -91,6 +91,7 @@ class ApiConnection(object):
         """
         self.token_type=token_type
         self.token=token
+        print("Setting token in object",self.token_typ, self.token )
 
     def get_authorization_header(self):
         """Returns the authorization header
