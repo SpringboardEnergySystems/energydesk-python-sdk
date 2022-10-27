@@ -89,16 +89,18 @@ class ApiConnection(object):
         :param token_type: bearer or token
         :type token_type: str, required
         """
-        self.token_type=token_type
-        self.token=token
-        print("Setting token in object",self.token_type, self.token )
+        if self.token is not None and self.token!="" and self.token_type=="Token":
+            print("Token already set from Django")
+        else:
+            self.token_type=token_type
+            self.token=token
+            print("Setting token in object",self.token_type, self.token )
 
     def get_current_token(self):
         return self.token
 
     def get_authorization_header(self):
         """Returns the authorization header
-
         """
         return {'Authorization':  self.token_type + ' ' + self.token}
 
