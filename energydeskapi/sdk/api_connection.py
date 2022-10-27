@@ -47,8 +47,12 @@ class ApiConnection(object):
         if response is None:
             return False, "Unknown Error"
         if 'token' not in response.json():
-            logger.error("Failed login attempt " + str(username) + " " + response.text)
-            return False, response.text
+            if 'detail' in response.json():
+                errmsg=response.json()['detail']
+            else:
+                errmsg=response.text
+            logger.error("Failed login attempt " + str(username) + " " + errmsg)
+            return False, errmsg
         tok=response.json()['token']
         print(response.json()['token'])
         self.set_token(tok, "Token")
