@@ -10,6 +10,7 @@ from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_d
 from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum, GosEnergySources
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
+from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
 import json
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
@@ -31,17 +32,17 @@ def get_curves(api_conn):
         return df.rename({'price': name}, axis=1),df2.rename({'price': name}, axis=1)
 
 
-    jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO1", "NOK")
+    jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO1", "NOK", FwdCurveInternalEnum.FB_PROPHET.value)
 
-    df = pd.DataFrame(data=eval(jsonres))
-    daily, monthly=process_dframe(df, "NO1")
-    jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO5", "NOK")
-    if jsonres is not None:
-        df = pd.DataFrame(data=eval(jsonres))
-        daily_sub, monthly_sub=process_dframe(df,"NO5")
-        daily["NO5"]= daily_sub["NO5"]
-        monthly["NO5"] = monthly_sub["NO5"]
-    print(daily, monthly)
+    # df = pd.DataFrame(data=eval(jsonres))
+    # daily, monthly=process_dframe(df, "NO1")
+    # jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO5", "NOK")
+    # if jsonres is not None:
+    #     df = pd.DataFrame(data=eval(jsonres))
+    #     daily_sub, monthly_sub=process_dframe(df,"NO5")
+    #     daily["NO5"]= daily_sub["NO5"]
+    #     monthly["NO5"] = monthly_sub["NO5"]
+    # print(daily, monthly)
 
 if __name__ == '__main__':
     api_conn=init_api()

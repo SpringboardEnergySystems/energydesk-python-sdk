@@ -39,7 +39,7 @@ class CurveApi:
 
 
     @staticmethod
-    def get_hourly_price_curve(api_connection , from_period, until_period, price_area, currency_code):
+    def get_hourly_price_curve(api_connection , from_period, until_period, price_area, currency_code, curve_model_key=1):
         """Fetches hourly price curve
 
         :param api_connection: class with API token for use with API
@@ -59,7 +59,9 @@ class CurveApi:
             "currency_code": currency_code,
             "period_from": from_period,
             "period_until": until_period,
+            "curve_model_key":curve_model_key
         }
+        print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/get-forward-curve/', qry_payload)
 
         if json_res is not None:
