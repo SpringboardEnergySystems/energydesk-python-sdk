@@ -3,6 +3,7 @@ Wrapper for Token management
 """
 
 import requests
+from requests.auth import HTTPBasicAuth
 import http.client
 import json
 import logging
@@ -35,6 +36,12 @@ class ApiConnection(object):
         """
         return self.base_url
 
+
+    def validate_via_basic_auth(self, username, password):
+        # Making a get request
+        response = requests.get(self.get_base_url() + '/api/energydesk/get-api-token/, ',
+                                auth=HTTPBasicAuth(username, password))
+        print("Response", response)
 
     def validate_token(self, token):
         """Validates a token

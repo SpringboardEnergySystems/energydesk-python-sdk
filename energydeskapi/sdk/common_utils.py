@@ -19,7 +19,10 @@ def load_env(current_dir):
 def init_api(current_dir=None):
     load_env(current_dir)
     env = environ.Env()
-    tok = env.str('ENERGYDESK_TOKEN')
+    if 'ENERGYDESK_TOKEN' in env:
+        tok = env.str('ENERGYDESK_TOKEN')
+    else:
+        tok=None
     url= env.str('ENERGYDESK_URL')
     api_conn=ApiConnection(url)
     api_conn.set_token(tok, "Token")

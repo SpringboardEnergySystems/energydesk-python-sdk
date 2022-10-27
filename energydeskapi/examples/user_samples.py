@@ -31,11 +31,14 @@ def create_user(api_conn):
     print(u.get_dict())
     UsersApi.create_users(api_conn, [u])
 
+def basic_auth(api_conn):
+    api_conn.validate_via_basic_auth("alfa", "beta")
+
+
 if __name__ == '__main__':
 
     api_conn=init_api()
-
-    list_users(api_conn)
+    basic_auth(api_conn)
     #register_companies(api_conn)
     #create_company(api_conn)
     #create_user(api_conn)
