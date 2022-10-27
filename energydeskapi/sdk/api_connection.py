@@ -89,7 +89,17 @@ class ApiConnection(object):
         :param token_type: bearer or token
         :type token_type: str, required
         """
-        if self.token is not None and self.token!="" and self.token_type=="Token":
+        def get_existing_token():
+            current_token=""
+            try:
+                if token is None:
+                    current_token=""
+                else:
+                    current_token=token
+            except:
+                pass
+            return current_token
+        if get_existing_token()!="" and self.token_type=="Token":
             print("Token already set from Django")
         else:
             self.token_type=token_type
