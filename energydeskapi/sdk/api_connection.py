@@ -46,7 +46,9 @@ class ApiConnection(object):
                                 auth=HTTPBasicAuth(username, password))
         if response is None:
             return False
-        print(response.json())
+        if 'token' not in response.json():
+            logger.error("Failed login attempt " + str(username) + " " + response.text)
+            return False
         tok=response.json()['token']
         print(response.json()['token'])
         self.set_token(tok, "Token")
