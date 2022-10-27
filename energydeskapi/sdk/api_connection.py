@@ -56,7 +56,7 @@ class ApiConnection(object):
         tok=response.json()['token']
         self.set_token(tok, "Token")
         print(self.get_authorization_header())
-        return True, "Login OK"
+        return True, tok
 
     def validate_token(self, token):
         """Validates a token
