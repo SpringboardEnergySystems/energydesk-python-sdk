@@ -46,5 +46,5 @@ class ParametersEnum(Enum):
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
     ticker={"internal": "tcker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
-    mtm = {"internal": "mtm", "formatting": "float", "display": "MtM"}
+    unreal = {"internal": "unreal", "formatting": "float", "display": "Unrealized"}
 
