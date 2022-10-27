@@ -102,9 +102,10 @@ class ApiConnection(object):
         if get_existing_token()!="" and self.token_type=="Token":
             print("Token already set from Django")
         else:
-            self.token_type=token_type
-            self.token=token
-            print("Setting token in object",self.token_type, self.token )
+            pass
+        self.token_type=token_type
+        self.token=token
+        print("Setting token in object",self.token_type, self.token )
 
     def get_current_token(self):
         return self.token
