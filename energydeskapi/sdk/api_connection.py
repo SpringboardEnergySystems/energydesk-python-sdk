@@ -103,7 +103,9 @@ class ApiConnection(object):
             self.token_type=token_type
             self.token=token
             print("Setting token in object",self.token_type, self.token )
-
+        elif token!="" and token_type=="Token":
+            self.token_type=token_type
+            self.token=token
     def get_current_token(self):
         return self.token
 
