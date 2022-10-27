@@ -54,8 +54,8 @@ class ApiConnection(object):
             logger.error("Failed login attempt " + str(username) + " " + errmsg)
             return False, errmsg
         tok=response.json()['token']
-        print(response.json()['token'])
         self.set_token(tok, "Token")
+        print(self.get_authorization_header())
         return True, "Login OK"
 
     def validate_token(self, token):
@@ -89,16 +89,6 @@ class ApiConnection(object):
         :param token_type: bearer or token
         :type token_type: str, required
         """
-        def get_existing_token():
-            current_token=""
-            try:
-                if token is None:
-                    current_token=""
-                else:
-                    current_token=token
-            except:
-                pass
-            return current_token
         if token!="" and token_type=="Bearer":
             self.token_type=token_type
             self.token=token
@@ -109,6 +99,7 @@ class ApiConnection(object):
             print("Token setting token ", token, token_type)
         else:
             print("Not setting token ",token, token_type)
+
     def get_current_token(self):
         return self.token
 
