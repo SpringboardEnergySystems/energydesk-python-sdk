@@ -46,6 +46,7 @@ class ApiConnection(object):
                                 auth=HTTPBasicAuth(username, password))
         if response is None:
             return False
+        print(response.json())
         tok=response.json()['token']
         print(response.json()['token'])
         self.set_token(tok, "Token")
