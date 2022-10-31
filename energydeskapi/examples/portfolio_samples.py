@@ -15,6 +15,8 @@ logging.basicConfig(level=logging.INFO,
 def query_trading_books(api_conn):
     df=TradingBooksApi.get_tradingbooks_df(api_conn)
     print(df)
+    data=TradingBooksApi.get_tradingbook_by_pk(api_conn, 4)
+    print(data)
 
 if __name__ == '__main__':
     api_conn=init_api()
