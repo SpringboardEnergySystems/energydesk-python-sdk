@@ -71,7 +71,7 @@ class ApiConnection(object):
             "grant_type": "convert_token",
             "client_id": "client_id",
             "client_secret": "client_secret",
-            "backend": "google-oauth2",
+            "backend": "microsoft-oauth2",
             "token": token}
         result = requests.post(server_url, json=payload)
         if result.status_code != 200:
