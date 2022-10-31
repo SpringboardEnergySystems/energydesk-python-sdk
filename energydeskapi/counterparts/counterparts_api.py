@@ -18,9 +18,8 @@ class CounterPartsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching treasury bank list")
+        logger.info("Fetching counterparts list")
         json_res = api_connection.exec_get_url('/api/counterparts/counterparts/')
-        print(json_res)
         if json_res is None:
             return None
         return json_res
@@ -32,9 +31,8 @@ class CounterPartsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching treasury bank list")
+        logger.info("Fetching counterparts list")
         json_res = api_connection.exec_get_url('/api/counterparts/counterparts/')
-        print(json_res)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
