@@ -102,7 +102,7 @@ class TradingBooksApi:
         df = pd.DataFrame(data=tmp)
         return df
     @staticmethod
-    def load_tradingbook_by_pk(api_connection, pk):
+    def get_tradingbook_by_pk(api_connection, pk):
         """Loads tradingbooks from key
 
         :param api_connection: class with API token for use with API
@@ -111,7 +111,7 @@ class TradingBooksApi:
         :type pk: str, required
         """
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/' + str(pk) + "/")
         for r in json_res:
             if r['pk']==pk:
                 return r
