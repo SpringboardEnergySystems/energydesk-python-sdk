@@ -40,6 +40,13 @@ def manage_market_products(api_conn, ticker):
         print("Need to create product")
         res=ProductsApi.generate_market_product_from_ticker(api_conn,"Nasdaq OMX", ticker)
         print(res)
+
+def get_market_types(api_conn):
+
+    res=MarketsApi.get_instrument_types(api_conn)
+    print(res)
+    res=MarketsApi.get_commodity_types(api_conn)
+    print(res)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_spot_prices(api_conn)
+    get_market_types(api_conn)

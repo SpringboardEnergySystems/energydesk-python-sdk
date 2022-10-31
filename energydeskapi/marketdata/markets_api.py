@@ -85,6 +85,35 @@ class MarketsApi:
             return None
         return json_res
 
+
+    @staticmethod
+    def get_commodity_types(api_connection, parameters={}):
+        """Fetches all commodity types
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/commoditytypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+
+    @staticmethod
+    def get_instrument_types(api_connection, parameters={}):
+        """Fetches all commodity types
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/instrumenttypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+
     @staticmethod
     def get_blocksize_category_url(api_connection, blocksize_category_enum):
         """Fetches blocksize category from url
