@@ -58,7 +58,7 @@ class ApiConnection(object):
         print(self.get_authorization_header())
         return True, tok
 
-    def validate_token(self, token):
+    def validate_token(self, token, backend="google-oauth2"):
         """Validates a token
 
         :param token: API token
@@ -71,7 +71,7 @@ class ApiConnection(object):
             "grant_type": "convert_token",
             "client_id": "client_id",
             "client_secret": "client_secret",
-            "backend": "microsoft-oauth2",
+            "backend":backend,
             "token": token}
         result = requests.post(server_url, json=payload)
         if result.status_code != 200:
