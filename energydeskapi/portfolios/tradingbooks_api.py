@@ -46,6 +46,19 @@ class TradingBooksApi:
         if json_res is None:
             return None
         return json_res
+    @staticmethod
+
+    def get_tradingbooks_embedded(api_connection, parameters={}):
+        """Fetches all tradingbooks
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching trading books")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_tradingbooks_df(api_connection, parameters={}):
@@ -55,7 +68,7 @@ class TradingBooksApi:
         :type api_connection: str, required
         """
         parameters['page_size']=1000
-        json_res=TradingBooksApi.get_tradingbooks(api_connection, parameters)
+        json_res=TradingBooksApi.get_tradingbooks_embedded(api_connection, parameters)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res['results'])
