@@ -124,11 +124,8 @@ class TradingBooksApi:
         :type pk: str, required
         """
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/' + str(pk) + "/")
-        for r in json_res:
-            if r['pk']==pk:
-                return r
-        return None
+        dict = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/' + str(pk) + "/")
+        return dict
 
     @staticmethod
     def get_tradingbook_url(api_connection, tradingbook_pk):
