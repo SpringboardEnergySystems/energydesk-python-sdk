@@ -158,6 +158,7 @@ class TradingBooksApi:
             logger.error("Problems saving tradingbook "  + tradingbook.description)
         else:
             logger.info("Tradingbook updated " + tradingbook.description)
+            
     @staticmethod
     def register_tradingbooks(api_connection, tradingbooks):
         """Registers tradingbooks
