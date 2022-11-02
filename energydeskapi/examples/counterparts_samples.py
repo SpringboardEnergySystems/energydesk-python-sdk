@@ -18,9 +18,13 @@ def fetch_counterparts_df(api_conn):
     df = CounterPartsApi.get_counterparts_df(api_conn)
     print(df)
 
+def register_counterparts(api_conn):
+    payload = {'name': 'City of Oslo'}
+    CounterPartsApi.upsert_counterparts(api_conn, payload)
 
 if __name__ == '__main__':
 
     api_conn=init_api()
-    fetch_counterparts(api_conn)
+    #fetch_counterparts(api_conn)
+    register_counterparts(api_conn)
     #fetch_counterparts_df(api_conn)
