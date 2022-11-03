@@ -130,6 +130,18 @@ class CustomersApi:
         return json_res
 
     @staticmethod
+    def get_companies_embedded(api_connection, parameters={}):
+        """Fetches all companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=api_connection.exec_get_url('/api/customers/companies/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_company_roles_df(api_connection):
         """Fetches all company roles in system with basic key+ name infmation
 
