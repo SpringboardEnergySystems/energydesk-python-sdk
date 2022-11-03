@@ -43,7 +43,7 @@ class CustomersApi:
 
 
     @staticmethod
-    def update_company(api_connection, company):
+    def upsert_company(api_connection, company):
         """Updates companies
 
         :param api_connection: class with API token for use with API
@@ -52,7 +52,10 @@ class CustomersApi:
         :type company: str, required
         """
         payload = company.get_dict()
-        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
+        if company.pk==0:
+            success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/companies/', payload)
+        else:
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
         if json_res is None:
             logger.error("Problems updating company " + company.name)
         else:
