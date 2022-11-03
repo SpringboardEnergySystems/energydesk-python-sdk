@@ -57,9 +57,9 @@ class CustomersApi:
         else:
             success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/companies/' + str(company.pk) + "/", payload)
         if json_res is None:
-            logger.error("Problems updating company " + company.name)
+            logger.error("Problems creating/updating company " + company.name)
         else:
-            logger.info("Company updated " + company.name)
+            logger.info("Company created/updated " + company.name)
 
     @staticmethod
     def create_companies(api_connection, companies):
