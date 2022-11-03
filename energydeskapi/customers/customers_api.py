@@ -93,6 +93,17 @@ class CustomersApi:
         return json_res["Registration"]
 
     @staticmethod
+    def get_company_types(api_connection):
+        """Fetches all company types in system with basic key+ name infmation
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching company types")
+        json_res=api_connection.exec_get_url('/api/customers/companytypes/')
+        return json_res
+
+    @staticmethod
     def get_company_types_df(api_connection):
         """Fetches all company types in system with basic key+ name infmation
 
