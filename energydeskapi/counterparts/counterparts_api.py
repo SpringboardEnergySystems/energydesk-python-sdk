@@ -38,4 +38,17 @@ class CounterPartsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
+    @staticmethod
+    def upsert_counterparts(api_connection, payload):
+        """Registers counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Upserting counterparts")
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterparts/', payload)
+        if success:
+            return returned_data
+        return None
+
 

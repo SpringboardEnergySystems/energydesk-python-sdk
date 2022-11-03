@@ -7,39 +7,32 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 #  Change
 
-
 class TradingBook():
     def __init__(self):
-        self.pk = 0
-        self.description = None
-        self.asset = None
-        self.manager = None
-        self.contract_types = []
-        self.commodity_types = []
-        self.traders = []
-
+        self.pk=0
+        self.description=None
+        self.asset=None
+        self.manager=None
+        self.contract_types=[]
+        self.commodity_types=[]
+        self.traders=[]
     def get_dict(self):
         dict = {}
-        dict['pk'] = self.pk
-        if self.description is not None:
-            dict['description'] = self.description
-        if self.asset is not None:
-            dict['asset'] = self.asset
-        if self.manager is not None:
-            dict['manager'] = self.manager
-        if self.contract_types is not None:
-            dict['contract_types'] = self.contract_types
-        if self.commodity_types is not None:
-            dict['commodity_types'] = self.commodity_types
-        if self.traders is not None:
-            dict['traders'] = self.traders
+        dict['pk']=self.pk
+        if self.description is not None: dict['description'] = self.description
+        if self.asset is not None: dict['asset'] = self.asset
+        if self.manager is not None: dict['manager'] = self.manager
+        if self.contract_types is not None: dict['contract_types'] = self.contract_types
+        if self.commodity_types is not None: dict['commodity_types'] = self.commodity_types
+        if self.traders is not None: dict['traders'] = self.traders
         return dict
-
 
 class TradingBooksApi:
     """Class for tradingbooks
 
       """
+
+
 
     @staticmethod
     def get_tradingbooks(api_connection, parameters={}):
@@ -49,13 +42,12 @@ class TradingBooksApi:
         :type api_connection: str, required
         """
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url(
-            '/api/portfoliomanager/tradingbooks/', parameters)
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/', parameters)
         if json_res is None:
             return None
         return json_res
-
     @staticmethod
+
     def get_tradingbooks_embedded(api_connection, parameters={}):
         """Fetches all tradingbooks
 
@@ -63,8 +55,7 @@ class TradingBooksApi:
         :type api_connection: str, required
         """
         logger.info("Fetching trading books")
-        json_res = api_connection.exec_get_url(
-            '/api/portfoliomanager/tradingbooks/embedded/', parameters)
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
@@ -76,16 +67,15 @@ class TradingBooksApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        parameters['page_size'] = 1000
-        json_res = TradingBooksApi.get_tradingbooks_embedded(
-            api_connection, parameters)
+        parameters['page_size']=1000
+        json_res=TradingBooksApi.get_tradingbooks_embedded(api_connection, parameters)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res['results'])
         return df
 
     @staticmethod
-    def get_tradingbooks_by_commodityfilter(api_connection, commodities, parameters={}):
+    def get_tradingbooks_by_commodityfilter(api_connection, commodities,parameters={}):
         """Fetches tradingbooks from commodity filter
 
         :param api_connection: class with API token for use with API
@@ -94,15 +84,15 @@ class TradingBooksApi:
         :type commodities: str, required
         """
         def commodities_as_str():
-            strval = ""
+            strval=""
             for c in commodities:
                 com = c if isinstance(c, int) else c.value
-                strval = strval + str(com) + ","
-            if len(strval) > 1:
-                strval = strval[:-1]  # Get rid of the last ,
+                strval=strval + str(com) + ","
+            if len(strval)>1:
+                strval=strval[:-1]  #Get rid of the last ,
             return strval
 
-        parameters["commodity_types"] = commodities_as_str()
+        parameters["commodity_types"]=commodities_as_str()
         res = TradingBooksApi.get_tradingbooks(api_connection, parameters)
         return res
 
@@ -115,17 +105,15 @@ class TradingBooksApi:
         :param commodities: all commodities
         :type commodities: str, required
         """
-        parameters['page_size'] = 100
-        json_res = TradingBooksApi.get_tradingbooks_by_commodityfilter(
-            api_connection, commodities, parameters)
+        parameters['page_size']=100
+        json_res = TradingBooksApi.get_tradingbooks_by_commodityfilter(api_connection,commodities, parameters)
         if json_res is None:
             return None
-        tmp = json_res['results']
-        if isinstance(tmp, str):
-            tmp = json.loads(tmp)
+        tmp=json_res['results']
+        if isinstance(tmp,str):
+            tmp=json.loads(tmp)
         df = pd.DataFrame(data=tmp)
         return df
-
     @staticmethod
     def get_tradingbook_by_pk(api_connection, pk):
         """Loads tradingbooks from key
@@ -136,8 +124,7 @@ class TradingBooksApi:
         :type pk: str, required
         """
         logger.info("Fetching trading books")
-        dict = api_connection.exec_get_url(
-            '/api/portfoliomanager/tradingbooks/' + str(pk) + "/")
+        dict = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/' + str(pk) + "/")
         return dict
 
     @staticmethod
@@ -151,6 +138,7 @@ class TradingBooksApi:
         """
         return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(tradingbook_pk) + "/"
 
+
     @staticmethod
     def upsert_tradingbook(api_connection, tradingbook):
         """Insefrts or updates a tradingbook
@@ -161,18 +149,15 @@ class TradingBooksApi:
         :type tradingbooks: str, required
         """
         logger.info("Updating a tradingbook")
-        payload = tradingbook.get_dict()
-        if tradingbook.pk > 0:
-            success, json_res, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/tradingbooks/', payload)
+        payload=tradingbook.get_dict()
+        if tradingbook.pk>0:
+            success, json_res, status_code, error_msg=api_connection.exec_patch_url('/api/portfoliomanager/tradingbooks/', payload)
         else:
-            success, json_res, status_code, error_msg = api_connection.exec_post_url(
-                '/api/portfoliomanager/tradingbooks/', payload)
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
         if json_res is None:
-            logger.error("Problems saving tradingbook " +
-                         tradingbook.description)
+            logger.error("Problems saving tradingbook "  + str(tradingbook.description))
         else:
-            logger.info("Tradingbook updated " + tradingbook.description)
+            logger.info("Tradingbook updated " + str(tradingbook.description))
 
     @staticmethod
     def register_tradingbooks(api_connection, tradingbooks):
@@ -183,12 +168,11 @@ class TradingBooksApi:
         :param tradingbooks: list of tradingbooks
         :type tradingbooks: str, required
         """
-        logger.info("Registering " + str(len(tradingbooks)) + " tadingbooks")
+        logger.info("Registering " + str(len(tradingbooks) )+ " tadingbooks")
         for book in tradingbooks:
-            payload = book.get_dict()
-            success, json_res, status_code, error_msg = api_connection.exec_post_url(
-                '/api/portfoliomanager/tradingbooks/', payload)
+            payload=book.get_dict()
+            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
             if json_res is None:
-                logger.error("Problems registering asset " + book.description)
+                logger.error("Problems registering asset "  + book.description)
             else:
                 logger.info("Asset registered " + book.description)
