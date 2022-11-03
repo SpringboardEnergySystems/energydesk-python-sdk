@@ -155,10 +155,10 @@ class TradingBooksApi:
         else:
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
         if json_res is None:
-            logger.error("Problems saving tradingbook "  + tradingbook.description)
+            logger.error("Problems saving tradingbook "  + str(tradingbook.description))
         else:
-            logger.info("Tradingbook updated " + tradingbook.description)
-            
+            logger.info("Tradingbook updated " + str(tradingbook.description))
+
     @staticmethod
     def register_tradingbooks(api_connection, tradingbooks):
         """Registers tradingbooks
