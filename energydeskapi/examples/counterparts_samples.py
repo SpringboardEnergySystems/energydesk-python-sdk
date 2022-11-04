@@ -25,6 +25,5 @@ def register_counterparts(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #fetch_counterparts(api_conn)
     register_counterparts(api_conn)
-    #fetch_counterparts_df(api_conn)
+    fetch_counterparts_df(api_conn)

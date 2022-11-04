@@ -2,15 +2,42 @@ import requests
 import json
 import logging
 import pandas as pd
-from energydeskapi.customers.customers_api import CustomersApi
+
 
 logger = logging.getLogger(__name__)
+
+class CounterPartRating:
+    def __init__(self, name, rating_date, record):
+        self.name=name
+        self.record=record
+        self.rating_date=rating_date
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['company']=self.name
+        dict['rating_date'] = self.rating_date
+        dict['period_3M'] = self.record['3M']
+        dict['period_1Y'] = self.record['1Y']
+        dict['period_2Y'] = self.record['2Y']
+        dict['period_3Y'] = self.record['3Y']
+        dict['period_5Y'] = self.record['5Y']
+        dict['period_7Y'] = self.record['7Y']
+        dict['period_10Y'] = self.record['10Y']
+
+
+
 #  Change
 class CounterPartsApi:
     """Class for counterparts
 
     """
 
+    def upsert_credit_rating(api_connection, credit_rating):
+        payload=credit_rating.get_dict()
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/uploadratings/', payload)
+        if success:
+            return returned_data
+        return None
     @staticmethod
     def get_counterparts(api_connection):
         """Fetches all counterparts
