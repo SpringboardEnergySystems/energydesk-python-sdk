@@ -33,7 +33,7 @@ class CounterPartsApi:
     """
 
     def upsert_credit_rating(api_connection, credit_rating):
-        payload=credit_rating.get_dict()
+        payload=credit_rating.get_dict(api_connection)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/uploadratings/', payload)
         if success:
             return returned_data
