@@ -23,7 +23,7 @@ class CounterPartRating:
         dict['period_5Y'] = self.record['5Y']
         dict['period_7Y'] = self.record['7Y']
         dict['period_10Y'] = self.record['10Y']
-
+        return dict
 
 
 #  Change
