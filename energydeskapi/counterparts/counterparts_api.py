@@ -25,6 +25,23 @@ class CounterPartRating:
         dict['period_10Y'] = self.record['10Y']
         return dict
 
+def convert_to_dataframe(dict):
+    newdict=[]
+    for rec in dict:
+        newrec={'company':rec['company']}
+        newrec['rating_date']=rec['rating_date']
+        newrec['3M'] = rec['period_3M']
+        newrec['1Y'] = rec['period_1Y']
+        newrec['2Y'] = rec['period_2Y']
+        newrec['3Y'] = rec['period_3Y']
+        newrec['5Y'] = rec['period_5Y']
+        newrec['7Y'] = rec['period_7Y']
+        newrec['10Y'] = rec['period_10Y']
+        newdict.append(newrec)
+    df = pd.DataFrame.from_records(newdict)
+    df.index = df.rating_date
+    df.index = pd.to_datetime(df.index)
+    return df
 
 #  Change
 class CounterPartsApi:
@@ -32,16 +49,31 @@ class CounterPartsApi:
 
     """
 
+    @staticmethod
     def upsert_credit_rating(api_connection, credit_rating):
         payload=credit_rating.get_dict(api_connection)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/uploadratings/', payload)
         if success:
             return returned_data
         return None
+
+    @staticmethod
+    def get_credit_ratings(api_connection, parameters={}):
+        logger.info("Fetching ratings")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterparts/ratings/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
+    @staticmethod
+    def get_credit_ratings_df(api_connection, parameters={}):
+        json_res=CounterPartsApi.get_credit_ratings(api_connection, parameters)
+        if json_res is not None:
+            return convert_to_dataframe(json_res)
+        return None
+
     @staticmethod
     def get_counterparts(api_connection):
         """Fetches all counterparts
-
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
