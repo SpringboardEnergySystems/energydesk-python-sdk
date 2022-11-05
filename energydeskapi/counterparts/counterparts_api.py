@@ -72,26 +72,26 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_counterparts(api_connection):
+    def get_counterparts(api_connection, parameters={}):
         """Fetches all counterparts
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching counterparts list")
-        json_res = api_connection.exec_get_url('/api/counterparts/counterparts/')
+        json_res = api_connection.exec_get_url('/api/counterparts/counterparts/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_counterparts_df(api_connection):
+    def get_counterparts_df(api_connection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching counterparts list")
-        json_res = api_connection.exec_get_url('/api/counterparts/counterparts/')
+        json_res = api_connection.exec_get_url('/api/counterparts/counterparts/', parameters)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
