@@ -9,6 +9,27 @@ class CurveApi:
 
     """
 
+    @staticmethod
+    def get_curve_models(api_connection):
+        """Lists the types of commodities
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching curve models")
+        json_res = api_connection.exec_get_url('/api/curvemanager/forwardcurvemodels/')
+        return json_res
+    @staticmethod
+    def get_curve_models_df(api_connection):
+        """Lists the types of commodities
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching curve models")
+        json_res = api_connection.exec_get_url('/api/curvemanager/forwardcurvemodels/')
+        df = pd.DataFrame(data=json_res)
+        return df
 
     @staticmethod
     def generate_forward_curve(api_connection ,period_from, period_until, price_area, currency_code, curve_model_key,
