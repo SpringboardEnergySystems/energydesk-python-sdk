@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-def get_curves(api_conn):
+def generate_curve(api_conn):
     fromd="2022-10-01"
     untild = "2024-10-01"
     def process_dframe(df, name):
@@ -32,7 +32,9 @@ def get_curves(api_conn):
         return df.rename({'price': name}, axis=1),df2.rename({'price': name}, axis=1)
 
 
-    jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO1", "NOK", FwdCurveInternalEnum.FB_PROPHET.value)
+    jsonres=CurveApi.generate_forward_curve_df(api_conn,fromd, untild, "NO1", "NOK",
+                                            FwdCurveInternalEnum.CUBIC_SPLINE.value)
+    print(jsonres)
 
     # df = pd.DataFrame(data=eval(jsonres))
     # daily, monthly=process_dframe(df, "NO1")
@@ -46,4 +48,4 @@ def get_curves(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    get_curves(api_conn)
+    generate_curve(api_conn)
