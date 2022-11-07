@@ -32,10 +32,14 @@ def generate_curve(api_conn):
         return df.rename({'price': name}, axis=1),df2.rename({'price': name}, axis=1)
 
 
-    jsonres=CurveApi.generate_forward_curve_df(api_conn,fromd, untild, "NO1", "NOK",
+    success, df, status_code, error_msg =CurveApi.generate_forward_curve_df(api_conn,fromd, untild, "NO1", "NOK",
                                             FwdCurveInternalEnum.CUBIC_SPLINE.value)
-    print(jsonres)
 
+    df.index=df.date
+    print(df)
+    df['index'] = pd.to_datetime(df.index)
+    df['monthly'] = df.groupby(df['index'].dt.strftime('%Y%m')).price.transform('mean')
+    print(df)
     # df = pd.DataFrame(data=eval(jsonres))
     # daily, monthly=process_dframe(df, "NO1")
     # jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO5", "NOK")
