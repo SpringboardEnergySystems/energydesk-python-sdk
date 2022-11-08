@@ -51,6 +51,11 @@ class CounterPartsApi:
 
     @staticmethod
     def upsert_credit_rating(api_connection, credit_rating):
+        """Creates/Updates credit ratings for counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         payload=credit_rating.get_dict(api_connection)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/uploadratings/', payload)
         if success:
@@ -59,6 +64,11 @@ class CounterPartsApi:
 
     @staticmethod
     def get_credit_ratings(api_connection, parameters={}):
+        """Fetches credit ratings for counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         logger.info("Fetching ratings")
         json_res = api_connection.exec_get_url('/api/counterparts/counterparts/ratings/', parameters)
         if json_res is not None:
@@ -66,6 +76,11 @@ class CounterPartsApi:
         return None
     @staticmethod
     def get_credit_ratings_df(api_connection, parameters={}):
+        """Fetches credit ratings for counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
         json_res=CounterPartsApi.get_credit_ratings(api_connection, parameters)
         if json_res is not None:
             return convert_to_dataframe(json_res)
@@ -74,6 +89,7 @@ class CounterPartsApi:
     @staticmethod
     def get_counterparts(api_connection, parameters={}):
         """Fetches all counterparts
+
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
