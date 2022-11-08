@@ -58,3 +58,47 @@ class LemsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
+    @staticmethod
+    def query_active_orders(api_connection, ticker):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query orders")
+        json_res=api_connection.exec_get_url('/api/lems/liveorders/?ticker=' + ticker)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
+    def query_own_orders(api_connection, ticker):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query own orders")
+        json_res=api_connection.exec_get_url('/api/lems/myorders/?ticker=' + ticker)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+    
+    @staticmethod
+    def query_own_trades(api_connection, ticker):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query own trades")
+        json_res=api_connection.exec_get_url('/api/lems/mytrades/?ticker=' + ticker)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
