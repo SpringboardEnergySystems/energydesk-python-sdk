@@ -23,11 +23,15 @@ def get_ticker_data(api_conn):
     LemsApi.add_order(api_conn, ticker, 193, 7, "SELL")
     
     df=LemsApi.query_active_orders(api_conn, ticker)
+    order_id = df["order_id"].values[0]
     print(df)
     df=LemsApi.query_own_orders(api_conn, ticker)
+    
     print(df)
-    df=LemsApi.query_own_trades(api_conn, ticker)
+    df=LemsApi.remove_order(api_conn, order_id)
     print(df)
+    
+
 if __name__ == '__main__':
 
     api_conn=init_api()

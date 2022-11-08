@@ -58,6 +58,22 @@ class LemsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
+
+    @staticmethod
+    def remove_order(api_connection, order_id):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        payload={
+            "order_id":order_id,
+        }
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/removeorder/', payload)
+
+        return success
+
     @staticmethod
     def query_active_orders(api_connection, ticker):
         """Fetches all counterparts and displays in a dataframe
