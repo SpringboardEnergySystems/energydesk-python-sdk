@@ -60,13 +60,14 @@ class LemsApi:
 
 
     @staticmethod
-    def remove_order(api_connection, order_id):
+    def remove_order(api_connection, ticker, order_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         payload={
+            "ticker":ticker,
             "order_id":order_id,
         }
 
