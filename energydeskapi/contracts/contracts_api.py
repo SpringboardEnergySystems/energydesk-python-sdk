@@ -122,7 +122,6 @@ class Contract:
         return dict
 class ContractsApi:
     """Class for contracts in api
-
     """
 
 
@@ -254,6 +253,18 @@ class ContractsApi:
         """
         logger.info("Loading contract with pk " + str(contract_pk))
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/' + str(contract_pk) + "/")
+        return json_res
+
+    @staticmethod
+    def get_contract_tags(api_connection):
+        """Fetches contract tags
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+
+        """
+
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-tags/')
         return json_res
 
     @staticmethod
