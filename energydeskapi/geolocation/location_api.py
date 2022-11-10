@@ -55,7 +55,7 @@ class LocationApi:
 
 
     @staticmethod
-    def generate_default_map(api_connection, map_type, include_assets, zones=[], country=None):
+    def generate_default_map(api_connection, map_type, include_assets, zones=[], country="NOR"):
         """Fetches main area of company
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

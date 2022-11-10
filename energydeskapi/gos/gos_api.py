@@ -235,6 +235,7 @@ class GosApi:
             "assets_in_area":asset_url_list
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
+        print(success, json_res, status_code, error_msg )
         return json_res
     @staticmethod
     def get_source_data(api_connection,parameters={}):
