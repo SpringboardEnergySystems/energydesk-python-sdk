@@ -261,9 +261,7 @@ class ContractsApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-
         """
-
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-tags/')
         return json_res
 
