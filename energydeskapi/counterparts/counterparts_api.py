@@ -114,6 +114,20 @@ class CounterPartsApi:
         return df
 
     @staticmethod
+    def query_counterpart_exposure(api_connection,commodity_type_pk):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterparts list")
+        payload={'commodity_type_pk':commodity_type_pk}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpart-exposure/', payload)
+        if success:
+            return returned_data
+        return None
+
+    @staticmethod
     def upsert_counterparts(api_connection, payload):
         """Registers counterparts
 

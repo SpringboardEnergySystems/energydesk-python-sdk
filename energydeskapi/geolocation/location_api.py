@@ -70,6 +70,7 @@ class LocationApi:
         }
 
         success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/locations/generate-default-map/', payload)
+        print(success, json_res, status_code, error_msg)
         if json_res is not None:
             return json_res
         return None
