@@ -55,6 +55,13 @@ class GosApi:
     @staticmethod
     def lookup_go_contract_pk(api_connection,
                           contract_pk):
+        """Fetches GoO contracts from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_pk: personal key of contract
+        :type contract_pk: str, required
+        """
         json_res=api_connection.exec_get_url('/api/gos/contractlookup?contract_pk=' + str(contract_pk))
         if json_res is not None:
             logger.info("Looking up main contract " + str(contract_pk) + " resulting in GO " + str(json_res[0]['pk']))
