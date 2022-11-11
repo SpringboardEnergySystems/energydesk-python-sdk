@@ -150,6 +150,13 @@ class ContractsApi:
     @staticmethod
     def upsert_contract_from_dict(api_connection,
                         dict):
+        """Registers contracts from dictionary
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param dict: dictionary
+        :type dict: str, required
+        """
         if dict['pk'] > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/portfoliomanager/contracts/' + str(dict['pk']) + "/", dict)
