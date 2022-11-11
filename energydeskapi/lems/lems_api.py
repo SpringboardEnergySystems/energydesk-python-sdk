@@ -91,7 +91,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def query_own_orders(api_connection, ticker):
+    def query_own_orders(api_connection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -99,14 +99,15 @@ class LemsApi:
         """
 
         logger.info("Query own orders")
-        json_res=api_connection.exec_get_url('/api/lems/myorders/?ticker=' + ticker)
+        url='/api/lems/myorders/' if ticker is None else '/api/lems/myorders/?ticker=' + ticker
+        json_res=api_connection.exec_get_url(url)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
         return df
     
     @staticmethod
-    def query_own_trades(api_connection, ticker):
+    def query_own_trades(api_connection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -114,7 +115,8 @@ class LemsApi:
         """
 
         logger.info("Query own trades")
-        json_res=api_connection.exec_get_url('/api/lems/mytrades/?ticker=' + ticker)
+        url = '/api/lems/mytrades/' if ticker is None else '/api/lems/mytrades/?ticker=' + ticker
+        json_res=api_connection.exec_get_url(url)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
