@@ -2,6 +2,7 @@ import requests
 import json
 import logging
 import pandas as pd
+import json
 from energydeskapi.sdk.common_utils import parse_enum_type
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class LocalArea:
         dict = {}
         dict['pk'] = self.pk
         if self.title is not None: dict['title'] = self.title
-        if self.geom is not None: dict['geom'] = self.geom
+        if self.geom is not None: dict['geom'] = json.dumps(self.geom)
         if self.location_type is not None: dict['location_type'] = LocationApi.get_location_type_url(api_conn,parse_enum_type(self.location_type))
         if self.description is not None: dict['description'] = self.description
         if self.is_main_area is not None: dict['is_main_area'] = self.is_main_area
