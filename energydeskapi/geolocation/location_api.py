@@ -103,7 +103,7 @@ class LocationApi:
             else:
                 success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
             
-            #print(success, json_res, status_code, error_msg)
+            print(success, status_code, error_msg)
             return json_res
 
     @staticmethod
