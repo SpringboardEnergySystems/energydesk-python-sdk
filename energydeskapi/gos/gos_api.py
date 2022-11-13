@@ -241,6 +241,7 @@ class GosApi:
             "local_area": LocationApi.get_local_area_url(api_connection, local_area_pk),
             "assets_in_area":asset_url_list
         }
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
         print(success, json_res, status_code, error_msg )
         return json_res

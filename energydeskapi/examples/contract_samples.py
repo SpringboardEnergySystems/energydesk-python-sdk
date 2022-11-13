@@ -111,11 +111,11 @@ def query_paginated_contracts(api_conn):
     print(result)
     #ContractsApi.list_contracts(api_conn, parameters)
 def query_sources(api_conn):
-    x=GosApi.get_source_collections(api_conn)
-    #print(x)
-    x=GosApi.get_source_data(api_conn)
+    x=GosApi.get_source_collections_embedded(api_conn)
+    #x=json.loads(x)
+    #x=GosApi.get_source_data(api_conn)
 
-    print(json.dumps(json.loads(x), indent=2))
+    print(json.dumps(x, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    load_contracts(api_conn)
+    query_sources(api_conn)

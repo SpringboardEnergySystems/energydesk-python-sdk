@@ -53,11 +53,12 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     random.seed(datetime.now())
-    for j in range(5):
-        gen_orders(api_conn, "856b5c2782a5f001124a423a5418d2e7bba1304b", 65, "BUY")
-        gen_orders(api_conn, "74cdfbb1bbcf8856112655f79d41867435c6085d", 65, "BUY")
-        gen_orders(api_conn, "7e63ca032791c213ce0789e0bf64ab131e9658d0", 75, "SELL")
-        gen_orders(api_conn, "9b50f5e43795d9c6e45bb08fd2a4a24ebcff7e49", 75, "SELL")
-
-    gen_orders(api_conn, "a6e685b5062ad1fbfce422fe5d703bf3e52ba2cb", 66, "SELL")
+    if False:
+        for j in range(5):
+            gen_orders(api_conn, "856b5c2782a5f001124a423a5418d2e7bba1304b", 65, "BUY")
+            gen_orders(api_conn, "74cdfbb1bbcf8856112655f79d41867435c6085d", 65, "BUY")
+            gen_orders(api_conn, "7e63ca032791c213ce0789e0bf64ab131e9658d0", 75, "SELL")
+            gen_orders(api_conn, "9b50f5e43795d9c6e45bb08fd2a4a24ebcff7e49", 75, "SELL")
+    for j in range(3):
+        gen_orders(api_conn, "a6e685b5062ad1fbfce422fe5d703bf3e52ba2cb", 66, "SELL")
 
