@@ -9,14 +9,16 @@ class LemsApi:
 
     """
     @staticmethod
-    def get_ticker_data(api_connection, parameters={}):
+    def get_ticker_data(api_connection, area=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching counterparts list")
-        json_res = api_connection.exec_get_url('/api/lems/tickerdata', parameters)
+        if area==None:
+            area="NO1"
+        json_res = api_connection.exec_get_url('/api/lems/tickerdata?area=' + area)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)

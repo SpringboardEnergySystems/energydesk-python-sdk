@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     random.seed(datetime.now())
-    if False:
+    if True:
         for j in range(5):
             gen_orders(api_conn, "856b5c2782a5f001124a423a5418d2e7bba1304b", 65, "BUY")
             gen_orders(api_conn, "74cdfbb1bbcf8856112655f79d41867435c6085d", 65, "BUY")
