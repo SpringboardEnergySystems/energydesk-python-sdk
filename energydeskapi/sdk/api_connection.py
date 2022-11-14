@@ -26,6 +26,7 @@ class ApiConnection(object):
 
     def __init__(self, base_url, bearer_token=None):
         self.base_url = base_url
+        self.token_type=None
         if bearer_token is None:
             self.set_token("", "Token")
         else:
@@ -99,6 +100,8 @@ class ApiConnection(object):
             print("Token setting token ", token, token_type)
         else:
             print("Not setting token ",token, token_type)
+            self.token_type=None
+            self.token=token
 
     def get_current_token(self):
         return self.token
