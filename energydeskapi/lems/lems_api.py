@@ -91,8 +91,8 @@ class LemsApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/localmarkets/', payload)
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res)
-        return df
+        return json_res
+
 
     @staticmethod
     def upsert_localproduct(api_connection, description, operator_url):
