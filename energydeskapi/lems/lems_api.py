@@ -92,6 +92,7 @@ class LocalProduct:
         dict['currency'] =self.currency
         dict['traded_from'] =check_fix_date2str(self.traded_from)
         dict['traded_until'] =check_fix_date2str(self.traded_until)
+        return dict
 
 
 class LemsApi:
