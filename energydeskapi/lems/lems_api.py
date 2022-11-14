@@ -86,6 +86,13 @@ class LocalProduct:
         else:
             prod['otc'] = True
         dict['commodity_definition']=prod
+        dict['ticker'] =self.ticker
+        dict['local_market'] =self.local_market
+        dict['local_area'] =self.local_area
+        dict['currency'] =self.currency
+        dict['traded_from'] =check_fix_date2str(self.traded_from)
+        dict['traded_until'] =check_fix_date2str(self.traded_until)
+
 
 class LemsApi:
     """Class for price curves
