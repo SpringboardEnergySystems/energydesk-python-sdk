@@ -127,6 +127,7 @@ class LemsApi:
         """
         logger.info("Registering local product")
         payload=local_product.get_dict(api_connection)
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/localproducts/', payload)
         if json_res is None:
             return None
