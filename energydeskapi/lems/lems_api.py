@@ -85,7 +85,7 @@ class LemsApi:
         """
         logger.info("Registering local market")
         payload={
-            "descrption":description,
+            "description":description,
             "operator":operator_url
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/localmarkets/', payload)
