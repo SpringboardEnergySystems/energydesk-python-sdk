@@ -62,11 +62,15 @@ class Contract:
         self.commodity_delivery_until = None
         self.product_code=None
         self.otc_multi_delivery_periods=[]
-        self.tags=[]
+        self.contract_tags=[]
         self.area="SYS"
         self.base_peak = "BASE"
         self.spread = False
         self.otc = False
+
+
+    def add_contract_tag(self, tag):
+        self.contract_tags.append(tag)
 
     def add_otc_delivery_period(self, delivery_from, delivery_until):
         if isinstance(delivery_from, str):
@@ -115,6 +119,9 @@ class Contract:
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
+
+        if len(self.contract_tags)>0:
+            dict['contract_tags']=self.contract_tags
 
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
@@ -269,7 +276,7 @@ class ContractsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-tags/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttags/')
         return json_res
 
     @staticmethod
