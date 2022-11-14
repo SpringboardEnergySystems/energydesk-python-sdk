@@ -81,8 +81,9 @@ class LocalProduct:
         prod['base_peak'] = self.base_peak
         prod['spread'] = self.spread
         prod['otc'] = self.otc
-        if self.product_code is not None:
-            prod['product_code'] = self.product_code
+
+        if self.ticker is not None:
+            prod['product_code'] = self.ticker
         else:
             prod['otc'] = True
         dict['commodity_definition']=prod
