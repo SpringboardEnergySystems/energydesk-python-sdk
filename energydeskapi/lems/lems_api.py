@@ -77,7 +77,7 @@ class LemsApi:
 
     """
     @staticmethod
-    def upsert_localmarket(api_connection, description, operator_url):
+    def upsert_localmarket(api_connection, description, operator_url, areas):
         """Registers local marketplace
 
         :param api_connection: class with API token for use with API
@@ -86,7 +86,8 @@ class LemsApi:
         logger.info("Registering local market")
         payload={
             "description":description,
-            "operator":operator_url
+            "operator":operator_url,
+            "local_areas": areas
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/localmarkets/', payload)
         if json_res is None:
