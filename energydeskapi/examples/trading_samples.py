@@ -29,7 +29,7 @@ def gen_orders(api_conn, baseprice, ordertype, token=None):
         price = useprice + random.uniform(1.5, 5.5)
         price = round(price, 1)
         #print("Adding ", row['ticker'], price, qty)
-        LemsApi.add_order(api_conn, row['ticker'], price, qty, ordertype)
+        LemsApi.add_order(api_conn, row['ticker'], price,"EUR", qty, ordertype)
 def get_ticker_data(api_conn):
     df=LemsApi.get_traded_products(api_conn)
     #print(df)
