@@ -99,13 +99,14 @@ class LocationApi:
         :type api_connection: str, required
         """
         for loc in local_areas:
-            print("GOT DICT", loc.get_dict(api_connection))
+            #print("GOT DICT", loc.get_dict(api_connection))
             if int(loc.pk)==0:
                 success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/locations/localareas/', loc.get_dict(api_connection))
             else:
                 success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
-            
-            print(success, status_code, error_msg)
+            if success==False:
+                print(error_msg)
+            #print(success, status_code, error_msg)
             return json_res
 
     @staticmethod
