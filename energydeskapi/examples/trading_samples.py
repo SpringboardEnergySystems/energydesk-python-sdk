@@ -34,9 +34,9 @@ def get_ticker_data(api_conn):
     df=LemsApi.get_traded_products(api_conn)
     #print(df)
     ticker = df["ticker"].values[2]
-    LemsApi.add_order(api_conn, ticker, 100, 5, "BUY")
-    LemsApi.add_order(api_conn, ticker, 93, 2, "SELL")
-    LemsApi.add_order(api_conn, ticker, 193, 7, "SELL")
+    LemsApi.add_order(api_conn, ticker, 100,"EUR", 5, "BUY")
+    LemsApi.add_order(api_conn, ticker, 93,"EUR", 2, "SELL")
+    LemsApi.add_order(api_conn, ticker, 193,"EUR", 7, "SELL")
     
     df=LemsApi.query_active_orders(api_conn, ticker)
     order_id = df["order_id"].values[0]
@@ -60,6 +60,8 @@ if __name__ == '__main__':
             gen_orders(api_conn, "2ba840008a1276d953bb708c0ecd8bf8251355ac", 65, "BUY")
             gen_orders(api_conn, "03cace913e56d29abc02ec9ebec250913b9b7ee2", 75, "SELL")
             gen_orders(api_conn, "28bffd50de26b4c9649402ab4c6dc48ca1e391ac", 75, "SELL")
-    for j in range(3):
+    for j in range(1):
         gen_orders(api_conn,  73, "SELL", None)
+    df = LemsApi.query_active_orders(api_conn)
+    print(df)
 

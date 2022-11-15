@@ -6,6 +6,7 @@ import requests
 import json
 import logging
 import pandas as pd
+from datetime import datetime, timedelta
 from energydeskapi.sdk.common_utils import parse_enum_type
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -176,18 +177,22 @@ class LemsApi:
         return df
 
     @staticmethod
-    def add_order(api_connection, ticker, price, quantity, buy_or_sell):
+    def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, expiry=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
+        exp = (datetime.today() + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        expiry_str= check_fix_date2str(exp) if expiry is None else check_fix_date2str(expiry)
         payload={
             "order_id":"",
             "order_timestamp":"2022-01-23",
             "ticker":ticker,
             "price":price,
+            "currency": currency,
             "quantity": quantity,
+            "expiry": expiry_str,
             "buy_or_sell":buy_or_sell
         }
         logger.info("Enter orde")
