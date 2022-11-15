@@ -120,8 +120,8 @@ class Contract:
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
 
-        if len(self.contract_tags)>0:
-            dict['contract_tags']=self.contract_tags
+        #if len(self.contract_tags)>0:
+        dict['contract_tags']=self.contract_tags
 
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
