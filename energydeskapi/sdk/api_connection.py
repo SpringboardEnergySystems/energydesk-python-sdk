@@ -109,7 +109,7 @@ class ApiConnection(object):
     def get_authorization_header(self):
         """Returns the authorization header
         """
-        return {'Authorization':  self.token_type + ' ' + self.token}
+        return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
     def exec_post_url(self, trailing_url, payload, extra_headers={}):
         """Posts content from URL
