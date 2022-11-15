@@ -16,8 +16,9 @@ logging.basicConfig(level=logging.INFO,
 
 
 
-def gen_orders(api_conn, token, baseprice, ordertype):
-    api_conn.set_token(token, "Token")
+def gen_orders(api_conn, baseprice, ordertype, token=None):
+    if token is not None:
+        api_conn.set_token(token, "Token")
     df = LemsApi.get_traded_products(api_conn)
     for index, row in df.iterrows():
         if row['area']=="NO1" or row['area']=="NO2" or row['area']=="NO5":
@@ -53,12 +54,12 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     random.seed(datetime.now())
-    if True:
+    if False:
         for j in range(5):
             gen_orders(api_conn, "241a85c905e36c0316d3d58be9cae9d3d5bc7d5a", 65, "BUY")
             gen_orders(api_conn, "2ba840008a1276d953bb708c0ecd8bf8251355ac", 65, "BUY")
             gen_orders(api_conn, "03cace913e56d29abc02ec9ebec250913b9b7ee2", 75, "SELL")
             gen_orders(api_conn, "28bffd50de26b4c9649402ab4c6dc48ca1e391ac", 75, "SELL")
     for j in range(3):
-        gen_orders(api_conn, "23f9dc04336c4a1d62dcd4f37585c4e1d16d58ac", 66, "SELL")
+        gen_orders(api_conn,  73, "SELL", None)
 

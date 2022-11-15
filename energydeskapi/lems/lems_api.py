@@ -215,7 +215,7 @@ class LemsApi:
         return success
 
     @staticmethod
-    def query_active_orders(api_connection, ticker):
+    def query_active_orders(api_connection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -223,7 +223,8 @@ class LemsApi:
         """
 
         logger.info("Query orders")
-        json_res=api_connection.exec_get_url('/api/lems/liveorders/?ticker=' + ticker)
+        url = '/api/lems/liveorders/' if ticker is None else '/api/lems/liveorders/?ticker=' + ticker
+        json_res=api_connection.exec_get_url(url)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
