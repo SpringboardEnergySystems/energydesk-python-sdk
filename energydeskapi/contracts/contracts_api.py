@@ -130,7 +130,7 @@ class Contract:
                 print("Created tag", returned_data)
             else:
                 taglist.append(existing_tags[0])
-        dict['contract_tags']=self.contract_tags
+        dict['contract_tags']=taglist
 
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
