@@ -151,7 +151,7 @@ class ContractsApi:
             print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
         else:
-            print(json.dumps(dict, indent=2))
+            print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
