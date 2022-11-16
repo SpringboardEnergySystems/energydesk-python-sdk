@@ -121,6 +121,9 @@ class Contract:
                 self.marketplace_product) + "/"
 
         #if len(self.contract_tags)>0:
+        for c in self.contract_tags:
+            tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
+            print("Checking for existing tag ", c, tags)
         dict['contract_tags']=self.contract_tags
 
         if len(self.otc_multi_delivery_periods) > 0:
@@ -153,6 +156,26 @@ class ContractsApi:
         else:
             print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def upsert_contract_tag(api_connection,
+                          contract_tag, description=None, is_active=True):
+        """Registers contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contracts: contracts to be registered
+        :type contracts: str, required
+        """
+        logger.info("Registering contract tag")
+
+        payload={
+            'pk':0,
+            'tagname':contract_tag,
+            'description':contract_tag if description is None else description,
+            'is_active':is_active}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracttags/',payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
@@ -273,13 +296,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_tags(api_connection):
+    def get_contract_tags(api_connection, parameters={}):
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttags/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttags/', parameters)
         return json_res
 
     @staticmethod
