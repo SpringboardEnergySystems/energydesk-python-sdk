@@ -120,9 +120,16 @@ class Contract:
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
 
-        if len(self.contract_tags)>0:
-            dict['contract_tags']=self.contract_tags
-
+        taglist=[]
+        for c in self.contract_tags:
+            existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
+            if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
+                success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
+                if success:
+                    taglist.append(returned_data)
+            else:
+                taglist.append(existing_tags[0])
+        dict['contract_tags']=taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
 
@@ -148,10 +155,31 @@ class ContractsApi:
         #json_records.append(contract.get_dict(api_connection))
 
         if contract.pk>0:
-            print(json.dumps(contract.get_dict(api_connection), indent=2))
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
         else:
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def upsert_contract_tag(api_connection,
+                          contract_tag, description=None, is_active=True):
+        """Registers contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contracts: contracts to be registered
+        :type contracts: str, required
+        """
+        #logger.info("Registering contract tag")
+
+        payload={
+            'pk':0,
+            'tagname':contract_tag,
+            'description':contract_tag if description is None else description,
+            'is_active':is_active}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracttags/',payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
@@ -165,9 +193,11 @@ class ContractsApi:
         :type dict: str, required
         """
         if dict['pk'] > 0:
+
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/portfoliomanager/contracts/' + str(dict['pk']) + "/", dict)
         else:
+
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/portfoliomanager/contracts/', dict)
         return success, returned_data, status_code, error_msg
@@ -270,13 +300,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_tags(api_connection):
+    def get_contract_tags(api_connection, parameters={}):
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttags/')
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttags/', parameters)
         return json_res
 
     @staticmethod

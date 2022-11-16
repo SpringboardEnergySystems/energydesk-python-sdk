@@ -6,6 +6,7 @@ import requests
 import json
 import logging
 import pandas as pd
+from datetime import datetime, timedelta
 from energydeskapi.sdk.common_utils import parse_enum_type
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -176,18 +177,22 @@ class LemsApi:
         return df
 
     @staticmethod
-    def add_order(api_connection, ticker, price, quantity, buy_or_sell):
+    def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, expiry=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
+        exp = (datetime.today() + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        expiry_str= check_fix_date2str(exp) if expiry is None else check_fix_date2str(expiry)
         payload={
             "order_id":"",
             "order_timestamp":"2022-01-23",
             "ticker":ticker,
             "price":price,
+            "currency": currency,
             "quantity": quantity,
+            "expiry": expiry_str,
             "buy_or_sell":buy_or_sell
         }
         logger.info("Enter orde")
@@ -215,7 +220,7 @@ class LemsApi:
         return success
 
     @staticmethod
-    def query_active_orders(api_connection, ticker):
+    def query_active_orders(api_connection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -223,7 +228,8 @@ class LemsApi:
         """
 
         logger.info("Query orders")
-        json_res=api_connection.exec_get_url('/api/lems/liveorders/?ticker=' + ticker)
+        url = '/api/lems/liveorders/' if ticker is None else '/api/lems/liveorders/?ticker=' + ticker
+        json_res=api_connection.exec_get_url(url)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
