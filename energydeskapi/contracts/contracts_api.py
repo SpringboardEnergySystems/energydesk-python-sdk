@@ -126,7 +126,7 @@ class Contract:
             existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
             print("Checking for existing tag ", c, existing_tags)
             if len(existing_tags)==0:
-                success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(c)
+                success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
                 print("Created tag", returned_data)
             else:
                 taglist.append(existing_tags[0])
