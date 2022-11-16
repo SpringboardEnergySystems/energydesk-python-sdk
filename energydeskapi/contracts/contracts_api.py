@@ -9,14 +9,11 @@ from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from moneyed.l10n import format_money
-from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
+from energydeskapi.sdk.common_utils import check_fix_date2str
 from datetime import datetime
 logger = logging.getLogger(__name__)
 #  Change
-def check_fix_date2str(dt):
-    if isinstance(dt, str):
-        return dt
-    return convert_datime_to_utcstr(dt)
+
 class Contract:
     """ Class for contracts
 

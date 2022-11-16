@@ -3,8 +3,14 @@ import logging
 from os.path import join, dirname
 from dotenv import load_dotenv
 import pytz, environ
+from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
+
+def check_fix_date2str(dt):
+    if isinstance(dt, str):
+        return dt
+    return convert_datime_to_utcstr(dt)
 
 def load_env(current_dir):
     """ Loads environment file
