@@ -155,10 +155,10 @@ class ContractsApi:
         #json_records.append(contract.get_dict(api_connection))
 
         if contract.pk>0:
-            print(json.dumps(contract.get_dict(api_connection), indent=2))
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
         else:
-            print(json.dumps(contract.get_dict(api_connection), indent=2))
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
@@ -172,7 +172,7 @@ class ContractsApi:
         :param contracts: contracts to be registered
         :type contracts: str, required
         """
-        logger.info("Registering contract tag")
+        #logger.info("Registering contract tag")
 
         payload={
             'pk':0,
@@ -215,7 +215,7 @@ class ContractsApi:
         json_list=[]
         for c in contract_list:
             contract_dict=c.get_dict(api_connection)
-            print(json.dumps(contract_dict, indent=2))
+            #print(json.dumps(contract_dict, indent=2))
             json_list.append(contract_dict)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinsert/',json_list)
         return success, returned_data, status_code, error_msg
