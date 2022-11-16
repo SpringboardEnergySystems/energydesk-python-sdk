@@ -165,6 +165,7 @@ class ContractsApi:
         :type dict: str, required
         """
         if dict['pk'] > 0:
+            print(json.dumps(dict, indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/portfoliomanager/contracts/' + str(dict['pk']) + "/", dict)
         else:
