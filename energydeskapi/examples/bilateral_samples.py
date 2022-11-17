@@ -22,17 +22,24 @@ logging.basicConfig(level=logging.INFO,
 def calculate_price(api_conn):
     fromd="2023-10-01"
     untild = "2024-10-01"
+    periods=[[fromd, untild]]
 
-    success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,fromd, untild,10, "NO1", "NOK",
+    fromd="2023-10-01"
+    untild = "2026-10-01"
+    periods.append([fromd, untild])
+    print(periods)
+    success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods,10, "NO1", "NOK",
                                             FwdCurveInternalEnum.CUBIC_SPLINE.value)
 
 
     df_curve = pd.DataFrame(data=eval(res['forward_curve']))
-    df_pricing = pd.DataFrame(data=eval(res['pricing_details']))
-    contract_price=res['contract_price']
 
-    print(df_pricing)
-    print("Contract price", contract_price)
+    period_prices=res['period_prices']
+    for p in period_prices:
+        df_pricing = pd.DataFrame(data=eval(p['pricing_details']))
+        contract_price=p['contract_price']
+        print(df_pricing)
+        print("Contract price", contract_price)
 
 
 if __name__ == '__main__':

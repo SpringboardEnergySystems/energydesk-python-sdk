@@ -10,7 +10,7 @@ class BilateralApi:
     """
 
     @staticmethod
-    def calculate_contract_price(api_connection ,period_from, period_until, contract_mw, price_area, currency_code, curve_model_key,
+    def calculate_contract_price(api_connection ,periods, contract_mw, price_area, currency_code, curve_model_key,
                                param_int_1=None,param_int_2=None,param_int_3=None,param_int_4=None,
                                param_str_1=None,param_str_2=None):
         """Fetches hourly price curve
@@ -27,14 +27,20 @@ class BilateralApi:
         :type currency_code: str, required
         """
         logger.info("Calculate bilateral price")
+
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "contract_date_from":p[0],
+            "contract_date_until": p[1],
+            })
         qry_payload = {
             "forward_curve":{
                     "price_area": price_area,
                     "currency_code": currency_code,
                     "curve_model_key":curve_model_key,
                     },
-            "contract_date_from":period_from,
-            "contract_date_until": period_until,
+            "periods":dict_periods,
             "contract_mw": contract_mw
         }
         if param_int_1 is not None:
