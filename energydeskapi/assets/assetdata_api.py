@@ -18,12 +18,12 @@ class AssetDataApi:
 
     @staticmethod
     def get_assetgroup_forecast(api_connection, assets):
-        """Fetches asset from url
+        """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param asset_pk: personal key of asset
-        :type asset_pk: str, required
+        :param assets: personal key of asset(s) in asset group
+        :type assets: str, required
         """
         assets_list=[]
         for key in assets:
@@ -39,6 +39,13 @@ class AssetDataApi:
         return json_res
     @staticmethod
     def get_assetgroup_forecast_df(api_connection, assets):
+        """Fetches forecast for asset group and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param assets: personal key of asset(s) in asset group
+        :type assets: str, required
+        """
         json_res=AssetDataApi.get_assetgroup_forecast(api_connection, assets)
         if json_res is not None and len(json_res)>0:
             df = pd.DataFrame(data=eval(json_res))
