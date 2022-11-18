@@ -72,7 +72,6 @@ class LocationApi:
         }
 
         success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/locations/generate-default-map/', payload)
-        print(success, json_res, status_code, error_msg)
         if json_res is not None:
             return json_res
         return None
@@ -99,14 +98,12 @@ class LocationApi:
         :type api_connection: str, required
         """
         for loc in local_areas:
-            #print("GOT DICT", loc.get_dict(api_connection))
             if int(loc.pk)==0:
                 success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/locations/localareas/', loc.get_dict(api_connection))
             else:
                 success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/locations/localareas/' + str(loc.pk) + "/", loc.get_dict(api_connection))
             if success==False:
                 print(error_msg)
-            #print(success, status_code, error_msg)
             return json_res
 
     @staticmethod
@@ -131,7 +128,6 @@ class LocationApi:
         :type location_type_enum: str
         """
 
-        logger.info("Fetching local area geojson")
         json_res=api_connection.exec_get_url('/api/locations/localareas/',parameters)
         if json_res is not None:
             return json_res
@@ -157,7 +153,7 @@ class LocationApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching geolocatioin")
+
         json_res=api_connection.exec_get_url('/api/locations/locationtypes/')
         if json_res is not None:
             return json_res
