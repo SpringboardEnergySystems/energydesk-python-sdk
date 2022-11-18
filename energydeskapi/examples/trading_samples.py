@@ -16,7 +16,9 @@ logging.basicConfig(level=logging.INFO,
 
 
 
+# Random order generator
 def gen_orders(api_conn, baseprice, ordertype, token=None):
+    random.seed(datetime.now())
     if token is not None:
         api_conn.set_token(token, "Token")
     df = LemsApi.get_traded_products(api_conn)
@@ -28,40 +30,48 @@ def gen_orders(api_conn, baseprice, ordertype, token=None):
         qty = 5 + randrange(15)
         price = useprice + random.uniform(1.5, 5.5)
         price = round(price, 1)
-        #print("Adding ", row['ticker'], price, qty)
         LemsApi.add_order(api_conn, row['ticker'], price,"EUR", qty, ordertype)
-def get_ticker_data(api_conn):
-    df=LemsApi.get_traded_products(api_conn)
-    #print(df)
-    ticker = df["ticker"].values[2]
-    LemsApi.add_order(api_conn, ticker, 100,"EUR", 5, "BUY")
-    LemsApi.add_order(api_conn, ticker, 93,"EUR", 2, "SELL")
-    LemsApi.add_order(api_conn, ticker, 193,"EUR", 7, "SELL")
-    
-    df=LemsApi.query_active_orders(api_conn, ticker)
-    order_id = df["order_id"].values[0]
-    print(df)
 
-    df=LemsApi.remove_order(api_conn, ticker, order_id)
-    print(df)
-    
-    df=LemsApi.query_own_orders(api_conn, ticker)
-    print(df)
 
-    df=LemsApi.get_ticker_data(api_conn)
-    print(df)
-if __name__ == '__main__':
 
-    api_conn=init_api()
-    random.seed(datetime.now())
-    if False:
-        for j in range(5):
-            gen_orders(api_conn, "241a85c905e36c0316d3d58be9cae9d3d5bc7d5a", 65, "BUY")
-            gen_orders(api_conn, "2ba840008a1276d953bb708c0ecd8bf8251355ac", 65, "BUY")
-            gen_orders(api_conn, "03cace913e56d29abc02ec9ebec250913b9b7ee2", 75, "SELL")
-            gen_orders(api_conn, "28bffd50de26b4c9649402ab4c6dc48ca1e391ac", 75, "SELL")
-    for j in range(1):
-        gen_orders(api_conn,  73, "SELL", None)
+# Returns an anonymous view of orders in local market
+def get_own_orders(api_conn, ticker):
+    df=LemsApi.get_own_orders(api_conn, ticker)
+    print(df)
+    return df
+
+
+# Returns an anonymous view of orders in local market
+def get_live_orderbook(api_conn):
     df = LemsApi.query_active_orders(api_conn)
     print(df)
+    return df
+
+# Returns an anonymous view of orders in local market
+def get_available_products(api_conn):
+    df = LemsApi.get_traded_products(api_conn)
+    print(df)
+    return df
+
+# Example of adding a buy order to match orders in the live orderbook
+def add_buy_order_on_nearest_products(api_conn,  price,currency, quantity_mw):
+    df_products=get_available_products(api_conn)
+    sample_ticker = df_products["ticker"].values[0]  #For simplicity and test, pick the first product
+    success, json_res, status_code, error_msg = LemsApi.add_order(api_conn,sample_ticker,price, currency, quantity_mw, "BUY")
+    if success:
+        print(json_res)
+    # Should see filled orders after previous operatgion
+    get_own_orders(api_conn, sample_ticker)
+
+    order_id=""  #If picking one of own active orders (none filled) this can be cancelled by following
+    df = LemsApi.remove_order(api_conn, sample_ticker, order_id)
+
+def add_random_sell_products(api_conn):
+    # Ransom prices around a price
+    for j in range(10):
+        gen_orders(api_conn,  73, "SELL", None)
+
+if __name__ == '__main__':
+    api_conn=init_api()
+    add_buy_order_on_nearest_products(api_conn, 900, "NOK", quantity_mw=0.5)  # 0.5 MW in sample
 

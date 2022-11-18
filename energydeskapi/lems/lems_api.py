@@ -183,11 +183,11 @@ class LemsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        exp = (datetime.today() + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        exp = (datetime.today() + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0)
         expiry_str= check_fix_date2str(exp) if expiry is None else check_fix_date2str(expiry)
         payload={
-            "order_id":"",
-            "order_timestamp":"2022-01-23",
+            "order_id":"",# Will be set by server
+            "order_timestamp":"", # Will be set by server
             "ticker":ticker,
             "price":price,
             "currency": currency,
@@ -195,12 +195,10 @@ class LemsApi:
             "expiry": expiry_str,
             "buy_or_sell":buy_or_sell
         }
-        logger.info("Enter orde")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorder/', payload)
-        if json_res is None:
-            return None
-        df = pd.DataFrame(data=json_res)
-        return df
+        if not success:
+            logger.error(error_msg)
+        return success, json_res, status_code, error_msg
 
 
     @staticmethod
