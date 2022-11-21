@@ -43,8 +43,17 @@ def calculate_price(api_conn):
         print("Contract price", contract_price)
 
 def generate_sell_prices(api_conn):
+    mw=5
     df = LemsApi.get_traded_products(api_conn)
-    print(df)
+    for index,row in df.iterrows():
+        print("Calculating fixed price for ", row['ticker'])
+        periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
+        success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, mw, row['area'],
+                                                                                     "NOK",
+                                                                                     FwdCurveInternalEnum.CUBIC_SPLINE.value)
+        for result in res['period_prices']:
+            print(result['period_tag'], result['contract_price'])
+
 
 if __name__ == '__main__':
     api_conn=init_api()

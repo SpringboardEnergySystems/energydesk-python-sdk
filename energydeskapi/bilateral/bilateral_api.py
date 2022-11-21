@@ -31,8 +31,9 @@ class BilateralApi:
         dict_periods=[]
         for p in periods:
             dict_periods.append({
-            "contract_date_from":p[0],
-            "contract_date_until": p[1],
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
             })
         qry_payload = {
             "forward_curve":{
@@ -55,6 +56,6 @@ class BilateralApi:
             qry_payload['forward_curve']['param_str_1']= param_str_1
         if param_str_2 is not None:
             qry_payload['forward_curve']['param_str_2']= param_str_2
-        print(qry_payload)
+        #print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/', qry_payload)
         return success, json_res, status_code, error_msg
