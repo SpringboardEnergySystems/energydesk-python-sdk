@@ -53,6 +53,7 @@ def generate_sell_prices(api_conn):
                                                                                      FwdCurveInternalEnum.CUBIC_SPLINE.value)
         for result in res['period_prices']:
             print(result['period_tag'], result['contract_price'])
+            LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL")
 
 
 if __name__ == '__main__':
