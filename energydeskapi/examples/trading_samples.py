@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 # Random order generator
-def gen_orders(api_conn, baseprice, ordertype, token=None):
+def gen_random_orders(api_conn, baseprice, buy_or_sell, token=None):
     random.seed(datetime.now())
     if token is not None:
         api_conn.set_token(token, "Token")
@@ -30,7 +30,7 @@ def gen_orders(api_conn, baseprice, ordertype, token=None):
         qty = 5 + randrange(15)
         price = useprice + random.uniform(1.5, 5.5)
         price = round(price, 1)
-        LemsApi.add_order(api_conn, row['ticker'], price,"EUR", qty, ordertype)
+        LemsApi.add_order(api_conn, row['ticker'], price,"NOK", qty, buy_or_sell)
 
 
 
@@ -69,9 +69,10 @@ def add_buy_order_on_nearest_products(api_conn,  price,currency, quantity_mw):
 def add_random_sell_products(api_conn):
     # Ransom prices around a price
     for j in range(10):
-        gen_orders(api_conn,  73, "SELL", None)
+        gen_random_orders(api_conn,  800, "SELL", None)
 
 if __name__ == '__main__':
     api_conn=init_api()
-    add_buy_order_on_nearest_products(api_conn, 900, "NOK", quantity_mw=0.5)  # 0.5 MW in sample
+    #add_buy_order_on_nearest_products(api_conn, 900, "NOK", quantity_mw=0.5)  # 0.5 MW in sample
+    add_random_sell_products(api_conn)
 

@@ -186,8 +186,8 @@ class LemsApi:
         exp = (datetime.today() + timedelta(days=2)).replace(hour=0, minute=0, second=0, microsecond=0)
         expiry_str= check_fix_date2str(exp) if expiry is None else check_fix_date2str(expiry)
         payload={
-            "order_id":"",# Will be set by server
-            "order_timestamp":"", # Will be set by server
+            #"order_id":"",# Will be set by server
+            #"order_timestamp":"", # Will be set by server
             "ticker":ticker,
             "price":price,
             "currency": currency,
