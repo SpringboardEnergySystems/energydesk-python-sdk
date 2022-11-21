@@ -4,6 +4,7 @@ from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from moneyed import EUR
 from energydeskapi.bilateral.bilateral_api import BilateralApi
+from energydeskapi.lems.lems_api import LemsApi
 from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
@@ -41,7 +42,10 @@ def calculate_price(api_conn):
         print(df_pricing)
         print("Contract price", contract_price)
 
+def generate_sell_prices(api_conn):
+    df = LemsApi.get_traded_products(api_conn)
+    print(df)
 
 if __name__ == '__main__':
     api_conn=init_api()
-    calculate_price(api_conn)
+    generate_sell_prices(api_conn)
