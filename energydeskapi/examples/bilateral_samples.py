@@ -43,7 +43,7 @@ def calculate_price(api_conn):
         print("Contract price", contract_price)
 
 def generate_sell_prices(api_conn):
-    mw=5
+    mw=500
     df = LemsApi.get_traded_products(api_conn)
     for index,row in df.iterrows():
         print("Calculating fixed price for ", row['ticker'])
