@@ -47,8 +47,7 @@ def remove_all_active_orders(api_conn):
         for index2, row2 in df_orders.iterrows():
             if row2['order_status']!='ACTIVE':
                 continue
-            LemsApi.remove_order(api_conn, row['ticker'], row2['order_status'])
-            return
+            LemsApi.remove_order(api_conn, row['ticker'], row2['order_id'])
 
 # Example of adding a buy order to match orders in the live orderbook
 def add_buy_order_on_nearest_products(api_conn,  price,currency, quantity_mw):
