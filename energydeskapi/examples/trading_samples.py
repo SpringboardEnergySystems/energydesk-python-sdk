@@ -67,6 +67,6 @@ def add_buy_order_on_nearest_products(api_conn,  price,currency, quantity_mw):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    #add_buy_order_on_nearest_products(api_conn, 1900, "NOK", quantity_mw=3)  # 0.5 MW in sample
-    remove_all_active_orders(api_conn)
+    add_buy_order_on_nearest_products(api_conn, 1900, "NOK", quantity_mw=3)  # 0.5 MW in sample
+    #remove_all_active_orders(api_conn)
 

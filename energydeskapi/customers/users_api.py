@@ -153,7 +153,19 @@ class UsersApi:
         """
         return UsersApi.get_profile_by_key(api_connection,user_profile_key)
 
+    @staticmethod
+    def update_user(api_connection, pk, payload ):
+        """Fetches user profiles
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Updating user profile")
+        print(payload)
+        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/profiles/' + str(pk)  + "/", payload)
+        if success is None:
+            logger.error(error_msg)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_users(api_connection, parameters={}):
@@ -167,6 +179,7 @@ class UsersApi:
         if json_res is None:
             return None
         return json_res
+
     @staticmethod
     def get_users_embedded(api_connection, parameters={}):
         """Fetches user profiles
@@ -199,6 +212,7 @@ class UsersApi:
              df = pd.json_normalize(json_res['results'], max_level=1)
              return UsersApi.process_dataframe(df)
         return None
+
     @staticmethod
     def create_users(api_connection, users):
         """Creates users from payload
