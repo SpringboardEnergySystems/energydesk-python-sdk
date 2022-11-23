@@ -48,12 +48,13 @@ def remove_all_active_orders(api_conn):
             if row2['order_status']!='ACTIVE':
                 continue
             LemsApi.remove_order(api_conn, row['ticker'], row2['order_status'])
+            return
 
 # Example of adding a buy order to match orders in the live orderbook
 def add_buy_order_on_nearest_products(api_conn,  price,currency, quantity_mw):
     df_products=get_available_products(api_conn)
     sample_ticker = df_products["ticker"].values[0]  #For simplicity and test, pick the first product
-    success, json_res, status_code, error_msg = LemsApi.add_order(api_conn,sample_ticker,price, currency, quantity_mw, "BUY")
+    success, json_res, status_code, error_msg = LemsApi.add_order(api_conn,sample_ticker,price, currency, quantity_mw, "BUY", "FOK")
     if success:
         print(json_res)
     else:
