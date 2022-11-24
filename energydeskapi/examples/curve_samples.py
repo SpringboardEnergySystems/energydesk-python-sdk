@@ -40,16 +40,14 @@ def generate_curve(api_conn):
     df['index'] = pd.to_datetime(df.index)
     df['monthly'] = df.groupby(df['index'].dt.strftime('%Y%m')).price.transform('mean')
     print(df)
-    # df = pd.DataFrame(data=eval(jsonres))
-    # daily, monthly=process_dframe(df, "NO1")
-    # jsonres=CurveApi.get_hourly_price_curve(api_conn, fromd, untild, "NO5", "NOK")
-    # if jsonres is not None:
-    #     df = pd.DataFrame(data=eval(jsonres))
-    #     daily_sub, monthly_sub=process_dframe(df,"NO5")
-    #     daily["NO5"]= daily_sub["NO5"]
-    #     monthly["NO5"] = monthly_sub["NO5"]
-    # print(daily, monthly)
+
+
+def retrieve_stored_curve(api_conn):
+    success, dict, status_code, error_msg =CurveApi.retrieve_latest_forward_curve(api_conn ,
+                                           "NO1",
+                                "NOK", "PRICEIT")
+    print(dict)
 
 if __name__ == '__main__':
     api_conn=init_api()
-    generate_curve(api_conn)
+    retrieve_stored_curve(api_conn)

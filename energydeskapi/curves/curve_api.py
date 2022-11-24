@@ -84,6 +84,7 @@ class CurveApi:
             return success, df, status_code, error_msg
         return success, None, status_code, error_msg
 
+
     @staticmethod
     def upload_forward_curve(api_connection ,price_date, price_area,
                                 currency_code, forward_curve_model,
@@ -98,5 +99,19 @@ class CurveApi:
             'currency_code':currency_code,
             'periods':period_prices#period_prices_df.to_json(orient='records',date_format='iso')
         }
+        print(price_area)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/upload-forwardcurve/', payload)
+        return success, json_res, status_code, error_msg
+    @staticmethod
+    def retrieve_latest_forward_curve(api_connection , price_area,
+                                currency_code, forward_curve_model,
+                               market_name="Nordic Power"):
+
+        payload={
+            'market_name': market_name,
+            'price_area':price_area,
+            'forward_curve_model': forward_curve_model,
+            'currency_code':currency_code,
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/retrieve-forwardcurve/', payload)
         return success, json_res, status_code, error_msg
