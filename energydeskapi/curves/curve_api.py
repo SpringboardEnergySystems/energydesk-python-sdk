@@ -83,3 +83,20 @@ class CurveApi:
             df = pd.DataFrame(data=eval(json_res))
             return success, df, status_code, error_msg
         return success, None, status_code, error_msg
+
+    @staticmethod
+    def upload_forward_curve(api_connection ,price_date, price_area,
+                                currency_code, forward_curve_model,
+                                period_prices_df,
+                               market_name="Nordic Power"):
+
+        payload={
+            'market_name': market_name,
+            'price_date': price_date,
+            'price_area':price_area,
+            'forward_curve_model': forward_curve_model,
+            'currency_code':currency_code,
+            'periods':period_prices_df.to_json(orient='records',date_format='iso')
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/upload-forwardcurve/', payload)
+        return success, json_res, status_code, error_msg

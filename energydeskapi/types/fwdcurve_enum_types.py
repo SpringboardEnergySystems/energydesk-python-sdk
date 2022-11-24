@@ -7,4 +7,11 @@ class FwdCurveInternalEnum(Enum):
     SARIMAX = 3
     EXTERNAL = 4
 
+class FwdCurveModels(Enum):
+    CUBIC_SPLINE = "SPLINE"   # Key for the most commonly used markets
+    FB_PROPHET = "PROPHET"
+    SARIMAX = "SARIMAX"
+    PRICEIT = "PRICEIT"
+
+
 
