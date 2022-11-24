@@ -10,9 +10,7 @@ class BilateralApi:
     """
 
     @staticmethod
-    def calculate_contract_price(api_connection ,periods, contract_mw, price_area, currency_code, curve_model_key,
-                               param_int_1=None,param_int_2=None,param_int_3=None,param_int_4=None,
-                               param_str_1=None,param_str_2=None):
+    def calculate_contract_price(api_connection ,periods, price_area, currency_code, curve_model):
         """Fetches hourly price curve
 
         :param api_connection: class with API token for use with API
@@ -39,23 +37,11 @@ class BilateralApi:
             "forward_curve":{
                     "price_area": price_area,
                     "currency_code": currency_code,
-                    "curve_model_key":curve_model_key,
+                    "curve_model":curve_model,
                     },
             "periods":dict_periods,
-            "contract_mw": contract_mw
         }
-        if param_int_1 is not None:
-            qry_payload['forward_curve']['param_int_1']= param_int_1
-        if param_int_2 is not None:
-            qry_payload['forward_curve']['param_int_2']= param_int_2
-        if param_int_3 is not None:
-            qry_payload['forward_curve']['param_int_3']= param_int_3
-        if param_int_4 is not None:
-            qry_payload['forward_curve']['param_int_4']= param_int_4
-        if param_str_1 is not None:
-            qry_payload['forward_curve']['param_str_1']= param_str_1
-        if param_str_2 is not None:
-            qry_payload['forward_curve']['param_str_2']= param_str_2
+
         #print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/', qry_payload)
         return success, json_res, status_code, error_msg

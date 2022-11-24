@@ -44,9 +44,12 @@ def generate_curve(api_conn):
 
 def retrieve_stored_curve(api_conn):
     success, dict, status_code, error_msg =CurveApi.retrieve_latest_forward_curve(api_conn ,
-                                           "NO1",
+                                           "NO5",
                                 "NOK", "PRICEIT")
-    print(dict)
+    if success:
+        df=pd.DataFrame(data=eval(dict))
+        df.index=df['period_from']
+        print(df)
 
 if __name__ == '__main__':
     api_conn=init_api()
