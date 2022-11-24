@@ -1,5 +1,3 @@
-import requests
-import json
 import logging
 import pandas as pd
 from energydeskapi.marketdata.markets_api import MarketsApi

@@ -1,7 +1,5 @@
 import logging
 import pandas as pd
-import requests
-import json
 import logging
 import pandas as pd
 from datetime import datetime, timedelta

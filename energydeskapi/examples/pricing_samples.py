@@ -1,12 +1,9 @@
-import sys
-import requests
 import logging
 from datetime import datetime
 import pandas as pd
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.pricing.pricing_api import PricingApi
 
-import json
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',

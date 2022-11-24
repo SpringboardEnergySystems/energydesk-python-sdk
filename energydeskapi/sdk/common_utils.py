@@ -1,8 +1,7 @@
-import json
 import logging
 from os.path import join, dirname
 from dotenv import load_dotenv
-import pytz, environ
+import environ
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
 from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)

@@ -1,12 +1,8 @@
-import sys
-import json
 
-import requests
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.clearing.clearing_api import ClearingApi
 from energydeskapi.types.clearing_enum_types import ClearingReportTypeEnum
-import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),

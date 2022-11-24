@@ -1,11 +1,8 @@
-import sys
-import json
-import requests
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.users_api import UsersApi, User
 from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.types.company_enum_types import CompanyTypeEnum, CompanyRoleEnum,UserRoleEnum
+from energydeskapi.types.company_enum_types import UserRoleEnum
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',

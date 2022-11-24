@@ -1,7 +1,4 @@
-import requests
-import json
 import logging
-import pandas as pd
 from energydeskapi.sdk.common_utils import check_fix_date2str
 logger = logging.getLogger(__name__)
 

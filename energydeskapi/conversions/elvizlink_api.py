@@ -1,7 +1,4 @@
-import requests
-import json
 import logging
-import pandas as pd
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi

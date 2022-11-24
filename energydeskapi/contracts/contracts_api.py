@@ -1,5 +1,3 @@
-import requests
-import json
 import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type
@@ -8,9 +6,7 @@ from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
-from moneyed.l10n import format_money
 from energydeskapi.sdk.common_utils import check_fix_date2str
-from datetime import datetime
 logger = logging.getLogger(__name__)
 #  Change
 

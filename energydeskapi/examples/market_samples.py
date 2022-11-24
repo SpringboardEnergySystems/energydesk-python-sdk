@@ -1,6 +1,4 @@
-import sys
 
-import requests
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
@@ -8,10 +6,6 @@ from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.spotprices_api import SpotPricesApi
 from energydeskapi.marketdata.products_api import ProductsApi
 from energydeskapi.types.market_enum_types import MarketEnum, CommodityTypeEnum, InstrumentTypeEnum
-from os.path import join, dirname
-from dotenv import load_dotenv
-import pytz, environ
-from dateutil import parser
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),

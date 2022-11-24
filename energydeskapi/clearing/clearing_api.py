@@ -1,8 +1,6 @@
-import requests
 import json
 import logging
 import pandas as pd
-from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 #  Change

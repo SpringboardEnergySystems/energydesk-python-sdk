@@ -1,6 +1,4 @@
-import sys
 
-import requests
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.treasury.treasury_api import TreasuryApi

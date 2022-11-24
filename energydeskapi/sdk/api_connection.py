@@ -5,7 +5,6 @@ Wrapper for Token management
 import requests
 from requests.auth import HTTPBasicAuth
 import http.client
-import json
 import logging
 logger = logging.getLogger(__name__)
 

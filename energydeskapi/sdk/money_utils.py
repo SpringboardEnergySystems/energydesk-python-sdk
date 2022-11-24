@@ -1,5 +1,5 @@
 
-from moneyed import Money, NOK, EUR
+from moneyed import Money
 from moneyed.l10n import format_money
 
 class FormattedMoney(Money):

@@ -1,12 +1,8 @@
-import sys
 
-import requests
 import logging
-from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.portfolios.portfolioviews_api import PortfolioViewsApi
 from energydeskapi.types.portfolio_enum_types import PeriodViewGroupingEnum, PeriodViewResolutionEnum
 from energydeskapi.sdk.common_utils import init_api
-import pytz, environ
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
