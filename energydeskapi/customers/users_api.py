@@ -1,5 +1,3 @@
-import requests
-import json
 import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type

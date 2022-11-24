@@ -1,9 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.assets.assetdata_api import AssetDataApi
 
-from energydeskapi.types.asset_enum_types import AssetTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),

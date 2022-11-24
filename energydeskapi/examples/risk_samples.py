@@ -1,10 +1,7 @@
-import sys
-import requests
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.risk.risk_api import RiskApi
 
-import json
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',

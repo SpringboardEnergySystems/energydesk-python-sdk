@@ -1,8 +1,5 @@
-import requests
-import json
 import logging
 import pandas as pd
-import pytz
 logger = logging.getLogger(__name__)
 
 class SpotPricesApi:

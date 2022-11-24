@@ -1,8 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.counterparts.counterparts_api import CounterPartsApi
-from energydeskapi.types.asset_enum_types import AssetTypeEnum
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
+from energydeskapi.types.market_enum_types import CommodityTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),

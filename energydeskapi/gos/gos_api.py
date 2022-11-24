@@ -1,17 +1,7 @@
-import requests
-import json
 import logging
 import pandas as pd
-from energydeskapi.sdk.money_utils import gen_json_money
-from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
-from energydeskapi.marketdata.markets_api import MarketsApi
-from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.assets.assets_api import AssetsApi
-from moneyed.l10n import format_money
-from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
-from datetime import datetime
 logger = logging.getLogger(__name__)
 #  Change
 class GoContract:

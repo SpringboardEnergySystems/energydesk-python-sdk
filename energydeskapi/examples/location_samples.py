@@ -1,7 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.geolocation.location_api import LocationApi
-from energydeskapi.types.location_enum_types import LocationTypeEnum
 from energydeskapi.gos.gos_api import GosApi
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',

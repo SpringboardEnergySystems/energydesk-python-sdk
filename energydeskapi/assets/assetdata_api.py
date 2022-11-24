@@ -1,5 +1,3 @@
-import requests
-import json
 import logging
 import pandas as pd
 from energydeskapi.assets.assets_api import AssetsApi
