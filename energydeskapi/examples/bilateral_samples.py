@@ -14,24 +14,24 @@ logging.basicConfig(level=logging.INFO,
 def calculate_price(api_conn):
     fromd="2023-10-01"
     untild = "2024-10-01"
-    periods=[[fromd, untild]]
+    periods=[["A", fromd, untild]]
 
     fromd="2023-10-01"
     untild = "2026-10-01"
-    periods.append([fromd, untild])
+    periods.append(["B", fromd, untild])
     print(periods)
-    success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods,10, "NO1", "NOK",
-                                            FwdCurveInternalEnum.CUBIC_SPLINE.value)
+    success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods, "NO1", "NOK",
+                                            "PRICEIT")
 
-
-    df_curve = pd.DataFrame(data=eval(res['forward_curve']))
-
-    period_prices=res['period_prices']
-    for p in period_prices:
-        df_pricing = pd.DataFrame(data=eval(p['pricing_details']))
-        contract_price=p['contract_price']
-        print(df_pricing)
-        print("Contract price", contract_price)
+    print(res)
+    # df_curve = pd.DataFrame(data=eval(res['forward_curve']))
+    #
+    # period_prices=res['period_prices']
+    # for p in period_prices:
+    #     df_pricing = pd.DataFrame(data=eval(p['pricing_details']))
+    #     contract_price=p['contract_price']
+    #     print(df_pricing)
+    #     print("Contract price", contract_price)
 
 def generate_sell_prices(api_conn):
     mw=500
@@ -50,4 +50,4 @@ def generate_sell_prices(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    generate_sell_prices(api_conn)
+    calculate_price(api_conn)

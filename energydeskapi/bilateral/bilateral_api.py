@@ -7,7 +7,7 @@ class BilateralApi:
     """
 
     @staticmethod
-    def calculate_contract_price(api_connection ,periods, price_area, currency_code, curve_model, monthly_profile=[], weekday_profile=[]):
+    def calculate_contract_price(api_connection ,periods, price_area, currency_code, curve_model, contract_type="BASELOAD", monthly_profile=[], weekday_profile=[]):
         """Fetches hourly price curve
 
         :param api_connection: class with API token for use with API
@@ -34,6 +34,7 @@ class BilateralApi:
                 "price_area": price_area,
                 "currency_code": currency_code,
                 "curve_model":curve_model,
+                "contract_type":contract_type,
                 "periods":dict_periods,
                 "monthly_profile":monthly_profile,
                 "weekday_profile": weekday_profile
