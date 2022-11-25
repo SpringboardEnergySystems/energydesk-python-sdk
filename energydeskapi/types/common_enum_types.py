@@ -7,8 +7,8 @@ class PeriodResolutionEnum(Enum):
     HOURLY = "Hourly"
     DAILY = "Daily"
     WEEKLY = "Weekly"
+    SEMI_MONTHLY = "Semi Monthly"
     MONTHLY = "Monthly"
-    SEMI_MONTHLY = "SemiMonthly"
     QUARTERLY = "Quarterly"
     YEARLY = "Yearly"
 
@@ -24,7 +24,7 @@ def period_addition_relativedelta(resolution_enum):
     elif resolution_enum==PeriodResolutionEnum.MONTHLY:
         return relativedelta(months=1)
     elif resolution_enum==PeriodResolutionEnum.SEMI_MONTHLY:
-        return relativedelta(months=2)
+        return relativedelta(weeks=2)
     elif resolution_enum==PeriodResolutionEnum.QUARTERLY:
         return relativedelta(months=3)
     elif resolution_enum==PeriodResolutionEnum.YEARLY:
@@ -38,10 +38,10 @@ def resolution_to_pandas_freq(resolution_enum):
         return "D"
     elif resolution_enum==PeriodResolutionEnum.WEEKLY:
         return "W"
+    elif resolution_enum==PeriodResolutionEnum.SEMI_MONTHLY:
+        return "SMS"
     elif resolution_enum==PeriodResolutionEnum.MONTHLY:
         return "MS"
-    elif resolution_enum==PeriodResolutionEnum.SEMI_MONTHLY:
-        return "SM"
     elif resolution_enum==PeriodResolutionEnum.QUARTERLY:
         return "QS"
     elif resolution_enum==PeriodResolutionEnum.YEARLY:
