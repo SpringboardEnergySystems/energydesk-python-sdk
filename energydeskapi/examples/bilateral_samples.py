@@ -3,7 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
-from energydeskapi.types.common_enum_types import PERIOD_CHOICES
+
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
