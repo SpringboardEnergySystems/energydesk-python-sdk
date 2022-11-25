@@ -41,3 +41,6 @@ def parse_enum_type(etype):
         return int(etype)
     else:
         return etype.value
+
+
+
