@@ -4,6 +4,7 @@ from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
+from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
@@ -22,7 +23,10 @@ def calculate_price(api_conn):
     periods.append(["B", fromd, untild])
     print(periods)
     success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods, "NO1", "NOK",
-                                            "PRICEIT")
+                                            "PRICEIT",
+                                        contract_type="PROFILE",
+                                        monthly_profile=get_month_list(),
+                                        weekday_profile=get_weekdays_list())
 
     period_prices = res['period_prices']
     for p in period_prices:
@@ -58,4 +62,4 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    generate_sell_prices(api_conn)
+    calculate_price(api_conn)

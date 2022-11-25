@@ -17,8 +17,8 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res):
     return df_new
 def apply_calendar_pattern(df, months, weekdays):
     def check_pattern(row):
-        v= 1 if row[0].strftime('%B') in months \
-            and calendar.day_name[row[0].weekday()]  in weekdays else 0
+        v= 1 if row.name.strftime('%B') in months \
+            and calendar.day_name[row.name.weekday()]  in weekdays else 0
         return v
     df['pattern']=df.apply(check_pattern, axis=1)
     return df
@@ -47,7 +47,7 @@ def get_summer_profile():
     return m1
 
 if __name__ == '__main__':
-    pd.set_option('display.max_rows', None)
+    #pd.set_option('display.max_rows', None)
     print(get_weekend())
     print(get_summer_profile())
     df=create_empty_df_with_pattern(get_summer_profile(), get_weekend())
