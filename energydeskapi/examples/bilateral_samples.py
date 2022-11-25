@@ -45,6 +45,8 @@ def generate_sell_prices(api_conn):
     for index,row in df.iterrows():
         print("Calculating fixed price for ", row['ticker'])
         periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
+        LemsApi.add_order(api_conn, row['ticker'], 1100, "NOK", mw, "SELL", "NORMAL", expiry)
+        continue
         success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, mw, row['area'],
                                                                                      "NOK",
                                                                                      FwdCurveInternalEnum.CUBIC_SPLINE.value)
@@ -56,4 +58,4 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    calculate_price(api_conn)
+    generate_sell_prices(api_conn)
