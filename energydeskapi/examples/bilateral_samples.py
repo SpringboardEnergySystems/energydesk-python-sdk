@@ -3,6 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
+from energydeskapi.types.common_enum_types import PERIOD_CHOICES
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
@@ -23,7 +24,11 @@ def calculate_price(api_conn):
     success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods, "NO1", "NOK",
                                             "PRICEIT")
 
-    print(res)
+    period_prices = res['period_prices']
+    for p in period_prices:
+        contract_price = p['contract_price']
+        print("Contract price", contract_price)
+
     # df_curve = pd.DataFrame(data=eval(res['forward_curve']))
     #
     # period_prices=res['period_prices']
@@ -50,4 +55,5 @@ def generate_sell_prices(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    calculate_price(api_conn)
+    print(PERIOD_CHOICES)
+    #calculate_price(api_conn)

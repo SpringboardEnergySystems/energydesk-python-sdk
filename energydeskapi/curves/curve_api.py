@@ -103,6 +103,7 @@ class CurveApi:
     @staticmethod
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,
+                                      resolution="HOURLY",
                                market_name="Nordic Power"):
 
         payload={
