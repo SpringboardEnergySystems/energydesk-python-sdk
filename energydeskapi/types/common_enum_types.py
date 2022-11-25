@@ -1,6 +1,16 @@
 from enum import Enum
 from dateutil.relativedelta import relativedelta
 
+from datetime import datetime, timedelta
+import calendar as cal
+
+def get_weekdays_list():
+    start = 0#[d for d in cal.day_name].index(weekday)
+    return [cal.day_name[(i+start) % 7] for i in range(7)]
+def get_month_list():
+    start = datetime(2022,1,1)
+    return [(start + relativedelta(months=i)).strftime('%B') for i in range(12)]
+
 
 
 class PeriodResolutionEnum(Enum):
