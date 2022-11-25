@@ -88,6 +88,7 @@ class CurveApi:
     def upload_forward_curve(api_connection ,price_date, price_area,
                                 currency_code, forward_curve_model,
                                 period_prices,
+                                period_resolution=PeriodResolutionEnum.HOURLY.value,
                                market_name="Nordic Power"):
 
         payload={
@@ -95,6 +96,7 @@ class CurveApi:
             'price_date': price_date,
             'price_area':price_area,
             'forward_curve_model': forward_curve_model,
+            'period_resolution':period_resolution,
             'currency_code':currency_code,
             'periods':period_prices#period_prices_df.to_json(orient='records',date_format='iso')
         }
