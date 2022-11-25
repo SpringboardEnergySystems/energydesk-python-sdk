@@ -1,7 +1,8 @@
 
 import logging
 from energydeskapi.portfolios.portfolioviews_api import PortfolioViewsApi
-from energydeskapi.types.portfolio_enum_types import PeriodViewGroupingEnum, PeriodViewResolutionEnum
+from energydeskapi.types.portfolio_enum_types import PeriodViewGroupingEnum
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.common_utils import init_api
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -12,7 +13,7 @@ logging.basicConfig(level=logging.INFO,
 def get_period_view(api_conn):
     filter={
         "trading_book":11,
-        "resolution":PeriodViewResolutionEnum.YEARLY.value,
+        "resolution":PeriodResolutionEnum.YEARLY.value,
         "groupby":PeriodViewGroupingEnum.ASSET.value
     }
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)

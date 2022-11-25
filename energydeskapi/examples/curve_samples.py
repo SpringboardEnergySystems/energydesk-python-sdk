@@ -1,6 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.curves.curve_api import CurveApi
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
@@ -35,7 +36,7 @@ def generate_curve(api_conn):
 def retrieve_stored_curve(api_conn):
     success, dict, status_code, error_msg =CurveApi.retrieve_latest_forward_curve(api_conn ,
                                            "NO5",
-                                "NOK", "PRICEIT")
+                                "NOK", "PRICEIT", PeriodResolutionEnum.MONTHLY.value)
     if success:
         df=pd.DataFrame(data=eval(dict))
         df.index=df['period_from']

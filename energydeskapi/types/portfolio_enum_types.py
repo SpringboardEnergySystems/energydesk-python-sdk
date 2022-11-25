@@ -9,14 +9,6 @@ class PortfolioTypeEnum(Enum):
     REPORTING_PORTFOLIO = 3
 
 
-class PeriodViewResolutionEnum(Enum):
-    DAILY = "Daily"
-    WEEKLY = "Weekly"
-    MONTHLY = "Monthly"
-    SEMI_MONTHLY = "SemiMonthly"
-    QUARTERLY = "Quarterly"
-    YEARLY = "Yearly"
-
 class PeriodViewGroupingEnum(Enum):
     NONE = "None"
     INSTRUMENT = "instrument"
