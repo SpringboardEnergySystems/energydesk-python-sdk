@@ -3,7 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
-
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
@@ -55,5 +55,5 @@ def generate_sell_prices(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    print(PERIOD_CHOICES)
+    print(PeriodResolutionEnum._value2member_map_['Daily'])
     #calculate_price(api_conn)

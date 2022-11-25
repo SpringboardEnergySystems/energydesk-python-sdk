@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 logger = logging.getLogger(__name__)
 
 class CurveApi:
@@ -103,12 +104,13 @@ class CurveApi:
     @staticmethod
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,
-                                      resolution="HOURLY",
+                                period_resolution=PeriodResolutionEnum.DAILY.value,
                                market_name="Nordic Power"):
 
         payload={
             'market_name': market_name,
             'price_area':price_area,
+            "period_resolution":period_resolution,
             'forward_curve_model': forward_curve_model,
             'currency_code':currency_code,
         }
