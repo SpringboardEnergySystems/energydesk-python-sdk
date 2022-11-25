@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
+from energydeskapi.sdk.pandas_utils import get_summer_profile, get_winter_profile, get_workweek, get_weekend
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -26,7 +27,7 @@ def calculate_price(api_conn):
                                             "PRICEIT",
                                         contract_type="PROFILE",
                                         monthly_profile=get_month_list(),
-                                        weekday_profile=get_weekdays_list())
+                                        weekday_profile=get_workweek())
 
     period_prices = res['period_prices']
     for p in period_prices:
