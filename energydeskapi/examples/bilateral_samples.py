@@ -26,7 +26,7 @@ def calculate_price(api_conn):
     success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods, "NO1", "NOK",
                                             "PRICEIT",
                                         contract_type="PROFILE",
-                                        monthly_profile=get_month_list(),
+                                        monthly_profile=get_winter_profile(),
                                         weekday_profile=get_workweek())
 
     period_prices = res['period_prices']
