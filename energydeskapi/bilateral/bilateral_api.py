@@ -66,10 +66,6 @@ class BilateralApi:
                 cprices.append({'ticker':p['period_tag'],
                                 'contract_price':p['contract_price']})
                 df_pricing = pd.DataFrame(data=eval(p['pricing_details']))
-                # df_pricing['period_from'] = pd.to_datetime(df_pricing['period_from'])
-                # df_pricing['period_from'] = df_pricing['period_from'].dt.tz_convert(tz=norzone)
-                # df_pricing['period_until'] = pd.to_datetime(df_pricing['period_until'])
-                # df_pricing['period_until'] = df_pricing['period_until'].dt.tz_convert(tz=norzone)
                 df_pricing.index=df_pricing['period_from']
                 df_pricing = convert_dataframe_to_localtime(df_pricing)
                 cpricedet.append(df_pricing)
