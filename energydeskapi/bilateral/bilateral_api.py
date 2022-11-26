@@ -82,7 +82,7 @@ class BilateralApi:
             return df_curve, cprices, cpricedet
         else:
             print(error_msg)
-        return None, [], []
+        return None, error_msg, []
 
 
 
