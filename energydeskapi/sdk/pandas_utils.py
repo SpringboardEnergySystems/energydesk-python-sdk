@@ -4,6 +4,8 @@ import numpy as np
 import calendar
 import calendar
 from datetime import datetime, timedelta
+from pandas.errors import ParserError
+import pytz
 from dateutil.relativedelta import relativedelta
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 def make_none_tz( utc_dt):
@@ -31,6 +33,19 @@ def create_empty_df_with_pattern( months, weekdays):
 
     df['timestamp']=df.index
     return apply_calendar_pattern(df, months, weekdays)
+
+
+def convert_dataframe_to_localtime(df):
+    norzone = pytz.timezone('Europe/Oslo')
+    for c in df.columns[df.dtypes == 'object']:  # don't cnvt num
+        try:
+            df[c] = pd.to_datetime(df[c])
+            df[c] = df[c].dt.tz_convert(tz=norzone)
+        except (ParserError, ValueError):  # Can't cnvrt some
+            pass  # ...so leave whole column as-is unconverted
+    df.index = pd.to_datetime(df.index)
+    df.index = df.index.tz_convert(tz=norzone)
+    return df
 
 def get_workweek():
     week=get_weekdays_list()[0:5]

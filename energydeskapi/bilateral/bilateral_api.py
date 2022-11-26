@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta, timezone
 import pytz
 from dateutil import relativedelta
-
+from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 logger = logging.getLogger(__name__)
 
 class BilateralApi:
@@ -59,15 +59,7 @@ class BilateralApi:
             period_prices = json_res['period_prices']
             df_curve = pd.DataFrame(data=eval(json_res['forward_curve']))
             df_curve.index=df_curve['date']
-            norzone = pytz.timezone('Europe/Oslo')
-            df_curve.index = pd.to_datetime(df_curve.index)
-            df_curve.index = df_curve.index.tz_convert(tz=norzone)
-            df_curve['date'] = pd.to_datetime(df_curve['date'])
-            df_curve['date'] = df_curve['date'].dt.tz_convert(tz=norzone)
-            df_curve['period_from'] = pd.to_datetime(df_curve['period_from'])
-            df_curve['period_from'] = df_curve['period_from'].dt.tz_convert(tz=norzone)
-            df_curve['period_until'] = pd.to_datetime(df_curve['period_until'])
-            df_curve['period_until'] = df_curve['period_until'].dt.tz_convert(tz=norzone)
+            df_curve=convert_dataframe_to_localtime(df_curve)
             cprices=[]
             cpricedet=[]
             for p in period_prices:

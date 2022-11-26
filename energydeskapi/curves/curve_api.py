@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
+from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 logger = logging.getLogger(__name__)
 
 class CurveApi:
@@ -119,9 +120,7 @@ class CurveApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/retrieve-forwardcurve/', payload)
         return success, json_res, status_code, error_msg
 
-    @staticmethod
-    def convert_dataframe_to_localtime(df):
-        return df
+
 
     @staticmethod
     def retrieve_latest_forward_curve_df(api_connection , price_area,
@@ -132,10 +131,10 @@ class CurveApi:
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
                                 currency_code, forward_curve_model,period_resolution,market_name)
         if success:
-            df = pd.DataFrame(data=eval(dict))
+            df = pd.DataFrame(data=eval(json_res))
             df.index = df['period_from']
 
-            df=CurveApi.convert_dataframe_to_localtime(df)
+            df=convert_dataframe_to_localtime(df)
             print(df)
             return success, df, status_code, error_msg
         else:
