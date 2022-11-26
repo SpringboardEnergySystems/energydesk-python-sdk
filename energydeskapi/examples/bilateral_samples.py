@@ -23,25 +23,14 @@ def calculate_price(api_conn):
     untild = "2026-10-01"
     periods.append(["B", fromd, untild])
     print(periods)
-    success, res, status_code, error_msg =BilateralApi.calculate_contract_price(api_conn,periods, "NO1", "NOK",
+    df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
                                             "PRICEIT",
                                         contract_type="PROFILE",
                                         monthly_profile=get_winter_profile(),
                                         weekday_profile=get_workweek())
 
-    period_prices = res['period_prices']
-    for p in period_prices:
-        contract_price = p['contract_price']
-        print("Contract price", contract_price)
+    print(cprices)
 
-    # df_curve = pd.DataFrame(data=eval(res['forward_curve']))
-    #
-    # period_prices=res['period_prices']
-    # for p in period_prices:
-    #     df_pricing = pd.DataFrame(data=eval(p['pricing_details']))
-    #     contract_price=p['contract_price']
-    #     print(df_pricing)
-    #     print("Contract price", contract_price)
 
 def generate_sell_prices(api_conn):
     mw=500
