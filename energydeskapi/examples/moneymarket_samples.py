@@ -23,7 +23,7 @@ def fetch_fxtenors(api_conn):
 
 def fetch_yieldcurves(api_conn):
     param = {"country": "NOK"}
-    df = MoneyMarketsApi.get_yieldcurves(api_conn, param)
+    df = MoneyMarketsApi.get_yieldcurves_df(api_conn, param)
     print(df)
     df2 = MoneyMarketsApi.get_fwdrates(api_conn, param)
     print(df2)
