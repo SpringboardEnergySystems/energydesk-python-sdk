@@ -133,9 +133,7 @@ class CurveApi:
         if success:
             df = pd.DataFrame(data=eval(json_res))
             df.index = df['period_from']
-
             df=convert_dataframe_to_localtime(df)
-            print(df)
             return success, df, status_code, error_msg
         else:
             success, None, status_code, error_msg
