@@ -216,6 +216,7 @@ class LemsApi:
             "buy_or_sell": buy_or_sell,
             "order_type": order_type
         }
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
         if not success:
