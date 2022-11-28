@@ -22,7 +22,7 @@ def apply_calendar_pattern(df, months, weekdays):
         v= 1 if row.name.strftime('%B') in months \
             and calendar.day_name[row.name.weekday()]  in weekdays else 0
         return v
-    df['pattern']=df.apply(check_pattern, axis=1)
+    df['profile']=df.apply(check_pattern, axis=1)
     return df
 
 def create_empty_df_with_pattern( months, weekdays):

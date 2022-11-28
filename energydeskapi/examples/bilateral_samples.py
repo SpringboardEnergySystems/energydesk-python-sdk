@@ -52,4 +52,4 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    calculate_price(api_conn)
+    generate_sell_prices(api_conn)
