@@ -17,10 +17,11 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res):
     ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     return df_new
-def apply_calendar_pattern(df, months, weekdays):
+def apply_calendar_pattern(df, months, weekdays, hours = range(24)):
     def check_pattern(row):
         v= 1 if row.name.strftime('%B') in months \
-            and calendar.day_name[row.name.weekday()]  in weekdays else 0
+            and calendar.day_name[row.name.weekday()]  in weekdays \
+            and row.name.hour in hours else 0
         return v
     df['profile']=df.apply(check_pattern, axis=1)
     return df
