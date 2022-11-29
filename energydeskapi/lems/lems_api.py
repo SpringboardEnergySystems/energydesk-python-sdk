@@ -28,6 +28,7 @@ class LocalProduct:
                  traded_from=None,
                  traded_until=None,
                  commodity_type=None,
+                 commodity_profile=None,
                  instrument_type=None,
                  contract_status=None,
                  buy_or_sell=None,
@@ -40,6 +41,7 @@ class LocalProduct:
         self.local_market = local_market
         self.local_area = local_area
         self.ticker = ticker
+        self.commodity_profile=commodity_profile
         self.description = description
         self.currency = currency
         self.traded_from = traded_from
@@ -81,7 +83,10 @@ class LocalProduct:
         prod['area'] = self.area
         prod['base_peak'] = self.base_peak
         prod['spread'] = self.spread
+    
         prod['otc'] = self.otc
+        if self.commodity_profile is not None:
+            prod['commodity_profile']=self.commodity_profile
 
         if self.ticker is not None:
             prod['product_code'] = self.ticker
@@ -92,6 +97,7 @@ class LocalProduct:
         dict['local_market'] = self.local_market
         dict['local_area'] = self.local_area
         dict['currency'] = self.currency
+        
         dict['traded_from'] = check_fix_date2str(self.traded_from)
         dict['traded_until'] = check_fix_date2str(self.traded_until)
         return dict
