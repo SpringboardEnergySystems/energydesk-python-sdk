@@ -127,6 +127,19 @@ class LemsApi:
         return json_res
 
     @staticmethod
+    def get_local_markets(api_connection, params={}):
+        """Fetches url for location type from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param key: personal key
+        :type key: str, required
+        """
+
+        json_res = api_connection.exec_get_url('/api/lems/localmarkets/', params)
+        return json_res
+
+    @staticmethod
     def get_local_market_url(api_connection, key):
         """Fetches url for location type from pk
 
@@ -209,6 +222,7 @@ class LemsApi:
             "buy_or_sell": buy_or_sell,
             "order_type": order_type
         }
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
         if not success:

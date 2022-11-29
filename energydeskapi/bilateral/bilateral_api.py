@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from datetime import datetime, timedelta, timezone
 import pytz
 from dateutil import relativedelta
@@ -13,7 +13,10 @@ class BilateralApi:
     """
 
     @staticmethod
-    def calculate_contract_price(api_connection ,periods, price_area, currency_code, curve_model, contract_type="BASELOAD", monthly_profile=[], weekday_profile=[]):
+    def calculate_contract_price(api_connection ,periods, price_area, currency_code,
+                                 curve_model,curve_resolution=PeriodResolutionEnum.DAILY.value,
+                                 contract_type="BASELOAD", monthly_profile=[],
+                                 weekday_profile=[],hours=list(range(24))):
         """Fetches hourly price curve
 
         :param api_connection: class with API token for use with API
@@ -40,21 +43,25 @@ class BilateralApi:
                 "price_area": price_area,
                 "currency_code": currency_code,
                 "curve_model":curve_model,
+                "curve_resolution":curve_resolution,
                 "contract_type":contract_type,
                 "periods":dict_periods,
                 "monthly_profile":monthly_profile,
-                "weekday_profile": weekday_profile
+                "weekday_profile": weekday_profile,
+                "day_profile": hours
         }
 
-        #print(qry_payload)
+        print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/', qry_payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calculate_contract_price_df(api_connection, periods, price_area, currency_code, curve_model,
-                                 contract_type="BASELOAD", monthly_profile=[], weekday_profile=[]):
-        success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area, currency_code, curve_model,
-                                 contract_type, monthly_profile, weekday_profile)
+    def calculate_contract_price_df(api_connection, periods, price_area, currency_code,
+                                    curve_model,curve_resolution=PeriodResolutionEnum.MONTHLY.value,
+                                 contract_type="BASELOAD", monthly_profile=[], weekday_profile=[], hours=list(range(24))):
+        success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area,
+                                                                                        currency_code, curve_model,curve_resolution,
+                                 contract_type, monthly_profile, weekday_profile, hours)
         if success:
             period_prices = json_res['period_prices']
             df_curve = pd.DataFrame(data=eval(json_res['forward_curve']))

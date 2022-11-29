@@ -24,7 +24,7 @@ def calculate_price(api_conn):
     periods.append(["B", fromd, untild])
     print(periods)
     df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
-                                            "PRICEIT",
+                                            "PRICEIT",curve_resolution=PeriodResolutionEnum.DAILY.value,
                                         contract_type="PROFILE",
                                         monthly_profile=get_winter_profile(),
                                         weekday_profile=get_workweek())
