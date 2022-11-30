@@ -206,11 +206,20 @@ class LemsApi:
         logger.info("Fetching counterparts list")
         json_res = api_connection.exec_get_url(
             '/api/lems/localproducts/compact/', parameters)
+        return json_res
+
+    @staticmethod
+    def get_traded_products_df(api_connection, parameters={}):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=LemsApi.get_traded_products(api_connection, parameters)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
         return df
-
     @staticmethod
     def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, order_type="NORMAL", expiry=None, exclusive=None):
         """Fetches all counterparts and displays in a dataframe

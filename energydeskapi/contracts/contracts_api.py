@@ -59,7 +59,7 @@ class Contract:
         self.otc_multi_delivery_periods=[]
         self.contract_tags=[]
         self.area="SYS"
-        self.base_peak = "BASE"
+        self.commodity_profile = "BASELOAD"
         self.spread = False
         self.otc = False
         self.delivery_type=delivery_type
@@ -91,7 +91,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
-        prod['base_peak'] = self.base_peak
+        prod['commodity_profile'] = self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
         if self.product_code is not None:

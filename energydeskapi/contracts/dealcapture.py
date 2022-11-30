@@ -22,13 +22,18 @@ from dotenv import load_dotenv
 from energydeskapi.sdk.money_utils import FormattedMoney
 
 def bilateral_dealcapture(api_conn):
+    locprods_df=LemsApi.get_traded_products_df(api_conn)
 
     trades = LemsApi.get_own_trades(api_conn)
     for t in trades:
-        print(t)
+        #print(t)
         deal_id=t['deal_id']
         trade_id = t['trade_id']
         loc_ticker = t['ticker']
+
+        delivery_from=locprods_df.loc[locprods_df["ticker"] ==loc_ticker, 'delivery_from'].iloc[0]
+        delivery_until = locprods_df.loc[locprods_df["ticker"] == loc_ticker, 'delivery_until'].iloc[0]
+
         price = t['price']
         buy_sell = t['side']
         quantity = t['quantity']
@@ -52,7 +57,7 @@ def bilateral_dealcapture(api_conn):
         prof = UsersApi.get_user_profile(api_conn)
         tader_pk = prof['pk']
         c=Contract(trade_id, tb,
-                    FormattedMoney(price, NOK),quantity,
+                    FormattedMoney(price, NOK),round(quantity, 1),
                     FormattedMoney(0, NOK),
                     FormattedMoney(0, NOK),
                    create_at[0:10],create_at, ContractTypeEnum.PHYSICAL,
@@ -65,8 +70,8 @@ def bilateral_dealcapture(api_conn):
                    tader_pk)
         print(c.get_dict(api_conn))
         c.contract_status = ContractStatusEnum.CONFIRMED
-        #c.commodity_delivery_from = parser.isoparse(selected_poduct['delivery_from'].iloc[0])
-        #c.commodity_delivery_until = parser.isoparse(selected_poduct['delivery_until'].iloc[0])
+        c.commodity_delivery_from = delivery_from
+        c.commodity_delivery_until =delivery_until
         c.product_code = loc_ticker
         c.commodity_profile="BASELOAD"
         ContractsApi.upsert_contract(api_conn,c)
