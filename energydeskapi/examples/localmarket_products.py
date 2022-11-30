@@ -129,7 +129,7 @@ def define_products(price_area):
 
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
-    api_conn = init_api(dirname(__file__))
+    api_conn=init_api()
     price_area="NO1"
     products=define_products(price_area)
     for p in products:
