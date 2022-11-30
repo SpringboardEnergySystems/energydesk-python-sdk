@@ -132,6 +132,24 @@ class Contract:
             dict["periods"] = self.otc_multi_delivery_periods
 
         return dict
+
+class ContractFilter():
+    """ Class for contract filters
+
+    """
+    def __init__(self):
+        self.pk=0
+        self.user=None
+        self.description=None
+        self.filters=None
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.user is not None: dict['user'] = self.user
+        if self.description is not None: dict['description'] = self.description
+        if self.filters is not None: dict['filters'] = self.filters
+        return dict
+
 class ContractsApi:
     """Class for contracts in api
     """
@@ -198,6 +216,26 @@ class ContractsApi:
 
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/portfoliomanager/contracts/', dict)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def upsert_contract_filters(api_connection, filter):
+        """Registers contract filters
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param filter: contract filter object
+        :type filter: str
+        """
+        logger.info("Registering contract filter")
+        print(filter.pk)
+
+        if filter.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/portfoliomanager/contractfilter/' + str(filter.pk) + "/", filter.get_dict())
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/portfoliomanager/contractfilter/', filter.get_dict())
         return success, returned_data, status_code, error_msg
 
     @staticmethod
@@ -380,6 +418,18 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contractstatuses/')
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_contract_filters(api_connection, parameters={}):
+        """Fetches contract filters
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param parameters: parameters to filter contract filters
+        :type parameters: str
+        """
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilter/', parameters)
+        return json_res
 
     @staticmethod
     def list_contract_types(api_connection):
