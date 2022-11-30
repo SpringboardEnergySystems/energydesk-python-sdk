@@ -218,6 +218,7 @@ class ContractsApi:
                 '/api/portfoliomanager/contracts/', dict)
         return success, returned_data, status_code, error_msg
 
+
     @staticmethod
     def upsert_contract_filters(api_connection, filter):
         """Registers contract filters

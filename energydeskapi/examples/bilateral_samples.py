@@ -37,17 +37,21 @@ def generate_sell_prices(api_conn):
     mw=500
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products(api_conn)
-    for index,row in df.iterrows():
-        print("Calculating fixed price for ", row['ticker'])
-        periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
-        LemsApi.add_order(api_conn, row['ticker'], 1100, "NOK", mw, "SELL", "NORMAL", expiry, "Volte AS")
-        continue
-        success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, mw, row['area'],
-                                                                                     "NOK",
-                                                                                     FwdCurveInternalEnum.CUBIC_SPLINE.value)
-        for result in res['period_prices']:
-            print(result['period_tag'], result['contract_price'])
-            LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
+    for o in [('Volte AS', 1120, 50),('Entelios AS', 1100, 500)]:
+        comp=o[0]
+        price = o[1]
+        qty = o[2]
+        for index,row in df.iterrows():
+            print("Calculating fixed price for ", row['ticker'])
+            periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
+            LemsApi.add_order(api_conn, row['ticker'], price, "NOK", qty, "SELL", "NORMAL", expiry, comp)
+            continue
+            success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, mw, row['area'],
+                                                                                         "NOK",
+                                                                                         FwdCurveInternalEnum.CUBIC_SPLINE.value)
+            for result in res['period_prices']:
+                print(result['period_tag'], result['contract_price'])
+                LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
 
 
 if __name__ == '__main__':

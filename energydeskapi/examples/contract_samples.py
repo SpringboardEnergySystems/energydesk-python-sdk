@@ -1,5 +1,6 @@
 import logging
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract, ContractFilter
+from energydeskapi.contracts.dealcapture import bilateral_dealcapture
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from moneyed import EUR
@@ -133,4 +134,4 @@ if __name__ == '__main__':
     api_conn=init_api()
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
-    register_contract_filters(api_conn)
+    bilateral_dealcapture(api_conn)

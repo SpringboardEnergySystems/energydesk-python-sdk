@@ -1,4 +1,7 @@
+import random
+from datetime import datetime
 import logging
+from random import randrange
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.lems.lems_api import LemsApi
 import pandas as pd
@@ -44,10 +47,10 @@ def remove_all_active_orders(api_conn):
 # Example of adding a buy order to match orders in the live orderbook
 
 
-def add_buy_order_on_nearest_products(api_conn,  price, currency, quantity_mw):
+def add_buy_order_on_products(api_conn,  price, currency,product_idx, quantity_mw):
     df_products = get_available_products(api_conn)
     # For simplicity and test, pick the first product
-    sample_ticker = df_products["ticker"].values[0]
+    sample_ticker = df_products["ticker"].values[product_idx]
     success, json_res, status_code, error_msg = LemsApi.add_order(
         api_conn, sample_ticker, price, currency, quantity_mw, "BUY", "FOK")
     if success:
@@ -90,9 +93,14 @@ def get_own_trades_total(api_conn):
 
 
 if __name__ == '__main__':
+    random.seed(datetime.now())
     api_conn = init_api()
-    for i in range(25):
-        add_buy_order_on_nearest_products(api_conn, 1900, "NOK", quantity_mw=0.2)  # 0.5 MW in sample
+    for comp in ["b3c56286a379a237ec41b5dfc3c87b3bf64584d6", "cda527d86d80d1fd67feda998a03ba9e59f97479"]:
+        api_conn.set_token(comp, "Token")
+        v = random.uniform(0.1, 0.5)
+        for i in range(25):
+            product_idx=randrange(5)
+            add_buy_order_on_products(api_conn, 1900, "NOK",product_idx, quantity_mw=v)  # 0.5 MW in sample
     # remove_all_active_orders(api_conn)
     #get_own_orders_total(api_conn)
     #get_own_trades_total(api_conn)
