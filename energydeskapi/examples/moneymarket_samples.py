@@ -34,4 +34,4 @@ if __name__ == '__main__':
     # get_moneymarket_data(api_conn)
     #fetch_fxspot(api_conn)
     fetch_yieldcurves(api_conn)
-    #fetch_yieldcurves(api_conn)
+    fetch_fxtenors(api_conn)

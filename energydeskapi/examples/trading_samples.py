@@ -91,8 +91,9 @@ def get_own_trades_total(api_conn):
 
 if __name__ == '__main__':
     api_conn = init_api()
-    add_buy_order_on_nearest_products(api_conn, 1900, "NOK", quantity_mw=3)  # 0.5 MW in sample
+    for i in range(25):
+        add_buy_order_on_nearest_products(api_conn, 1900, "NOK", quantity_mw=0.2)  # 0.5 MW in sample
     # remove_all_active_orders(api_conn)
-    get_own_orders_total(api_conn)
-    get_own_trades_total(api_conn)
+    #get_own_orders_total(api_conn)
+    #get_own_trades_total(api_conn)
     # get_live_orderbook(api_conn)

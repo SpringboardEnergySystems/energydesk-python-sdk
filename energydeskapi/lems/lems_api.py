@@ -212,7 +212,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, order_type="NORMAL", expiry=None):
+    def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, order_type="NORMAL", expiry=None, exclusive=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -233,6 +233,8 @@ class LemsApi:
             "buy_or_sell": buy_or_sell,
             "order_type": order_type
         }
+        if exclusive is not None:
+            payload['exclusive_counterpart']=exclusive
         print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
