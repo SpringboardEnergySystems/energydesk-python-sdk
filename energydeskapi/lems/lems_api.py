@@ -28,18 +28,21 @@ class LocalProduct:
                  traded_from=None,
                  traded_until=None,
                  commodity_type=None,
+                 commodity_profile=None,
                  instrument_type=None,
                  contract_status=None,
                  buy_or_sell=None,
                  counterpart=None,
                  market=None,
                  trader=None,
-                 marketplace_product=None
+                 marketplace_product=None,
+                    delivery_type=None
                  ):
         self.pk = 0
         self.local_market = local_market
         self.local_area = local_area
         self.ticker = ticker
+        self.commodity_profile=commodity_profile
         self.description = description
         self.currency = currency
         self.traded_from = traded_from
@@ -54,11 +57,13 @@ class LocalProduct:
         self.marketplace_product = marketplace_product
         self.commodity_delivery_from = None
         self.commodity_delivery_until = None
+
         self.product_code = None
         self.otc_multi_delivery_periods = []
         self.tags = []
         self.area = "SYS"
-        self.base_peak = "BASE"
+        self.profile_category = "BASELOAD"
+        self.delivery_type=delivery_type
         self.spread = False
         self.otc = False
 
@@ -66,12 +71,19 @@ class LocalProduct:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
+        self.contract_size = int((self.commodity_delivery_until - self.commodity_delivery_from).total_seconds()/3600)
         if self.instrument_type is not None:
             prod['instrument_type'] = MarketsApi.get_instrument_type_url(
                 api_conn, self.instrument_type)
         if self.commodity_type is not None:
             prod['commodity_type'] = MarketsApi.get_commodity_type_url(
                 api_conn, self.commodity_type)
+        if self.delivery_type is not None:
+            prod['delivery_type'] = MarketsApi.get_delivery_type_url(
+                api_conn, self.delivery_type)
+        if self.market is not None:
+            prod['market'] = MarketsApi.get_market_url(
+                api_conn, self.market)
         if self.commodity_delivery_from is not None:
             prod['delivery_from'] = check_fix_date2str(
                 self.commodity_delivery_from)
@@ -79,9 +91,13 @@ class LocalProduct:
             prod['delivery_until'] = check_fix_date2str(
                 self.commodity_delivery_until)
         prod['area'] = self.area
-        prod['base_peak'] = self.base_peak
+        prod['profile_category'] = self.profile_category
         prod['spread'] = self.spread
+        prod['contract_size'] = self.contract_size
+    
         prod['otc'] = self.otc
+        if self.commodity_profile is not None:
+            prod['commodity_profile']=self.commodity_profile
 
         if self.ticker is not None:
             prod['product_code'] = self.ticker
@@ -92,6 +108,7 @@ class LocalProduct:
         dict['local_market'] = self.local_market
         dict['local_area'] = self.local_area
         dict['currency'] = self.currency
+        
         dict['traded_from'] = check_fix_date2str(self.traded_from)
         dict['traded_until'] = check_fix_date2str(self.traded_until)
         return dict

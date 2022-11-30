@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type
 from energydeskapi.sdk.money_utils import gen_json_money
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
@@ -31,7 +32,8 @@ class Contract:
                  counterpart=None,
                  market=None,
                  trader=None,
-                 marketplace_product=None
+                 marketplace_product=None,
+                 delivery_type=DeliveryTypeEnum.FINANCIAL.value,
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -60,6 +62,7 @@ class Contract:
         self.base_peak = "BASE"
         self.spread = False
         self.otc = False
+        self.delivery_type=delivery_type
 
 
     def add_contract_tag(self, tag):
@@ -82,6 +85,8 @@ class Contract:
         prod = {}
         if self.instrument_type is not None: prod['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,self.instrument_type)
         if self.commodity_type is not None: prod['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn, self.commodity_type)
+        if self.delivery_type is not None: prod['delivery_type'] = MarketsApi.get_delivery_type_url(api_conn,
+                                                                                                       self.delivery_type)
         if self.commodity_delivery_from is not None:prod['delivery_from'] = check_fix_date2str(self.commodity_delivery_from)
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
