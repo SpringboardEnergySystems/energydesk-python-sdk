@@ -3,6 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.lems.lems_api import LemsApi, LocalProduct
 import pandas as pd
 import pytz
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum
 from os.path import join, dirname
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.customers.customers_api import CustomersApi
@@ -62,13 +63,14 @@ def check_create_product(api_conn, price_area, product):
     locprod.market = MarketEnum.NORDIC_POWER
     locprod.commodity_type = CommodityTypeEnum.POWER
     locprod.instrument_type = InstrumentTypeEnum.FWD
+    locprod.delivery_type=DeliveryTypeEnum.PHYSICAL
+    locprod.profile_category=product['contract_type']
     locprod.commodity_profile={'monthly_profile':product['monthly_profile'],
     'weekday_profile':product['weekday_profile'],
     'daily_profile':product['daily_profile']}
-    print(locprod.commodity_profile)
     print(locprod.get_dict(api_conn))
     #Check and create product if not already on server. User must av admin rights
-    #LemsApi.upsert_localproduct(api_conn, locprod)
+    LemsApi.upsert_localproduct(api_conn, locprod)
 
 def set_timezone(locdt, loczone="Europe/Oslo"):
     norzone = pytz.timezone(loczone)

@@ -8,6 +8,10 @@ class MarketEnum(Enum):
     CURRENCY_MARKET = 4
     GOs_MARKET = 5
 
+class DeliveryTypeEnum(Enum):
+    FINANCIAL = 1
+    PHYSICAL = 2
+
 class CommodityTypeEnum(Enum):
     POWER = 1
     EUA = 2

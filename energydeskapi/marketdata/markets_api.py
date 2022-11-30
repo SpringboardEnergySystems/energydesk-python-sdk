@@ -56,6 +56,33 @@ class MarketsApi:
         return json_res
 
     @staticmethod
+    def get_delivery_type_url(api_connection, delivery_type_enum):
+        """Fetches url for commodity type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param delivery_type_enum: type of commodity
+        :type delivery_type_enum: str, required
+        """
+        deltype = delivery_type_enum if isinstance(delivery_type_enum, int) else delivery_type_enum.value
+        return api_connection.get_base_url() +'/api/markets/deliverytypes/' + str(deltype) + "/"
+
+    @staticmethod
+    def get_delivery_type_obj(api_connection, delivery_type_enum):
+        """Fetches all commodity type objects with URL relations. Will only return commodity types for which the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param commodity_type_enum: type of commodity
+        :type commodity_type_enum: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/deliverytypes/' + str(delivery_type_enum.value) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_commodity_type_url(api_connection, commodity_type_enum):
         """Fetches url for commodity type from enum value
 
