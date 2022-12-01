@@ -221,15 +221,14 @@ class ContractsApi:
 
     @staticmethod
     def upsert_contract_filters(api_connection, filter):
-        """Registers contract filters
+        """Registers/Updates contract filters
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         :param filter: contract filter object
         :type filter: str
         """
-        logger.info("Registering contract filter")
-        print(filter.pk)
+        logger.info("Upserting contract filter")
 
         if filter.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
