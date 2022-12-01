@@ -35,6 +35,12 @@ def list_users(api_conn):
     print(df)
     df = UsersApi.get_profile_by_key(api_conn,1)
     print(df)
+
+def get_user_by_pk(api_conn):
+    pk = 5
+    json_user = UsersApi.get_user_by_key(api_conn, pk)
+    print(json_user)
+
 def create_user(api_conn):
     u = User()
     u.username = "myuser@gmail.com"
@@ -53,8 +59,9 @@ def basic_auth(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    update_user_company(api_conn, "s.r.eriksen@gmail.com","976894677" )
-    update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "976894677")
+    #update_user_company(api_conn, "s.r.eriksen@gmail.com","976894677" )
+    #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "976894677")
+    get_user_by_pk(api_conn)
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "922675163")
     #register_companies(api_conn)
     #create_company(api_conn)

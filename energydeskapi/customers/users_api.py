@@ -152,6 +152,14 @@ class UsersApi:
         return UsersApi.get_profile_by_key(api_connection,user_profile_key)
 
     @staticmethod
+    def get_user_by_key(api_connection, user_key):
+        logger.info("Fetching user with key " + str(user_key))
+        json_res = api_connection.exec_get_url('/api/customers/users/' + str(user_key) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def update_user(api_connection, pk, payload ):
         """Fetches user profiles
 
