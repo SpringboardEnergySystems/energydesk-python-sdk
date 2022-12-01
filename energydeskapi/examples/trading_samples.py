@@ -115,8 +115,7 @@ import sys
 if __name__ == '__main__':
     random.seed(datetime.now())
     api_conn = init_api()
-    get_own_trades_total(api_conn)
-    #sys.exit(0)
+    #get_own_trades_total(api_conn)
     list1 = ['920369820','925891576','913320506', '927856026', '927856026', '985274762']
     list2 =['970980105','970234934','820431472','820431472','979437218']
     #Samples of 2 users from different companies
