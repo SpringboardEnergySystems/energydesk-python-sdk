@@ -153,6 +153,6 @@ if __name__ == '__main__':
     api_conn=init_api()
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
-    #bilateral_dealcapture(api_conn)
+    bilateral_dealcapture(api_conn)
     #get_master_contract_agreement(api_conn)
-    register_master_contract_agreement(api_conn)
+    #register_master_contract_agreement(api_conn)
