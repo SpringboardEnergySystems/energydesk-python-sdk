@@ -48,16 +48,23 @@ class MasterAgreementApi:
         return None
 
     @staticmethod
-    def register_master_agreement(api_connection, master_agreement):
-        """Creates master contract agreements
+    def upsert_master_agreement(api_connection, master_agreement):
+        """Creates/Updates master contract agreements
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         :param master_agreement: master contract agreement object
         :type master_agreement: str, required
         """
+        logger.info("Upserting master agreement")
         payload = master_agreement.get_dict(api_connection)
-        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/mastercontractagreement/', payload)
+        key = int(payload['pk'])
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/portfoliomanager/mastercontractagreement/' + payload['pk'] + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/portfoliomanager/mastercontractagreement/', payload)
         if success:
             return returned_data
         return None

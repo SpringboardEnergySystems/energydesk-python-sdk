@@ -49,15 +49,16 @@ def register_contract_filters(api_conn):
 
 def register_master_contract_agreement(api_conn):
     master_agreement = MasterContractAgreement()
+    master_agreement.pk = "4"
     master_agreement.title = "title"
     master_agreement.created_at = "2022-12-01T08:29:46.594Z"
     master_agreement.contract_owner = "http://127.0.0.1:8001/api/customers/companies/721/"
     master_agreement.counterpart = "http://127.0.0.1:8001/api/customers/companies/721/"
-    master_agreement.contract_info_1 = "contract_info"
+    master_agreement.contract_info_1 = "contract_info11111"
     master_agreement.contract_info_2 = "contract_info"
     master_agreement.contract_info_3 = "contract_info"
     master_agreement.signed_contract_url_ref = "url"
-    MasterAgreementApi.register_master_agreement(api_conn, master_agreement)
+    MasterAgreementApi.upsert_master_agreement(api_conn, master_agreement)
 
 def get_sample_contract(api_conn, commodity):
     yester = (datetime.today() + timedelta(days=-1)).replace( hour=0, minute=0, second=0, microsecond=0)
