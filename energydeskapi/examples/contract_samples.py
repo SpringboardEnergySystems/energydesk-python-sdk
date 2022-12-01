@@ -47,10 +47,11 @@ def get_master_contract_agreement(api_conn):
 def register_contract_filters(api_conn):
     contract_filter = ContractFilter()
     contract_filter.pk = 4
-    contract_filter.user = "https://127.0.0.1:8001/api/customers/profiles/1/"
-    contract_filter.description = "filters"
-    contract_filter.filters = "filters"
-    ContractsApi.upsert_contract_filters(api_conn, contract_filter)
+    contract_filter.user = "http://127.0.0.1:8001/api/customers/profiles/1/"
+    contract_filter.description = "filkters"
+    contract_filter.filters = "filterds"
+    success, returned_data, status_code, error_msg = ContractsApi.upsert_contract_filters(api_conn, contract_filter)
+    print(returned_data)
 
 def register_master_contract_agreement(api_conn):
     master_agreement = MasterContractAgreement()
