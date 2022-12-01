@@ -95,7 +95,8 @@ def get_own_trades_total(api_conn):
 if __name__ == '__main__':
     random.seed(datetime.now())
     api_conn = init_api()
-    for comp in ["b3c56286a379a237ec41b5dfc3c87b3bf64584d6", "cda527d86d80d1fd67feda998a03ba9e59f97479"]:
+    #Samples of 2 users from different companies
+    for comp in ["82a85b9cbdd30be50a343a475e885905bf778494", "af0ac457fa7315ea96291c9e438586915bffad5c"]:
         api_conn.set_token(comp, "Token")
         v = random.uniform(0.1, 0.5)
         for i in range(25):
