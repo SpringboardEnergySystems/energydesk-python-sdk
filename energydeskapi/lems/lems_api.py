@@ -216,6 +216,7 @@ class LemsApi:
         :type api_connection: str, required
         """
         json_res=LemsApi.get_traded_products(api_connection, parameters)
+        print(json_res)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
