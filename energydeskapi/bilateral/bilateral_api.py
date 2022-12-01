@@ -13,6 +13,18 @@ class BilateralApi:
     """
 
     @staticmethod
+    def calculate_deliveries(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value):
+        qry_payload = {
+                "period_from": period_from,
+                "period_until": period_until,
+                "resolution":resolution,
+        }
+
+        print(qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/', qry_payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
                                  curve_model,curve_resolution=PeriodResolutionEnum.DAILY.value,
                                  contract_type="BASELOAD", monthly_profile=[],
