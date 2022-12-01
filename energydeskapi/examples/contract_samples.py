@@ -1,6 +1,7 @@
 import logging
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract, ContractFilter
 from energydeskapi.contracts.dealcapture import bilateral_dealcapture
+from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, MasterContractAgreement
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from moneyed import EUR
@@ -33,6 +34,11 @@ def get_contract_filters(api_conn):
     json_contractfilters = ContractsApi.get_contract_filters(api_conn)
     print(json_contractfilters)
 
+def get_master_contract_agreement(api_conn):
+    parameter = {"user": 1}
+    json_contractfilters = MasterAgreementApi.get_master_agreement(api_conn)
+    print(json_contractfilters)
+
 def register_contract_filters(api_conn):
     contract_filter = ContractFilter()
     contract_filter.pk = 1
@@ -40,6 +46,18 @@ def register_contract_filters(api_conn):
     contract_filter.description = "filters"
     contract_filter.filters = "filters"
     ContractsApi.upsert_contract_filters(api_conn, contract_filter)
+
+def register_master_contract_agreement(api_conn):
+    master_agreement = MasterContractAgreement()
+    master_agreement.title = "title"
+    master_agreement.created_at = "2022-12-01T08:29:46.594Z"
+    master_agreement.contract_owner = "http://127.0.0.1:8001/api/customers/companies/721/"
+    master_agreement.counterpart = "http://127.0.0.1:8001/api/customers/companies/721/"
+    master_agreement.contract_info_1 = "contract_info"
+    master_agreement.contract_info_2 = "contract_info"
+    master_agreement.contract_info_3 = "contract_info"
+    master_agreement.signed_contract_url_ref = "url"
+    MasterAgreementApi.register_master_agreement(api_conn, master_agreement)
 
 def get_sample_contract(api_conn, commodity):
     yester = (datetime.today() + timedelta(days=-1)).replace( hour=0, minute=0, second=0, microsecond=0)
@@ -134,4 +152,6 @@ if __name__ == '__main__':
     api_conn=init_api()
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
-    bilateral_dealcapture(api_conn)
+    #bilateral_dealcapture(api_conn)
+    #get_master_contract_agreement(api_conn)
+    register_master_contract_agreement(api_conn)
