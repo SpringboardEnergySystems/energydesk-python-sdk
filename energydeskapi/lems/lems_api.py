@@ -216,7 +216,6 @@ class LemsApi:
         :type api_connection: str, required
         """
         json_res=LemsApi.get_traded_products(api_connection, parameters)
-        print(json_res)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -245,13 +244,43 @@ class LemsApi:
         }
         if exclusive is not None:
             payload['exclusive_counterpart']=exclusive
-        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
         if not success:
             logger.error(error_msg)
         return success, json_res, status_code, error_msg
+    @staticmethod
+    def add_buyer_order(api_connection, ticker, price, currency, quantity, order_type="NORMAL", expiry=None, extern_comp_reg=None,extern_comp_name=None):
+        """Fetches all counterparts and displays in a dataframe
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        exp = (datetime.today() + timedelta(days=2)
+               ).replace(hour=0, minute=0, second=0, microsecond=0)
+        expiry_str = check_fix_date2str(
+            exp) if expiry is None else check_fix_date2str(expiry)
+        payload = {
+            # "order_id":"",# Will be set by server
+            # "order_timestamp":"", # Will be set by server
+            "ticker": ticker,
+            "price": price,
+            "currency": currency,
+            "quantity": quantity,
+            "expiry": expiry_str,
+            "buy_or_sell": "BUY",
+            "order_type": order_type
+        }
+        if extern_comp_reg is not None:
+            payload['extern_company_regnumber']=extern_comp_reg
+        if extern_comp_name is not None:
+            payload['extern_company_name']=extern_comp_name
+        print(extern_comp_name)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            '/api/lems/addorder/', payload)
+        if not success:
+            logger.error(error_msg)
+        return success, json_res, status_code, error_msg
     @staticmethod
     def remove_order(api_connection, ticker, order_id):
         """Fetches all counterparts and displays in a dataframe
