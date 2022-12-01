@@ -133,7 +133,7 @@ class Contract:
 
         return dict
 
-class ContractFilter():
+class ContractFilter:
     """ Class for contract filters
 
     """
