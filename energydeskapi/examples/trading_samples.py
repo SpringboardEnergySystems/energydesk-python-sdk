@@ -119,7 +119,7 @@ if __name__ == '__main__':
     list1 = ['920369820','925891576','913320506', '927856026', '927856026', '985274762']
     list2 =['970980105','970234934','820431472','820431472','979437218']
     #Samples of 2 users from different companies
-    for comp in [("40431ea50d95eca62c665f0003fd19130195a14b", list1), ("e295e38c0e45be1b6783c9e2341a8a7bd0a60170",list2)]:
+    for comp in [("88866a706afe940ed3bac70b2d43511040d508d9", list1), ("2116dad42c08674376936fd1b09dda5680c83e66",list2)]:
         api_conn.set_token(comp[0], "Token")
         v = random.uniform(0.1, 0.5)
         externals=comp[1]

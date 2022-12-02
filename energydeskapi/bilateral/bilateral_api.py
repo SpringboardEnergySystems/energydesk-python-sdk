@@ -25,6 +25,20 @@ class BilateralApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
+    def calculate_deliveries_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value):
+
+        success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution)
+        if success==False:
+            return success, json_res, status_code, error_msg
+        df_deliveries = pd.DataFrame(data=eval(json_res))
+        df_deliveries.index = df_deliveries['period_from']
+        #for index,row in df_deliveries.iterrows():
+        #    print(row)
+        print(df_deliveries)
+        #df_deliveries = convert_dataframe_to_localtime(df_deliveries)
+        return True, df_deliveries,status_code, error_msg
+
+    @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
                                  curve_model,curve_resolution=PeriodResolutionEnum.DAILY.value,
                                  profile_type="BASELOAD", monthly_profile=[],
