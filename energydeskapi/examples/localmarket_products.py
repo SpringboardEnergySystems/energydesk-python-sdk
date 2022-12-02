@@ -86,7 +86,7 @@ def define_products(price_area):
     p1={'name': 'FWD' + price_area + '-3YR-JAN23',
         'period_from':period_from,
         'period_until':period_until_3yr,
-        'contract_type':"BASELOAD",
+        'profile_type':"BASELOAD",
         'monthly_profile':get_month_list(), #All months
         'weekday_profile':get_weekdays_list(),
         'daily_profile':list(range(24))} #All weekdays
@@ -96,7 +96,7 @@ def define_products(price_area):
     p1b={'name': 'FWD' + price_area + '-BASE-7YRJAN23',
         'period_from':period_from,
         'period_until':period_until_7yr,
-        'contract_type':"BASELOAD",
+        'profile_type':"BASELOAD",
         'monthly_profile':get_month_list(),
         'weekday_profile':get_weekdays_list(),
         'daily_profile':list(range(24))
@@ -107,7 +107,7 @@ def define_products(price_area):
     p2={'name': 'FWD' + price_area + '-WINTERWEEK-3YRJAN23',
         'period_from':period_from,
         'period_until':period_until_3yr,
-        'contract_type':"PROFILE",
+        'profile_type':"PROFILE",
         'monthly_profile':get_winter_profile(),
         'weekday_profile':get_workweek(),
         'daily_profile':list(range(24))
@@ -119,7 +119,7 @@ def define_products(price_area):
     p3={'name': 'FWD' + price_area + '-WINTERWEEKEND-3YRJAN23',
         'period_from':period_from,
         'period_until':period_until_3yr,
-        'contract_type':"PROFILE",
+        'profile_type':"PROFILE",
         'monthly_profile':get_winter_profile(),
         'weekday_profile':get_weekend(),
         'daily_profile':list(range(24))}

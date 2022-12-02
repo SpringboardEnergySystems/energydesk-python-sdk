@@ -58,7 +58,7 @@ if __name__ == '__main__':
     dtstr1=convert_datime_to_utcstr(yester)
     dtstr2=convert_datime_to_locstr(yester, "Europe/Oslo")  #In order to get the date correct
     trading_book = 1  # Use lookup function to set correct trading book key. Server will check if user allowed still
-    contract_type = ContractTypeEnum.FINANCIAL
+
     commodity_type = CommodityTypeEnum.POWER
     contract_status = ContractStatusEnum.REGISTERED
     instrument_type = InstrumentTypeEnum.FORWARD
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     c=Contract("EXT ID 667", trading_book, FormattedMoney(55.30, EUR),5,
                                     FormattedMoney(2.1, EUR),
                                     FormattedMoney(2.0, EUR),
-               dtstr2[0:10],dtstr1, contract_type, commodity_type, instrument_type,
+               dtstr2[0:10],dtstr1,  commodity_type, instrument_type,
                contract_status,
                "SELL",
                counterpart,

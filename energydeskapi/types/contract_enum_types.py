@@ -8,9 +8,6 @@ class ContractStatusEnum(Enum):
     CANCELLED = 4
 
 
-class ContractTypeEnum(Enum):
-    FINANCIAL = 1
-    PHYSICAL = 2
 
 
 class GosEnergySources(Enum):
