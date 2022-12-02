@@ -42,7 +42,7 @@ class MasterAgreementApi:
         :type api_connection: str, required
         """
         logger.info("Fetching master agreement")
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/mastercontractagreement/', parameters)
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/mastercontractagreements/', parameters)
         if json_res is not None:
             return json_res
         return None
@@ -61,10 +61,10 @@ class MasterAgreementApi:
         key = int(payload['pk'])
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/mastercontractagreement/' + payload['pk'] + "/", payload)
+                '/api/portfoliomanager/mastercontractagreements/' + payload['pk'] + "/", payload)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/portfoliomanager/mastercontractagreement/', payload)
+                '/api/portfoliomanager/mastercontractagreements/', payload)
         if success:
             return returned_data
         return None
