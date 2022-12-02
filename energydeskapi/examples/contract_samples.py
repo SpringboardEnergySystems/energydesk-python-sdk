@@ -9,7 +9,7 @@ from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
 from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
-from energydeskapi.types.contract_enum_types import ContractStatusEnum, ContractTypeEnum, GosEnergySources
+from energydeskapi.types.contract_enum_types import ContractStatusEnum, GosEnergySources
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
 import json
@@ -157,8 +157,8 @@ if __name__ == '__main__':
     api_conn=init_api()
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
-    get_contract_filter_pk(api_conn)
+    #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
-    #bilateral_dealcapture(api_conn)
+    bilateral_dealcapture(api_conn)
     #get_master_contract_agreement(api_conn)
     #register_master_contract_agreement(api_conn)

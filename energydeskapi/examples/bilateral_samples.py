@@ -18,7 +18,7 @@ def get_deliveries(api_conn):
     fromd="2023-01-01"
     untild = "2023-10-01"
     BilateralApi.calculate_deliveries(api_conn, fromd,untild,
-                                      resolution=PeriodResolutionEnum.HOURLY.value)
+                                      resolution=PeriodResolutionEnum.MONTHLY.value)
 
 def calculate_price(api_conn):
     fromd="2023-10-01"
@@ -63,4 +63,4 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    get_deliveries(api_conn)
+    generate_sell_prices(api_conn)
