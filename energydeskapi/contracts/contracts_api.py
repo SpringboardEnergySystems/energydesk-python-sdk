@@ -24,7 +24,7 @@ class Contract:
                  clearing_fee=None,
                  trade_date=None,
                  trade_datetime=None,
-                 contract_type=None,
+
                  commodity_type=None,
                  instrument_type=None,
                  contract_status=None,
@@ -44,7 +44,7 @@ class Contract:
         self.clearing_fee=clearing_fee
         self.trade_date=trade_date
         self.trade_datetime=trade_datetime
-        self.contract_type=contract_type
+
         self.commodity_type=commodity_type
         self.instrument_type=instrument_type
         self.contract_status=contract_status
@@ -108,7 +108,7 @@ class Contract:
         if self.quantity is not None: dict['quantity'] = self.quantity
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
-        if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
+        #if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
         if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn,
                                                                                                             self.contract_status)
 

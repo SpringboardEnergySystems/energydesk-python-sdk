@@ -71,7 +71,7 @@ def get_sample_contract(api_conn, commodity):
     dtstr1=convert_datime_to_utcstr(yester)
     dtstr2=convert_datime_to_locstr(yester, "Europe/Oslo")  #In order to get the date correct
     #trading_book = 1  # Use lookup function to set correct trading book key. Server will check if user allowed still
-    contract_type = ContractTypeEnum.FINANCIAL
+
     commodity_type = commodity
     contract_status = ContractStatusEnum.APPROVED
     instrument_type = InstrumentTypeEnum.FWD
@@ -84,7 +84,6 @@ def get_sample_contract(api_conn, commodity):
                FormattedMoney(2.1, EUR),
                FormattedMoney(2.0, EUR),
                dtstr2[0:10],dtstr1,
-               contract_type,
                commodity_type,
                instrument_type,
                contract_status,
@@ -142,7 +141,6 @@ def test_gos(api_conn):
     print(rr)
 def query_paginated_contracts(api_conn):
     parameters={}
-    parameters['contract_type']=3
     head={'Authorization': 'Token 0a60f84e67763bb3214b4b1bfad522d2f947a4f3'}
     import requests
     fullurl="http://127.0.0.1:8001/api/portfoliomanager/contracts/"
