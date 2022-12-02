@@ -16,12 +16,12 @@ logging.basicConfig(level=logging.INFO,
 
 def get_deliveries(api_conn):
     fromd="2023-01-01"
-    untild = "2023-10-01"
+    untild = "2029-02-01"
     BilateralApi.calculate_deliveries(api_conn, fromd,untild)
 
 def calculate_price(api_conn):
     fromd="2023-10-01"
-    untild = "2024-10-01"
+    untild = "2030-10-01"
     periods=[["A", fromd, untild]]
 
     fromd="2023-10-01"
