@@ -25,6 +25,8 @@ class Product:
         self.block_size_category = None
         self.market = None
         self.market_place = None
+        self.delivery_type=None
+        self.commodity_profile=None
 
     def get_dict(self):
         dict = {}
@@ -36,7 +38,8 @@ class Product:
         if self.description is not None: commodity['description'] = self.description
         if self.area is not None: commodity['area'] = self.area
         if self.denomination is not None: dict['denomination'] = self.denomination
-        if self.base_peak is not None: commodity['base_peak'] = self.base_peak
+        if self.commodity_profile is not None: commodity['commodity_profile'] = self.commodity_profile
+        if self.delivery_type is not None: commodity['delivery_type'] = self.delivery_type
         if self.spread is not None: commodity['spread'] = self.spread
         if self.otc is not None: commodity['otc'] = self.otc
         if self.delivery_from is not None: commodity['delivery_from'] = self.delivery_from
