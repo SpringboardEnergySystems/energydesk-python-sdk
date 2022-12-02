@@ -13,7 +13,8 @@ class User:
         self.last_name=None
         self.user_role = None
         self.is_super_user=False
-        self.company_registry_number=None
+        self.company=None
+        #self.company_registry_number=None
 
     def get_dict(self):
         dict = {}
@@ -24,7 +25,8 @@ class User:
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
         if self.user_role is not None: dict['user_role'] = role_pk
-        if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
+        if self.company is not None: dict['company'] = self.company
+        #if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
         return dict
 
@@ -46,7 +48,7 @@ class UsersApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/update-userprofile', payload)
         if json_res is None:
             logger.error("Problems updating user " + user.username)
-            False
+            return False
         else:
             logger.info("User profile updated " + user.username)
             return True
