@@ -10,9 +10,8 @@ class Product:
         self.ticker=None
         self.vendor_ticker=None
         self.description=""
-        self.area=None
+        self.area="SYS"
         self.denomination=None
-        self.base_peak=None
         self.spread=None
         self.otc=None
         self.delivery_from=""
@@ -23,10 +22,10 @@ class Product:
         self.instrument_type = None
         self.commodity_type = None
         self.block_size_category = None
-        self.market = None
+        self.market = "Nordic Power"
         self.market_place = None
-        self.delivery_type=None
-        self.commodity_profile=None
+        self.delivery_type="FINANCIAL"
+        self.commodity_profile="BASELOAD"
 
     def get_dict(self):
         dict = {}
