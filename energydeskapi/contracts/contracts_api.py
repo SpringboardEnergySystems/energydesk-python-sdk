@@ -131,7 +131,6 @@ class Contract:
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
 
-        print(dict)
         return dict
 
 class ContractFilter:
