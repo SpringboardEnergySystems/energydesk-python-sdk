@@ -232,10 +232,10 @@ class ContractsApi:
 
         if filter.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/contractfilter/' + str(filter.pk) + "/", filter.get_dict())
+                '/api/portfoliomanager/contractfilters/' + str(filter.pk) + "/", filter.get_dict())
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/portfoliomanager/contractfilter/', filter.get_dict())
+                '/api/portfoliomanager/contractfilters/', filter.get_dict())
         return success, returned_data, status_code, error_msg
 
     @staticmethod
@@ -428,7 +428,7 @@ class ContractsApi:
         :param parameters: parameters to filter contract filters
         :type parameters: str
         """
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilter/', parameters)
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilters/', parameters)
         return json_res
 
     @staticmethod
@@ -441,7 +441,7 @@ class ContractsApi:
         :type filter_pk: str, required
         """
         logger.info("Loading contract with pk " + str(filter_pk))
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilter/' + str(filter_pk) + "/")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilters/' + str(filter_pk) + "/")
         return json_res
 
     @staticmethod
