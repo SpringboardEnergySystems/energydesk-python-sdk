@@ -432,6 +432,19 @@ class ContractsApi:
         return json_res
 
     @staticmethod
+    def get_contract_filter_by_key(api_connection, filter_pk):
+        """Fetches contract filter from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param filter_pk: key to contract filter
+        :type filter_pk: str, required
+        """
+        logger.info("Loading contract with pk " + str(filter_pk))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilter/' + str(filter_pk) + "/")
+        return json_res
+
+    @staticmethod
     def list_contract_types(api_connection):
         """Lists the types of contracts
 

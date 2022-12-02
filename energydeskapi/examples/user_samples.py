@@ -41,6 +41,11 @@ def get_user_by_pk(api_conn):
     json_user = UsersApi.get_user_by_key(api_conn, pk)
     print(json_user)
 
+def get_profile_by_pk_embedded(api_conn):
+    pk = 5
+    json_profiles = UsersApi.get_embedded_profile_by_key(api_conn, pk)
+    print(json_profiles)
+
 def create_user(api_conn):
     u = User()
     u.username = "myuser@gmail.com"
@@ -61,7 +66,8 @@ if __name__ == '__main__':
     api_conn=init_api()
     #update_user_company(api_conn, "s.r.eriksen@gmail.com","976894677" )
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "976894677")
-    get_user_by_pk(api_conn)
+    #get_user_by_pk(api_conn)
+    get_profile_by_pk_embedded(api_conn)
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "922675163")
     #register_companies(api_conn)
     #create_company(api_conn)

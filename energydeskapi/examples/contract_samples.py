@@ -31,8 +31,13 @@ def get_contract_types(api_conn):
 
 def get_contract_filters(api_conn):
     parameter = {"user": 1}
-    json_contractfilters = ContractsApi.get_contract_filters(api_conn)
+    json_contractfilters = ContractsApi.get_contract_filters(api_conn, parameter)
     print(json_contractfilters)
+
+def get_contract_filter_pk(api_conn):
+    pk = 1
+    json_contractfilter = ContractsApi.get_contract_filter_by_key(api_conn, pk)
+    print(json_contractfilter)
 
 def get_master_contract_agreement(api_conn):
     parameter = {"user": 1}
@@ -41,11 +46,12 @@ def get_master_contract_agreement(api_conn):
 
 def register_contract_filters(api_conn):
     contract_filter = ContractFilter()
-    contract_filter.pk = 1
+    contract_filter.pk = 4
     contract_filter.user = "http://127.0.0.1:8001/api/customers/profiles/1/"
-    contract_filter.description = "filters"
-    contract_filter.filters = "filters"
-    ContractsApi.upsert_contract_filters(api_conn, contract_filter)
+    contract_filter.description = "filkters"
+    contract_filter.filters = "filterds"
+    success, returned_data, status_code, error_msg = ContractsApi.upsert_contract_filters(api_conn, contract_filter)
+    print(returned_data)
 
 def register_master_contract_agreement(api_conn):
     master_agreement = MasterContractAgreement()
@@ -153,6 +159,8 @@ if __name__ == '__main__':
     api_conn=init_api()
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
-    bilateral_dealcapture(api_conn)
+    get_contract_filter_pk(api_conn)
+    #register_contract_filters(api_conn)
+    #bilateral_dealcapture(api_conn)
     #get_master_contract_agreement(api_conn)
     #register_master_contract_agreement(api_conn)
