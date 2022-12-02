@@ -68,6 +68,8 @@ class TradingBooksApi:
         """
         parameters['page_size']=1000
         json_res=TradingBooksApi.get_tradingbooks_embedded(api_connection, parameters)
+
+        print(json.dumps(json_res, indent=2))
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res['results'])
