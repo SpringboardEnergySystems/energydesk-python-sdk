@@ -16,9 +16,11 @@ logging.basicConfig(level=logging.INFO,
 
 def get_deliveries(api_conn):
     fromd="2023-01-01"
-    untild = "2023-02-01"
-    success, df, status_code, error_msg=BilateralApi.calculate_deliveries_df(api_conn, fromd,untild,
-                                      resolution=PeriodResolutionEnum.HOURLY.value)
+    untild = "2025-02-01"
+    success, df, df_trades, status_code, error_msg=BilateralApi.calculate_deliveries_df(api_conn, fromd,untild,
+                                      resolution=PeriodResolutionEnum.DAILY.value)
+    print(df_trades.columns)
+    df=df.pivot(index='period_from', columns='counterpart', values='netpos')
     print(df)
 def calculate_price(api_conn):
     fromd="2023-10-01"
