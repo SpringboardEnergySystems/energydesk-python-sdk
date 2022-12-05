@@ -36,6 +36,16 @@ def list_users(api_conn):
     df = UsersApi.get_profile_by_key(api_conn,1)
     print(df)
 
+def list_users_embedded(api_conn):
+    payload = {'page_size': 200}
+    df = UsersApi.get_users_embedded(api_conn)
+    print(df)
+
+def list_users_df(api_conn):
+    payload = {'page_size':200}
+    df = UsersApi.get_users_df(api_conn, payload)
+    print(df)
+
 def get_user_by_pk(api_conn):
     pk = 5
     json_user = UsersApi.get_user_by_key(api_conn, pk)
@@ -67,7 +77,8 @@ if __name__ == '__main__':
     #update_user_company(api_conn, "s.r.eriksen@gmail.com","976894677" )
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "976894677")
     #get_user_by_pk(api_conn)
-    get_profile_by_pk_embedded(api_conn)
+    #get_profile_by_pk_embedded(api_conn)
+    list_users_embedded(api_conn)
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "922675163")
     #register_companies(api_conn)
     #create_company(api_conn)
