@@ -19,9 +19,14 @@ def get_deliveries(api_conn):
     untild = "2025-02-01"
     success, df, df_trades, status_code, error_msg=BilateralApi.calculate_deliveries_df(api_conn, fromd,untild,
                                       resolution=PeriodResolutionEnum.DAILY.value)
-    print(df_trades.columns)
-    df=df.pivot(index='period_from', columns='counterpart', values='netpos')
-    print(df)
+    df = df.drop(['period_from'], axis=1)
+    #print(df_trades.columns)
+    df2=df.pivot_table(index='period_from', columns='counterpart', values='netpos', aggfunc='sum')
+
+    print(df2)
+
+    df3=df.pivot_table(index='period_from', columns='area', values='netpos', aggfunc='sum')
+    print(df3)
 def calculate_price(api_conn):
     fromd="2023-10-01"
     untild = "2024-10-01"
