@@ -39,6 +39,10 @@ def get_contract_filter_pk(api_conn):
     json_contractfilter = ContractsApi.get_contract_filter_by_key(api_conn, pk)
     print(json_contractfilter)
 
+def get_contract_tags(api_conn):
+    json_contractfilter = ContractsApi.get_contract_tags(api_conn)
+    print(json_contractfilter)
+
 def get_master_contract_agreement(api_conn):
     parameter = {"user": 1}
     json_contractfilters = MasterAgreementApi.get_master_agreement(api_conn)
@@ -159,6 +163,7 @@ if __name__ == '__main__':
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
-    bilateral_dealcapture(api_conn)
+    #bilateral_dealcapture(api_conn)
+    get_contract_tags(api_conn)
     #get_master_contract_agreement(api_conn)
     #register_master_contract_agreement(api_conn)
