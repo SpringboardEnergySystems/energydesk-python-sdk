@@ -48,7 +48,7 @@ def get_contract_tags(api_conn):
 
 def get_master_contract_agreements(api_conn):
     parameter = {"user": 1}
-    json_contractfilters = MasterAgreementApi.get_master_agreement(api_conn)
+    json_contractfilters = MasterAgreementApi.get_master_agreements(api_conn)
     print(json_contractfilters)
 
 def register_contract_filters(api_conn):

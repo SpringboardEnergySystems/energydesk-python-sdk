@@ -35,7 +35,7 @@ class MasterAgreementApi:
     """
 
     @staticmethod
-    def get_master_agreement(api_connection, parameters={}):
+    def get_master_agreements(api_connection, parameters={}):
         """Fetches master contract agreements
 
         :param api_connection: class with API token for use with API
@@ -47,6 +47,18 @@ class MasterAgreementApi:
             return json_res
         return None
 
+    @staticmethod
+    def get_master_agreements_embedded(api_connection, parameters={}):
+        """Fetches master contract agreements
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching master agreement")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/mastercontractagreements/embedded/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
     @staticmethod
     def upsert_master_agreement(api_connection, master_agreement):
         """Creates/Updates master contract agreements
