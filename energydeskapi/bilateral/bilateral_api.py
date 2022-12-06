@@ -72,6 +72,7 @@ class BilateralApi:
                 "curve_model":curve_model,
                 "curve_resolution":curve_resolution,
                 "periods":dict_periods,
+                "contract_type":profile_type,
                 "monthly_profile":monthly_profile,
                 "weekday_profile": weekday_profile,
                 "day_profile": hours
