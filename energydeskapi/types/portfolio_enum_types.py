@@ -10,7 +10,7 @@ class PortfolioTypeEnum(Enum):
 
 
 class PeriodViewGroupingEnum(Enum):
-    NONE = "None"
+    COUNTERPART = "counterpart"
     INSTRUMENT = "instrument"
     AREA = "area"
     TICKER = "ticker"
@@ -36,7 +36,7 @@ class ParametersEnum(Enum):
     delivery_until = {"internal": "delivery_until", "formatting":"date", "display": "DelivTo"}
     hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
-    ticker={"internal": "tcker","formatting":"str",  "display": "Product"}
+    ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "Unrealized"}
 
