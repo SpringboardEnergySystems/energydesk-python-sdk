@@ -56,6 +56,7 @@ class ApiConnection(object):
         tok=response.json()['token']
         self.set_token(tok, "Token")
         print(self.get_authorization_header())
+        print("We are OK for basic auth, return token", tok)
         return True, tok
 
     def validate_token(self, token, backend="google-oauth2"):
