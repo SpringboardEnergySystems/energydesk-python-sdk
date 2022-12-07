@@ -4,7 +4,10 @@ from energydeskapi.contracts.dealcapture import bilateral_dealcapture
 from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, MasterContractAgreement
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.customers.users_api import UsersApi
 from moneyed import EUR
+from energydeskapi.customers.customers_api import CustomersApi
+from energydeskapi.contracts.masteragreement_api import MasterContractAgreement
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
@@ -39,9 +42,13 @@ def get_contract_filter_pk(api_conn):
     json_contractfilter = ContractsApi.get_contract_filter_by_key(api_conn, pk)
     print(json_contractfilter)
 
-def get_master_contract_agreement(api_conn):
+def get_contract_tags(api_conn):
+    json_contractfilter = ContractsApi.get_contract_tags(api_conn)
+    print(json_contractfilter)
+
+def get_master_contract_agreements(api_conn):
     parameter = {"user": 1}
-    json_contractfilters = MasterAgreementApi.get_master_agreement(api_conn)
+    json_contractfilters = MasterAgreementApi.get_master_agreements_embedded(api_conn)
     print(json_contractfilters)
 
 def register_contract_filters(api_conn):
@@ -53,17 +60,21 @@ def register_contract_filters(api_conn):
     success, returned_data, status_code, error_msg = ContractsApi.upsert_contract_filters(api_conn, contract_filter)
     print(returned_data)
 
-def register_master_contract_agreement(api_conn):
+def register_master_contract_agreement(api_conn, regnmb):
+    counterres=CustomersApi.get_company_from_registry_number(api_conn, regnmb)
+    usrprofile=UsersApi.get_user_profile(api_conn)
+    usrcomp = CustomersApi.get_company_from_registry_number(api_conn, usrprofile['company_nbr'])
     master_agreement = MasterContractAgreement()
-    master_agreement.pk = "4"
-    master_agreement.title = "title"
-    master_agreement.created_at = "2022-12-01T08:29:46.594Z"
-    master_agreement.contract_owner = "http://127.0.0.1:8001/api/customers/companies/721/"
-    master_agreement.counterpart = "http://127.0.0.1:8001/api/customers/companies/721/"
-    master_agreement.contract_info_1 = "contract_info11111"
-    master_agreement.contract_info_2 = "contract_info"
-    master_agreement.contract_info_3 = "contract_info"
-    master_agreement.signed_contract_url_ref = "url"
+    master_agreement.pk = 0
+    master_agreement.title = "Master Agreement with " + counterres['name']
+    master_agreement.created_at = datetime.today().strftime(("%Y-%m-%d"))
+    master_agreement.contract_owner = "http://127.0.0.1:8001/api/customers/companies/" + str(usrcomp['pk']) + "/"
+    master_agreement.counterpart = "http://127.0.0.1:8001/api/customers/companies/" + str(counterres['pk']) + "/"
+    master_agreement.contract_info_1 = "contract_info #1"
+    master_agreement.contract_info_2 = "contract_info #2"
+    master_agreement.contract_info_3 = "contract_info #3"
+    master_agreement.signed_contract_url_ref = "http://sharepoint.com/"
+    print(master_agreement.get_dict(api_conn))
     MasterAgreementApi.upsert_master_agreement(api_conn, master_agreement)
 
 def get_sample_contract(api_conn, commodity):
@@ -93,6 +104,9 @@ def get_sample_contract(api_conn, commodity):
                trader)
 
     return c
+
+def master_agreements(api_conn):
+    MasterContractAgreement
 
 def register_normal_contract(api_conn):
     deliv_start = (datetime.today() + timedelta(days=100)).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -159,6 +173,8 @@ if __name__ == '__main__':
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
-    bilateral_dealcapture(api_conn)
-    #get_master_contract_agreement(api_conn)
-    #register_master_contract_agreement(api_conn)
+    #bilateral_dealcapture(api_conn)
+    #get_contract_tags(api_conn)
+    get_master_contract_agreements(api_conn)
+    #register_master_contract_agreement(api_conn, "922675163")
+    #register_master_contract_agreement(api_conn, "819449392")

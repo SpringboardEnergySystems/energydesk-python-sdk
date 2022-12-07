@@ -16,10 +16,17 @@ logging.basicConfig(level=logging.INFO,
 
 def get_deliveries(api_conn):
     fromd="2023-01-01"
-    untild = "2023-10-01"
-    BilateralApi.calculate_deliveries(api_conn, fromd,untild,
-                                      resolution=PeriodResolutionEnum.MONTHLY.value)
+    untild = "2025-02-01"
+    success, df, df_trades, status_code, error_msg=BilateralApi.calculate_deliveries_df(api_conn, fromd,untild,
+                                      resolution=PeriodResolutionEnum.DAILY.value)
+    df = df.drop(['period_from'], axis=1)
+    #print(df_trades.columns)
+    df2=df.pivot_table(index='period_from', columns='counterpart', values='netpos', aggfunc='sum')
 
+    print(df2)
+
+    df3=df.pivot_table(index='period_from', columns='area', values='netpos', aggfunc='sum')
+    print(df3)
 def calculate_price(api_conn):
     fromd="2023-10-01"
     untild = "2024-10-01"
@@ -43,7 +50,7 @@ def generate_sell_prices(api_conn):
     mw=500
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products_df(api_conn)
-    for o in [('Volte AS', 1120, 50),('Entelios AS', 1100, 100)]:
+    for o in [('Volte AS', 1120, 50),('Entelios AS', 1100, 500)]:
         comp=o[0]
         price = o[1]
         qty = o[2]

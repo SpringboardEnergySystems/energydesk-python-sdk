@@ -20,9 +20,24 @@ class BilateralApi:
                 "resolution":resolution,
         }
 
-        print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/', qry_payload)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def calculate_deliveries_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value):
+
+        success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution)
+        if success==False:
+            return success, None, None, status_code, error_msg
+        deliveries=json_res['bilateral_deliveries']
+        df_deliveries = pd.DataFrame(data=eval(deliveries))
+        df_deliveries.index = df_deliveries['period_from']
+        print(df_deliveries)
+        trades = json_res['bilateral_trades']
+        df_trades = pd.DataFrame(data=eval(trades))
+        print("GOOD#",df_trades)
+        #df_deliveries = convert_dataframe_to_localtime(df_deliveries)
+        return True, df_deliveries,df_trades, status_code, error_msg
 
     @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
@@ -57,6 +72,7 @@ class BilateralApi:
                 "curve_model":curve_model,
                 "curve_resolution":curve_resolution,
                 "periods":dict_periods,
+                "contract_type":profile_type,
                 "monthly_profile":monthly_profile,
                 "weekday_profile": weekday_profile,
                 "day_profile": hours

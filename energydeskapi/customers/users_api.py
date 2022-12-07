@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type
+import json
 logger = logging.getLogger(__name__)
 
 
@@ -208,7 +209,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_users_df(api_connection, parameters={}):
+    def get_users_df2(api_connection, parameters={}):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
@@ -225,8 +226,9 @@ class UsersApi:
         #json_res=UsersApi.get_users(api_connection, parameters)
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
         if json_res is not None:
-             df = pd.json_normalize(json_res['results'], max_level=1)
-             return UsersApi.process_dataframe(df)
+            dict=json.loads(json.dumps(json_res['results']))
+            df = pd.json_normalize(dict, max_level=1)
+            return UsersApi.process_dataframe(df)
         return None
 
     @staticmethod
