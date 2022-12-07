@@ -29,7 +29,8 @@ def query_exposure(api_conn):
     print(res)
 
 def fetch_counterpart_limits(api_conn):
-    res = CounterPartsApi.get_counterpart_limits(api_conn)
+    parameters = {'company__id': 722}
+    res = CounterPartsApi.get_counterpart_limits(api_conn, parameters)
     print(res)
 
 def fetch_counterpart_limits_by_key(api_conn):
@@ -53,6 +54,6 @@ if __name__ == '__main__':
     api_conn=init_api()
     #register_counterparts(api_conn)
     #query_exposure(api_conn)
-    #fetch_counterpart_limits(api_conn)
+    fetch_counterpart_limits(api_conn)
     #fetch_counterpart_limits_by_key(api_conn)
-    register_counterpart_limits(api_conn)
+    #register_counterpart_limits(api_conn)
