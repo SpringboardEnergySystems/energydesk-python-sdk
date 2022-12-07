@@ -189,10 +189,8 @@ class CounterPartsApi:
         payload = counterpartlimit.get_dict(api_connection)
 
         if counterpartlimit.pk>0:
-            #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/counterparts/counterpartlimits/' + str(counterpartlimit.pk) + "/", payload)
         else:
-            #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
         return success, returned_data, status_code, error_msg
 
