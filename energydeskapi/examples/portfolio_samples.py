@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO,
 
 def query_trading_books(api_conn):
     df=TradingBooksApi.get_tradingbooks_df(api_conn)
-    print(df)
+    print(df[['pk','description']])
 
 
 if __name__ == '__main__':

@@ -42,6 +42,10 @@ def get_contract_filter_pk(api_conn):
     json_contractfilter = ContractsApi.get_contract_filter_by_key(api_conn, pk)
     print(json_contractfilter)
 
+def get_contracts(api_conn, trading_book):
+    json_contractfilter = ContractsApi.query_contracts(api_conn, {'trading_book':trading_book})
+    print(json_contractfilter)
+
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)
     print(json_contractfilter)
@@ -175,6 +179,6 @@ if __name__ == '__main__':
     #register_contract_filters(api_conn)
     #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)
-    get_master_contract_agreements(api_conn)
+    get_contracts(api_conn, 27)
     #register_master_contract_agreement(api_conn, "922675163")
     #register_master_contract_agreement(api_conn, "819449392")

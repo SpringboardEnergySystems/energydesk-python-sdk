@@ -38,6 +38,7 @@ def calculate_price(api_conn):
     print(periods)
     df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
                                             "PRICEIT",curve_resolution=PeriodResolutionEnum.DAILY.value,
+                                         wacc=0.06, inflation=0,
                                         profile_type="BASELOAD",
                                         monthly_profile=get_winter_profile(),
                                         weekday_profile=get_workweek(),
