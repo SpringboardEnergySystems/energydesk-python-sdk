@@ -181,6 +181,7 @@ class ApiConnection(object):
             result = requests.get(server_url,  headers=headers, params=parameters)
         else:
             result = requests.get(server_url, headers=headers)
+        print(result, result.text)
         if result.status_code<202:
             try:
                 json_data = result.json()
