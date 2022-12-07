@@ -440,7 +440,7 @@ class ContractsApi:
         :param filter_pk: key to contract filter
         :type filter_pk: str, required
         """
-        logger.info("Loading contract with pk " + str(filter_pk))
+        logger.info("Loading contract filter with pk " + str(filter_pk))
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilters/' + str(filter_pk) + "/")
         return json_res
 

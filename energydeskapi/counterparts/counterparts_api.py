@@ -23,6 +23,23 @@ class CounterPartRating:
         dict['period_10Y'] = self.record['10Y']
         return dict
 
+class CounterPartLimit:
+    def __init__(self):
+        self.pk = 0
+        self.company = None
+        self.valid_from_date = None
+        self.valid_until_date = None
+        self.volume_limit_mwh = None
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.company is not None: dict['company'] = self.company
+        if self.valid_from_date is not None: dict['valid_from_date'] = self.valid_from_date
+        if self.valid_until_date is not None: dict['valid_until_date'] = self.valid_until_date
+        if self.volume_limit_mwh is not None: dict['volume_limit_mwh'] = self.volume_limit_mwh
+        return dict
+
 def convert_to_dataframe(dict):
     newdict=[]
     for rec in dict:
@@ -137,5 +154,46 @@ class CounterPartsApi:
         if success:
             return returned_data
         return None
+
+    @staticmethod
+    def get_counterpart_limits(api_connection, parameters={}):
+        """Fetches all counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart limits list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterpartlimits/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_counterpart_limits_by_key(api_connection, counterpartlimit_pk):
+        """Fetches counterpart limit from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param counterpartlimit_pk: key to counterpart limit
+        :type counterpartlimit_pk: required
+        """
+        logger.info("Loading counterpart limit with pk " + str(counterpartlimit_pk))
+        json_res = api_connection.exec_get_url('/api/counterparts/counterpartlimits/' + str(counterpartlimit_pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_counterpart_limits(api_connection, counterpartlimit):
+        logger.info("Registering counterpart limit")
+        payload = counterpartlimit.get_dict(api_connection)
+
+        if counterpartlimit.pk>0:
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/counterparts/counterpartlimits/' + str(counterpartlimit.pk) + "/", payload)
+        else:
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
+        return success, returned_data, status_code, error_msg
 
 
