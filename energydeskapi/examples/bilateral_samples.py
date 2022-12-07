@@ -38,19 +38,19 @@ def calculate_price(api_conn):
     print(periods)
     df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
                                             "PRICEIT",curve_resolution=PeriodResolutionEnum.DAILY.value,
-                                        contract_type="BASELOAD",
+                                        profile_type="BASELOAD",
                                         monthly_profile=get_winter_profile(),
                                         weekday_profile=get_workweek(),
                                         hours=list(range(5)))
 
-    print(cprices)
+    print(cpricedet)
 
 
 def generate_sell_prices(api_conn):
     mw=500
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products_df(api_conn)
-    for o in [('Volte AS', 1120, 50),('Entelios AS', 1100, 500)]:
+    for o in [('Volte AS', 1150, 50),('Entelios AS', 1100, 500)]:
         comp=o[0]
         price = o[1]
         qty = o[2]
@@ -70,4 +70,4 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    calculate_price(api_conn)
+    generate_sell_prices(api_conn)

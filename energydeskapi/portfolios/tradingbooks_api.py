@@ -67,7 +67,7 @@ class TradingBooksApi:
         :type api_connection: str, required
         """
         parameters['page_size']=1000
-        json_res=TradingBooksApi.get_tradingbooks_embedded(api_connection, parameters)
+        json_res=TradingBooksApi.get_tradingbooks(api_connection, parameters)
 
         print(json.dumps(json_res, indent=2))
         if json_res is None:

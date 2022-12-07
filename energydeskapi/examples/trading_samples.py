@@ -114,12 +114,16 @@ import sys
 
 if __name__ == '__main__':
     random.seed(datetime.now())
+    volte1="b35b2c92ff729df1cdd546f099eabf5c6c6afeb6"
+    voltetest2 = "a62b59e7a46bf3bbd7d93c5cf5314cadf239fdec"
+    ent1="b35b2c92ff729df1cdd546f099eabf5c6c6afeb6"
+    enttest2 = "d503d740ea0ff61290297ecbfb9e2279c0588551"
     api_conn = init_api()
     #get_own_trades_total(api_conn)
     list1 = ['920369820','925891576','913320506', '927856026', '927856026', '985274762']
     list2 =['970980105','970234934','820431472','820431472','979437218']
     #Samples of 2 users from different companies
-    for comp in [("88866a706afe940ed3bac70b2d43511040d508d9", list1), ("2116dad42c08674376936fd1b09dda5680c83e66",list2)]:
+    for comp in [(voltetest2, list1), (enttest2,list2)]:
         api_conn.set_token(comp[0], "Token")
         v = random.uniform(0.1, 0.5)
         externals=comp[1]
