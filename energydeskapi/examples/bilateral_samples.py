@@ -43,7 +43,7 @@ def generate_sell_prices(api_conn):
     mw=500
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products_df(api_conn)
-    for o in [('Volte AS', 1120, 50),('Entelios AS', 1100, 500)]:
+    for o in [('Volte AS', 1120, 50),('Entelios AS', 1100, 100)]:
         comp=o[0]
         price = o[1]
         qty = o[2]
@@ -63,4 +63,4 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    generate_sell_prices(api_conn)
+    calculate_price(api_conn)
