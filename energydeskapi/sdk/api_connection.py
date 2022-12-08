@@ -93,13 +93,13 @@ class ApiConnection(object):
         if token!="" and token_type=="Bearer":
             self.token_type=token_type
             self.token=token
-            print("Bearer setting token ",token, token_type)
+            #print("Bearer setting token ",token, token_type)
         elif token!="" and token_type=="Token":
             self.token_type=token_type
             self.token=token
-            print("Token setting token ", token, token_type)
+            #print("Token setting token ", token, token_type)
         else:
-            print("Not setting token ",token, token_type)
+            #print("Not setting token ",token, token_type)
             self.token_type=None
             self.token=token
 
