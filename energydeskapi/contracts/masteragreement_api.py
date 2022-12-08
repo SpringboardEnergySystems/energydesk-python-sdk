@@ -59,6 +59,23 @@ class MasterAgreementApi:
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def get_master_agreements_by_key(api_connection, masteragreement_pk):
+        """Fetches master contract agreement from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param masteragreement_pk: key to master contract agreement
+        :type masteragreement_pk: required
+        """
+        logger.info("Loading master agreement with pk " + str(masteragreement_pk))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/mastercontractagreements/'
+                                               + str(masteragreement_pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
     @staticmethod
     def upsert_master_agreement(api_connection, master_agreement):
         """Creates/Updates master contract agreements
