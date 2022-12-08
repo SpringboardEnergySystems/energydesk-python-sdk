@@ -42,13 +42,18 @@ def get_contract_filter_pk(api_conn):
     json_contractfilter = ContractsApi.get_contract_filter_by_key(api_conn, pk)
     print(json_contractfilter)
 
-def get_contracts(api_conn, trading_book):
-    json_contractfilter = ContractsApi.list_contracts_embedded(api_conn, {'trading_book':trading_book})
+def get_contracts(api_conn, trading_book=None):
+    tb={} if trading_book==None else {'trading_book':trading_book}
+    json_contractfilter = ContractsApi.list_contracts_embedded(api_conn, tb)
     print(json.dumps(json_contractfilter, indent=2))
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)
     print(json_contractfilter)
+
+
+def register_contract_tag(api_conn, contract_tag):
+    ContractsApi.upsert_contract_tag(api_conn,contract_tag, description=None, is_active=True)
 
 def get_master_contract_agreements(api_conn):
     parameter = {"user": 1}
@@ -178,7 +183,9 @@ if __name__ == '__main__':
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
     #bilateral_dealcapture(api_conn)
-    #get_contract_tags(api_conn)
-    get_contracts(api_conn, 27)
+    #register_contract_tag(api_conn,"EURNOK Hedge")
+
+    get_contract_tags(api_conn)
+    #get_contracts(api_conn)
     #register_master_contract_agreement(api_conn, "922675163")
     #register_master_contract_agreement(api_conn, "819449392")
