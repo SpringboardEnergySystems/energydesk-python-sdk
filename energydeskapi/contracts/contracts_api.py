@@ -335,6 +335,17 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/' + str(contract_pk) + "/")
         return json_res
 
+
+    @staticmethod
+    def get_contract_tag(api_connection, pk):
+        """Fetches contract tags
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracttags/' + str(pk) + "/")
+        return json_res
+
     @staticmethod
     def get_contract_tags(api_connection, parameters={}):
         """Fetches contract tags
