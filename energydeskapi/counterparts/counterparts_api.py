@@ -115,6 +115,21 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
+    def get_counterpart(api_connection, counterpart_pk):
+        """Fetches counterpart from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param counterpart_pk: key to counterpart
+        :type counterpart_pk: required
+        """
+        logger.info("Loading counterpart with pk " + str(counterpart_pk))
+        json_res = api_connection.exec_get_url('/api/counterparts/counterparts/' + str(counterpart_pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_counterparts_df(api_connection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 
