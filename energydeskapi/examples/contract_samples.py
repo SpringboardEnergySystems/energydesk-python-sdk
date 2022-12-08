@@ -1,5 +1,5 @@
 import logging
-from energydeskapi.contracts.contracts_api import ContractsApi, Contract, ContractFilter
+from energydeskapi.contracts.contracts_api import ContractsApi, Contract, ContractFilter, ContractTag
 from energydeskapi.contracts.dealcapture import bilateral_dealcapture
 from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, MasterContractAgreement
 from energydeskapi.gos.gos_api import GosApi, GoContract
@@ -51,8 +51,13 @@ def get_contract_tags(api_conn):
     print(json_contractfilter)
 
 
-def register_contract_tag(api_conn, contract_tag):
-    ContractsApi.upsert_contract_tag(api_conn,contract_tag, description=None, is_active=True)
+def register_contract_tag(api_conn):
+    contract_tag = ContractTag()
+    contract_tag.tagname = "tag_name"
+    contract_tag.description = "description"
+    contract_tag.is_active = True
+    success, returned_data, status_code, error_msg = ContractsApi.upsert_contract_tag(api_conn,contract_tag)
+    print(returned_data)
 
 def get_master_contract_agreements(api_conn):
     parameter = {"user": 1}
@@ -66,7 +71,7 @@ def get_master_contract_agreement_by_pk(api_conn):
 
 def register_contract_filters(api_conn):
     contract_filter = ContractFilter()
-    contract_filter.pk = 4
+    contract_filter.pk = 0
     contract_filter.user = "http://127.0.0.1:8001/api/customers/profiles/1/"
     contract_filter.description = "filkters"
     contract_filter.filters = "filterds"
@@ -188,7 +193,8 @@ if __name__ == '__main__':
     #register_contract_filters(api_conn)
     #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)
-    get_contracts(api_conn)
+    #get_contracts(api_conn, 27)
     #get_master_contract_agreements(api_conn)
+    register_contract_tag(api_conn)
     #register_master_contract_agreement(api_conn, "922675163")
     #register_master_contract_agreement(api_conn, "819449392")

@@ -133,6 +133,28 @@ class Contract:
 
         return dict
 
+
+class ContractTag:
+    """ Class for contract tags
+
+    """
+    def __init__(self):
+        self.pk = 0
+        self.tagname = None
+        self.description = None
+        self.is_active = False
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.tagname is not None: dict['tagname'] = self.tagname
+        if self.description is not None:
+            dict['description'] = self.description
+        else:
+            dict['tagname'] = self.description
+        if self.is_active is not None: dict['is_active'] = self.is_active
+        return dict
+
+
 class ContractFilter:
     """ Class for contract filters
 
@@ -149,6 +171,7 @@ class ContractFilter:
         if self.description is not None: dict['description'] = self.description
         if self.filters is not None: dict['filters'] = self.filters
         return dict
+
 
 class ContractsApi:
     """Class for contracts in api
@@ -179,23 +202,17 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_contract_tag(api_connection,
-                          contract_tag, description=None, is_active=True):
+    def upsert_contract_tag(api_connection, tag):
         """Registers contracts
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param contracts: contracts to be registered
-        :type contracts: str, required
+        :param tag: contract tag to be registered
+        :type tag: str, required
         """
         #logger.info("Registering contract tag")
-
-        payload={
-            'pk':0,
-            'tagname':contract_tag,
-            'description':contract_tag if description is None else description,
-            'is_active':is_active}
-        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracttags/',payload)
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/portfoliomanager/contracttags/',tag.get_dict())
         return success, returned_data, status_code, error_msg
 
     @staticmethod
