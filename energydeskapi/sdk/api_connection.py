@@ -100,6 +100,7 @@ class ApiConnection(object):
             #print("Token setting token ", token, token_type)
         else:
             #print("Not setting token ",token, token_type)
+            logger.debug("Token is Null")
             self.token_type=None
             self.token=token
 
