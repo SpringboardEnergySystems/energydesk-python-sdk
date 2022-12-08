@@ -43,8 +43,8 @@ def get_contract_filter_pk(api_conn):
     print(json_contractfilter)
 
 def get_contracts(api_conn, trading_book):
-    json_contractfilter = ContractsApi.query_contracts(api_conn, {'trading_book':trading_book})
-    print(json_contractfilter)
+    json_contractfilter = ContractsApi.list_contracts_embedded(api_conn, {'trading_book':trading_book})
+    print(json.dumps(json_contractfilter, indent=2))
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)

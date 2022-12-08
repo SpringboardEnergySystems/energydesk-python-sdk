@@ -31,6 +31,30 @@ class MarketsApi:
         return json_res
 
     @staticmethod
+    def get_markets(api_connection, parameters={}):
+        """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/markets/', parameters)
+        return json_res
+
+    @staticmethod
+    def get_markets_df(api_connection, parameters={}):
+        """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=MarketsApi.get_markets(api_connection, parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_instrument_type_url(api_connection, instrument_type_enum):
         """Fetches url for instrument type from enum value
 
