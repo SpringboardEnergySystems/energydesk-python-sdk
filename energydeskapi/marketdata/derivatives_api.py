@@ -166,4 +166,24 @@ class DerivativesApi:
         df = pd.read_json(result.json()['dataframe'], orient='records')
         return df
 
+    @staticmethod
+    def fetch_intraday_price():
+        """Fetches price for selected product
 
+        :param base_url: prefix of the URL
+        :type base_url: str, required
+        :param token: API token
+        :type token: str, required
+        :param market_place: description...
+        :type market_place: str, required
+        :param market_name: name of market
+        :type market_name: str, required
+        :param ticker: description...
+        :type ticker: str, required
+        :param period_from: period from
+        :type period_from: str, required
+        :param period_until: period to
+        :type period_until: str, required
+        """
+
+        pass
