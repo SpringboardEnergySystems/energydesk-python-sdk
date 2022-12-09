@@ -61,7 +61,7 @@ def register_contract_tag(api_conn):
 
 def get_master_contract_agreements(api_conn):
     parameter = {"user": 1}
-    json_masteragreement = MasterAgreementApi.get_master_agreements(api_conn)
+    json_masteragreement = MasterAgreementApi.get_master_agreements_embedded(api_conn)
     print(json_masteragreement)
 
 def get_master_contract_agreement_by_pk(api_conn):
@@ -194,7 +194,7 @@ if __name__ == '__main__':
     #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)
     #get_contracts(api_conn, 27)
-    #get_master_contract_agreements(api_conn)
-    register_contract_tag(api_conn)
+    get_master_contract_agreements(api_conn)
+    #register_contract_tag(api_conn)
     #register_master_contract_agreement(api_conn, "922675163")
     #register_master_contract_agreement(api_conn, "819449392")
