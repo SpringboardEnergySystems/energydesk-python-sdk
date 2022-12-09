@@ -189,7 +189,7 @@ class DerivativesApi:
         logger.info("Fetching counterparts list")
         payload = {'market': market,
                    'price_date': price_date,
-                   'prices': df.to_json(orient='records')
+                   'intraday_prices': df.to_json(orient='records')
                    }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/markets/update-intraday-prices/', payload)
