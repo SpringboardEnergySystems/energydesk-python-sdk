@@ -167,7 +167,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def fetch_intraday_price():
+    def update_intraday_price(api_connection, market, price_date, df):
         """Fetches price for selected product
 
         :param base_url: prefix of the URL
@@ -186,4 +186,13 @@ class DerivativesApi:
         :type period_until: str, required
         """
 
-        pass
+        logger.info("Fetching counterparts list")
+        payload = {'market': market,
+                   'price_date': price_date,
+                   'prices': df.to_json(orient='records')
+                   }
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/markets/update-intraday-prices/', payload)
+        if success:
+            return returned_data
+        return None
