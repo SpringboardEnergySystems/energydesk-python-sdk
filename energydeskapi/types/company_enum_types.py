@@ -31,3 +31,5 @@ class UserRoleEnum(Enum):
     RISKMANAGER =3
     MANAGER = 4
     STAKEHOLDER = 5
+    BACKOFFICE = 6
+    EXTERNAL_GUEST = 7
