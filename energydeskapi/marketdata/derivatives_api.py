@@ -195,4 +195,4 @@ class DerivativesApi:
             '/api/markets/update-intraday-prices/', payload)
         if success:
             return returned_data
-        return None
+        return error_msg
