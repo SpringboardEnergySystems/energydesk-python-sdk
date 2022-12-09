@@ -16,6 +16,11 @@ def fetch_counterparts(api_conn):
     ratings=CounterPartsApi.get_credit_ratings_df(api_conn)
     print(ratings)
 
+def fetch_counterpart(api_conn):
+    pk = 1
+    json_counterpart = CounterPartsApi.get_counterpart(api_conn, pk)
+    print(json_counterpart)
+
 def fetch_counterparts_df(api_conn):
     df = CounterPartsApi.get_counterparts_df(api_conn)
     print(df)
@@ -54,6 +59,7 @@ if __name__ == '__main__':
     api_conn=init_api()
     #register_counterparts(api_conn)
     #query_exposure(api_conn)
-    fetch_counterpart_limits(api_conn)
+    #fetch_counterpart_limits(api_conn)
+    fetch_counterpart(api_conn)
     #fetch_counterpart_limits_by_key(api_conn)
     #register_counterpart_limits(api_conn)
