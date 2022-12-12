@@ -52,8 +52,27 @@ sample_portfolio_tree=[
     "trading_books": [3, 4],  # Different PKs than portfolios IDs.
     "production_assets": [],
     "parent_id": 4,
+    "children": [7]
+  }
+,
+  {
+    "portfolio_id": 7,
+    "name": "Trading Book X",
+    "trading_books": [3, 4],  # Different PKs than portfolios IDs.
+    "production_assets": [],
+    "parent_id": 4,
+    "children": [8]
+  }
+,
+  {
+    "portfolio_id": 8,
+    "name": "Trading Book X",
+    "trading_books": [3, 4],  # Different PKs than portfolios IDs.
+    "production_assets": [],
+    "parent_id": 4,
     "children": []
-  }]
+  }
+]
 
 
 sample_portfolio_tree_embedded=[
