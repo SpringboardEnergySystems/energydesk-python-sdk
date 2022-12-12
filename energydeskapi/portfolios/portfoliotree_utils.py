@@ -23,6 +23,7 @@ def create_embedded_tree(flat_tree):
             newnode.children.append(c)
 
             embedd_node(c)  #Looks funny, but now we manage the sub node before we have finished the current one
+        tree.append(node)  # Adds the new copy to the new list after we have completed this node and its children
 
     embedd_node(root)
 
