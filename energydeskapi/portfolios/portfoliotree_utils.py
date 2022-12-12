@@ -28,13 +28,18 @@ def create_embedded_tree2(flat_tree):
 
 
 def create_embedded_tree(flat_tree):
+    root = 0
 
     for portf_tree in range(0, len(flat_tree)):
         portfolio_tree = flat_tree[portf_tree]
+        if portfolio_tree['parent_id'] == 0:
+            root += 1
         for child in range(0, len(portfolio_tree['children'])):
             child_portfolio = portfolio_tree['children'][child]
             portfolio_tree['children'][child] = flat_tree[child_portfolio - 1]
-    result = json.dumps(flat_tree, indent=4)
+    for number_of_roots in range(0, len(flat_tree) - root):
+        flat_tree.pop()
+    result = json.dumps(flat_tree, indent=2)
 
     return result
     tree=[]
