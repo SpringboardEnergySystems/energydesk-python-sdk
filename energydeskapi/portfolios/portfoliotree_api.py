@@ -57,7 +57,7 @@ sample_portfolio_tree_embedded=[
     "children": [  {
                 "portfolio_id": 2,
                 "name": "Trading Portfolios Nordic",
-                "trading_books": [4,5],  # Different PKs than portfolios IDs.
+                "trading_books": [],  # Different PKs than portfolios IDs.
                 "production_assets": [12,23],  # PKs of assets with FDM forecasts
                 "parent_id": 1,
                 "children": [
@@ -82,7 +82,7 @@ sample_portfolio_tree_embedded=[
               {
                 "portfolio_id": 5,
                 "name": "Trading Book German Power",
-                "trading_books": [6, 7],  # Different PKs than portfolios IDs.
+                "trading_books": [3, 4],  # Different PKs than portfolios IDs.
                 "production_assets": [],
                 "parent_id": 1,
                 "children": []
