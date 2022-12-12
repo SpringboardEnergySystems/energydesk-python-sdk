@@ -54,6 +54,6 @@ class PortfolioTreeApi:
     return sample_portfolio_tree
 
   @staticmethod
-  def upsert_portfolio_tree(api_connection, parameters={}):
+  def upsert_portfolio_tree(api_connection, tree):
      #Save to backend
-    return True
+    return True, sample_portfolio_tree
