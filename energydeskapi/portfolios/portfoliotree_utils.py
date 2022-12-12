@@ -1,8 +1,30 @@
 from energydeskapi.portfolios.portfoliotree_api import sample_portfolio_tree, sample_portfolio_tree_embedded
 import json
-
+import copy
 def create_flat_tree(embedded_tree):
     flat_list = []
+
+
+def create_embedded_tree2(flat_tree):
+
+    def lookup_node_by_id(id):
+        for p in flat_tree:
+            if p['portfolio_id']==id:
+                return p
+        return None # Not found
+
+    def manage_node(node):
+        children_as_json=[]
+        for child in node['children']:
+            child_node= lookup_node_by_id(child)
+            cn=manage_node(child_node)
+            children_as_json.append(cn)
+        node['children']=children_as_json  # Replace list of INTs with list of json obj
+        return copy.deepcopy(node)
+
+    new_root=manage_node(flat_tree[0])
+    result = json.dumps([new_root], indent=4)
+    print(result)
 
 
 def create_embedded_tree(flat_tree):
@@ -39,7 +61,7 @@ def create_embedded_tree(flat_tree):
 
 
 if __name__ == '__main__':
-    emb_tree = create_embedded_tree(sample_portfolio_tree)
+    emb_tree = create_embedded_tree2(sample_portfolio_tree)
     print(emb_tree)
     # create_flat_tree(sample_portfolio_tree_embedded)
     # print(flt_tree)
