@@ -1,5 +1,8 @@
-from energydeskapi.portfolios.portfoliotree_api import sample_portfolio_tree
+from energydeskapi.portfolios.portfoliotree_api import sample_portfolio_tree, sample_portfolio_tree_embedded
 import json
+
+def create_flat_tree(embedded_tree):
+    flat_list = []
 
 
 def create_embedded_tree(flat_tree):
@@ -9,7 +12,7 @@ def create_embedded_tree(flat_tree):
         for child in range(0, len(portfolio_tree['children'])):
             child_portfolio = portfolio_tree['children'][child]
             portfolio_tree['children'][child] = flat_tree[child_portfolio - 1]
-    result = json.dumps(flat_tree, indent=2)
+    result = json.dumps(flat_tree, indent=4)
 
     return result
     tree=[]
@@ -38,3 +41,5 @@ def create_embedded_tree(flat_tree):
 if __name__ == '__main__':
     emb_tree = create_embedded_tree(sample_portfolio_tree)
     print(emb_tree)
+    # create_flat_tree(sample_portfolio_tree_embedded)
+    # print(flt_tree)

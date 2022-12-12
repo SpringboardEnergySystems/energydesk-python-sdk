@@ -36,7 +36,7 @@ sample_portfolio_tree=[
     "trading_books": [2],  # Different PKs than portfolios IDs.
     "production_assets": [],
     "parent_id": 2,
-    "children": []
+    "children": [6]
   },
   {
     "portfolio_id": 5,
@@ -44,6 +44,14 @@ sample_portfolio_tree=[
     "trading_books": [3,4],  # Different PKs than portfolios IDs.
     "production_assets": [],
     "parent_id": 1,
+    "children": []
+  },
+  {
+    "portfolio_id": 6,
+    "name": "Trading Book X",
+    "trading_books": [3, 4],  # Different PKs than portfolios IDs.
+    "production_assets": [],
+    "parent_id": 4,
     "children": []
   }]
 
