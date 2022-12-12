@@ -102,6 +102,7 @@ class BilateralApi:
             cpricedet=[]
             for p in period_prices:
                 cprices.append({'ticker':p['period_tag'],
+                                'mean_price': p['mean_price'],
                                 'contract_price':p['contract_price']})
                 df_pricing = pd.DataFrame(data=eval(p['pricing_details']))
                 df_pricing.index=df_pricing['period_from']
