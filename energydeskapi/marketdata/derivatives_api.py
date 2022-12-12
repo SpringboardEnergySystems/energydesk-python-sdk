@@ -166,4 +166,33 @@ class DerivativesApi:
         df = pd.read_json(result.json()['dataframe'], orient='records')
         return df
 
+    @staticmethod
+    def update_intraday_price(api_connection, market, price_date, df):
+        """Fetches price for selected product
 
+        :param base_url: prefix of the URL
+        :type base_url: str, required
+        :param token: API token
+        :type token: str, required
+        :param market_place: description...
+        :type market_place: str, required
+        :param market_name: name of market
+        :type market_name: str, required
+        :param ticker: description...
+        :type ticker: str, required
+        :param period_from: period from
+        :type period_from: str, required
+        :param period_until: period to
+        :type period_until: str, required
+        """
+
+        logger.info("Fetching counterparts list")
+        payload = {'market': market,
+                   'price_date': price_date,
+                   'intraday_prices': df.to_json(orient='records')
+                   }
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/markets/update-intraday-prices/', payload)
+        if success:
+            return returned_data
+        return error_msg
