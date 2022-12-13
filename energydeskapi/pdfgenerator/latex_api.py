@@ -6,8 +6,8 @@ logger = logging.getLogger(__name__)
 class LatexApi:
 
     @staticmethod
-    def upload_pdf_download(api_connection, pdf_file):
-        payload = {"tex_file": "tex_file"}
+    def download_pdf_attachment(api_connection, tex_file):
+        payload = {"tex_file":tex_file}
         print(payload)
         response = api_connection.exec_post_url(
             '/api/latex2pdf-download/', payload)
@@ -16,8 +16,8 @@ class LatexApi:
         return None
 
     @staticmethod
-    def upload_pdf_email(api_connection, pdf_file):
-        payload = {"tex_file": "tex_file",
+    def convert_and_email(api_connection, tex_file):
+        payload = {"tex_file": tex_file,
                    "email_receipients": "string"}
         response = api_connection.exec_post_url(
             '/api/latex2pdf-email/', payload)
@@ -26,11 +26,11 @@ class LatexApi:
         return None
 
     @staticmethod
-    def upload_pdf_stream(api_connection, pdf_file):
-        payload = {"tex_file": "tex_file"}
+    def download_pdf_stream(api_connection, tex_file):
+        payload = {"tex_file": tex_file}
         print(payload)
-        response = api_connection.exec_post_url(
+        response = api_connection.exec_post_url_binary(
             '/api/latex2pdf-stream/', payload)
-        if response:
-            return response
+        print(response.text)
+
         return None

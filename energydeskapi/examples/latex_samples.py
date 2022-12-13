@@ -8,13 +8,17 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
-def upload_pdf(api_conn):
-    pdf_file = 'C:/Users/57884/pycharmprojects/energydesk-python-sdk/sample.pdf'
-    pdf = LatexApi.upload_pdf_download(api_conn, pdf_file)
+def convert_tex2pdf_as_attachment(api_conn):
+    textfile = '.'
+    pdf = LatexApi.download_pdf_attachment(api_conn, textfile)
     print(pdf)
 
+def convert_tex2pdf_as_stream(api_conn):
+    textfile = '.'
+    pdf = LatexApi.download_pdf_stream(api_conn, textfile)
+    print(pdf)
 
 if __name__ == '__main__':
 
     api_conn=init_api()
-    upload_pdf(api_conn)
+    convert_tex2pdf_as_stream(api_conn)

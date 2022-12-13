@@ -112,6 +112,15 @@ class ApiConnection(object):
         """
         return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
+    def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
+        headers=self.get_authorization_header()
+        for key in extra_headers:
+            headers[key]=extra_headers[key]
+        server_url= self.get_base_url() + trailing_url
+        logger.info("Calling URL " + str(server_url))
+        logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
+        return  requests.post(server_url, json=payload,   headers=headers)
+
     def exec_post_url(self, trailing_url, payload, extra_headers={}):
         """Posts content from URL
 
