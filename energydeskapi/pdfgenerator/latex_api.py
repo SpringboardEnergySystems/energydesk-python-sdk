@@ -9,10 +9,9 @@ class LatexApi:
     def download_pdf_attachment(api_connection, tex_file):
         payload = {"tex_file":tex_file}
         print(payload)
-        response = api_connection.exec_post_url(
+        response = api_connection.exec_post_url_binary(
             '/api/latex2pdf-download/', payload)
-        if response:
-            return response
+        print(response)
         return None
 
     @staticmethod
@@ -31,6 +30,9 @@ class LatexApi:
         print(payload)
         response = api_connection.exec_post_url_binary(
             '/api/latex2pdf-stream/', payload)
-        print(response.text)
+        print(response.content)
+        fb=open("./loc.pdf", "wb")
+        fb.write(response.content)
+        fb.close()
 
         return None
