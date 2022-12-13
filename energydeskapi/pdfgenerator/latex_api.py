@@ -11,7 +11,10 @@ class LatexApi:
         print(payload)
         response = api_connection.exec_post_url_binary(
             '/api/latex2pdf-download/', payload)
-        print(response)
+        print(response.content)
+        fb = open("./loc2.pdf", "wb")
+        fb.write(response.content)
+        fb.close()
         return None
 
     @staticmethod
