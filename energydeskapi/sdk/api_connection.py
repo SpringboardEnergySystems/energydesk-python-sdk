@@ -74,6 +74,7 @@ class ApiConnection(object):
             "client_secret": "client_secret",
             "backend":backend,
             "token": token}
+        print("VALIDATING TOKEN", payload)
         result = requests.post(server_url, json=payload)
         if result.status_code != 200:
             print("Could not validate user with backend")
@@ -93,14 +94,14 @@ class ApiConnection(object):
         if token!="" and token_type=="Bearer":
             self.token_type=token_type
             self.token=token
-            #print("Bearer setting token ",token, token_type)
+            print("Bearer setting token ",token, token_type)
         elif token!="" and token_type=="Token":
             self.token_type=token_type
             self.token=token
-            #print("Token setting token ", token, token_type)
+            print("Token setting token ", token, token_type)
         else:
-            #print("Not setting token ",token, token_type)
-            logger.debug("Token is Null")
+            print("Not setting token ",token, token_type)
+            logger.info("Token is Null")
             self.token_type=None
             self.token=token
 
