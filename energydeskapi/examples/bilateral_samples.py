@@ -21,12 +21,17 @@ def get_deliveries(api_conn):
                                       resolution=PeriodResolutionEnum.DAILY.value)
     df = df.drop(['period_from'], axis=1)
     #print(df_trades.columns)
-    df2=df.pivot_table(index='period_from', columns='counterpart', values='netpos', aggfunc='sum')
+    df2=df.pivot_table(index='period_from', columns=['area','counterpart'], values='netpos', aggfunc='sum')
 
     print(df2)
 
     df3=df.pivot_table(index='period_from', columns='area', values='netpos', aggfunc='sum')
     print(df3)
+    #df2=df.pivot_table(index='period_from', columns='counterpart', values='netpos', aggfunc='sum')
+    #print(df2)
+    #df = df.pivot(index='period_from', columns='counterpart', values='netpos')
+    #print(df)
+
 def calculate_price(api_conn):
     fromd="2023-10-01"
     untild = "2024-10-01"
@@ -71,4 +76,5 @@ def generate_sell_prices(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #print(PeriodResolutionEnum._value2member_map_['Daily'])
-    generate_sell_prices(api_conn)
+    #generate_sell_prices(api_conn)
+    get_deliveries(api_conn)

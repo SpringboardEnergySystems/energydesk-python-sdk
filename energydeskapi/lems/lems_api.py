@@ -355,3 +355,16 @@ class LemsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_contract_doc(api_connection, trade_id):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/lems/contractdoc/?trade_id=' + trade_id
+        json_res = api_connection.exec_get_url(url)
+        return json_res
