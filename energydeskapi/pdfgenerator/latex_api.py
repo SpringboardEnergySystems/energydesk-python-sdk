@@ -1,17 +1,22 @@
 import logging
 import pandas as pd
-
+import requests
 logger = logging.getLogger(__name__)
 
 class LatexApi:
+    @staticmethod
+    def exec_post(server_url, payload):
+        server_url = "http://127.0.0.1:5000" + server_url
+        logger.info("Calling URL " + str(server_url))
+        logger.debug("...with payload " + str(payload) )
+        return requests.post(server_url, json=payload)
 
     @staticmethod
     def download_pdf_attachment(api_connection, tex_file):
         payload = {"tex_file":tex_file}
         print(payload)
-        response = api_connection.exec_post_url_binary(
-            '/api/latex2pdf-download/', payload)
-        print(response.content)
+        response = LatexApi.exec_post(
+            '/api/pdflatex/latex2pdf-download/', payload)
         fb = open("./loc2.pdf", "wb")
         fb.write(response.content)
         fb.close()
@@ -21,8 +26,8 @@ class LatexApi:
     def convert_and_email(api_connection, tex_file):
         payload = {"tex_file": tex_file,
                    "email_receipients": "string"}
-        response = api_connection.exec_post_url(
-            '/api/latex2pdf-email/', payload)
+        response = LatexApi.exec_post(
+            '/api/pdflatex/latex2pdf-email/', payload)
         if response:
             return response
         return None
@@ -31,9 +36,8 @@ class LatexApi:
     def download_pdf_stream(api_connection, tex_file):
         payload = {"tex_file": tex_file}
         print(payload)
-        response = api_connection.exec_post_url_binary(
-            '/api/latex2pdf-stream/', payload)
-        print(response.content)
+        response = LatexApi.exec_post(
+            '/api/pdflatex/latex2pdf-stream/', payload)
         fb=open("./loc.pdf", "wb")
         fb.write(response.content)
         fb.close()
