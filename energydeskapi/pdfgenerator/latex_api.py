@@ -13,7 +13,7 @@ class LatexApi:
 
     @staticmethod
     def download_pdf_attachment(api_connection, tex_file):
-        payload = {"tex_file":tex_file}
+        payload = {"tex_file":'tex_file'}
         print(payload)
         response = LatexApi.exec_post(
             '/api/pdflatex/latex2pdf-download/', payload)
