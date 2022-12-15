@@ -26,6 +26,7 @@ def convert_tex2pdf_as_stream(api_conn):
     current_dir=dirname(__file__)
     docpath = join(current_dir, 'contract_sample.tex')
     tex_content=open(docpath,"r", encoding="ISO-8859-1").read()
+    print(tex_content)
     pdf = LatexApi.download_pdf_stream(api_conn, tex_content)
     print(pdf)
 
