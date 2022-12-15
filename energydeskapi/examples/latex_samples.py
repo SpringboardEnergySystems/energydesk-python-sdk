@@ -32,4 +32,4 @@ def convert_tex2pdf_as_stream(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    convert_tex2pdf_as_attachment(api_conn)
+    convert_tex2pdf_as_stream(api_conn)
