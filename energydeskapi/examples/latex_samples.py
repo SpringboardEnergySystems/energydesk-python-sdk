@@ -19,6 +19,7 @@ def convert_tex2pdf_as_attachment(api_conn):
     current_dir=dirname(__file__)
     docpath = join(current_dir, 'contract_sample.tex')
     tex_content=open(docpath,"r", encoding="ISO-8859-1").read()
+    print(tex_content.encode("latin-1").decode("utf-8"))
     pdf = LatexApi.download_pdf_attachment(api_conn, tex_content)
     print(pdf)
 
