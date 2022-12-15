@@ -120,13 +120,16 @@ class Contract:
 
         taglist=[]
         for c in self.contract_tags:
-            existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
-            if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
-                success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
-                if success:
-                    taglist.append(returned_data)
-            else:
-                taglist.append(existing_tags[0])
+            d=c.get_dict()
+            print(d)
+            taglist.append(d)
+            # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
+            # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
+            #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
+            #     if success:
+            #         taglist.append(returned_data)
+            # else:
+            #     taglist.append(existing_tags[0])
         dict['contract_tags']=taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
