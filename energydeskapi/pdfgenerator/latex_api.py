@@ -34,7 +34,7 @@ class LatexApi:
 
     @staticmethod
     def download_pdf_stream(api_connection, tex_file):
-        payload = {"tex_file": tex_file}
+        payload = {"tex_file": 'aaaa'}
         print(payload)
         response = LatexApi.exec_post(
             '/api/pdflatex/latex2pdf-stream/', payload)
