@@ -4,6 +4,7 @@ import logging
 from random import randrange
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.lems.lems_api import LemsApi
+from energydeskapi.pdfgenerator.latex_api import LatexApi
 import pandas as pd
 import requests
 logging.basicConfig(level=logging.INFO,
@@ -101,8 +102,11 @@ def get_own_orders_per_product(api_conn):
 def get_contract_doc(api_conn):
     tex_content = LemsApi.get_contract_doc(api_conn, "a61f30fa-1385-4c28-9347-7c64fd131951")
     print(tex_content)
-    pdf = LatexApi.download_pdf_attachment(api_conn, textfile)
-    print(pdf)
+    f=open("./sample.tex","w")
+    f.write(tex_content['tex_file'])
+    f.close()
+    #pdf = LatexApi.download_pdf_attachment(api_conn, textfile)
+    #print(pdf)
 
 def get_own_orders_total(api_conn):
     df_all_orders = LemsApi.query_own_orders(api_conn)
