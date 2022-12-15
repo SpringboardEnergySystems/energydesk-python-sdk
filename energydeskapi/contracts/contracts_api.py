@@ -120,7 +120,9 @@ class Contract:
 
         taglist=[]
         for c in self.contract_tags:
-            taglist.append(c.get_dict(api_conn))
+            d=c.get_dict()
+            print(d)
+            taglist.append(d)
             # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
             # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
             #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
