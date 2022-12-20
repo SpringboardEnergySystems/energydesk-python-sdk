@@ -1,6 +1,6 @@
 
 import logging
-from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
+from energydeskapi.portfolios.portfoliotree_api import PortfolioTreeApi
 from energydeskapi.sdk.common_utils import init_api
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -8,11 +8,11 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-def query_trading_books(api_conn):
-    df=TradingBooksApi.get_tradingbooks_df(api_conn)
-    print(df[['pk','description']])
+def query_portfolios(api_conn):
+    js=PortfolioTreeApi.get_portfolio_tree(api_conn)
+    print(js)
 
 
 if __name__ == '__main__':
     api_conn=init_api()
-    query_trading_books(api_conn)
+    query_portfolios(api_conn)
