@@ -197,7 +197,27 @@ def create_embedded_tree(flat_tree):
 
 def create_embedded_tree_for_dropdown(flat_tree):
     root = 0
-    return []
+    resultlist=[]
+    for portf_tree in range(0, len(flat_tree)):
+        portfolio_tree = flat_tree[portf_tree]
+        if portfolio_tree['parent_id'] == 0:
+            root += 1
+        localnode={}
+        localnode['title']=flat_tree[portf_tree]['name']
+        localnode['dataAttrs']=[]
+        for child in range(0, len(portfolio_tree['children'])):
+            child_portfolio = portfolio_tree['children'][child]
+            portfolio_tree['children'][child] = flat_tree[child_portfolio - 1]
+            child={}
+            child['name']=flat_tree[child_portfolio - 1]['name']
+            child['dataAttrs']=[]
+            localnode['dataAttrs'].append(child)
+        resultlist.append(localnode)
+    for number_of_roots in range(0, len(flat_tree) - root):
+        flat_tree.pop()
+    result = json.dumps(resultlist, indent=4)
+    #print(json.dumps(resultlist, indent=4))
+    return result
 
 if __name__ == '__main__':
     emb_tree = create_embedded_tree_for_dropdown(sample_portfolio_tree)
