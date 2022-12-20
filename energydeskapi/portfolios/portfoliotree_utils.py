@@ -214,8 +214,8 @@ def create_embedded_dropdown2(flat_tree):
             child_node= lookup_node_by_id(child)
             cn=manage_node(child_node)
             children_as_json.append(cn)
-        node['dataAttrs']=children_as_json  # Replace list of INTs with list of json obj
-        return copy.deepcopy(node)
+        localnode['dataAttrs']=children_as_json  # Replace list of INTs with list of json obj
+        return copy.deepcopy(localnode)
 
     new_root=manage_node(flat_tree[0])
     result = json.dumps([new_root], indent=4)
