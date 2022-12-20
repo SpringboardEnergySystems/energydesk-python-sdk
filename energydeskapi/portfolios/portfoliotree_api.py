@@ -7,6 +7,29 @@ from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, 
 logger = logging.getLogger(__name__)
 #  Change
 
+#
+# {
+#   "portfolio_id": 1,
+#   "name": "Trading Portfolios",
+#   "trading_books": [],  # Different PKs than portfolios IDs.
+#   "percentage": 1,
+#   "assets": [12, 23],  # PKs of assets with FDM forecasts
+#   "parent_id": 0,
+#   "children": [2, 5]
+# },
+
+class PortfolioNode:
+  def __init__(self):
+    self.pk=1
+    self.name=""
+    self.trading_books=[]
+    self.percentage=1
+    self.assets=[]
+    self.children=[]
+    self.paremt_id=0
+
+
+
 
 class PortfolioTreeApi:
 
@@ -15,7 +38,12 @@ class PortfolioTreeApi:
     return sample_portfolio_tree_embedded
 
   @staticmethod
-  def upsert_portfolio_tree(api_connection, tree):
+  def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):
+     #Save to backend
+    return True, sample_portfolio_tree_embedded
+
+  @staticmethod
+  def upsert_portfolio_tree(api_connection, portfolio_nodes):
      #Save to backend
     return True, sample_portfolio_tree_embedded
 
