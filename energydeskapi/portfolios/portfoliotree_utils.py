@@ -1,5 +1,6 @@
 import json
 import copy
+from operator import itemgetter
 
 
 
@@ -189,9 +190,10 @@ def create_embedded_tree(flat_tree):
         for child in range(0, len(portfolio_tree['children'])):
             child_portfolio = portfolio_tree['children'][child]
             portfolio_tree['children'][child] = flat_tree[child_portfolio - 1]
-    for number_of_roots in range(0, len(flat_tree) - root):
-        flat_tree.pop()
-    result = json.dumps(flat_tree, indent=4)
+    sorted_tree = sorted(flat_tree, key=itemgetter('parent_id'))
+    for number_of_roots in range(0, len(sorted_tree) - root):
+        sorted_tree.pop()
+    result = json.dumps(sorted_tree, indent=4)
 
     return result
 
