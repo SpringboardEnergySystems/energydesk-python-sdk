@@ -26,10 +26,20 @@ class PortfolioNode:
     self.percentage=1
     self.assets=[]
     self.children=[]
-    self.paremt_id=0
+    self.parent_id=0
+    self.parent_name = ""
 
-
-
+  def get_dict(self, api_conn):
+      dict = {}
+      dict['portfolio_id'] = self.pk
+      dict['name'] = self.name
+      dict['trading_books']=self.trading_books
+      dict['percentage']=self.percentage
+      dict['assets'] = self.assets
+      dict['children'] = self.children
+      dict['parent_id'] = self.parent_id
+      dict['parent_name'] = self.parent_name
+      return dict
 
 class PortfolioTreeApi:
 
