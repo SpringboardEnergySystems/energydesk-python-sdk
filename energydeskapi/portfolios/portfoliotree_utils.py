@@ -195,6 +195,33 @@ def create_embedded_tree(flat_tree):
 
     return result
 
+
+def create_embedded_dropdown2(flat_tree):
+    def lookup_node_by_id(id):
+        for p in flat_tree:
+            if p['portfolio_id']==id:
+                return p
+        return None # Not found
+
+    def manage_node(node):
+        localnode={}
+        localnode['title']=node['name']
+        localnode['portfolio_id'] = node['portfolio_id']
+        localnode['dataAttrs']=[]
+
+        children_as_json=[]
+        for child in node['children']:
+            child_node= lookup_node_by_id(child)
+            cn=manage_node(child_node)
+            children_as_json.append(cn)
+        node['dataAttrs']=children_as_json  # Replace list of INTs with list of json obj
+        return copy.deepcopy(node)
+
+    new_root=manage_node(flat_tree[0])
+    result = json.dumps([new_root], indent=4)
+    print(result)
+    return result
+
 def create_embedded_tree_for_dropdown(flat_tree):
     root = 0
     resultlist=[]
@@ -220,6 +247,6 @@ def create_embedded_tree_for_dropdown(flat_tree):
     return result
 
 if __name__ == '__main__':
-    emb_tree = create_embedded_tree_for_dropdown(sample_portfolio_tree)
+    emb_tree = create_embedded_dropdown2(sample_portfolio_tree)
     print(emb_tree)
 

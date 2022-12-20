@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from energydeskapi.portfolios.portfoliotree_utils import create_embedded_tree_for_dropdown
+from energydeskapi.portfolios.portfoliotree_utils import create_embedded_tree_for_dropdown, create_embedded_dropdown2
 from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, sample_portfolio_tree_embedded
 
 
@@ -58,5 +58,5 @@ class PortfolioTreeApi:
     {"title":2,"dataAttrs":[{"title":"dataattr4","data":"value4"},{"title":"dataattr5","data":"value5"},{"title":"dataattr6","data":"value6"}]},
     {"title":3,"dataAttrs":[{"title":"dataattr7","data":"value7"},{"title":"dataattr8","data":"value8"},{"title":"dataattr9","data":"value9"}]}
     ]
-    return create_embedded_tree_for_dropdown(sample_portfolio_tree)
+    return create_embedded_dropdown2(sample_portfolio_tree)
     #return arr
