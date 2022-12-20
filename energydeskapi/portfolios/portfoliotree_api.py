@@ -24,16 +24,18 @@ class PortfolioNode:
     self.name=""
     self.trading_books=[]
     self.percentage=1
+    self.manager=None
     self.assets=[]
     self.children=[]
     self.parent_id=0
-    self.parent_name = ""
+    self.parent_name = None
 
   def get_dict(self, api_conn):
       dict = {}
       dict['portfolio_id'] = self.pk
       dict['name'] = self.name
       dict['trading_books']=self.trading_books
+      dict['manager'] = self.manager
       dict['percentage']=self.percentage
       dict['assets'] = self.assets
       dict['children'] = self.children
