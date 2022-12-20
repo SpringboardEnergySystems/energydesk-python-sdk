@@ -4,6 +4,16 @@ import copy
 def create_flat_tree(embedded_tree):
     flat_list = []
 
+    for embd_tree in range(0, len(embedded_tree)):
+        embedded_tre = embedded_tree[embd_tree]
+        print(embd_tree)
+        for child in range(0, len(embedded_tre['children'])):
+            portfolio_child = embedded_tre['children'][child]
+            print(embedded_tre['children'][child])
+            flat_list.append(embedded_tre['children'][child])
+            embedded_tre['children'][child] = portfolio_child['portfolio_id']
+    print(flat_list)
+
 
 def create_flat_tree2(embedded_tree):
     flat_list = []
@@ -57,11 +67,11 @@ def create_embedded_tree(flat_tree):
 
     return result
 
-
-
+def create_embedded_tree_for_dropdown(flat_tree):
+    root = 0
+    return []
 
 if __name__ == '__main__':
-    #emb_tree = create_embedded_tree2(sample_portfolio_tree)
-    #print(emb_tree)
-    create_flat_tree2(sample_portfolio_tree_embedded)
-    # print(flt_tree)
+    emb_tree = create_embedded_tree_for_dropdown(sample_portfolio_tree)
+    print(emb_tree)
+
