@@ -57,7 +57,7 @@ class PortfolioTreeApi:
     list=[]
     for p in portfolio_nodes:
         list.append(p.get_dict(api_connection))
-    return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dict)
+    return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, list)
 
 
   @staticmethod
