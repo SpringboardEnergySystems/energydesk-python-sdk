@@ -29,7 +29,11 @@ class PortfolioNode:
     self.children=[]
     self.parent_id=0
     self.parent_name = None
-
+  def __str__(self):
+      chs=""
+      for c in self.children:
+          chs+=str(c)
+      return str(self.pk) + " " + self.name + " Children " + chs
   def get_dict(self, api_conn):
       dict = {}
       dict['portfolio_id'] = self.pk
