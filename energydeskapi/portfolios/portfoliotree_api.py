@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class PortfolioNode:
     def __init__(self):
         self.pk=1
-        self.name=""
+        self.portfolio_name=""
         self.trading_books=[]
         self.percentage=1
         self.manager=None
@@ -24,12 +24,12 @@ class PortfolioNode:
         chs=""
         for c in self.children:
           chs+=str(c)
-        return str(self.pk) + " " + self.name + " Children " + chs
+        return str(self.pk) + " " + self.portfolio_name + " Children " + chs
 
     def get_dict(self, api_conn):
         dict = {}
         dict['portfolio_id'] = self.pk
-        dict['name'] = self.name
+        dict['portfolio_name'] = self.portfolio_name
         dict['trading_books']=self.trading_books
         dict['manager'] = self.manager
         dict['percentage']=self.percentage
