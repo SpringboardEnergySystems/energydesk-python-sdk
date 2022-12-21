@@ -47,13 +47,18 @@ class PortfolioTreeApi:
 
   @staticmethod
   def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):
-     #Save to backend
-    return True, sample_portfolio_tree_embedded
+
+    success, json_res, status_code, error_msg = api_connection.exec_post_url(
+              '/api/portfoliomanager/portfoliotree-creation/', portfolio_nodes)
+    return success, None
 
   @staticmethod
   def upsert_portfolio_tree(api_connection, portfolio_nodes):
-     #Save to backend
-    return True, sample_portfolio_tree_embedded
+    list=[]
+    for p in portfolio_nodes:
+        list.append(p.get_dict(api_connection))
+    return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dict)
+
 
   @staticmethod
   def get_portfolio_tree_for_dropdown(api_connection, parameters={}, root=None):
