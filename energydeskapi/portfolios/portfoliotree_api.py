@@ -7,45 +7,37 @@ from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, 
 logger = logging.getLogger(__name__)
 #  Change
 
-#
-# {
-#   "portfolio_id": 1,
-#   "name": "Trading Portfolios",
-#   "trading_books": [],  # Different PKs than portfolios IDs.
-#   "percentage": 1,
-#   "assets": [12, 23],  # PKs of assets with FDM forecasts
-#   "parent_id": 0,
-#   "children": [2, 5]
-# },
 
 class PortfolioNode:
-  def __init__(self):
-    self.pk=1
-    self.name=""
-    self.trading_books=[]
-    self.percentage=1
-    self.manager=None
-    self.assets=[]
-    self.children=[]
-    self.parent_id=0
-    self.parent_name = None
-  def __str__(self):
-      chs=""
-      for c in self.children:
+    def __init__(self):
+        self.pk=1
+        self.name=""
+        self.trading_books=[]
+        self.percentage=1
+        self.manager=None
+        self.assets=[]
+        self.children=[]
+        self.parent_id=0
+        self.parent_name = None
+
+    def __str__(self):
+        chs=""
+        for c in self.children:
           chs+=str(c)
-      return str(self.pk) + " " + self.name + " Children " + chs
-  def get_dict(self, api_conn):
-      dict = {}
-      dict['portfolio_id'] = self.pk
-      dict['name'] = self.name
-      dict['trading_books']=self.trading_books
-      dict['manager'] = self.manager
-      dict['percentage']=self.percentage
-      dict['assets'] = self.assets
-      dict['children'] = self.children
-      dict['parent_id'] = self.parent_id
-      dict['parent_name'] = self.parent_name
-      return dict
+        return str(self.pk) + " " + self.name + " Children " + chs
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['portfolio_id'] = self.pk
+        dict['name'] = self.name
+        dict['trading_books']=self.trading_books
+        dict['manager'] = self.manager
+        dict['percentage']=self.percentage
+        dict['assets'] = self.assets
+        dict['children'] = self.children
+        dict['parent_id'] = self.parent_id
+        dict['parent_name'] = self.parent_name
+        return dict
 
 class PortfolioTreeApi:
 
