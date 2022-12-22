@@ -243,7 +243,7 @@ def create_embedded_tree_for_dropdown(flat_tree):
             new_root=manage_node(flat_tree[i])
             roots.append(new_root)
 
-    return roots[0]
+    return roots
 
 
 
