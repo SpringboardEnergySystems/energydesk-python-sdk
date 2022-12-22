@@ -1,7 +1,6 @@
 import logging
 import pandas as pd
 import requests
-from django.http import HttpResponse
 logger = logging.getLogger(__name__)
 
 class LatexApi:
@@ -40,7 +39,8 @@ class LatexApi:
         print(payload)
         response = LatexApi.exec_post(
             '/api/pdflatex/latex2pdf-stream/', payload)
-        return HttpResponse(response.content, mimetype='application/pdf')
         # fb=open("./loc.pdf", "wb")
         # fb.write(response.content)
         # fb.close()
+
+        return response.content
