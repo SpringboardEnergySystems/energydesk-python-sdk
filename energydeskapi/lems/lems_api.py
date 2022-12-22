@@ -357,7 +357,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def get_contract_doc(api_connection, trade_id):
+    def get_contract_doc(api_connection, deal_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -365,6 +365,6 @@ class LemsApi:
         """
 
         logger.info("Query contract_doc")
-        url = '/api/lems/contractdoc/?trade_id=' + trade_id
+        url = '/api/lems/contractdoc/?deal_id=' + deal_id
         json_res = api_connection.exec_get_url(url)
         return json_res
