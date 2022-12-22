@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO,
 def query_portfolios(api_conn):
     js=PortfolioTreeApi.get_portfolio_tree(api_conn)
     print(json.dumps(js, indent=4))
-    js=PortfolioTreeApi.get_portfolio_tree_for_dropdown(api_conn)
+    js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
     print(json.dumps(js, indent=4))
 
 if __name__ == '__main__':

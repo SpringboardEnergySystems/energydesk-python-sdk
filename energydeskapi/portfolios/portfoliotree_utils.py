@@ -211,12 +211,12 @@ def create_flat_tree_for_jstree(flat_tree):
     jstreelist=[]
 
     def create_node(node):
-
+        parent="#" if node['parent_portfolio'] is None else key_from_url(node['parent_portfolio'])
         localnode = {
             "id": node['pk'],
             "text": node['description'],
             "type": "catRoot",
-            "parent": node['parent_portfolio'],
+            "parent": parent,
             "percentage": 1,
             "portfolio_manager": node['manager']['name']
         }
@@ -239,9 +239,9 @@ def create_flat_tree_for_jstree(flat_tree):
         return localnode
 
     for i in range(len(flat_tree)):
-        if flat_tree[i]['parent_portfolio'] is None:
-            dict_node=create_node(flat_tree[i])
-            jstreelist.append(dict_node)
+        #if flat_tree[i]['parent_portfolio'] is None:
+        dict_node=create_node(flat_tree[i])
+        jstreelist.append(dict_node)
 
     return jstreelist
 
