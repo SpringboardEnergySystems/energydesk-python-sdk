@@ -234,7 +234,7 @@ def create_embedded_tree_for_dropdown(flat_tree):
             cn=manage_node(child_node)
             if cn is not None:
                 children_as_json.append(cn)
-        localnode['dataAttrs']=children_as_json  # Replace list of INTs with list of json obj
+        localnode['data']=children_as_json  # Replace list of INTs with list of json obj
         return localnode
 
     root=None
