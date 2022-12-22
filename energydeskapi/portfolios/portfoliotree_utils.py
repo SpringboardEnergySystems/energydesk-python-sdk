@@ -159,26 +159,92 @@ def create_flat_tree2(embedded_tree):
     print(result)
 
 
-
-def create_embedded_tree2(flat_tree):
+from energydeskapi.sdk.common_utils import key_from_url
+def create_embedded_tree_recursive(flat_tree):
+    roots=[]
     def lookup_node_by_id(id):
         for p in flat_tree:
-            if p['portfolio_id']==id:
+            if p['pk']==id:
+                #nd={"portfolio_id":p['pk'],"portfolio_name":p['description']}
                 return p
         return None # Not found
 
     def manage_node(node):
-        children_as_json=[]
-        for child in node['children']:
-            child_node= lookup_node_by_id(child)
-            cn=manage_node(child_node)
-            children_as_json.append(cn)
-        node['children']=children_as_json  # Replace list of INTs with list of json obj
-        return copy.deepcopy(node)
+        if node is None:
+            return None
 
-    new_root=manage_node(flat_tree[0])
-    result = json.dumps([new_root], indent=4)
-    print(result)
+        localnode={
+            "portfolio_id":node['pk'],
+            "portfolio_name": node['description'],
+            "percentage": 1,
+            "portfolio_manager": node['manager']['name']
+        }
+        assets_as_json = []
+        for a in node['assets']:
+            assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
+        localnode['assets'] = assets_as_json
+
+        tradingbooks_as_json = []
+        for tb in node['trading_books']:
+            tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
+        localnode['trading_books'] = tradingbooks_as_json
+        children_as_json = []
+        for child in node['sub_portfolios']:
+            subkey=key_from_url(child)
+            child_node= lookup_node_by_id(subkey)
+            cn=manage_node(child_node)
+            if cn is not None:
+                children_as_json.append(cn)
+        localnode['children']=children_as_json  # Replace list of INTs with list of json obj
+        return localnode
+
+    root=None
+    for i in range(len(flat_tree)):
+        if flat_tree[i]['parent_portfolio'] is None:
+            new_root=manage_node(flat_tree[i])
+            roots.append(new_root)
+
+    return roots
+
+
+def create_embedded_tree_for_dropdown(flat_tree):
+    roots=[]
+    def lookup_node_by_id(id):
+        for p in flat_tree:
+            if p['pk']==id:
+                #nd={"portfolio_id":p['pk'],"portfolio_name":p['description']}
+                return p
+        return None # Not found
+
+    def manage_node(node):
+        if node is None:
+            return None
+
+        localnode={
+            "portfolio_id":node['pk'],
+            "title": node['description'],
+            "percentage": 1,
+            "portfolio_manager": node['manager']['name']
+        }
+
+        children_as_json = []
+        for child in node['sub_portfolios']:
+            subkey=key_from_url(child)
+            child_node= lookup_node_by_id(subkey)
+            cn=manage_node(child_node)
+            if cn is not None:
+                children_as_json.append(cn)
+        localnode['dataAttrs']=children_as_json  # Replace list of INTs with list of json obj
+        return localnode
+
+    root=None
+    for i in range(len(flat_tree)):
+        if flat_tree[i]['parent_portfolio'] is None:
+            new_root=manage_node(flat_tree[i])
+            roots.append(new_root)
+
+    return roots[0]
+
 
 
 def create_embedded_tree(flat_tree):
@@ -224,7 +290,7 @@ def create_embedded_dropdown2(flat_tree):
     print(result)
     return result
 
-def create_embedded_tree_for_dropdown(flat_tree):
+def create_embedded_tree_for_dropdown2(flat_tree):
     root = 0
     resultlist=[]
     for portf_tree in range(0, len(flat_tree)):

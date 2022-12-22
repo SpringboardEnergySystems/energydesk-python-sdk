@@ -44,3 +44,12 @@ def parse_enum_type(etype):
 
 
 
+# Given a REST entity url https://.../..././/object/x/  will return thee X value
+def key_from_url(url):
+    if url is None:
+        return 0
+    cols=url.split("/")
+    try:
+        return int(cols[-2:-1][0])
+    except:
+        return 0
