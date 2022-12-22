@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from energydeskapi.portfolios.portfoliotree_utils import create_embedded_tree_recursive, create_embedded_tree_for_dropdown
+from energydeskapi.portfolios.portfoliotree_utils import create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
 from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, sample_portfolio_tree_embedded
 
 
@@ -48,6 +48,14 @@ class PortfolioTreeApi:
       if json_res is None:
           return None
       return create_embedded_tree_recursive(json_res)
+
+  @staticmethod
+  def get_portfolio_flat_tree(api_connection, parameters={}):
+      logger.info("Fetching portfolio tree")
+      json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
+      if json_res is None:
+          return None
+      return create_flat_tree_for_jstree(json_res)
 
   @staticmethod
   def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):

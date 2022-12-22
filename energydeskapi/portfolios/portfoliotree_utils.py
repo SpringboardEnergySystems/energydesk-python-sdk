@@ -207,6 +207,45 @@ def create_embedded_tree_recursive(flat_tree):
     return roots
 
 
+def create_flat_tree_for_jstree(flat_tree):
+    jstreelist=[]
+
+    def create_node(node):
+
+        localnode = {
+            "id": node['pk'],
+            "text": node['description'],
+            "type": "catRoot",
+            "parent": node['parent_portfolio'],
+            "percentage": 1,
+            "portfolio_manager": node['manager']['name']
+        }
+        assets_as_json = []
+        for a in node['assets']:
+            assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
+        localnode['assets'] = assets_as_json
+
+        tradingbooks_as_json = []
+        for tb in node['trading_books']:
+            tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
+        localnode['trading_books'] = tradingbooks_as_json
+
+        children_as_json = []
+        for child in node['sub_portfolios']:
+            subkey=key_from_url(child)
+            children_as_json.append(subkey)
+        localnode['children'] = children_as_json
+
+        return localnode
+
+    for i in range(len(flat_tree)):
+        if flat_tree[i]['parent_portfolio'] is None:
+            dict_node=create_node(flat_tree[i])
+            jstreelist.append(dict_node)
+
+    return jstreelist
+
+
 def create_embedded_tree_for_dropdown(flat_tree):
     roots=[]
     def lookup_node_by_id(id):
