@@ -221,7 +221,7 @@ def create_embedded_tree_for_dropdown(flat_tree):
             return None
 
         localnode={
-            #"portfolio_id":node['pk'],
+            "portfolio_id":node['pk'],
             "title": node['description'],
             #"percentage": 1,
             #"portfolio_manager": node['manager']['name']
