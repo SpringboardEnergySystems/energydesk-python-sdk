@@ -13,7 +13,8 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_market_prices(api_conn):
-    df=DerivativesApi.fetch_daily_prices(api_conn, "Nasdaq OMX", "Nordic Power", "NO1")
+    df=DerivativesApi.fetch_daily_prices(api_conn, "Nasdaq OMX", "Nordic Power", "ALL")
+
     print(df)
 
 def query_market_types(api_conn):
@@ -43,4 +44,4 @@ def get_market_types(api_conn):
     print(res)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_market_types(api_conn)
+    query_market_prices(api_conn)
