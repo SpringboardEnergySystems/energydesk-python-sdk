@@ -1,5 +1,6 @@
 
 import logging
+import pandas as pd
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -43,5 +44,6 @@ def get_market_types(api_conn):
     res=MarketsApi.get_commodity_types(api_conn)
     print(res)
 if __name__ == '__main__':
+    pd.set_option('display.max_rows', None)
     api_conn=init_api()
     query_market_prices(api_conn)
