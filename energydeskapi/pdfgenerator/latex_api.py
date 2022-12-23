@@ -39,8 +39,8 @@ class LatexApi:
         print(payload)
         response = LatexApi.exec_post(
             '/api/pdflatex/latex2pdf-stream/', payload)
-        fb=open("./loc.pdf", "wb")
-        fb.write(response.content)
-        fb.close()
+        # fb=open("./loc.pdf", "wb")
+        # fb.write(response.content)
+        # fb.close()
 
-        return None
+        return response.content
