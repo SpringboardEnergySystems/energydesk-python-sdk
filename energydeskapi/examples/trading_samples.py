@@ -125,19 +125,15 @@ import sys
 if __name__ == '__main__':
 
     random.seed(datetime.now())
-    volte1="bb98d5f7e9387118ae325b2e5b71686e2c1ac150"
-    voltetest2 = "a62b59e7a46bf3bbd7d93c5cf5314cadf239fdec"
-    ent1="555a94fbb9d09e987ee2762a027fae209a333384"
-    enttest2 = "d503d740ea0ff61290297ecbfb9e2279c0588551"
-    api_conn = init_api()
 
-    #get_contract_doc(api_conn)
-    #sys.exit(0)
-    #get_own_trades_total(api_conn)
+    api_conn = init_api()
+    cust1="token1"
+    cust2="token2"
+    # Random list of external customer BRREG numbers
     list1 = ['920369820','925891576','913320506', '927856026', '927856026', '985274762']
     list2 =['970980105','970234934','820431472','820431472','979437218']
     #Samples of 2 users from different companies
-    for comp in [(volte1, list1), (ent1,list2)]:
+    for comp in [(cust1, list1), (cust2,list2)]:
         api_conn.set_token(comp[0], "Token")
         v = random.uniform(0.1, 0.5)
         externals=comp[1]

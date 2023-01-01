@@ -41,7 +41,14 @@ class MqttClient:
             return False
         return True
 
-
+    def publish(self,topic, msg):
+        result = self.client.publish(topic, msg, qos=0, retain=True)
+        # result: [0, 1]
+        status = result[0]
+        if status == 0:
+            logger.info(f"Send `{msg}` to topic `{topic}`")
+        else:
+            logger.warning(f"Failed to send message to topic {topic}" + str(result))
     def start_listener(self):
         self.client.loop_start()  # start the loop
         # logger.info("Setting up MQTT listener on topic" + str(self.subscriber_topic))
@@ -65,10 +72,10 @@ import time, environ
 if __name__ == '__main__':
     api_conn = init_api()
     env = environ.Env()
-    mqtt_broker = env.str('ENERGYDESK_MQTT_BROKER')
-    mqtt_port= env.str('ENERGYDESK_MQTT_PORT')
-    mqtt_usr=None if "ENERGYDESK_MQTT_USERNAME" not in env else env.str("ENERGYDESK_MQTT_USERNAME")
-    mqtt_pwd = None if "ENERGYDESK_MQTT_PASSWORD" not in env else env.str("ENERGYDESK_MQTT_PASSWORD")
+    mqtt_broker = env.str('MQTT_HOST')
+    mqtt_port= env.str('MQTT_PORT')
+    mqtt_usr=None if "MQTT_USERNAME" not in env else env.str("MQTT_USERNAME")
+    mqtt_pwd = None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
     mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd)
     mqttcli.connect(on_message_test_callback, ["/marketdata/nordicpower/#"], "Feed Listener")
     mqttcli.start_listener()
