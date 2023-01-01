@@ -56,7 +56,7 @@ def generate_sell_prices(api_conn):
     mw=500
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products_df(api_conn)
-    for o in [('Volte AS', 1150, 50),('Entelios AS', 1100, 500)]:
+    for o in [('Volte AS', 1100, 50),('Entelios AS', 1100, 500)]:
         comp=o[0]
         price = o[1]
         qty = o[2]
