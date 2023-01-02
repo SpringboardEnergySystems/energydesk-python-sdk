@@ -75,8 +75,9 @@ def simulate_price_changes(api_conn, mqttcli):
             colname="close"
         val = df.loc[ticker_idx, colname]
         val+=v
-        df.loc[ticker_idx, colname]=val
-        print("Sending change for", ticker, colname, val)
+        dec_val = float("{:.2f}".format(val))
+        df.loc[ticker_idx, colname]=dec_val
+        print("Sending change for", ticker, colname, dec_val)
         generate_send_marketdata(mqttcli, df,ticker_idx,ticker)
         time.sleep(1)
 
