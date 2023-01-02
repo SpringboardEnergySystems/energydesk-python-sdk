@@ -222,7 +222,7 @@ def create_flat_tree_for_jstree(flat_tree):
         parent="#" if node['parent_portfolio'] is None else key_from_url(node['parent_portfolio'])
         type_tag = "root" if node['parent_portfolio'] is None else "default"
         localnode = {
-            "id": node['pk'],
+            "id": "port_" + str(node['pk']),
             "text": node['description'] + ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
@@ -237,13 +237,21 @@ def create_flat_tree_for_jstree(flat_tree):
         }
         assets_as_json = []
         for a in node['assets']:
-            assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
+            anode={
+                'id': "asset_" + str(a['pk']),
+                'text': a['description'],
+                "type":"assets",
+                "data": [],
+                "parent":node['pk']
+            }
+            assets_as_json.append(anode)
+            #assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
         localnode['assets'] = assets_as_json
 
         tradingbooks_as_json = []
         for tb in node['trading_books']:
             tbnode={
-                'id': tb['pk'],
+                'id': "tb_" + str(tb['pk']),
                 'text': tb['description'],
                 "type":"trading_books",
                 "data": [],
