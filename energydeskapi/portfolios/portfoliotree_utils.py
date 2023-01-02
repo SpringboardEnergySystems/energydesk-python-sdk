@@ -222,6 +222,11 @@ def create_flat_tree_for_jstree(flat_tree):
             "id": node['pk'],
             "text": node['description'] + '<span class=\'label label-default\'> ' + str(percentage*100.0) + ' %</span>',
             "type": type_tag,
+            "data": {
+                "original_text": node['description'],
+                "calculation": str(percentage*100.0),
+                "company": "4"
+            },
             "parent": parent,
             "calculation": percentage,
             "state": {"opened": True},
