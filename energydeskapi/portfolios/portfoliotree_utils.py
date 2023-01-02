@@ -227,13 +227,12 @@ def create_flat_tree_for_jstree(flat_tree):
             "type": type_tag,
             "data": {
                 "original_text": node['description'],
-                "calculation": str(percentage*100.0),
+                "calculation": str(percentage*100),
                 "company": "4"
             },
             "parent": parent,
             "calculation": percentage,
-            "state": {"opened": True},
-            "portfolio_manager": node['manager']['name']
+            "state": {"opened": True}
         }
         assets_as_json = []
         for a in node['assets']:
@@ -246,7 +245,7 @@ def create_flat_tree_for_jstree(flat_tree):
             }
             jstreelist.append(anode)
             #assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
-        localnode['assets'] = assets_as_json
+        #localnode['assets'] = assets_as_json
 
         tradingbooks_as_json = []
         for tb in node['trading_books']:
@@ -259,13 +258,13 @@ def create_flat_tree_for_jstree(flat_tree):
             }
             jstreelist.append(tbnode)
             #tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
-        localnode['trading_books'] = tradingbooks_as_json
+        #localnode['trading_books'] = tradingbooks_as_json
 
-        children_as_json = []
-        for child in node['sub_portfolios']:
-            subkey=key_from_url(child)
-            children_as_json.append(subkey)
-        localnode['children'] = children_as_json
+        #children_as_json = []
+        #for child in node['sub_portfolios']:
+        #    subkey=key_from_url(child)
+        #    children_as_json.append(subkey)
+        #localnode['children'] = children_as_json
 
         return localnode
 
