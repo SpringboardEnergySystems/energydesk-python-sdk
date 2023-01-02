@@ -237,9 +237,9 @@ def create_flat_tree_for_jstree(flat_tree):
         assets_as_json = []
         for a in node['assets']:
             anode={
-                'id': 0,
-                'text': a['description'],
-                "type":"assets",
+                "id": "a"+str(a['pk']),
+                "text": a['description'],
+                "type": "assets",
                 "data": [],
                 "parent":node['pk']
             }
@@ -250,9 +250,9 @@ def create_flat_tree_for_jstree(flat_tree):
         tradingbooks_as_json = []
         for tb in node['trading_books']:
             tbnode={
-                'id': 0,
-                'text': tb['description'],
-                "type":"trading_books",
+                "id": "a"+str(tb['pk']),
+                "text": tb['description'],
+                "type": "trading_books",
                 "data": [],
                 "parent":node['pk']
             }
