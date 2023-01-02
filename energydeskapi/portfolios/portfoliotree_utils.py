@@ -251,7 +251,7 @@ def create_flat_tree_for_jstree(flat_tree):
         tradingbooks_as_json = []
         for tb in node['trading_books']:
             tbnode={
-                'id': "tb_" + str(tb['pk']),
+                'id': "tbook_" + str(tb['pk']),
                 'text': tb['description'],
                 "type":"trading_books",
                 "data": [],
