@@ -220,7 +220,7 @@ def create_flat_tree_for_jstree(flat_tree):
         type_tag = "root" if node['parent_portfolio'] is None else "default"
         localnode = {
             "id": node['pk'],
-            "text": node['description'] + "<span class='label label-default'> " + str(percentage*100.0) + " %</span>",
+            "text": node['description'] + "<span class=\'label label-default\'> " + str(percentage*100.0) + " %</span>",
             "type": type_tag,
             "parent": parent,
             "calculation": percentage,
@@ -363,4 +363,3 @@ def create_embedded_tree_for_dropdown2(flat_tree):
 if __name__ == '__main__':
     emb_tree = create_embedded_dropdown2(sample_portfolio_tree)
     print(emb_tree)
-
