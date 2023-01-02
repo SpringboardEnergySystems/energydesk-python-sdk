@@ -206,6 +206,10 @@ def create_embedded_tree_recursive(flat_tree):
 
     return roots
 
+def convert_nodes_from_jstree(portfolio_nodes):
+    jstreelist = []
+    ## TODO generate format for saving on API
+    return jstreelist
 
 def create_flat_tree_for_jstree(flat_tree):
     jstreelist=[]
