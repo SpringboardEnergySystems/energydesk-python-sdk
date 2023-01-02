@@ -222,7 +222,7 @@ def create_flat_tree_for_jstree(flat_tree):
         parent="#" if node['parent_portfolio'] is None else key_from_url(node['parent_portfolio'])
         type_tag = "root" if node['parent_portfolio'] is None else "default"
         localnode = {
-            "id": "port_" + str(node['pk']),
+            "id": node['pk'],
             "text": node['description'] + ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
@@ -230,7 +230,7 @@ def create_flat_tree_for_jstree(flat_tree):
                 "calculation": str(percentage*100.0),
                 "company": "4"
             },
-            "parent": "port_" + str(parent),
+            "parent": parent,
             "calculation": percentage,
             "state": {"opened": True},
             "portfolio_manager": node['manager']['name']
@@ -242,7 +242,7 @@ def create_flat_tree_for_jstree(flat_tree):
                 'text': a['description'],
                 "type":"assets",
                 "data": [],
-                "parent":"port_"+str(node['pk'])
+                "parent":node['pk']
             }
             jstreelist.append(anode)
             #assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
@@ -255,7 +255,7 @@ def create_flat_tree_for_jstree(flat_tree):
                 'text': tb['description'],
                 "type":"trading_books",
                 "data": [],
-                "parent":"port_"+str(node['pk'])
+                "parent":node['pk']
             }
             jstreelist.append(tbnode)
             #tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
