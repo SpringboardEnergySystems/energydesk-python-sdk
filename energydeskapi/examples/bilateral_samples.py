@@ -5,7 +5,7 @@ from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
-from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
+from energydeskapi.types.fwdcurve_enum_types import FwdCurveModels
 from energydeskapi.sdk.pandas_utils import get_summer_profile, get_winter_profile, get_workweek, get_weekend
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
@@ -56,21 +56,16 @@ def generate_sell_prices(api_conn):
     mw=500
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products_df(api_conn)
-    for o in [('Volte AS', 1100, 50),('Entelios AS', 1100, 500)]:
-        comp=o[0]
-        price = o[1]
-        qty = o[2]
-        for index,row in df.iterrows():
-            print("Calculating fixed price for ", row['ticker'])
-            periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
-            LemsApi.add_order(api_conn, row['ticker'], price, "NOK", qty, "SELL", "NORMAL", expiry, comp)
-            continue
-            success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, mw, row['area'],
-                                                                                         "NOK",
-                                                                                         FwdCurveInternalEnum.CUBIC_SPLINE.value)
-            for result in res['period_prices']:
-                print(result['period_tag'], result['contract_price'])
-                LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
+    for index,row in df.iterrows():
+        print("Calculating fixed price for ", row['ticker'])
+        periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
+
+        success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, row['area'],
+                                                                                     "NOK",
+                                                                                     FwdCurveModels.PRICEIT.value)
+        for result in res['period_prices']:
+            print(result['period_tag'], result['contract_price'])
+            LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
 
 
 if __name__ == '__main__':
