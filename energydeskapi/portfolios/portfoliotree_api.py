@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from energydeskapi.portfolios.portfoliotree_utils import create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
+from energydeskapi.portfolios.portfoliotree_utils import convert_nodes_from_jstree, create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
 from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, sample_portfolio_tree_embedded
 
 
@@ -58,11 +58,20 @@ class PortfolioTreeApi:
       return create_flat_tree_for_jstree(json_res)
 
   @staticmethod
+  def save_portfolio_flat_tree(api_connection, portfolio_nodes):
+      logger.info("Saving portfolio tree")
+      result_json=convert_nodes_from_jstree(portfolio_nodes)
+      #Need to test that result_json is what is expected in upsert_portfolio...
+      #return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, result_json)
+      return True
+
+
+  @staticmethod
   def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):
 
     success, json_res, status_code, error_msg = api_connection.exec_post_url(
               '/api/portfoliomanager/portfoliotree-creation/', portfolio_nodes)
-    print()
+
     return success, None
 
   @staticmethod
