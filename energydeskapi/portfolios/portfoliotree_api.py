@@ -59,7 +59,7 @@ class PortfolioTreeApi:
 
   @staticmethod
   def save_portfolio_flat_tree(api_connection, portfolio_nodes):
-      logger.info("Fetching portfolio tree")
+      logger.info("Saving portfolio tree")
       result_json=convert_nodes_from_jstree(portfolio_nodes)
       #Need to test that result_json is what is expected in upsert_portfolio...
       #return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, result_json)
