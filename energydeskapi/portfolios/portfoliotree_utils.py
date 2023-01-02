@@ -215,13 +215,16 @@ def create_flat_tree_for_jstree(flat_tree):
     jstreelist=[]
 
     def create_node(node):
+        percentage=1  # Defaul for now...
         parent="#" if node['parent_portfolio'] is None else key_from_url(node['parent_portfolio'])
+        type_tag = "root" if node['parent_portfolio'] is None else "default"
         localnode = {
             "id": node['pk'],
-            "text": node['description'],
-            "type": "catRoot",
+            "text": node['description'] + "<span class='label label-default'> " + str(percentage*100.0) + " %</span>",
+            "type": type_tag,
             "parent": parent,
-            "percentage": 1,
+            "calculation": percentage,
+            "state": {"opened": True},
             "portfolio_manager": node['manager']['name']
         }
         assets_as_json = []
