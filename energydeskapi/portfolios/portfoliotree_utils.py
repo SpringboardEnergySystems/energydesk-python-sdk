@@ -244,7 +244,7 @@ def create_flat_tree_for_jstree(flat_tree):
                 "data": [],
                 "parent":node['pk']
             }
-            assets_as_json.append(anode)
+            jstreelist.append(anode)
             #assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
         localnode['assets'] = assets_as_json
 
@@ -257,7 +257,7 @@ def create_flat_tree_for_jstree(flat_tree):
                 "data": [],
                 "parent":node['pk']
             }
-            tradingbooks_as_json.append(tbnode)
+            jstreelist.append(tbnode)
             #tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
         localnode['trading_books'] = tradingbooks_as_json
 
