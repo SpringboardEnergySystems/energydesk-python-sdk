@@ -1,4 +1,5 @@
 import logging
+import requests
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -204,3 +205,23 @@ class ElvizLinksApi:
                                                      + str(existing['pk']) + "/", payload)
         print(json_res)
         return True
+
+    @staticmethod
+    def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings):
+        server_url = "http://127.0.0.1:5000/elviztrades"
+        logger.info("Calling URL " + str(server_url))
+        payload={
+            "user_mappings":user_mappings,
+            "portfolio_mappings":portfolio_mappings,
+            "company_mappings":company_mappings,
+        }
+        logger.debug("...with payload " + str(payload) )
+        return requests.post(server_url, json=payload)
+
+    @staticmethod
+    def get_latest_elviz_trades(api_connection):
+        port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
+        usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
+        comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
+        ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps )
+
