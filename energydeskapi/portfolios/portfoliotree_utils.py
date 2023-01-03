@@ -222,50 +222,49 @@ def create_flat_tree_for_jstree(flat_tree):
         parent="#" if node['parent_portfolio'] is None else key_from_url(node['parent_portfolio'])
         type_tag = "root" if node['parent_portfolio'] is None else "default"
         localnode = {
-            "id": "port_" + str(node['pk']),
+            "id": node['pk'],
             "text": node['description'] + ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
                 "original_text": node['description'],
-                "calculation": str(percentage*100.0),
+                "calculation": str(percentage*100),
                 "company": "4"
             },
             "parent": parent,
             "calculation": percentage,
-            "state": {"opened": True},
-            "portfolio_manager": node['manager']['name']
+            "state": {"opened": True}
         }
         assets_as_json = []
         for a in node['assets']:
             anode={
-                'id': "asset_" + str(a['pk']),
-                'text': a['description'],
-                "type":"assets",
+                "id": "a"+str(a['pk']),
+                "text": a['description'],
+                "type": "assets",
                 "data": [],
                 "parent":node['pk']
             }
-            assets_as_json.append(anode)
+            jstreelist.append(anode)
             #assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
-        localnode['assets'] = assets_as_json
+        #localnode['assets'] = assets_as_json
 
         tradingbooks_as_json = []
         for tb in node['trading_books']:
             tbnode={
-                'id': "tbook_" + str(tb['pk']),
-                'text': tb['description'],
-                "type":"trading_books",
+                "id": "a"+str(tb['pk']),
+                "text": tb['description'],
+                "type": "trading_books",
                 "data": [],
                 "parent":node['pk']
             }
-            tradingbooks_as_json.append(tbnode)
+            jstreelist.append(tbnode)
             #tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
-        localnode['trading_books'] = tradingbooks_as_json
+        #localnode['trading_books'] = tradingbooks_as_json
 
-        children_as_json = []
-        for child in node['sub_portfolios']:
-            subkey=key_from_url(child)
-            children_as_json.append(subkey)
-        localnode['children'] = children_as_json
+        #children_as_json = []
+        #for child in node['sub_portfolios']:
+        #    subkey=key_from_url(child)
+        #    children_as_json.append(subkey)
+        #localnode['children'] = children_as_json
 
         return localnode
 
