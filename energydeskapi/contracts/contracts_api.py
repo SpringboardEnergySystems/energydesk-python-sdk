@@ -83,14 +83,14 @@ class Contract:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
-        if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type
-        if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type
-        if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type
+        if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
+        if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
+        if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
         if self.commodity_delivery_from is not None: prod['delivery_from'] = check_fix_date2str(
             self.commodity_delivery_from)
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(
             self.commodity_delivery_until)
-        if self.market is not None: prod['market'] = self.market
+        if self.market is not None: prod['market'] = self.market.value
         prod['area'] = self.area
         prod['commodity_profile'] = self.commodity_profile
         prod['spread'] = self.spread
@@ -110,7 +110,7 @@ class Contract:
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         # if self.contract_type is not None: dict['contract_type'] = self.contract_type
-        if self.contract_status is not None: dict['contract_status'] = self.contract_status
+        if self.contract_status is not None: dict['contract_status'] = self.contract_status.value
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = self.counterpart
