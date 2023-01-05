@@ -29,8 +29,8 @@ def get_comp_name_from_regnumber(regnumber):
         pass
     return ""
 # Returns an anonymous view of orders in local market
-def get_own_orders(api_conn, ticker):
-    df = LemsApi.query_own_orders(api_conn, ticker)
+def get_own_active_orders(api_conn, ticker=None):
+    df = LemsApi.query_own_orders(api_conn, True, ticker)
     print(df)
     return df
 
@@ -38,7 +38,7 @@ def get_own_orders(api_conn, ticker):
 
 
 def get_live_orderbook(api_conn):
-    df = LemsApi.query_active_orders(api_conn)
+    df = LemsApi.query_active_anonymous_orders(api_conn)
     print(df)
     return df
 
@@ -53,7 +53,7 @@ def get_available_products(api_conn):
 def remove_all_active_orders(api_conn):
     df_products = get_available_products(api_conn)
     for index, row in df_products.iterrows():
-        df_orders = get_own_orders(api_conn, row['ticker'])
+        df_orders = get_own_active_orders(api_conn, row['ticker'])
         print("Own orders (incl filled) on ", row['ticker'])
         print(df_orders)
         for index2, row2 in df_orders.iterrows():
@@ -128,8 +128,8 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #get_own_trades_total(api_conn)
-    #get_live_orderbook(api_conn)
-    remove_all_active_orders(api_conn)
+    get_own_active_orders(api_conn)
+    #remove_all_active_orders(api_conn)
     sys.exit(0)
     cust1="token1"
     cust2="token2"

@@ -299,7 +299,7 @@ class LemsApi:
         return success
 
     @staticmethod
-    def query_active_orders(api_connection, ticker=None):
+    def query_active_anonymous_orders(api_connection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -315,7 +315,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def query_own_orders(api_connection, ticker=None):
+    def query_own_orders(api_connection, show_active_only=False, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -323,7 +323,10 @@ class LemsApi:
         """
 
         logger.info("Query own orders")
-        url = '/api/lems/myorders/' if ticker is None else '/api/lems/myorders/?ticker=' + ticker
+        if show_active_only:
+            url = '/api/lems/myactiveorders/' if ticker is None else '/api/lems/myactiveorders/?ticker=' + ticker
+        else:
+            url = '/api/lems/myorders/' if ticker is None else '/api/lems/myorders/?ticker=' + ticker
         json_res = api_connection.exec_get_url(url)
         if json_res is None:
             return None
