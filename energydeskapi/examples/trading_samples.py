@@ -127,8 +127,9 @@ if __name__ == '__main__':
     random.seed(datetime.now())
 
     api_conn = init_api()
-    get_own_trades_total(api_conn)
-    get_live_orderbook(api_conn)
+    #get_own_trades_total(api_conn)
+    #get_live_orderbook(api_conn)
+    remove_all_active_orders(api_conn)
     sys.exit(0)
     cust1="token1"
     cust2="token2"

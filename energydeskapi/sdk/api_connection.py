@@ -139,7 +139,7 @@ class ApiConnection(object):
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
-        if result.status_code<202:
+        if result.status_code<210:
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
