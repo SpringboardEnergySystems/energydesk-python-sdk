@@ -127,6 +127,9 @@ if __name__ == '__main__':
     random.seed(datetime.now())
 
     api_conn = init_api()
+    get_own_trades_total(api_conn)
+    get_live_orderbook(api_conn)
+    sys.exit(0)
     cust1="token1"
     cust2="token2"
     # Random list of external customer BRREG numbers
