@@ -39,3 +39,35 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
     utc_dt=parser.isoparse(str(utc_str))
     d_loc = utc_dt.astimezone(timezone)
     return d_loc
+
+
+
+def safe_set_utc(indate):
+    try:
+        outdate=indate.astimezone(pytz.utc)
+    except:
+        outdate = indate
+    return outdate
+
+def calc_seconds(date1, date2):
+    duration=date2-date1
+    return float(duration.total_seconds())
+
+def overlapping_seconds(calc_period_from, calc_period_until, test_period_from, test_period_until):
+    period_from=safe_set_utc(test_period_from)
+    period_until = safe_set_utc(test_period_until)
+    calc_period_from=safe_set_utc(calc_period_from)
+    calc_period_until = safe_set_utc(calc_period_until)
+    if calc_period_until<period_from:
+        return 0
+    if calc_period_from>=period_until:
+        return 0
+    if calc_period_from<=period_from and calc_period_until>=period_until:
+        return calc_seconds(period_from, period_until)
+    if calc_period_from>=period_from and calc_period_until<=period_until:
+        return calc_seconds(calc_period_from, calc_period_until)
+    if calc_period_from>period_from:
+        return calc_seconds(calc_period_from, period_until)
+    if calc_period_until<period_until:
+        return calc_seconds(period_from, calc_period_until)
+    return 0

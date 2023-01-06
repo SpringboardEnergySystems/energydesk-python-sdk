@@ -57,9 +57,9 @@ def generate_sell_prices(api_conn):
     expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
     df = LemsApi.get_traded_products_df(api_conn)
     for index,row in df.iterrows():
-        LemsApi.add_order(api_conn, row['ticker'], 999, "NOK", mw, "SELL", "NORMAL", expiry)
-        continue
-        print("Calculating fixed price for ", row['ticker'])
+        #LemsApi.add_order(api_conn, row['ticker'], 999, "NOK", mw, "SELL", "NORMAL", expiry)
+        #continue
+        #print("Calculating fixed price for ", row['ticker'])
 
         periods = [[row['ticker'],row['delivery_from'], row['delivery_until']]]
 
