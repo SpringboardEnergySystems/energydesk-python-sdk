@@ -19,11 +19,16 @@ class PortfolioViewsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
+        import uuid
+        result = uuid.uuid4()
+        id=str(result.hex)
         logger.info("Fetching product view")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/productview/', parameters)
         if json_res is None:
-            return None
-        return json_res
+            return None, None
+        view_id=json_res['view_id']
+        view_data = json_res['view_data']
+        return view_id, view_data
 
     @staticmethod
     def get_product_view_df(api_connection, parameters={}):
@@ -33,14 +38,14 @@ class PortfolioViewsApi:
         :type api_connection: str, required
         """
 
-        json_res = PortfolioViewsApi.get_product_view(api_connection, parameters)
+        id, json_res = PortfolioViewsApi.get_product_view(api_connection, parameters)
         if json_res is None:
-            return None
+            return None, None
         if len(json_res)==0:
-            return None
+            return None, None
         df = pd.DataFrame(data=eval(json_res))
 
-        return df
+        return id, df
 
     @staticmethod
     def get_period_view(api_connection, parameters={}):
