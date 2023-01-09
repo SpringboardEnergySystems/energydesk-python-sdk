@@ -26,6 +26,7 @@ class PortfolioViewsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/productview/', parameters)
         if json_res is None:
             return None, None
+        print(json_res)
         return id, json_res
 
     @staticmethod
