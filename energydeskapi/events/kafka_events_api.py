@@ -114,7 +114,7 @@ if __name__ == '__main__':
     mqtt_port= env.str('KAFKA_PORT')
     mqttcli=KafkaClient(mqtt_broker,mqtt_port)
     es=EventSubscriber("marketdata.nordicpower.nasdaqomx",on_test_callback)
-    mqttcli.connect( [es], "Feed Listener")
+    mqttcli.connect( [es], "Feed Consumer")
     mqttcli.start_listener()
     while 1==1:
         time.sleep(1)
