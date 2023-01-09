@@ -79,7 +79,7 @@ def simulate_price_changes(api_conn, mqttcli):
         df.loc[ticker_idx, colname]=dec_val
         print("Sending change for", ticker, colname, dec_val)
         generate_send_marketdata(mqttcli, df,ticker_idx,ticker)
-        time.sleep(0.1)
+        time.sleep(1)
 
 if __name__ == '__main__':
     random.seed(datetime.now())
