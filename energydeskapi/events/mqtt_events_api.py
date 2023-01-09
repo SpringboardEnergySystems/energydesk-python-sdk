@@ -1,6 +1,8 @@
 
 import json
 import logging
+import ssl
+
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 import paho.mqtt.client as mqtt
 from energydeskapi.sdk.common_utils import init_api
@@ -22,13 +24,15 @@ def on_message_callback(client, userdata, message):
         logger.error(str(content))
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, client_certificate={}):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
         super().__init__()
         self.mqtt_host=mqtt_host
         self.mqtt_port=mqtt_port
         self.username=username
         self.password=password
-        self.client_certificate=client_certificate
+        self.ca_certificate=certificates['ca_certificate']
+        self.client_certificate=certificates['client_certificate']
+        self.client_key=certificates['client_key']
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None
@@ -50,6 +54,11 @@ class MqttClient(EventClient):
                 self.client.username_pw_set(self.username, self.password)
             self.client.user_data_set(self)
             logger.info("Connecting " + str(self.mqtt_host) + ":"  + str(self.mqtt_port))
+            print(self.client_certificate)
+            if self.client_certificate is not None:
+                self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
+                                    keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
+                self.client.tls_insecure_set(True)
             self.client.connect(self.mqtt_host, port=int(self.mqtt_port))  # connect to broker
         except Exception as e:
             logger.error(str(e))
@@ -77,10 +86,14 @@ if __name__ == '__main__':
     api_conn = init_api()
     env = environ.Env()
     mqtt_broker = env.str('MQTT_HOST')
-    mqtt_port= env.str('MQTT_PORT')
-    mqtt_usr=None if "MQTT_USERNAME" not in env else env.str("MQTT_USERNAME")
+    mqtt_port = env.str('MQTT_PORT')
+    mqtt_usr = None if "MQTT_USERNAME" not in env else env.str("MQTT_USERNAME")
     mqtt_pwd = None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
-    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd)
+    ca_cert = None if "MQTT_CA_CERT" not in env else env.str('MQTT_CA_CERT')
+    client_cert = None if "MQTT_CLIENT_CERT" not in env else env.str('MQTT_CLIENT_CERT')
+    client_key = None if "MQTT_CLIENT_KEY" not in env else env.str('MQTT_CLIENT_KEY')
+    mqtt_certs = {'ca_certificate': ca_cert, 'client_certificate': client_cert, 'client_key': client_key}
+    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd, mqtt_certs)
     es=EventSubscriber("/marketdata/nordicpower/#",on_my_callback)
     mqttcli.connect( [es], "Feed Listener")
     mqttcli.start_listener()
