@@ -36,9 +36,9 @@ class KafkaClient(EventClient):
             logger.error("Error refreshing connection " + str(e))
             return False
 
-    def publish(self,topic, msg):
-        result = self.client.publish(topic, msg, qos=0, retain=True)
-        # result: [0, 1]
+    def publish(self,topic, msg, headers=[]):
+        result = self.producer.send(topic, msg)
+
         status = result[0]
         if status == 0:
             logger.info(f"Send `{msg}` to topic `{topic}`")
