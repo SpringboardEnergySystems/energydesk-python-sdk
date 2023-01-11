@@ -37,6 +37,7 @@ class KafkaClient(EventClient):
             return False
 
     def publish(self,topic, msg, headers=[]):
+        print("Sending", topic, msg, "on ", self.producer)
         result = self.producer.send(topic, msg)
 
         status = result[0]
