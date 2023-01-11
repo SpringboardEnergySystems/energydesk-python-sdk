@@ -26,7 +26,9 @@ class PortfolioViewsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/productview/', parameters)
         if json_res is None:
             return None, None
-        return id, json_res
+        view_id=json_res['view_id']
+        view_data = json_res['view_data']
+        return view_id, view_data
 
     @staticmethod
     def get_product_view_df(api_connection, parameters={}):
