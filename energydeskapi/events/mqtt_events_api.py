@@ -30,9 +30,9 @@ class MqttClient(EventClient):
         self.mqtt_port=mqtt_port
         self.username=username
         self.password=password
-        self.ca_certificate=certificates['ca_certificate']
-        self.client_certificate=certificates['client_certificate']
-        self.client_key=certificates['client_key']
+        self.ca_certificate=None if 'ca_certificate' not in certificates else certificates['ca_certificate']
+        self.client_certificate=None if 'client_certificate' not in certificates else certificates['client_certificate']
+        self.client_key=None if 'client_key' not in certificates else certificates['client_key']
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None

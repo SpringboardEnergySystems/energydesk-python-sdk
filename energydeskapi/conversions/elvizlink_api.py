@@ -1,5 +1,6 @@
 import logging
 import requests
+import environ
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -208,7 +209,8 @@ class ElvizLinksApi:
 
     @staticmethod
     def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings):
-        server_url = "http://127.0.0.1:5000/api/elviztrades"
+        env = environ.Env()
+        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/api/elviztrades"
         logger.info("Calling URL " + str(server_url))
         payload={
             "user_mappings":user_mappings,

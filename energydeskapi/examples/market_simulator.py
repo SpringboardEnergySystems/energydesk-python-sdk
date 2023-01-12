@@ -56,13 +56,32 @@ def get_current_snapshot(api_conn):
     return df
 
 
+def pick_test_product():
+    c = randrange(4)
+    if c==0:
+        return "ENOFUTBLQ1-24"
+    elif c==1:
+        return "ENOFUTBLQ4-23"
+    elif c==2:
+        return "ENOFUTBLYR-25"
+    else:
+        return "ENOFUTBLYR-26"
+
+
+
 def simulate_price_changes(api_conn, mqttcli):
     df=get_current_snapshot(api_conn)
     df['bid'] = df['last']
     df['ask'] = df['last']
     while True:
         ticker_idx = randrange(len(df.index))
+
+        tickrow=df.loc[df['ticker'] == pick_test_product()]
+        ticker_idx=tickrow.index[0]
+
         ticker = df.loc[ticker_idx, 'ticker']
+
+
         v = random.uniform(-0.5, 0.5)
         type_change = randrange(4)
         if type_change==0:

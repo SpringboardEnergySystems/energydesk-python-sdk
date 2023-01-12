@@ -37,13 +37,10 @@ class KafkaClient(EventClient):
             return False
 
     def publish(self,topic, msg, headers=[]):
+        print("Sending", topic)
         result = self.producer.send(topic, msg)
 
-        status = result[0]
-        if status == 0:
-            logger.info(f"Send `{msg}` to topic `{topic}`")
-        else:
-            logger.warning(f"Failed to send message to topic {topic}" + str(result))
+        print(result)
 
 
     def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000):

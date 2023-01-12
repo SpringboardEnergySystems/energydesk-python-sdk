@@ -159,7 +159,6 @@ class ApiConnection(object):
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<210:
-            print(result.text)
             if result.status_code>200 and result.text.strip()=="":
                 return True, [], result.status_code, None
             json_data = result.json()
