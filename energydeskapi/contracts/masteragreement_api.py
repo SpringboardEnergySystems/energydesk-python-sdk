@@ -92,7 +92,7 @@ class MasterAgreementApi:
         key = int(payload['pk'])
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/mastercontractagreements/' + payload['pk'] + "/", payload)
+                '/api/portfoliomanager/mastercontractagreements/' + str(payload['pk']) + "/", payload)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/portfoliomanager/mastercontractagreements/', payload)
