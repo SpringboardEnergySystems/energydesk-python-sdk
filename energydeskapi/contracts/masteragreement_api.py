@@ -11,9 +11,10 @@ class MasterContractAgreement:
         self.created_at = None
         self.contract_owner = None
         self.counterpart = None
-        self.contract_info_1 = None
-        self.contract_info_2 = None
-        self.contract_info_3 = None
+        self.contract_info = None
+        self.phone = None
+        self.email = None
+        self.email_contract_documents = False
         self.signed_contract_url_ref = None
 
     def get_dict(self, api_conn):
@@ -23,9 +24,10 @@ class MasterContractAgreement:
         if self.created_at is not None: dict['created_at'] = self.created_at
         if self.contract_owner is not None: dict['contract_owner'] = self.contract_owner
         if self.counterpart is not None: dict['counterpart'] = self.counterpart
-        if self.contract_info_1 is not None: dict['contract_info_1'] = self.contract_info_1
-        if self.contract_info_2 is not None: dict['contract_info_2'] = self.contract_info_2
-        if self.contract_info_3 is not None: dict['contract_info_3'] = self.contract_info_3
+        if self.contract_info is not None: dict['contract_info'] = self.contract_info
+        if self.phone is not None: dict['phone'] = self.phone
+        if self.email is not None: dict['email'] = self.email
+        if self.email_contract_documents is not False: dict['email_contract_documents'] = self.email_contract_documents
         if self.signed_contract_url_ref is not None: dict['signed_contract_url_ref'] = self.signed_contract_url_ref
         return dict
 
