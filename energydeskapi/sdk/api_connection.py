@@ -59,6 +59,7 @@ class ApiConnection(object):
         print("We are OK for basic auth, return token", tok)
         return True, tok
 
+    #Example
     @staticmethod
     def validate_jwt_token( base_url, token, backend="google-oauth2"):
         http.client._MAXHEADERS = 1000
