@@ -59,6 +59,25 @@ class ApiConnection(object):
         print("We are OK for basic auth, return token", tok)
         return True, tok
 
+    #Example
+    @staticmethod
+    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+        http.client._MAXHEADERS = 1000
+        server_url = base_url + "/auth/convert-token"
+        payload = {
+            "grant_type": "convert_token",
+            "client_id": "client_id",
+            "client_secret": "client_secret",
+            "backend": backend,
+            "token": token}
+        print("VALIDATING TOKEN", payload)
+        result = requests.post(server_url, json=payload)
+        if result.status_code != 200:
+            print("Could not validate user with backend")
+            return None
+        access_token = result.json()['access_token']
+        return access_token
+
     def validate_token(self, token, backend="google-oauth2"):
         """Validates a token
 

@@ -83,14 +83,15 @@ def register_master_contract_agreement(api_conn, regnmb):
     usrprofile=UsersApi.get_user_profile(api_conn)
     usrcomp = CustomersApi.get_company_from_registry_number(api_conn, usrprofile['company_nbr'])
     master_agreement = MasterContractAgreement()
-    master_agreement.pk = 0
+    master_agreement.pk = 4
     master_agreement.title = "Master Agreement with " + counterres['name']
     master_agreement.created_at = datetime.today().strftime(("%Y-%m-%d"))
     master_agreement.contract_owner = "http://127.0.0.1:8001/api/customers/companies/" + str(usrcomp['pk']) + "/"
     master_agreement.counterpart = "http://127.0.0.1:8001/api/customers/companies/" + str(counterres['pk']) + "/"
-    master_agreement.contract_info_1 = "contract_info #1"
-    master_agreement.contract_info_2 = "contract_info #2"
-    master_agreement.contract_info_3 = "contract_info #3"
+    master_agreement.contract_info = "contract_info #1"
+    master_agreement.phone = "111121111"
+    master_agreement.email = "example@example.com"
+    master_agreement.email_contract_documents = True
     master_agreement.signed_contract_url_ref = "http://sharepoint.com/"
     print(master_agreement.get_dict(api_conn))
     MasterAgreementApi.upsert_master_agreement(api_conn, master_agreement)
@@ -191,10 +192,10 @@ if __name__ == '__main__':
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
-    bilateral_dealcapture(api_conn)
+    #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)
     #get_contracts(api_conn, 27)
     #get_master_contract_agreements(api_conn)
     #register_contract_tag(api_conn)
-    #register_master_contract_agreement(api_conn, "922675163")
+    register_master_contract_agreement(api_conn, "922675163")
     #register_master_contract_agreement(api_conn, "819449392")
