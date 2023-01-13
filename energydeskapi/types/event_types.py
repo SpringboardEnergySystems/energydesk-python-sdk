@@ -7,5 +7,5 @@ class KafkaQueues(Enum):
     PRODUCTVIEWS = "portfolioview.productview"
 
 class MqttTopics(Enum):
-    NORDICPOWER_PRICES = "/marketdata/nordicpower/#"
+    NORDICPOWER_PRICES = "/marketdata/nordicpower"
     PRODUCTVIEWS = "/portfolioview/productview"
