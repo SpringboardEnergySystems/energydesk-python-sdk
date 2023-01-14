@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from random import randrange
 from energydeskapi.sdk.common_utils import init_api
@@ -79,9 +79,19 @@ def add_buy_order_on_products(api_conn,  price, currency,product_idx, quantity_m
     else:
         print(error_msg)
     # Should see filled orders after previous operatgion
-    df = get_own_orders(api_conn, sample_ticker)
-    print(df)
+    df_own_orders = LemsApi.query_own_orders(api_conn)
+    print(df_own_orders)
 
+
+def add_sell_order_on_products(api_conn,  price, currency,product_idx, quantity_mw, is_pending=False):
+    df_products = get_available_products(api_conn)
+    sample_ticker = df_products["ticker"].values[product_idx]
+    expiry = (datetime.today() + timedelta(days=10)).strftime("%Y-%m-%d")
+    status="ACTIVE" if not is_pending else "PENDING"
+    LemsApi.add_order(api_conn, sample_ticker,price,currency, quantity_mw, "SELL", "NORMAL", expiry, status)
+    print("Order added. Now query res")
+    df_own_orders = LemsApi.query_own_orders(api_conn)
+    print(df_own_orders)
 
 # Example of retrieving own orders for set of products
 def get_own_orders_per_product(api_conn):
@@ -127,25 +137,10 @@ if __name__ == '__main__':
     random.seed(datetime.now())
 
     api_conn = init_api()
-    #get_own_trades_total(api_conn)
-    #get_own_active_orders(api_conn)
-    remove_all_active_orders(api_conn)
-    sys.exit(0)
-    cust1="token1"
-    cust2="token2"
-    # Random list of external customer BRREG numbers
-    list1 = ['920369820','925891576','913320506', '927856026', '927856026', '985274762']
-    list2 =['970980105','970234934','820431472','820431472','979437218']
-    #Samples of 2 users from different companies
-    for comp in [(cust1, list1), (cust2,list2)]:
-        api_conn.set_token(comp[0], "Token")
-        v = random.uniform(0.1, 0.5)
-        externals=comp[1]
-        for i in range(25):
-            product_idx=randrange(4,24)
-            extern_customer_idx = randrange(len(externals))
-            add_buy_order_on_products(api_conn, 1900, "NOK",product_idx, quantity_mw=v, extern_comp_regnr=externals[extern_customer_idx])  # 0.5 MW in sample
-    # remove_all_active_orders(api_conn)
-    #get_own_orders_total(api_conn)
-    #get_own_trades_total(api_conn)
-    # get_live_orderbook(api_conn)
+    get_live_orderbook(api_conn)
+    get_own_active_orders(api_conn)
+    get_own_orders_total(api_conn)
+    add_sell_order_on_products(api_conn , 922,"NOK",4,45, False)
+    add_sell_order_on_products(api_conn, 925, "NOK", 4, 45, False)
+    add_sell_order_on_products(api_conn, 930, "NOK", 4, 45, True)
+
