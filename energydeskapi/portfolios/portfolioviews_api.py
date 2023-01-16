@@ -58,7 +58,9 @@ class PortfolioViewsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/periodview/', parameters)
         if json_res is None:
             return None
-        return json_res
+        view_id=json_res['view_id']
+        view_data = json_res['view_data']
+        return view_id, view_data
 
     @staticmethod
     def get_period_view_df(api_connection, parameters={}):
@@ -68,13 +70,13 @@ class PortfolioViewsApi:
         :type api_connection: str, required
         """
 
-        json_res = PortfolioViewsApi.get_period_view(api_connection, parameters)
+        id, json_res = PortfolioViewsApi.get_period_view(api_connection, parameters)
         if json_res is None:
             return None
         if len(json_res)==0:
             return None
-        viewdata=json_res['view_data']
-        df = pd.read_json(viewdata, orient="table")
+
+        df = pd.read_json(json_res, orient="table")
         #df = pd.DataFrame(data=eval(json_res), orient)
 
-        return df
+        return id, df
