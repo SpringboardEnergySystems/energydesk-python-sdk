@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 def list_current_profiles(api_conn):
     profs=LemsApi.get_product_profiles(api_conn)
     print(profs)
+def retrieve_product_profiles(api_conn, pk):
+    profs=LemsApi.get_profile_by_key(api_conn, pk)
+    print(profs)
 
 def check_create_profile(api_conn, profile):
 
@@ -79,6 +82,8 @@ if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     list_current_profiles(api_conn)
+    print("Get specific")
+    retrieve_product_profiles(api_conn, 1)
     sys.exit(0)
     products=define_profiles()
     for p in products:

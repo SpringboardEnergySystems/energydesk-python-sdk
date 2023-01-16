@@ -253,6 +253,20 @@ class LemsApi:
         return json_res
 
     @staticmethod
+    def get_profile_by_key(api_connection, pk):
+        """Fetches product profile from key
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: personal key of profile
+        :type pk: str, required
+        """
+        logger.info("Fetching product profile with key " + str(pk))
+        json_res=api_connection.exec_get_url('/api/lems/localproductprofiles/' + str(pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_traded_products(api_connection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 
