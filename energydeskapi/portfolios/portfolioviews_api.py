@@ -73,7 +73,8 @@ class PortfolioViewsApi:
             return None
         if len(json_res)==0:
             return None
-        df = pd.read_json(json_res, orient="table")
+        viewdata=json_res['view_data']
+        df = pd.read_json(viewdata, orient="table")
         #df = pd.DataFrame(data=eval(json_res), orient)
 
         return df
