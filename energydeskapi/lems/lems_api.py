@@ -13,6 +13,32 @@ def check_fix_date2str(dt):
         return dt
     return convert_datime_to_utcstr(dt)
 
+class LocalProductProfile:
+    """ Class for local product profile
+
+    """
+
+    def __init__(self,
+                 description=None,
+                 ticker_subname=None,
+                 profile_category=None,
+                 commodity_profile=None):
+        self.pk=0
+        self.description=description
+        self.ticker_subname=ticker_subname
+        self.profile_category=profile_category
+        self.commodity_profile=commodity_profile
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        prod = {}
+        prod['description'] = self.description
+        prod['ticker_subname'] = self.ticker_subname
+        if self.profile_category is not None:
+            prod['profile_category']=self.profile_category
+        if self.commodity_profile is not None:
+            prod['commodity_profile']=self.commodity_profile
+        return prod
 
 class LocalProduct:
     """ Class for local product
@@ -180,6 +206,23 @@ class LemsApi:
         return df
 
     @staticmethod
+    def upsert_localproductprofile(api_connection, local_product_profile):
+        """Registers local local product profile
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Registering local product profile")
+        payload = local_product_profile.get_dict(api_connection)
+        print(payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            '/api/lems/localproductprofiles/', payload)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
     def get_ticker_data(api_connection, area=None):
         """Fetches all counterparts and displays in a dataframe
 
@@ -195,6 +238,19 @@ class LemsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+
+    @staticmethod
+    def get_product_profiles(api_connection, parameters={}):
+        """Fetches all profiles stored in local market
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching predefined profiles")
+        json_res = api_connection.exec_get_url(
+            '/api/lems/localproductprofiles/', parameters)
+        return json_res
 
     @staticmethod
     def get_traded_products(api_connection, parameters={}):
