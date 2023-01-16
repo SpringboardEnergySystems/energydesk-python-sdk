@@ -26,8 +26,8 @@ class ParametersEnum(Enum):
     sellvol = {"internal": "sellvol","formatting":"float",  "display": "Sell MWh"}
 
     avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Cost"}
-    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Sell Cost"}
-    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Buy Cost"}
+    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Buy Cost"}
+    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Sell Cost"}
     market = {"internal": "market", "formatting":"str","display": "Market"}
     asset = {"internal": "asset", "formatting":"str", "display": "Underlying"}
     area = {"internal": "area", "formatting":"str", "display": "Area"}
