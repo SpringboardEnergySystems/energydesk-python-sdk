@@ -279,6 +279,18 @@ class LemsApi:
         return json_res
 
     @staticmethod
+    def get_all_local_products(api_connection, parameters={}):
+        """Fetches all products including expired
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching locl products list")
+        json_res = api_connection.exec_get_url(
+            '/api/lems/localproducts/historical/', parameters)
+        return json_res
+
+    @staticmethod
     def get_traded_products_df(api_connection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 

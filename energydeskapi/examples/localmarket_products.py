@@ -20,6 +20,17 @@ from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_li
 from energydeskapi.sdk.pandas_utils import get_winter_profile, get_workweek, get_weekend
 logger = logging.getLogger(__name__)
 
+def print_ticker(prod_dict):
+    for p in prod_dict:
+        print(p['ticker'])
+
+def get_historical_products(api_conn):
+    print("Traded")
+    res=LemsApi.get_traded_products(api_conn)
+    print_ticker(res)
+    print("ALL")
+    res=LemsApi.get_all_local_products(api_conn)
+    print_ticker(res)
 def check_create_product(api_conn, price_area, product):
     res = LocationApi.get_local_areas(api_conn)
     loc_url=None
@@ -53,7 +64,7 @@ def check_create_product(api_conn, price_area, product):
     locprod.ticker = product['name']
     locprod.currency = "NOK"
     locprod.local_market = markurl
-    locprod.traded_from = today
+    locprod.traded_from =  product['period_from'] + relativedelta(months=-1)
     locprod.traded_until = product['period_from']
     locprod.local_area = loc_url
     locprod.description = "Fixed price contract " + product['name']
@@ -64,7 +75,7 @@ def check_create_product(api_conn, price_area, product):
     locprod.commodity_type = CommodityTypeEnum.POWER
     locprod.instrument_type = InstrumentTypeEnum.FWD
     locprod.delivery_type=DeliveryTypeEnum.PHYSICAL
-    locprod.profile_category=product['contract_type']
+    locprod.profile_category=product['profile_type']
     locprod.commodity_profile={'monthly_profile':product['monthly_profile'],
     'weekday_profile':product['weekday_profile'],
     'daily_profile':product['daily_profile']}
@@ -76,16 +87,18 @@ def set_timezone(locdt, loczone="Europe/Oslo"):
     norzone = pytz.timezone(loczone)
     d_aware = locdt.astimezone(norzone)
     return d_aware
-def define_products(price_area):
-    period_from=set_timezone(datetime(2023,1,1))
+def define_products(price_area, monthyr="FEB23", startdate=datetime(2023,2,1)):
+    myr=monthyr
+    period_from=set_timezone(startdate)
 
     period_until_3yr=(period_from + relativedelta(years=3))
     period_until_7yr=(period_from + relativedelta(years=7))
     products=[]
     # Baseload
-    p1={'name': 'FWD' + price_area + '-3YR-JAN23',
+    p1={'name': 'FWD' + price_area + '-BASE-3YR' + myr,
         'period_from':period_from,
         'period_until':period_until_3yr,
+        'area': price_area,
         'profile_type':"BASELOAD",
         'monthly_profile':get_month_list(), #All months
         'weekday_profile':get_weekdays_list(),
@@ -93,9 +106,10 @@ def define_products(price_area):
     products.append(p1)
 
     # Baseload 7year
-    p1b={'name': 'FWD' + price_area + '-BASE-7YRJAN23',
+    p1b={'name': 'FWD' + price_area + '-BASE-7YR' + myr,
         'period_from':period_from,
         'period_until':period_until_7yr,
+         'area': price_area,
         'profile_type':"BASELOAD",
         'monthly_profile':get_month_list(),
         'weekday_profile':get_weekdays_list(),
@@ -104,9 +118,10 @@ def define_products(price_area):
     products.append(p1b)
 
     # Winter Workweek
-    p2={'name': 'FWD' + price_area + '-WINTERWEEK-3YRJAN23',
+    p2={'name': 'FWD' + price_area + '-WINTERWEEK-3YR' + myr,
         'period_from':period_from,
         'period_until':period_until_3yr,
+        'area': price_area,
         'profile_type':"PROFILE",
         'monthly_profile':get_winter_profile(),
         'weekday_profile':get_workweek(),
@@ -116,22 +131,41 @@ def define_products(price_area):
     products.append(p2)
 
     # Winter Weekend
-    p3={'name': 'FWD' + price_area + '-WINTERWEEKEND-3YRJAN23',
+    p3={'name': 'FWD' + price_area + '-WINTERWEEKEND-3YR' + myr,
         'period_from':period_from,
         'period_until':period_until_3yr,
+        'area': price_area,
         'profile_type':"PROFILE",
         'monthly_profile':get_winter_profile(),
         'weekday_profile':get_weekend(),
         'daily_profile':list(range(24))}
     products.append(p3)
+
+    # Winter Weekend
+    p4={'name': 'FWD' + price_area + '-WINTERPEAK-3YR' + myr,
+        'period_from':period_from,
+        'period_until':period_until_3yr,
+        'area':price_area,
+        'profile_type':"PROFILE",
+        'monthly_profile':get_winter_profile(),
+        'weekday_profile':get_workweek(),
+        'daily_profile':list(range(8,18))}
+    products.append(p4)
     df_products=pd.DataFrame(data=products)
     return products
-
+import sys
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    price_area="NO1"
-    products=define_products(price_area)
+    get_historical_products(api_conn)
+    sys.exit(0)
+    products=define_products("NO1", monthyr="DEC22", startdate=datetime(2022, 12, 1))
+    products.extend(define_products("NO1", monthyr="JAN23", startdate=datetime(2023, 1, 1)))
+    products.extend(define_products("NO1", monthyr="FEB23", startdate=datetime(2023, 2, 1)))
+    products.extend(define_products("NO5", monthyr="DEC22", startdate=datetime(2022, 12, 1)))
+    products.extend(define_products("NO5", monthyr="JAN23", startdate=datetime(2023, 1, 1)))
+    products.extend(define_products("NO5", monthyr="FEB23", startdate=datetime(2023, 2, 1)))
+
     for p in products:
-        check_create_product(api_conn=api_conn, price_area=price_area, product=p)
+        check_create_product(api_conn=api_conn, price_area=p['area'], product=p)
 
