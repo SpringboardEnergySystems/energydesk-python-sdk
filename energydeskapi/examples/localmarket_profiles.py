@@ -82,8 +82,8 @@ if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     list_current_profiles(api_conn)
-    print("Get specific")
-    retrieve_product_profiles(api_conn, 1)
+    #print("Get specific")
+    #retrieve_product_profiles(api_conn, 1)
     sys.exit(0)
     products=define_profiles()
     for p in products:
