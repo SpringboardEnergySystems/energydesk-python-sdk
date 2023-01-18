@@ -164,9 +164,7 @@ class DerivativesApi:
 
 
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/derivatives-prices-in-period/', qry_payload)
-
         if not success:
-
             logger.error("Problens calling EnergyDesk API " + str(status_code) + " " + error_msg)
             return None
         data=json.loads(json_res)
