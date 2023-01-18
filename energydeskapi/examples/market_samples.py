@@ -50,4 +50,4 @@ def get_market_types(api_conn):
 if __name__ == '__main__':
     pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    query_historical_market_prices(api_conn)
+    query_market_prices(api_conn)
