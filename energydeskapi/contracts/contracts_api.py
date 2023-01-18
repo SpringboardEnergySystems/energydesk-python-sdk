@@ -481,7 +481,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
         print(json_res)
         #json_res=ContractsApi.list_contracts(api_connection, parameters)
-        df = pd.DataFrame(data=json_res)
+        df = pd.DataFrame(data=json_res['results'])
         return df
 
     @staticmethod
