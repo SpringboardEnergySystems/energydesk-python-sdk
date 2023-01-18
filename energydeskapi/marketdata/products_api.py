@@ -69,6 +69,12 @@ class ProductsApi:
         """
         return api_connection.get_base_url() + '/api/markets/commoditydefinitions/' + str(commodity_deinition_pk) + "/"
 
+    @staticmethod
+    def get_commodity_definitions(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/commoditydefinitions/', parameters)
+        if json_res is None:
+            return False
+        return json_res
 
     @staticmethod
     def get_market_products(api_connection, parameters={}):
