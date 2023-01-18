@@ -18,6 +18,7 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res):
     df_new = df.reindex(ix, fill_value='NaN')
     return df_new
 def apply_calendar_pattern(df, months, weekdays, hours = range(24)):
+    print("Applying cal pattern", months, weekdays, hours)
     def check_pattern(row):
         v= 1 if row.name.strftime('%B') in months \
             and calendar.day_name[row.name.weekday()]  in weekdays \
