@@ -17,6 +17,7 @@ class Company:
         self.city=""
         self.country=""
         self.location="0,0"
+        self.is_active=True
 
     def get_dict(self):
         dict = {}
@@ -32,6 +33,7 @@ class Company:
         if self.city is not None: dict['city'] = self.city
         if self.country is not None: dict['country'] = self.country
         if self.location is not None: dict['location'] = self.location
+        dict['is_active'] = self.is_active
         return dict
 
 class CustomersApi:
