@@ -75,11 +75,9 @@ class PortfolioViewsApi:
         """
 
         id, json_res = PortfolioViewsApi.get_period_view(api_connection, parameters)
-        print("json_res", json_res)
+
         if json_res is None:
-            return None
-        if len(json_res)==0:
-            return None
+            return None, None
 
         df = pd.read_json(json_res, orient="table")
         #df = pd.DataFrame(data=eval(json_res), orient)
