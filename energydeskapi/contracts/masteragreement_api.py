@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 class MasterContractAgreement:
     def __init__(self):
         self.pk = 0
-        self.title = None
+        self.title = ''
         self.created_at = None
         self.contract_owner = None
         self.counterpart = None
