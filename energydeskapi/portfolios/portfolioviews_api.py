@@ -59,7 +59,9 @@ class PortfolioViewsApi:
         if json_res is None:
             return None, None
         print(json_res)
-        print(json_res.text)
+        print(json_res['view_data'])
+        if len(json_res['view_data'])==0:
+            return None, None
         view_id=json_res['view_id']
         view_data = json_res['view_data']
         return view_id, view_data
