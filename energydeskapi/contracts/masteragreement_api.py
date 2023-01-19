@@ -11,11 +11,11 @@ class MasterContractAgreement:
         self.created_at = None
         self.contract_owner = None
         self.counterpart = None
-        self.contract_info = ''
-        self.phone = ''
-        self.email = ''
+        self.contract_info = None
+        self.phone = None
+        self.email = None
         self.email_contract_documents = False
-        self.signed_contract_url_ref = ''
+        self.signed_contract_url_ref = None
 
     def get_dict(self, api_conn):
         dict = {}
