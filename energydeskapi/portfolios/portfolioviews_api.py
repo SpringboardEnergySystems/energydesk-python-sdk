@@ -58,6 +58,8 @@ class PortfolioViewsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/periodview/', parameters)
         if json_res is None:
             return None, None
+        print(json_res)
+        print(json_res.text)
         view_id=json_res['view_id']
         view_data = json_res['view_data']
         return view_id, view_data
