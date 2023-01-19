@@ -7,15 +7,15 @@ logger = logging.getLogger(__name__)
 class MasterContractAgreement:
     def __init__(self):
         self.pk = 0
-        self.title = None
+        self.title = ''
         self.created_at = None
         self.contract_owner = None
         self.counterpart = None
-        self.contract_info = None
-        self.phone = None
-        self.email = None
+        self.contract_info = ''
+        self.phone = ''
+        self.email = ''
         self.email_contract_documents = False
-        self.signed_contract_url_ref = None
+        self.signed_contract_url_ref = ''
 
     def get_dict(self, api_conn):
         dict = {}
