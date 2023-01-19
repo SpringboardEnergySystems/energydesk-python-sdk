@@ -112,8 +112,9 @@ class BilateralApi:
                 cpricedet.append(df_pricing)
             return df_curve, cprices, cpricedet
         else:
-            print(error_msg)
-        return None, error_msg, []
+            print("An error occured")
+            pass#print(error_msg)
+        return None, "error_msg", []
 
 
 
