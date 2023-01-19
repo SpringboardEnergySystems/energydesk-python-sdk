@@ -333,6 +333,7 @@ class LemsApi:
             payload['exclusive_counterpart']=exclusive
         else:
             payload['exclusive_counterpart']=None
+        print("ENTERING OORDER ", payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
         if not success:
