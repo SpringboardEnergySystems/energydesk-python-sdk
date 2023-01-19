@@ -1,7 +1,7 @@
 import requests
 import logging
 import pandas as pd
-
+import json
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -127,7 +127,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def fetch_prices_for_product(api_connection, market_place, market_name, ticker, period_from, period_until):
+    def fetch_prices_in_period(api_connection, market_place, market_name, ticker, period_from, period_until):
         """Fetches price for selected product
 
         :param base_url: prefix of the URL
@@ -150,20 +150,25 @@ class DerivativesApi:
 
         #server_url = base_url + '/api/markets/derivatives_prices_in_period/'
         logger.info("Fetching prices in " + market_name)
-        qry_payload = {
-            "market_place":market_place,
-            "market_name": market_name,
-            "period_from": period_from,
-            "period_until": period_until,
-            "currency_code": "EUR",
-            "ticker": ticker
-        }
+        qry_payload={"currency_code":"EUR"}
+        if market_place is not None:
+            qry_payload[ "market_place"]=market_place
+        if market_name is not None:
+            qry_payload[ "market_name"]=market_name
+        if ticker is not None:
+            qry_payload[ ticker]=ticker
+        if period_from is not None:
+            qry_payload[ "period_from"]=period_from
+        if period_until is not None:
+            qry_payload[ "period_until"]=period_until
+
+
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/derivatives-prices-in-period/', qry_payload)
-        #result = requests.post(server_url, json=qry_payload, headers=headers)
-        if result.status_code!=200:
-            logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)
+        if not success:
+            logger.error("Problens calling EnergyDesk API " + str(status_code) + " " + error_msg)
             return None
-        df = pd.read_json(result.json()['dataframe'], orient='records')
+        data=json.loads(json_res)
+        df = pd.DataFrame(data=data)
         return df
 
     @staticmethod

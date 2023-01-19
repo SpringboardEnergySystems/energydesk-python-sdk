@@ -17,6 +17,10 @@ def query_market_prices(api_conn):
     df=DerivativesApi.fetch_daily_prices(api_conn, "Nasdaq OMX", "Nordic Power", "ALL")
 
     print(df)
+def query_historical_market_prices(api_conn):
+    df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
+
+    print(df)
 
 def query_market_types(api_conn):
 
