@@ -32,8 +32,8 @@ class LocalProductProfile:
         self.active=active
     def get_dict(self, api_conn):
         dict = {}
-        dict['pk'] = self.pk
         prod = {}
+        prod['pk'] = self.pk
         prod['description'] = self.description
         prod['ticker_subname'] = self.ticker_subname
         if self.profile_category is not None:
