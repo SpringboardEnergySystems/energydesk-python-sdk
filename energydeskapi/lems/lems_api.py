@@ -222,7 +222,7 @@ class LemsApi:
         key = payload['pk']
         if key > 0:
             success, json_res, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/lems/localproductprofiles/', payload)
+                '/api/lems/localproductprofiles/' + str(key) + "/", payload)
         else:
             success, json_res, status_code, error_msg = api_connection.exec_post_url(
                 '/api/lems/localproductprofiles/', payload)
