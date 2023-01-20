@@ -23,13 +23,13 @@ class LocalProductProfile:
                  ticker_subname=None,
                  profile_category=None,
                  commodity_profile=None,
-                 active=False):
+                 is_active=False):
         self.pk=0
         self.description=description
         self.ticker_subname=ticker_subname
         self.profile_category=profile_category
         self.commodity_profile=commodity_profile
-        self.active=active
+        self.is_active=is_active
     def get_dict(self, api_conn):
         dict = {}
         prod = {}
@@ -40,8 +40,8 @@ class LocalProductProfile:
             prod['profile_category']=self.profile_category
         if self.commodity_profile is not None:
             prod['commodity_profile']=self.commodity_profile
-        if self.active is not False:
-            prod['active']=self.active
+        if self.is_active is not False:
+            prod['is_active']=self.is_active
         return prod
 
 class LocalProduct:
