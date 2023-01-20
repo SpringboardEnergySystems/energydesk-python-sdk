@@ -219,8 +219,13 @@ class LemsApi:
         logger.info("Registering local product profile")
         payload = local_product_profile.get_dict(api_connection)
         print(payload)
-        success, json_res, status_code, error_msg = api_connection.exec_post_url(
-            '/api/lems/localproductprofiles/', payload)
+        key = payload['pk']
+        if key > 0:
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/lems/localproductprofiles/', payload)
+        else:
+            success, json_res, status_code, error_msg = api_connection.exec_post_url(
+                '/api/lems/localproductprofiles/', payload)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
