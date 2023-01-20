@@ -23,7 +23,7 @@ class LocalProductProfile:
                  ticker_subname=None,
                  profile_category=None,
                  commodity_profile=None,
-                 is_active=False):
+                 is_active=True):
         self.pk=0
         self.description=description
         self.ticker_subname=ticker_subname
@@ -40,7 +40,7 @@ class LocalProductProfile:
             prod['profile_category']=self.profile_category
         if self.commodity_profile is not None:
             prod['commodity_profile']=self.commodity_profile
-        if self.is_active is not False:
+        if self.is_active is not True:
             prod['is_active']=self.is_active
         return prod
 
