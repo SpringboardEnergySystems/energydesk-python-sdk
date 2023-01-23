@@ -353,6 +353,7 @@ class LemsApi:
             "currency": currency,
             "quantity": quantity,
             "expiry": expiry_str,
+            "order_status": "ACTIVE",
             "buy_or_sell": "BUY",
             "order_type": order_type
         }
@@ -360,7 +361,7 @@ class LemsApi:
             payload['extern_company_regnumber']=extern_comp_reg
         if extern_comp_name is not None:
             payload['extern_company_name']=extern_comp_name
-        print(extern_comp_name)
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
         if not success:

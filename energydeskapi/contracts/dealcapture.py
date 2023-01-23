@@ -30,7 +30,7 @@ def bilateral_dealcapture(api_conn):
         tbs=TradingBooksApi.get_tradingbooks(api_conn, {'page_size':100, 'contract_types':1})
         for tb in tbs['results']:
             print(tb)
-        tb=30
+        tb=31
 
         comdef=MarketsApi.get_commodity(api_conn, {'product_code':loc_ticker})
         delivery_type = DeliveryTypeEnum.PHYSICAL
