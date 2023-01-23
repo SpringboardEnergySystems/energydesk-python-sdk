@@ -90,6 +90,8 @@ class BilateralApi:
                                     curve_model,curve_resolution=PeriodResolutionEnum.MONTHLY.value,
                                     wacc=0.06, inflation=0,
                                  profile_type="BASELOAD", monthly_profile=[], weekday_profile=[], hours=list(range(24))):
+
+        print(periods, price_area, currency_code, curve_model,curve_resolution)
         success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area,
                                                                                         currency_code, curve_model,curve_resolution,
                                  wacc, inflation,profile_type, monthly_profile, weekday_profile, hours)
@@ -110,8 +112,9 @@ class BilateralApi:
                 cpricedet.append(df_pricing)
             return df_curve, cprices, cpricedet
         else:
-            print(error_msg)
-        return None, error_msg, []
+            print("An error occured")
+            pass#print(error_msg)
+        return None, "error_msg", []
 
 
 

@@ -22,22 +22,26 @@ class LocalProductProfile:
                  description=None,
                  ticker_subname=None,
                  profile_category=None,
-                 commodity_profile=None):
+                 commodity_profile=None,
+                 is_active=True):
         self.pk=0
         self.description=description
         self.ticker_subname=ticker_subname
         self.profile_category=profile_category
         self.commodity_profile=commodity_profile
+        self.is_active=is_active
     def get_dict(self, api_conn):
         dict = {}
-        dict['pk'] = self.pk
         prod = {}
+        prod['pk'] = self.pk
         prod['description'] = self.description
         prod['ticker_subname'] = self.ticker_subname
         if self.profile_category is not None:
             prod['profile_category']=self.profile_category
         if self.commodity_profile is not None:
             prod['commodity_profile']=self.commodity_profile
+        if self.is_active is not True:
+            prod['is_active']=self.is_active
         return prod
 
 class LocalProduct:
@@ -215,8 +219,13 @@ class LemsApi:
         logger.info("Registering local product profile")
         payload = local_product_profile.get_dict(api_connection)
         print(payload)
-        success, json_res, status_code, error_msg = api_connection.exec_post_url(
-            '/api/lems/localproductprofiles/', payload)
+        key = payload['pk']
+        if key > 0:
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/lems/localproductprofiles/' + str(key) + "/", payload)
+        else:
+            success, json_res, status_code, error_msg = api_connection.exec_post_url(
+                '/api/lems/localproductprofiles/', payload)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -329,6 +338,7 @@ class LemsApi:
             payload['exclusive_counterpart']=exclusive
         else:
             payload['exclusive_counterpart']=None
+        print("ENTERING OORDER ", payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/addorder/', payload)
         if not success:

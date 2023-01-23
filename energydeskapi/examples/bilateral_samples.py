@@ -49,7 +49,6 @@ def calculate_price(api_conn):
                                         weekday_profile=get_workweek(),
                                         hours=list(range(5)))
 
-    print(cpricedet)
 
 
 def generate_sell_prices(api_conn):

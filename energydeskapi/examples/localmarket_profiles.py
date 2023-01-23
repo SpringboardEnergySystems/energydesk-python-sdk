@@ -84,7 +84,7 @@ if __name__ == '__main__':
     list_current_profiles(api_conn)
     #print("Get specific")
     #retrieve_product_profiles(api_conn, 1)
-    sys.exit(0)
+    #sys.exit(0)
     products=define_profiles()
     for p in products:
         check_create_profile(api_conn=api_conn, profile=p)
