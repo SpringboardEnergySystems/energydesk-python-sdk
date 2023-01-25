@@ -98,14 +98,14 @@ def simulate_price_changes(api_conn, mqttcli):
         df.loc[ticker_idx, colname]=dec_val
         print("Sending change for", ticker, colname, dec_val)
         generate_send_marketdata(mqttcli, df,ticker_idx,ticker)
-        time.sleep(0.01)
+        time.sleep(1)
 
 if __name__ == '__main__':
     random.seed(datetime.now())
     api_conn=init_api()
     env = environ.Env()
     mqtt_broker = env.str('MQTT_HOST')
-    mqtt_port= env.str('MQTT_PORT')
+    mqtt_port= env.str('MQTT_WEBSOCKET_PORT')
     mqtt_usr=None if "MQTT_USERNAME" not in env else env.str("MQTT_USERNAME")
     mqtt_pwd = None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
     mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd)

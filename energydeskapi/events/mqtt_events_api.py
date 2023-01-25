@@ -47,7 +47,7 @@ class MqttClient(EventClient):
                 self.client.subscribe(paho_topics)  #Only subscribe if topics given here. Some clients are *publish only*
         try:
             logger.info("Initializing MQTT")
-            self.client = mqtt.Client(client_name)  # create new instance
+            self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
             self.client.on_message = on_message_callback  # attach function to callback
             self.client.on_connect = on_connect
             if self.username is not None:
