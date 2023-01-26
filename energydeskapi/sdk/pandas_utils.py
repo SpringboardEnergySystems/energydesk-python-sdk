@@ -70,17 +70,7 @@ def convert_dataframe_to_localtime(df):
     df.index = df.index.tz_convert(tz=norzone)
     return df
 
-def get_baseload_weekdays():
-    week=get_weekdays_list()
-    return {k: 1.0 for k in week}
 
-def get_baseload_dailyhours():
-    hours=list(range(24))
-    return {k: 1.0 for k in hours}
-
-def get_baseload_months():
-    months=get_month_list()
-    return {k: 1.0 for k in months}
 
 def get_workweek():
     week=get_weekdays_list()[0:5]
