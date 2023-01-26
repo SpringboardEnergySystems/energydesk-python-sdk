@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.lems.lems_api import LemsApi, LocalProductProfile
+from energydeskapi.lems.lems_api import LemsApi, CustomProfile
 import pandas as pd
 import pytz
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum
@@ -21,61 +21,72 @@ from energydeskapi.sdk.pandas_utils import get_winter_profile, get_workweek, get
 logger = logging.getLogger(__name__)
 
 def list_current_profiles(api_conn):
-    profs=LemsApi.get_product_profiles(api_conn)
+    profs=LemsApi.get_custom_profiles(api_conn)
     print(profs)
-def retrieve_product_profiles(api_conn, pk):
-    profs=LemsApi.get_profile_by_key(api_conn, pk)
-    print(profs)
+
+
 
 def check_create_profile(api_conn, profile):
 
-    locprod = LocalProductProfile()
-    locprod.description = profile['description']
-    locprod.ticker_subname = profile['sub_ticker']
-    locprod.profile_category=profile['profile_type']
-    locprod.commodity_profile={'monthly_profile':profile['monthly_profile'],
-    'weekday_profile':profile['weekday_profile'],
-    'daily_profile':profile['daily_profile']}
-    print(locprod.get_dict(api_conn))
+    locprod =CustomProfile()
+    locprod.price_area = profile['price_area']
+    locprod.delivery_from = profile['delivery_from']
+    locprod.delivery_until=profile['delivery_until']
+    locprod.volume_profile={'monthly_profile':profile['volume_profile']['monthly_profile'],
+    'weekday_profile':profile['volume_profile']['weekday_profile'],
+    'daily_profile':profile['volume_profile']['daily_profile']}
     #Check and create product if not already on server. User must av admin rights
-    LemsApi.upsert_localproductprofile(api_conn, locprod)
+    success, json_res, status_code, error_msg=LemsApi.upsert_custom_profile(api_conn, locprod)
+    if success:
+        print("Got ticker to use in order entry", json_res['ticker'])
 
 def set_timezone(locdt, loczone="Europe/Oslo"):
     norzone = pytz.timezone(loczone)
     d_aware = locdt.astimezone(norzone)
     return d_aware
-def define_profiles():
+
+def define_custom_profiles():
 
     profiles=[]
     # Winter Workweek
-    p2={'description': 'Workweek Sep-Apr',
-        'sub_ticker':'WINTERWEEK',
-        'profile_type':"PROFILE",
-        'monthly_profile':get_winter_profile(),
-        'weekday_profile':get_workweek(),
-        'daily_profile':list(range(24))
+    p2={'delivery_from': '2023-04-01',
+        'delivery_until': '2026-04-01',
+        'price_area':'NO1',
+        'volume_profile':{'monthly_profile':get_winter_profile(),
+                    'weekday_profile':get_workweek(),
+                    'daily_profile':list(range(24))
+                   }
         }
-        
+    profiles.append(p2)
+    p2={'delivery_from': '2023-04-01',
+        'delivery_until': '2026-04-01',
+        'price_area':'NO5',
+        'volume_profile':{'monthly_profile':get_winter_profile(),
+                    'weekday_profile':get_workweek(),
+                    'daily_profile':list(range(24))
+                   }
+        }
     profiles.append(p2)
 
-    # Winter Weekend
-    p3={'description': 'Weekends Sep-Apr',
-        'sub_ticker': 'WINTERWEEKEND',
-        'profile_type':"PROFILE",
-        'monthly_profile':get_winter_profile(),
-        'weekday_profile':get_weekend(),
-        'daily_profile':list(range(24))}
-    profiles.append(p3)
+    p2={'delivery_from': '2023-04-01',
+        'delivery_until': '2028-04-01',
+        'price_area':'NO5',
+        'volume_profile':{'monthly_profile':get_winter_profile(),
+                    'weekday_profile':get_workweek(),
+                    'daily_profile':list(range(24))
+                   }
+        }
+    profiles.append(p2)
 
-    p4={'description': 'Weekends Sep-Apr (8-17)',
-        'sub_ticker': 'WINTERPEAK',
-        'profile_type':"PROFILE",
-        'monthly_profile':get_winter_profile(),
-        'weekday_profile':get_workweek(),
-        'daily_profile':list(range(8,18))}
-    profiles.append(p4)
-    df_products=pd.DataFrame(data=profiles)
-    print(profiles)
+    p2={'delivery_from': '2023-04-01',
+        'delivery_until': '2028-04-01',
+        'price_area':'NO5',
+        'volume_profile':{'monthly_profile':get_winter_profile(),
+                    'weekday_profile':get_weekend(),
+                    'daily_profile':list(range(24))
+                   }
+        }
+    profiles.append(p2)
     return profiles
 import sys
 if __name__ == '__main__':
@@ -85,7 +96,7 @@ if __name__ == '__main__':
     #print("Get specific")
     #retrieve_product_profiles(api_conn, 1)
     #sys.exit(0)
-    products=define_profiles()
+    products=define_custom_profiles()
     for p in products:
         check_create_profile(api_conn=api_conn, profile=p)
 

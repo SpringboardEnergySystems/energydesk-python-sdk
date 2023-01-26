@@ -13,35 +13,29 @@ def check_fix_date2str(dt):
         return dt
     return convert_datime_to_utcstr(dt)
 
-class LocalProductProfile:
+class CustomProfile:
     """ Class for local product profile
 
     """
 
     def __init__(self,
-                 description=None,
-                 ticker_subname=None,
-                 profile_category=None,
-                 commodity_profile=None,
-                 is_active=True):
+                 price_area=None,
+                 delivery_from=None, #ISO str
+                 delivery_until=None,
+                 volume_profile=None):
         self.pk=0
-        self.description=description
-        self.ticker_subname=ticker_subname
-        self.profile_category=profile_category
-        self.commodity_profile=commodity_profile
-        self.is_active=is_active
+        self.price_area=price_area
+        self.delivery_from=delivery_from
+        self.delivery_until=delivery_until
+        self.volume_profile=volume_profile
+
     def get_dict(self, api_conn):
-        dict = {}
         prod = {}
         prod['pk'] = self.pk
-        prod['description'] = self.description
-        prod['ticker_subname'] = self.ticker_subname
-        if self.profile_category is not None:
-            prod['profile_category']=self.profile_category
-        if self.commodity_profile is not None:
-            prod['commodity_profile']=self.commodity_profile
-        if self.is_active is not True:
-            prod['is_active']=self.is_active
+        prod['price_area'] = self.price_area
+        prod['delivery_from'] = self.delivery_from
+        prod['delivery_until'] = self.delivery_until
+        prod['volume_profile'] = self.volume_profile
         return prod
 
 class LocalProduct:
@@ -201,7 +195,7 @@ class LemsApi:
         """
         logger.info("Registering local product")
         payload = local_product.get_dict(api_connection)
-        print(payload)
+
         success, json_res, status_code, error_msg = api_connection.exec_post_url(
             '/api/lems/localproducts/', payload)
         if json_res is None:
@@ -210,26 +204,17 @@ class LemsApi:
         return df
 
     @staticmethod
-    def upsert_localproductprofile(api_connection, local_product_profile):
+    def upsert_custom_profile(api_connection, custom_profile):
         """Registers local local product profile
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Registering local product profile")
-        payload = local_product_profile.get_dict(api_connection)
-        print(payload)
-        key = payload['pk']
-        if key > 0:
-            success, json_res, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/lems/localproductprofiles/' + str(key) + "/", payload)
-        else:
-            success, json_res, status_code, error_msg = api_connection.exec_post_url(
-                '/api/lems/localproductprofiles/', payload)
-        if json_res is None:
-            return None
-        df = pd.DataFrame(data=json_res)
-        return df
+        payload = custom_profile.get_dict(api_connection)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            '/api/lems/customprofiles/', payload)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_ticker_data(api_connection, area=None):
@@ -250,7 +235,7 @@ class LemsApi:
 
 
     @staticmethod
-    def get_product_profiles(api_connection, parameters={}):
+    def get_custom_profiles(api_connection, parameters={}):
         """Fetches all profiles stored in local market
 
         :param api_connection: class with API token for use with API
@@ -258,7 +243,7 @@ class LemsApi:
         """
         logger.info("Fetching predefined profiles")
         json_res = api_connection.exec_get_url(
-            '/api/lems/localproductprofiles/', parameters)
+            '/api/lems/customprofiles/', parameters)
         return json_res
 
     @staticmethod
@@ -270,7 +255,7 @@ class LemsApi:
         :type pk: str, required
         """
         logger.info("Fetching product profile with key " + str(pk))
-        json_res=api_connection.exec_get_url('/api/lems/localproductprofiles/' + str(pk) + "/")
+        json_res=api_connection.exec_get_url('/api/lems/customprofiles/' + str(pk) + "/")
         if json_res is None:
             return None
         return json_res

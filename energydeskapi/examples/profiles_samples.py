@@ -14,8 +14,7 @@ logging.basicConfig(level=logging.INFO,
 def load_profiles(api_conn):
     jsdata = ProfilesApi.get_volume_profiles(api_conn)
     print(jsdata)
-    #jsdata = ProfilesApi.get_spot_profiles(api_conn)
-    #print(jsdata)
+
 def create_profile(api_conn):
     v=VolumeProfile()
     v.profile={
