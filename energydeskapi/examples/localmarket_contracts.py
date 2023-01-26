@@ -119,7 +119,7 @@ def add_custom_profile_order(api_conn, profile, price, quantity):
 
 def create_profile(api_conn):
     months=get_baseload_months()
-    months['June'] = 0.4
+    months['June'] = 0.7
     months['July']=0.4
     months['August'] = 0.4
     weekdays=get_baseload_weekdays()
@@ -130,24 +130,27 @@ def create_profile(api_conn):
         'weekday_profile': weekdays,
         'daily_profile': hours
     }
-    v.description="customprofile"
+    v.description="customprofile3"
     jsres = ProfilesApi.upsert_volume_profile(api_conn, v)
     print(jsres)
 
 def manage_myown_profiles(api_conn):
-    #create_profile(api_conn)
+    create_profile(api_conn)
+
     jsdata = ProfilesApi.get_volume_profiles(api_conn)
     print(jsdata)
 
-    jsdata=ProfilesApi.get_volume_profiles(api_conn,{'description':"customprofile"})
+    jsdata=ProfilesApi.get_volume_profiles(api_conn,{'description':"customprofile3"})
     if len(jsdata['results'])>0:
         selected_profile=jsdata['results'][0]['profile']
         print(selected_profile)
-        add_custom_profile_order(api_conn, selected_profile, 1000, 5)
+        add_custom_profile_order(api_conn, selected_profile, 999, 5)
 
+from energydeskapi.types.market_enum_types import MarketEnum
 import sys
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
+
     api_conn=init_api()
     manage_myown_profiles(api_conn)
 
