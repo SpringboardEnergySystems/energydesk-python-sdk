@@ -27,3 +27,13 @@ class InstrumentTypeEnum(Enum):
     EPAD = 4
     EUROPT = 5
     ASIOPT = 6
+
+class BlockSizeEnum(Enum):
+    SPOT = 1
+    DAY = 2
+    WEEK = 3
+    WEEKEND = 4
+    MONTH = 5
+    QUATER = 6
+    SEASON = 7
+    YEAR = 8
