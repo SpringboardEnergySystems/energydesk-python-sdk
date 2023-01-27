@@ -393,6 +393,7 @@ class LemsApi:
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
+        print("GOT IT ", df)
         return df
 
     @staticmethod
