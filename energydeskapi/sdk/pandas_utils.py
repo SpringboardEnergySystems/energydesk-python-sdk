@@ -33,15 +33,15 @@ def apply_calendar_pattern(df, months, weekdays, hours=list(range(24))):
             return False
         return type(lst[0])==tuple
     # If ínputs are plain lists, create binary maps with 1.0 as factors
-    if type(months)==tuple:
+    if type(months)==dict:
         month_map=months
     else:
         month_map = {k[0]: k[1] for k in months} if check_tuples(months) else {k: 1.0 for k in months}
-    if type(weekdays)==tuple:
+    if type(weekdays)==dict:
         weekday_map=weekdays
     else:
         weekday_map = {k[0]: k[1] for k in weekdays} if check_tuples(weekdays) else {k: 1.0 for k in weekdays}
-    if type(hours)==tuple:
+    if type(hours)==dict:
         hourly_map=hours
     else:
         hourly_map = {k[0]: k[1] for k in hours} if check_tuples(hours) else {k: 1.0 for k in hours}
