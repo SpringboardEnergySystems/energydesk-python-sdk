@@ -21,6 +21,12 @@ def get_baseload_months():
     months=get_month_list()
     return {k: 1.0 for k in months}
 
+def get_baseload_profile():
+    return {
+        'monthly_profile': get_baseload_months(),
+        'weekday_profile': get_baseload_weekdays(),
+        'daily_profile': get_baseload_dailyhours()
+    }
 
 if __name__ == '__main__':
     months=get_baseload_months()
