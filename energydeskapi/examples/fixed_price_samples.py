@@ -21,7 +21,7 @@ def calculate_price(api_conn):
     print("Calculate price for ", dt_from, dt_until)
     price_area="NO1"
     months=get_baseload_months()
-    months['June'] = 0.7
+    months['January'] = 0.7
     months['July']=0.4
     months['August'] = 0.4
     weekdays=get_baseload_weekdays()
@@ -31,6 +31,10 @@ def calculate_price(api_conn):
                                                                                       months,weekdays, hours
                                                                                       )
     if success:
+        print(json_res)
+        pid=json_res['priceoffer_id']
+        print("Adding offer")
+        success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, pid, "BUY", expiry, 25)
         print(json_res)
     else:
         print("Something went wrong")
