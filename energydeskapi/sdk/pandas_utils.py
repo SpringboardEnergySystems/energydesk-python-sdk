@@ -42,22 +42,19 @@ def apply_calendar_pattern(df, months, weekdays, hours=list(range(24))):
     else:
         weekday_map = {k[0]: k[1] for k in weekdays} if check_tuples(weekdays) else {k: 1.0 for k in weekdays}
 
-    print(hours)
     if type(hours)==dict:
         hourly_map={int(k): hours[k] for k in hours.keys()}
     else:
         hourly_map = {int(k[0]): k[1] for k in hours} if check_tuples(hours) else {k: 1.0 for k in hours}
-    #print(hours)
-    print(hourly_map)
+
     def check_pattern(row):
         mname=row.name.strftime('%B')
         wdname=calendar.day_name[row.name.weekday()]
         mnth_factor = month_map[mname] if mname in month_map else 0
         wday_factor = weekday_map[wdname] if wdname in weekday_map else 0
         hour_factor=hourly_map[row.name.hour] if row.name.hour in hourly_map else 0
-        #v = mnth_factor*wday_factor*hour_factor
-        print("Compare factors", mnth_factor, wday_factor, hour_factor)
-        v = min([mnth_factor, wday_factor, hour_factor])
+        v = mnth_factor*wday_factor*hour_factor
+        #v = min([mnth_factor, wday_factor, hour_factor])
         return v
     df['profile'] = df.apply(check_pattern, axis=1)
     return df
