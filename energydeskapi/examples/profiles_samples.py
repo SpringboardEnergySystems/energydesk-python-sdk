@@ -62,6 +62,10 @@ def convert_volume_profile(api_conn):
         df.index = df.index.tz_convert(pytz.timezone("Europe/Oslo"))
         df = df.rename(columns={df.columns[0]: 'hourly_factor'})
         print(df)
+        # Pandas by default with to_json(ISO) converts to UTC.
+        df.index=df.index.strftime("%Y-%m-%d %H:%M:%S+01:00")
+        json_to_save=df.to_dict()
+        #print(json_to_save)
 
 
 
