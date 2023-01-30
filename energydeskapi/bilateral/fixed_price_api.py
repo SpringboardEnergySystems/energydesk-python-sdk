@@ -7,7 +7,7 @@ class FixedPriceApi:
 
     """
     @staticmethod
-    def calculate_contract_price(api_connection ,delivery_from, delivery_until, price_area,
+    def calculate_contract_price(api_connection ,profile_name, delivery_from, delivery_until, price_area,
                                  monthly_profile=[], weekday_profile=[],hours=list(range(24))):
         """Calculated fix price in period
 
@@ -23,6 +23,7 @@ class FixedPriceApi:
         logger.info("Calculate bilateral fix price")
 
         qry_payload = {
+                'profile_name':profile_name,
                 "delivery_until": delivery_until,
                 "delivery_from": delivery_from,
                 "price_area":price_area,

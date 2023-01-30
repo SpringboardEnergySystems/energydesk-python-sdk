@@ -26,8 +26,8 @@ def calculate_price(api_conn):
     months['August'] = 0.4
     weekdays=get_baseload_weekdays()
     hours=get_baseload_dailyhours()
-
-    success, json_res, status_code, error_msg =FixedPriceApi.calculate_contract_price(api_conn, dt_from, dt_until,price_area,
+    profile_name="Superconsumers"
+    success, json_res, status_code, error_msg =FixedPriceApi.calculate_contract_price(api_conn, profile_name, dt_from, dt_until,price_area,
                                                                                       months,weekdays, hours
                                                                                       )
     if success:
