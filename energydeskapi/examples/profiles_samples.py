@@ -4,6 +4,7 @@ from energydeskapi.sdk.profiles_utils import generate_normalized_profile
 from energydeskapi.profiles.profiles_api import ProfilesApi, StoredProfile
 from energydeskapi.profiles.profiles import GenericProfile
 import pandas as pd
+import pytz
 import json
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
@@ -53,17 +54,19 @@ def convert_volume_profile(api_conn):
     }
     print(volume_profile)
     dprof=GenericProfile.from_dict(volume_profile)
-    success, returned_data, status_code, error_msg = ProfilesApi.convert_relativeprofile_to_yearlyfactors(api_conn, dprof)
+    success, returned_data, status_code, error_msg = ProfilesApi.convert_relativeprofile_to_yearlyfactors(api_conn,2023,3, dprof)
     if success:
-        print(len(returned_data['profile']))
         dict=json.loads(returned_data['profile'])
-
         df=pd.DataFrame.from_dict(dict, orient='index')
+        df.index = pd.to_datetime(df.index)
+        df.index = df.index.tz_convert(pytz.timezone("Europe/Oslo"))
+        df = df.rename(columns={df.columns[0]: 'hourly_factor'})
         print(df)
+
 
 
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #create_profile(api_conn)
-    load_profiles(api_conn)
+    convert_volume_profile(api_conn)
+    #load_profiles(api_conn)

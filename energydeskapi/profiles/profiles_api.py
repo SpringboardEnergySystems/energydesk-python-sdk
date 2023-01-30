@@ -98,7 +98,7 @@ class ProfilesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def convert_relativeprofile_to_yearlyfactors(api_connection, relative_profile:GenericProfile):
+    def convert_relativeprofile_to_yearlyfactors(api_connection, year_start, year_count, relative_profile:GenericProfile):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -106,7 +106,9 @@ class ProfilesApi:
         """
         logger.info("Converting relative profile to factors")
         payload={
-            'profile':relative_profile.to_dict()
+            'year_start':year_start,
+            'year_count':year_count,
+            'relative_profile':relative_profile.to_dict()
         }
         success, returned_data, status_code, error_msg  = api_connection.exec_post_url('/api/profilemanager/convertvolume2yearlyprofile/', payload)
         return success, returned_data, status_code, error_msg
