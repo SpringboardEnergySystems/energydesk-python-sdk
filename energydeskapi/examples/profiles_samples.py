@@ -3,6 +3,8 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.sdk.profiles_utils import generate_normalized_profile
 from energydeskapi.profiles.profiles_api import ProfilesApi, StoredProfile
 from energydeskapi.profiles.profiles import GenericProfile
+import pandas as pd
+import json
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.sdk.pandas_utils import get_winter_profile, get_workweek, get_weekend
@@ -17,7 +19,8 @@ logging.basicConfig(level=logging.INFO,
 def load_profiles(api_conn):
     jsdata = ProfilesApi.get_volume_profiles(api_conn)
     print(jsdata)
-
+    jsdata = ProfilesApi.get_volume_profile_by_key(api_conn, 1)
+    print(jsdata)
 
 def create_profile(api_conn):
     v=StoredProfile()
@@ -49,17 +52,18 @@ def convert_volume_profile(api_conn):
         'daily_profile':hourly_map
     }
     print(volume_profile)
-    normalized_profile=generate_normalized_profile(volume_profile)
-    print(normalized_profile)
-    return
     dprof=GenericProfile.from_dict(volume_profile)
-    print(dprof)
-    success, returned_data, status_code, error_msg = ProfilesApi.convert_volumeprofile_to_factors(api_conn, dprof)
-    print(returned_data)
+    success, returned_data, status_code, error_msg = ProfilesApi.convert_relativeprofile_to_yearlyfactors(api_conn, dprof)
+    if success:
+        print(len(returned_data['profile']))
+        dict=json.loads(returned_data['profile'])
+
+        df=pd.DataFrame.from_dict(dict, orient='index')
+        print(df)
 
 
 if __name__ == '__main__':
 
     api_conn=init_api()
     #create_profile(api_conn)
-    convert_volume_profile(api_conn)
+    load_profiles(api_conn)

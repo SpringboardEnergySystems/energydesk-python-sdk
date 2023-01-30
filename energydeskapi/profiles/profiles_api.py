@@ -56,6 +56,24 @@ class ProfilesApi:
         return None
 
     @staticmethod
+    def get_volume_profile_by_key(api_connection, key):
+        """Fetches url for location type from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param key: personal key
+        :type key: str, required
+        """
+        res=ProfilesApi.get_volume_profiles(api_connection, {'page_size':100})
+        if res is None:
+            return None
+        for r in res['results']:
+            if r['pk']==key:
+                return r
+        return None
+
+
+    @staticmethod
     def upsert_volume_profile(api_connection, profile):
         """Fetches credit ratings for counterparts
 
@@ -77,4 +95,18 @@ class ProfilesApi:
             'profile':volume_profile.to_dict()
         }
         success, returned_data, status_code, error_msg  = api_connection.exec_post_url('/api/profilemanager/convertvolume2factors/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def convert_relativeprofile_to_yearlyfactors(api_connection, relative_profile:GenericProfile):
+        """Fetches credit ratings for counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Converting relative profile to factors")
+        payload={
+            'profile':relative_profile.to_dict()
+        }
+        success, returned_data, status_code, error_msg  = api_connection.exec_post_url('/api/profilemanager/convertvolume2yearlyprofile/', payload)
         return success, returned_data, status_code, error_msg
