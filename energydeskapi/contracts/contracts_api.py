@@ -29,14 +29,15 @@ class Contract:
                  commodity_type=None,
                  instrument_type=None,
                  contract_status=None,
-                 quentity_type=QuantityTypeEnum.EFFECT.value,
-                 quantity_unit=QuantityUnitEnum.MW.value,
                  buy_or_sell=None,
                  counterpart=None,
                  market=None,
                  trader=None,
                  marketplace_product=None,
                  delivery_type=DeliveryTypeEnum.FINANCIAL.value,
+                 profile_category="BASELOAD",
+                 quentity_type=QuantityTypeEnum.EFFECT.value,
+                 quantity_unit=QuantityUnitEnum.MW.value,
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -50,6 +51,7 @@ class Contract:
         self.quantity_unit=quantity_unit
         self.quantity_type=quentity_type
         self.commodity_type=commodity_type
+        self.profile_category=profile_category
         self.instrument_type=instrument_type
         self.contract_status=contract_status
         self.buy_or_sell=buy_or_sell
@@ -63,7 +65,7 @@ class Contract:
         self.otc_multi_delivery_periods=[]
         self.contract_tags=[]
         self.area="SYS"
-        self.commodity_profile = "BASELOAD"
+        self.commodity_profile = {}
         self.spread = False
         self.otc = False
         self.delivery_type=delivery_type
@@ -89,6 +91,7 @@ class Contract:
         prod = {}
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
+        if self.profile_category is not None: prod['profile_category'] = self.profile_category.value
         if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
         if self.commodity_delivery_from is not None: prod['delivery_from'] = check_fix_date2str(
             self.commodity_delivery_from)
