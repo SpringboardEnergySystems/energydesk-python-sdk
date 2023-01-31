@@ -1,13 +1,15 @@
 import logging
 import pandas as pd
-from energydeskapi.sdk.common_utils import parse_enum_type
+from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
+
 logger = logging.getLogger(__name__)
 #  Change
 
@@ -24,10 +26,11 @@ class Contract:
                  clearing_fee=None,
                  trade_date=None,
                  trade_datetime=None,
-
                  commodity_type=None,
                  instrument_type=None,
                  contract_status=None,
+                 quentity_type=QuantityTypeEnum.EFFECT.value,
+                 quantity_unit=QuantityUnitEnum.MW.value,
                  buy_or_sell=None,
                  counterpart=None,
                  market=None,
@@ -44,7 +47,8 @@ class Contract:
         self.clearing_fee=clearing_fee
         self.trade_date=trade_date
         self.trade_datetime=trade_datetime
-
+        self.quantity_unit=quantity_unit
+        self.quantity_type=quentity_type
         self.commodity_type=commodity_type
         self.instrument_type=instrument_type
         self.contract_status=contract_status
@@ -163,6 +167,8 @@ class Contract:
         if self.trade_datetime is not None: dict['trade_time'] = self.trade_datetime
         if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
+        if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit
+        if self.quantity_type is not None: dict['quantity_type'] = self.quantity_type
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         #if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
