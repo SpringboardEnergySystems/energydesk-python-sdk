@@ -84,6 +84,17 @@ class ProfilesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def upsert_yearlyfactors(api_connection, factor):
+        """Registers yearly factors
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/profilemanager/yearhourlyfactorprofile/', factor)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def convert_volumeprofile_to_factors(api_connection, volume_profile:GenericProfile):
         """Fetches credit ratings for counterparts
 
