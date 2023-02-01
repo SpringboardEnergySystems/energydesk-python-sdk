@@ -170,8 +170,8 @@ class Contract:
         if self.trade_datetime is not None: dict['trade_time'] = self.trade_datetime
         if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
-        if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit
-        if self.quantity_type is not None: dict['quantity_type'] = self.quantity_type
+        if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit.value
+        if self.quantity_type is not None: dict['quantity_type'] = self.quantity_type.value
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         #if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
