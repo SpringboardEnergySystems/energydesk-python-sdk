@@ -64,7 +64,8 @@ class MarketsApi:
         :param instrument_type_enum: type of instrument
         :type instrument_type_enum: str, required
         """
-        return api_connection.get_base_url() +'/api/markets/instrumenttypes/' + str(instrument_type_enum.value) + "/"
+        instrument_type = instrument_type_enum if isinstance(instrument_type_enum, int) else instrument_type_enum.value
+        return api_connection.get_base_url() +'/api/markets/instrumenttypes/' + str(instrument_type) + "/"
     @staticmethod
     def get_instrument_type_obj(api_connection, instrument_type_enum):
         """Fetches all instrument type objects with URL relations. Will only return instrument types for which the user has rights
