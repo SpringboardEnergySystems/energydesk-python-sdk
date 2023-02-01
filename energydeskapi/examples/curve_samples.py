@@ -34,11 +34,18 @@ def generate_curve(api_conn):
 
 
 def retrieve_stored_curve(api_conn):
-    success, df, status_code, error_msg =CurveApi.retrieve_latest_forward_curve_df(api_conn ,
-                                           "NO5",
-                                "NOK", "PRICEIT", PeriodResolutionEnum.MONTHLY.value)
-    if success:
-        print(df)
+    for area in ['SYS', 'NO1','NO2','NO3','NO4','NO5']:
+        for curr in ['NOK','EUR']:
+            success, df, status_code, error_msg =CurveApi.retrieve_latest_forward_curve_df(api_conn ,
+                                                   area,
+                                        curr, "PRICEIT", PeriodResolutionEnum.HOURLY.value)
+            if success:
+                print(df)
+                df.index = df.index.tz_localize(None)
+                df = df.drop(columns=['period_from', 'period_until','date'])
+
+                print(df)
+                df.to_excel("priskurve_" + area + "_" + curr + ".xlsx")
 
 if __name__ == '__main__':
     api_conn=init_api()
