@@ -170,8 +170,10 @@ class Contract:
         if self.trade_datetime is not None: dict['trade_time'] = self.trade_datetime
         if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
-        if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit.value
-        if self.quantity_type is not None: dict['quantity_type'] = self.quantity_type.value
+        if self.quantity_unit is not None: dict['quantity_unit'] = ContractsApi.get_quantity_unit_url(api_conn,
+                                                                                                            self.quantity_unit)
+        if self.quantity_type is not None: dict['quantity_type'] = ContractsApi.get_quantity_type_url(api_conn,
+                                                                                                            self.quantity_type)
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         #if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
@@ -341,6 +343,30 @@ class ContractsApi:
             json_list.append(contract_dict)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinsert/',json_list)
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def get_quantity_type_url(api_connection, quantity_type_enum):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param quantity_type_enum: type of contract
+        :type quantity_type_enum: str, required
+        """
+        type_pk = quantity_type_enum if isinstance(quantity_type_enum, int) else quantity_type_enum.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/quantitytypes/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_quantity_unit_url(api_connection, quantity_unit_enum):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param quantity_unit_enum: type of contract
+        :type quantity_unit_enum: str, required
+        """
+        type_pk = quantity_unit_enum if isinstance(quantity_unit_enum, int) else quantity_unit_enum.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/quantityunits/' + str(type_pk) + "/"
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
