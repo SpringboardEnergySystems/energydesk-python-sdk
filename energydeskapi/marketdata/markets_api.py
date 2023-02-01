@@ -16,7 +16,8 @@ class MarketsApi:
         :param market_enum: market
         :type market_enum: str, required
         """
-        return api_connection.get_base_url() +'/api/markets/markets/' + str(market_enum.value) + "/"
+        market = market_enum if isinstance(market_enum, int) else market_enum.value
+        return api_connection.get_base_url() +'/api/markets/markets/' + str(market) + "/"
     @staticmethod
     def get_market_obj(api_connection, market_enum):
         """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
