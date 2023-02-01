@@ -16,7 +16,8 @@ class MarketsApi:
         :param market_enum: market
         :type market_enum: str, required
         """
-        return api_connection.get_base_url() +'/api/markets/markets/' + str(market_enum.value) + "/"
+        market = market_enum if isinstance(market_enum, int) else market_enum.value
+        return api_connection.get_base_url() +'/api/markets/markets/' + str(market) + "/"
     @staticmethod
     def get_market_obj(api_connection, market_enum):
         """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
@@ -63,7 +64,8 @@ class MarketsApi:
         :param instrument_type_enum: type of instrument
         :type instrument_type_enum: str, required
         """
-        return api_connection.get_base_url() +'/api/markets/instrumenttypes/' + str(instrument_type_enum.value) + "/"
+        instrument_type = instrument_type_enum if isinstance(instrument_type_enum, int) else instrument_type_enum.value
+        return api_connection.get_base_url() +'/api/markets/instrumenttypes/' + str(instrument_type) + "/"
     @staticmethod
     def get_instrument_type_obj(api_connection, instrument_type_enum):
         """Fetches all instrument type objects with URL relations. Will only return instrument types for which the user has rights
