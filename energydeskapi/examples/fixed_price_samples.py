@@ -12,6 +12,10 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+def load_current_offers(api_conn):
+    eso = FixedPriceApi.list_active_price_offers(api_conn)
+    print(eso)
+
 def calculate_price(api_conn):
     thismonth = date.today().replace(day=1)
     expiry = date.today() + relativedelta(days=3)
@@ -32,10 +36,11 @@ def calculate_price(api_conn):
                                                                                       )
     if success:
         print(json_res)
-        pid=json_res['priceoffer_id']
-        print("Adding offer")
-        success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, pid, "BUY", expiry, 25)
-        print(json_res)
+
+        #pid=json_res['priceoffer_id']
+        #print("Adding offer")
+        #success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, pid, "BUY", expiry, 25)
+        #print(json_res)
     else:
         print("Something went wrong")
         print(error_msg)
@@ -43,5 +48,6 @@ def calculate_price(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    calculate_price(api_conn)
+    #calculate_price(api_conn)
+    load_current_offers(api_conn)
 

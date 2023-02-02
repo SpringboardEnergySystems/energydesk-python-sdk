@@ -36,6 +36,19 @@ class FixedPriceApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/external/', qry_payload)
         return success, json_res, status_code, error_msg
 
+    @staticmethod
+    def list_active_price_offers(api_connection, parameters={}):
+        """Calculated fix price in period
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Retrieve previously given pricees")
+
+        json_res = api_connection.exec_get_url('/api/bilateral/priceoffers/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
 
     @staticmethod
     def add_order_from_priceoffer_id(api_connection ,priceoffer_id, buy_or_sell, expiry_datetime, quantity):
