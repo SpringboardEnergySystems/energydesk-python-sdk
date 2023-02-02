@@ -7,7 +7,7 @@ def check_flat_profile(vmap):
     return len(np.unique(df.counts)) == 1
 
 def is_baseload(profile):
-    b1=check_flat_profile(profile['monthly_profile'])
+    b1 = check_flat_profile(profile['monthly_profile'])
     b2 = check_flat_profile(profile['weekday_profile'])
     b3 = check_flat_profile(profile['daily_profile'])
     return b1 and b2 and b3
