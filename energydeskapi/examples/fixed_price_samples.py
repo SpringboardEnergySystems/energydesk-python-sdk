@@ -54,7 +54,7 @@ def calculate_price(api_conn):
         print(error_msg)
 
 def enter_order_from_priceoffer(api_conn, priceoffer_id, yearly_kwh):
-    expiry=parser.isoparse("2023-02-23")
+    # This order entry places a limit order at the price given in the offer, with validity time equal to the price offer (can be cancelled)
     success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, priceoffer_id, "BUY",  yearly_kwh)
     print(json_res)
 
