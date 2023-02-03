@@ -296,6 +296,19 @@ class LemsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def match_specific_order(api_connection, ticker, order_id):
+        payload = {
+             "ticker": ticker,
+            'order_id':order_id
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            '/api/lems/matchorder/', payload)
+        if not success:
+            logger.error(error_msg)
+        return success, json_res, status_code, error_msg
+
     @staticmethod
     def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, order_type="NORMAL", expiry=None, status="ACTIVE", exclusive=None):
         """Fetches all counterparts and displays in a dataframe
@@ -329,6 +342,8 @@ class LemsApi:
         if not success:
             logger.error(error_msg)
         return success, json_res, status_code, error_msg
+
+
     @staticmethod
     def add_buyer_order(api_connection, ticker, price, currency, quantity, order_type="NORMAL", expiry=None, extern_comp_reg=None,extern_comp_name=None):
         """Fetches all counterparts and displays in a dataframe
