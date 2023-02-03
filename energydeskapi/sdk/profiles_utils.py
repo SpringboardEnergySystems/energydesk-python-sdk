@@ -1,13 +1,16 @@
 import pandas as pd
-import numpy as np
-import calendar
-import calendar
-from datetime import datetime, timedelta
-from pandas.errors import ParserError
-import pytz
-from dateutil.relativedelta import relativedelta
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
+import numpy as np
+def check_flat_profile(vmap):
+    df=pd.DataFrame.from_dict(vmap, orient='index')
+    df.rename(columns={0:'counts'}, inplace=True)
+    return len(np.unique(df.counts)) == 1
 
+def is_baseload(profile):
+    b1 = check_flat_profile(profile['monthly_profile'])
+    b2 = check_flat_profile(profile['weekday_profile'])
+    b3 = check_flat_profile(profile['daily_profile'])
+    return b1 and b2 and b3
 
 def get_baseload_weekdays():
     week=get_weekdays_list()
