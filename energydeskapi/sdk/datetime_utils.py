@@ -1,6 +1,6 @@
 import pytz
 from dateutil import parser
-
+from datetime import date, datetime, timedelta
 def localize_datetime(dt,  loczone="UTC"):
     timezone = pytz.timezone(loczone)
     d_aware = timezone.localize(dt)
@@ -71,3 +71,14 @@ def overlapping_seconds(calc_period_from, calc_period_until, test_period_from, t
     if calc_period_until<period_until:
         return calc_seconds(period_from, calc_period_until)
     return 0
+
+
+def next_weekday(d, weekday):
+    days_ahead = weekday - d.weekday()
+    if days_ahead <= 0: # Target day already happened this week
+        days_ahead += 7
+    return d + timedelta(days_ahead)
+
+    #d = datetime.date(2011, 7, 2)
+    #next_monday = next_weekday(d, 0) # 0 = Monday, 1=Tuesday, 2=Wednesday...
+    #print(next_monday)
