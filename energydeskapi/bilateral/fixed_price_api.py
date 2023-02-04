@@ -1,5 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import check_fix_date2str
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
 logger = logging.getLogger(__name__)
 
 class FixedPriceApi:
@@ -51,7 +52,9 @@ class FixedPriceApi:
         return None
 
     @staticmethod
-    def add_order_from_priceoffer_id(api_connection ,priceoffer_id, buy_or_sell, expiry_datetime, quantity):
+    def add_order_from_priceoffer_id(api_connection ,priceoffer_id, buy_or_sell, quantity,
+                                     quantity_type=QuantityTypeEnum.VOLUME_YEARLY.name,
+                                     quantity_unit=QuantityUnitEnum.KW.name):
         """Calculated fix price in period
 
         :param api_connection: class with API token for use with API
@@ -69,7 +72,8 @@ class FixedPriceApi:
                 "buy_or_sell": buy_or_sell,
                 "priceoffer_id": priceoffer_id,
                 "quantity":quantity,
-                "expiry":expiry_datetime.strftime('%Y-%m-%dT%H:%M:%S%z')
+                "quantity_type":quantity_type,
+                "quantity_unit": quantity_unit
         }
 
         print(qry_payload)
