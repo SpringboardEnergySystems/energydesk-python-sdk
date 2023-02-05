@@ -12,9 +12,9 @@ def make_none_tz( utc_dt):
     tmp =str(utc_dt)[:19]
     return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S')
 
-def make_empty_timeseries_df(period_from, period_to, pandas_res):
+def make_empty_timeseries_df(period_from, period_to, pandas_res, timeznoe=None):
     df=pd.DataFrame()
-    ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
+    ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res, tz=timeznoe)
     df_new = df.reindex(ix, fill_value='NaN')
     return df_new
 
