@@ -35,7 +35,7 @@ class Contract:
                  trader=None,
                  marketplace_product=None,
                  delivery_type=DeliveryTypeEnum.FINANCIAL.value,
-                 profile_category=ProfileCategoryEnum.BASELOAD.value,
+                 profile_category=ProfileCategoryEnum.BASELOAD,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  ):
@@ -91,7 +91,7 @@ class Contract:
         prod = {}
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
-        if self.profile_category is not None: prod['profile_category'] = self.profile_category.value
+        if self.profile_category is not None: prod['profile_category'] = str(self.profile_category.name)
         if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
         if self.commodity_delivery_from is not None: prod['delivery_from'] = check_fix_date2str(
             self.commodity_delivery_from)
