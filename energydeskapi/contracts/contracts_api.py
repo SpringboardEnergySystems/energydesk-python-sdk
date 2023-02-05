@@ -2,7 +2,7 @@ import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
@@ -35,7 +35,7 @@ class Contract:
                  trader=None,
                  marketplace_product=None,
                  delivery_type=DeliveryTypeEnum.FINANCIAL.value,
-                 profile_category="BASELOAD",
+                 profile_category=ProfileCategoryEnum.BASELOAD.value,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  ):
