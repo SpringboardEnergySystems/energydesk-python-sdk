@@ -1,14 +1,24 @@
 import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money
+from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.marketdata.products_api import ProductsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
+
+def resolve_ticker(api_conn, ticker):
+    res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
+    if len(res['results']) == 0:
+        res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
+        print(res['results'][0]['pk'])
+    else:
+        print(res['results'][0]['pk'])
+    return res['results'][0]['pk']
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -96,6 +106,31 @@ class Contract:
         c.delivery_type = d['commodity']['delivery_type']
         c.commodity_delivery_from = d['commodity']['delivery_from']
         c.commodity_delivery_until = d['commodity']['delivery_until']
+        c.market = d['commodity']['market']
+        c.area = d['commodity']['area']
+        c.commodity_profile = d['commodity']['commodity_profile']
+        c.spread = d['commodity']['spread']
+        c.otc = d['commodity']['otc']
+        c.product_code = d['commodity']['product_code']
+
+        c.external_contract_id = d['external_contract_id']
+        c.trading_book = d['trading_book']
+        c.trade_date = d['trade_date']
+        c.trade_datetime = d['trade_time']
+        c.last_update_time = d['last_update_time']
+
+        c.contract_price = gen_money_from_json(d['contract_price'])
+        c.quantity = d['quantity']
+
+        c.trading_fee = gen_money_from_json(d['trading_fee'])
+        c.clearing_fee = gen_money_from_json(d['clearing_fee'])
+        c.contract_status = d['contract_status']
+        c.buy_or_sell = d['buy_or_sell']
+        c.counterpart = d['counterpart']
+        c.trader = d['trader']
+        c.marketplace_product = d['marketplace_product']
+        for t in d['contract_tags']:
+            c.contract_tags.append(ContractTag.from_dict(t))
         return c
 
     def get_simple_dict(self):
@@ -159,7 +194,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
-        prod['commodity_profile'] = self.commodity_profile
+        prod['commodity_profile'] = {} if self.commodity_profile is None else self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
         if self.product_code is not None:
@@ -187,6 +222,8 @@ class Contract:
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
+        if self.marketplace_product==0:
+            self.marketplace_product=resolve_ticker(api_conn, self.product_code)
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
 
@@ -229,6 +266,14 @@ class ContractTag:
         if self.is_active is not None: dict['is_active'] = self.is_active
         return dict
 
+    @staticmethod
+    def from_dict(d):
+        ct=ContractTag()
+        ct.pk=d['pk']
+        ct.tagname = d['tagname']
+        ct.description = d['description']
+        ct.is_active = d['is_active']
+        return ct
 
 class ContractFilter:
     """ Class for contract filters
