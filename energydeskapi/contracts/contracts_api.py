@@ -17,6 +17,7 @@ def resolve_ticker(api_conn, ticker):
     print(res)
     if len(res['results']) == 0:
         res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
+        print(res)
         print(res['results'][0]['pk'])
     else:
         print(res['results'][0]['pk'])
