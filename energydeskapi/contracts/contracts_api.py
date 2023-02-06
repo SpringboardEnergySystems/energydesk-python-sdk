@@ -2,7 +2,7 @@ import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.customers.customers_api import CustomersApi
@@ -35,7 +35,7 @@ class Contract:
                  trader=None,
                  marketplace_product=None,
                  delivery_type=DeliveryTypeEnum.FINANCIAL.value,
-                 profile_category="BASELOAD",
+                 profile_category=ProfileCategoryEnum.BASELOAD,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  ):
@@ -91,7 +91,7 @@ class Contract:
         prod = {}
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
-        if self.profile_category is not None: prod['profile_category'] = self.profile_category.value
+        if self.profile_category is not None: prod['profile_category'] = str(self.profile_category.name)
         if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
         if self.commodity_delivery_from is not None: prod['delivery_from'] = check_fix_date2str(
             self.commodity_delivery_from)
@@ -128,7 +128,6 @@ class Contract:
         taglist = []
         for c in self.contract_tags:
             d = c.get_dict()
-            print(d)
             taglist.append(d)
             # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
             # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
@@ -140,7 +139,6 @@ class Contract:
         dict['contract_tags'] = taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
-
         return dict
 
     def get_dict(self, api_conn):
@@ -188,7 +186,7 @@ class Contract:
 
         taglist=[]
         for c in self.contract_tags:
-            print(c)
+
 
             taglist.append(c)
             # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})

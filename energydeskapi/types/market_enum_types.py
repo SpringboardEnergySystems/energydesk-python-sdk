@@ -1,5 +1,8 @@
 from enum import Enum
 
+class ProfileCategoryEnum(Enum):
+    BASELOAD = 1
+    PROFILE = 2
 
 class MarketEnum(Enum):
     NORDIC_POWER = 1   # Key for the most commonly used markets
