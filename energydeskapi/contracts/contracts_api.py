@@ -85,6 +85,19 @@ class Contract:
                                     'period_until':convert_datime_to_utcstr(delivery_until),
                                     'price':gen_json_money(self.contract_price),
                                     'quantity': self.quantity})
+
+    @staticmethod
+    def from_simple_dict(d):
+        c=Contract()
+        c.pk=d['pk']
+        c.instrument_type=d['commodity']['instrument_type']
+        c.commodity_type = d['commodity']['commodity_type']
+        c.profile_category = d['commodity']['profile_category']
+        c.delivery_type = d['commodity']['delivery_type']
+        c.commodity_delivery_from = d['commodity']['delivery_from']
+        c.commodity_delivery_until = d['commodity']['delivery_until']
+        return c
+
     def get_simple_dict(self):
         dict = {}
         dict['pk'] = self.pk
@@ -93,8 +106,8 @@ class Contract:
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
         if self.profile_category is not None: prod['profile_category'] = str(self.profile_category.name)
         if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
-        if self.commodity_delivery_from is not None: prod['delivery_from'] = check_fix_date2str(
-            self.commodity_delivery_from)
+        if self.commodity_delivery_from is not None: prod['delivery_from'] = self.commodity_delivery_from#check_fix_date2str(
+          #  )
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(
             self.commodity_delivery_until)
         if self.market is not None: prod['market'] = self.market.value
@@ -129,13 +142,6 @@ class Contract:
         for c in self.contract_tags:
             d = c.get_dict()
             taglist.append(d)
-            # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
-            # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
-            #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
-            #     if success:
-            #         taglist.append(returned_data)
-            # else:
-            #     taglist.append(existing_tags[0])
         dict['contract_tags'] = taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
