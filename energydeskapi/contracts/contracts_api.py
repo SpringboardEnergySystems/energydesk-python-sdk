@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money
+from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -108,12 +108,12 @@ class Contract:
         c.trade_date = d['trade_date']
         c.trade_datetime = d['trade_time']
         c.last_update_time = d['last_update_time']
-        print(d['contract_price'], d['trading_fee'])
-        c.contract_price = d['contract_price']
+
+        c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']
 
-        c.trading_fee = d['trading_fee']
-        c.clearing_fee = d['clearing_fee']
+        c.trading_fee = gen_money_from_json(d['trading_fee'])
+        c.clearing_fee = gen_money_from_json(d['clearing_fee'])
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
