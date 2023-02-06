@@ -63,6 +63,7 @@ if __name__ == '__main__':
     api_conn=init_api()
     #calculate_price(api_conn)
     most_recent=load_current_offers(api_conn)
-    print("Most recent price offer ",most_recent['priceoffer_id'], most_recent['priceoffer_data']['price'] )
-    enter_order_from_priceoffer(api_conn, most_recent['priceoffer_id'], 125000)
+    print(most_recent)
+    #print("Most recent price offer ",most_recent['priceoffer_id'], most_recent['priceoffer_data']['price'] )
+    #enter_order_from_priceoffer(api_conn, most_recent['priceoffer_id'], 125000)
 

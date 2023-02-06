@@ -12,7 +12,9 @@ from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
 
 def resolve_ticker(api_conn, ticker):
+    print("Lookup", ticker)
     res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
+    print(res)
     if len(res['results']) == 0:
         res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
         print(res['results'][0]['pk'])
