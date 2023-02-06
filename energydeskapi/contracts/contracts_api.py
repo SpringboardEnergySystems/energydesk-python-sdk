@@ -106,7 +106,7 @@ class Contract:
         c.external_contract_id = d['external_contract_id']
         c.trading_book = d['trading_book']
         c.trade_date = d['trade_date']
-        c.trade_datetime = d['trade_datetime']
+        c.trade_datetime = d['trade_time']
         c.last_update_time = d['last_update_time']
         c.contract_price = d['contract_price']
         c.quantity = d['quantity']
