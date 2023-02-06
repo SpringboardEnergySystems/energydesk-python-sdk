@@ -282,5 +282,6 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Sending password reset instructions to " + email)
-        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/customers/reset-password-email', email)
+        payload = {"email": email}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/customers/password_reset', payload)
         return success, returned_data, status_code, error_msg
