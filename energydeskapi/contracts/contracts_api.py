@@ -5,24 +5,13 @@ from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
-from energydeskapi.marketdata.products_api import ProductsApi
+from energydeskapi.marketdata.products_api import ProductHelper
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
 
-def resolve_ticker(api_conn, ticker):
-    print("Lookup", ticker)
-    res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
-    print(res)
-    if len(res['results']) == 0:
-        res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
-        print(res)
-        print(res[1][0]['pk'])
-        k=res[1][0]['pk']
-    else:
-        k=res['results'][0]['pk']
-    return k
+
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -227,15 +216,13 @@ class Contract:
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.marketplace_product==0:
-            self.marketplace_product=resolve_ticker(api_conn, self.product_code)
+            self.marketplace_product=ProductHelper().resolve_ticker(api_conn, self.product_code)
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
 
         taglist=[]
         for c in self.contract_tags:
-
-
-            taglist.append(c)
+            taglist.append(c.get_dict())
             # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
             # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
             #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
