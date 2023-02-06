@@ -120,7 +120,7 @@ class Contract:
         c.trader = d['trader']
         c.marketplace_product = d['marketplace_product']
         for t in d['contract_tags']:
-            print(t)
+            c.contract_tags.append(ContractTag.from_dict(t))
         return c
 
     def get_simple_dict(self):
@@ -254,6 +254,14 @@ class ContractTag:
         if self.is_active is not None: dict['is_active'] = self.is_active
         return dict
 
+    @staticmethod
+    def from_dict(d):
+        ct=ContractTag()
+        ct.pk=d['pk']
+        ct.tagname = d['tagname']
+        ct.description = d['description']
+        ct.is_active = d['is_active']
+        return ct
 
 class ContractFilter:
     """ Class for contract filters
