@@ -108,6 +108,7 @@ class Contract:
         c.trade_date = d['trade_date']
         c.trade_datetime = d['trade_time']
         c.last_update_time = d['last_update_time']
+        print(d['contract_price'], d['trading_fee'])
         c.contract_price = d['contract_price']
         c.quantity = d['quantity']
 
