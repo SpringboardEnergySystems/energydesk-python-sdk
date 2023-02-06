@@ -96,6 +96,29 @@ class Contract:
         c.delivery_type = d['commodity']['delivery_type']
         c.commodity_delivery_from = d['commodity']['delivery_from']
         c.commodity_delivery_until = d['commodity']['delivery_until']
+        c.market = d['commodity']['market']
+        c.area = d['commodity']['area']
+        c.commodity_profile = d['commodity']['commodity_profile']
+        c.spread = d['commodity']['spread']
+        c.otc = d['commodity']['otc']
+        c.product_code = d['commodity']['product_code']
+
+        c.external_contract_id = d['external_contract_id']
+        c.trading_book = d['trading_book']
+        c.trade_date = d['trade_date']
+        c.trade_datetime = d['trade_datetime']
+        c.last_update_time = d['last_update_time']
+        c.contract_price = d['contract_price']
+        c.quantity = d['quantity']
+
+        c.trading_fee = d['trading_fee']
+        c.clearing_fee = d['clearing_fee']
+        c.contract_status = d['contract_status']
+        c.buy_or_sell = d['buy_or_sell']
+        c.counterpart = d['counterpart']
+        c.trader = d['trader']
+        c.marketplace_product = d['marketplace_product']
+
         return c
 
     def get_simple_dict(self):
