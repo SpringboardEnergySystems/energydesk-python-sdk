@@ -16,12 +16,13 @@ def resolve_ticker(api_conn, ticker):
     res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
     print(res)
     if len(res['results']) == 0:
-        res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
+        success, res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
         print(res)
-        print(res['results'][0]['pk'])
+        print(res[0]['pk'])
+        k=res[0]['pk']
     else:
-        print(res['results'][0]['pk'])
-    return res['results'][0]['pk']
+        k=res['results'][0]['pk']
+    return k
 
 logger = logging.getLogger(__name__)
 #  Change
