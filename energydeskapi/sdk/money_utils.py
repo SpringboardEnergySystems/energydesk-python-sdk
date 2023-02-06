@@ -15,5 +15,4 @@ def gen_json_money(mon):
 
 def gen_money_from_json(mon_json):
     mny=FormattedMoney(float(mon_json['amount'])/100.0, mon_json['currency'])
-    print(mny)
     return mny
