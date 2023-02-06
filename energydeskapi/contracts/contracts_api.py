@@ -119,7 +119,8 @@ class Contract:
         c.counterpart = d['counterpart']
         c.trader = d['trader']
         c.marketplace_product = d['marketplace_product']
-
+        for t in d['contract_tags']:
+            print(t)
         return c
 
     def get_simple_dict(self):
