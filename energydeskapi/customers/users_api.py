@@ -273,3 +273,14 @@ class UsersApi:
         :type user_pk: str, required
         """
         return api_connection.get_base_url() + '/api/customers/profiles/' + str(user_pk) + "/"
+
+    @staticmethod
+    def send_password_reset_email(api_connection, email):
+        """Resets password for user
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Sending password reset instructions to " + email)
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/customers/reset-password-email', email)
+        return success, returned_data, status_code, error_msg
