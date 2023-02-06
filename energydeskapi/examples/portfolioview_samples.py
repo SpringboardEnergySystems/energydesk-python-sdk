@@ -12,17 +12,17 @@ logging.basicConfig(level=logging.INFO,
 
 def get_period_view(api_conn):
     filter={
-        "trading_book":11,
-        "resolution":PeriodResolutionEnum.YEARLY.value,
-        "groupby":PeriodViewGroupingEnum.ASSET.value
+        "trading_book":31,
+        "resolution":PeriodResolutionEnum.DAILY.value,
+        "groupby":[PeriodViewGroupingEnum.AREA.value]
     }
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
     print(df)
-    print(df.to_json(orient='split'))
+    #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
     filter={
-        "trading_book":11
+        "trading_book":31
     }
     df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
@@ -31,4 +31,4 @@ def get_product_view(api_conn):
     #print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_product_view(api_conn)
+    get_period_view(api_conn)
