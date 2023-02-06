@@ -5,10 +5,20 @@ from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.marketdata.products_api import ProductsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
+
+def resolve_ticker(api_conn, ticker):
+    res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
+    if len(res['results']) == 0:
+        res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
+        print(res['results'][0]['pk'])
+    else:
+        print(res['results'][0]['pk'])
+    return res['results'][0]['pk']
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -184,7 +194,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
-        prod['commodity_profile'] = self.commodity_profile
+        prod['commodity_profile'] = {} if self.commodity_profile is None else self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
         if self.product_code is not None:
@@ -212,6 +222,8 @@ class Contract:
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
+        if self.marketplace_product==0:
+            self.marketplace_product=resolve_ticker(api_conn, self.product_code)
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
 
