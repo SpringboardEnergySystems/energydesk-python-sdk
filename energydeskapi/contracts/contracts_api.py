@@ -258,16 +258,19 @@ class ContractsApi:
         :type contracts: str, required
         """
         logger.info("Registering contract")
-        #print(format_money(price, locale='en_DE'))
-        #json_records=[]
-        #json_records.append(contract.get_dict(api_connection))
+        if type(contract) is dict:
+            key=contract['pk']
+            contract_dict=contract
+        else:
+            key=contract.pk
+            contract_dict=contract.get_dict(api_connection)
 
-        if contract.pk>0:
+        if key>0:
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
-            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(key) + "/", contract_dict)
         else:
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
-            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract_dict)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
