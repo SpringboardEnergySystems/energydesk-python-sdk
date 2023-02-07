@@ -72,11 +72,15 @@ def send_reset_password_email(api_conn):
     UsersApi.send_password_reset_email(api_conn, email)
 
 def reset_password(api_conn):
-    password = "superbpass312412"
-    reset_token = "d8107be9c25260a992a13d04784d84cb5292063cf640e381e"
+    password = "superbpasssssss312412"
+    reset_token = "cc1ce950c5255d9"
     payload = {"password": password,
                "token": reset_token}
     UsersApi.reset_password(api_conn, payload)
+
+def verify_token(api_conn):
+    token = ""
+    UsersApi.validate_reset_token(api_conn, token)
 
 def basic_auth(api_conn):
     api_conn.validate_via_basic_auth("s.r.eriksen@gmail.com", "xxx")
@@ -96,4 +100,5 @@ if __name__ == '__main__':
     #create_user(api_conn)
     #send_reset_password_email(api_conn)
     reset_password(api_conn)
+    verify_token(api_conn)
     #update_company(api_conn)

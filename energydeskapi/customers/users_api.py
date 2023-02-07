@@ -297,3 +297,16 @@ class UsersApi:
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/customers/password_reset/confirm/',
                                                                                       payload)
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def validate_reset_token(api_connection, token):
+        """ Checks if token for resetting password is valid
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Verifying reset token")
+        payload = {"token": token}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/customers/password_reset/validate_token/',
+                                                                                      payload)
+        return success, returned_data, status_code, error_msg
