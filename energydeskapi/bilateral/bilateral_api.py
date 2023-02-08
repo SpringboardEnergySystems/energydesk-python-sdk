@@ -32,13 +32,14 @@ class BilateralApi:
         success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution, area_filter, counterpart_filter)
         if success==False:
             return success, None, None, status_code, error_msg
+
         deliveries=json_res['bilateral_deliveries']
+        if len(deliveries)==0:
+            return True, None, None, status_code, error_msg
         df_deliveries = pd.DataFrame(data=eval(deliveries))
         df_deliveries.index = df_deliveries['period_from']
-        print(df_deliveries)
         trades = json_res['bilateral_trades']
         df_trades = pd.DataFrame(data=eval(trades))
-        print("GOOD#",df_trades)
         #df_deliveries = convert_dataframe_to_localtime(df_deliveries)
         return True, df_deliveries,df_trades, status_code, error_msg
 
