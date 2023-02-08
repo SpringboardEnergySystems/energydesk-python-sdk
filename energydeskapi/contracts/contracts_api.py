@@ -1,14 +1,17 @@
 import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money
+from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.marketdata.products_api import ProductHelper
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
+
+
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -85,6 +88,44 @@ class Contract:
                                     'period_until':convert_datime_to_utcstr(delivery_until),
                                     'price':gen_json_money(self.contract_price),
                                     'quantity': self.quantity})
+
+    @staticmethod
+    def from_simple_dict(d):
+        c=Contract()
+        c.pk=d['pk']
+        c.instrument_type=d['commodity']['instrument_type']
+        c.commodity_type = d['commodity']['commodity_type']
+        c.profile_category = d['commodity']['profile_category']
+        c.delivery_type = d['commodity']['delivery_type']
+        c.commodity_delivery_from = d['commodity']['delivery_from']
+        c.commodity_delivery_until = d['commodity']['delivery_until']
+        c.market = d['commodity']['market']
+        c.area = d['commodity']['area']
+        c.commodity_profile = d['commodity']['commodity_profile']
+        c.spread = d['commodity']['spread']
+        c.otc = d['commodity']['otc']
+        c.product_code = d['commodity']['product_code']
+
+        c.external_contract_id = d['external_contract_id']
+        c.trading_book = d['trading_book']
+        c.trade_date = d['trade_date']
+        c.trade_datetime = d['trade_time']
+        c.last_update_time = d['last_update_time']
+
+        c.contract_price = gen_money_from_json(d['contract_price'])
+        c.quantity = d['quantity']
+
+        c.trading_fee = gen_money_from_json(d['trading_fee'])
+        c.clearing_fee = gen_money_from_json(d['clearing_fee'])
+        c.contract_status = d['contract_status']
+        c.buy_or_sell = d['buy_or_sell']
+        c.counterpart = d['counterpart']
+        c.trader = d['trader']
+        c.marketplace_product = d['marketplace_product']
+        for t in d['contract_tags']:
+            c.contract_tags.append(ContractTag.from_dict(t))
+        return c
+
     def get_simple_dict(self):
         dict = {}
         dict['pk'] = self.pk
@@ -93,8 +134,8 @@ class Contract:
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
         if self.profile_category is not None: prod['profile_category'] = str(self.profile_category.name)
         if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
-        if self.commodity_delivery_from is not None: prod['delivery_from'] = check_fix_date2str(
-            self.commodity_delivery_from)
+        if self.commodity_delivery_from is not None: prod['delivery_from'] = self.commodity_delivery_from#check_fix_date2str(
+          #  )
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(
             self.commodity_delivery_until)
         if self.market is not None: prod['market'] = self.market.value
@@ -129,13 +170,6 @@ class Contract:
         for c in self.contract_tags:
             d = c.get_dict()
             taglist.append(d)
-            # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
-            # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
-            #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
-            #     if success:
-            #         taglist.append(returned_data)
-            # else:
-            #     taglist.append(existing_tags[0])
         dict['contract_tags'] = taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
@@ -153,7 +187,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
-        prod['commodity_profile'] = self.commodity_profile
+        prod['commodity_profile'] = {} if self.commodity_profile is None else self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
         if self.product_code is not None:
@@ -181,14 +215,14 @@ class Contract:
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
+        if self.marketplace_product==0:
+            self.marketplace_product=ProductHelper().resolve_ticker(api_conn, self.product_code)
         if self.marketplace_product is not None: dict['marketplace_product'] = api_conn.get_base_url() + "/api/markets/marketproducts/" + str(
                 self.marketplace_product) + "/"
 
         taglist=[]
         for c in self.contract_tags:
-
-
-            taglist.append(c)
+            taglist.append(c.get_dict())
             # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
             # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
             #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
@@ -223,6 +257,14 @@ class ContractTag:
         if self.is_active is not None: dict['is_active'] = self.is_active
         return dict
 
+    @staticmethod
+    def from_dict(d):
+        ct=ContractTag()
+        ct.pk=d['pk']
+        ct.tagname = d['tagname']
+        ct.description = d['description']
+        ct.is_active = d['is_active']
+        return ct
 
 class ContractFilter:
     """ Class for contract filters
@@ -258,16 +300,20 @@ class ContractsApi:
         :type contracts: str, required
         """
         logger.info("Registering contract")
-        #print(format_money(price, locale='en_DE'))
-        #json_records=[]
-        #json_records.append(contract.get_dict(api_connection))
-
-        if contract.pk>0:
-            #print(json.dumps(contract.get_dict(api_connection), indent=2))
-            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(contract.pk) + "/", contract.get_dict(api_connection))
+        if type(contract) is dict:
+            key=contract['pk']
+            contract_dict=contract
         else:
+            key=contract.pk
+            contract_dict=contract.get_dict(api_connection)
+
+        if key>0:
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
-            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract.get_dict(api_connection))
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(key) + "/", contract_dict)
+        else:
+            print(contract_dict)
+            #print(json.dumps(contract.get_dict(api_connection), indent=2))
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract_dict)
         return success, returned_data, status_code, error_msg
 
     @staticmethod

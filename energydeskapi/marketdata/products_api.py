@@ -3,6 +3,32 @@ import pandas as pd
 from energydeskapi.marketdata.markets_api import MarketsApi
 logger = logging.getLogger(__name__)
 
+class Singleton(object):
+  _instances = {}
+  def __new__(class_, *args, **kwargs):
+    if class_ not in class_._instances:
+        class_._instances[class_] = super(Singleton, class_).__new__(class_, *args, **kwargs)
+    return class_._instances[class_]
+
+class ProductHelper(Singleton):
+    product_map={}
+    def __init__(self):
+        pass
+
+    def resolve_ticker(self, api_conn, ticker):
+        if ticker in self.product_map:
+            return self.product_map[ticker]
+        res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
+        if len(res['results']) == 0:
+            res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
+            print(ticker)
+            if res[0]==False:
+                print("What is wrong here", res)
+            k = res[1][0]['pk']
+        else:
+            k = res['results'][0]['pk']
+        self.product_map[ticker]=k
+        return k
 
 class Product:
     def __init__(self):

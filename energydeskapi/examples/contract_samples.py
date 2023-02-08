@@ -188,6 +188,7 @@ def query_sources(api_conn):
     print(json.dumps(x, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
+    get_contracts(api_conn, 31)
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
@@ -197,5 +198,5 @@ if __name__ == '__main__':
     #get_contracts(api_conn, 27)
     #get_master_contract_agreements(api_conn)
     #register_contract_tag(api_conn)
-    register_master_contract_agreement(api_conn, "922675163")
+    #register_master_contract_agreement(api_conn, "922675163")
     #register_master_contract_agreement(api_conn, "819449392")

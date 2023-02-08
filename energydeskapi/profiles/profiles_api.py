@@ -64,12 +64,10 @@ class ProfilesApi:
         :param key: personal key
         :type key: str, required
         """
-        res=ProfilesApi.get_volume_profiles(api_connection, {'page_size':100})
-        if res is None:
-            return None
-        for r in res['results']:
-            if r['pk']==key:
-                return r
+        logger.info("Fetching volume profiles")
+        json_res = api_connection.exec_get_url('/api/profilemanager/volumeprofiles/' + str(key) + "/")
+        if json_res is not None:
+            return json_res
         return None
 
 

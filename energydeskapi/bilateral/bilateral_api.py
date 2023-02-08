@@ -13,29 +13,33 @@ class BilateralApi:
     """
 
     @staticmethod
-    def calculate_deliveries(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value):
+    def calculate_deliveries(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value, area_filter=None, counterpart_filter=None):
         qry_payload = {
                 "period_from": period_from,
                 "period_until": period_until,
                 "resolution":resolution,
         }
-
+        if area_filter is not None:
+            qry_payload['area_filter']=area_filter
+        if counterpart_filter is not None:
+            qry_payload['counterpart_filter']=counterpart_filter
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/', qry_payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calculate_deliveries_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value):
+    def calculate_deliveries_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value,  area_filter=None, counterpart_filter=None):
 
-        success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution)
+        success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution, area_filter, counterpart_filter)
         if success==False:
             return success, None, None, status_code, error_msg
+
         deliveries=json_res['bilateral_deliveries']
+        if len(deliveries)==0:
+            return True, None, None, status_code, error_msg
         df_deliveries = pd.DataFrame(data=eval(deliveries))
         df_deliveries.index = df_deliveries['period_from']
-        print(df_deliveries)
         trades = json_res['bilateral_trades']
         df_trades = pd.DataFrame(data=eval(trades))
-        print("GOOD#",df_trades)
         #df_deliveries = convert_dataframe_to_localtime(df_deliveries)
         return True, df_deliveries,df_trades, status_code, error_msg
 
