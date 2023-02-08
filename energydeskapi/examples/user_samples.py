@@ -67,6 +67,21 @@ def create_user(api_conn):
     print(u.get_dict())
     UsersApi.create_users(api_conn, [u])
 
+def send_reset_password_email(api_conn):
+    email = "morteb1507@gmail.com"
+    UsersApi.send_password_reset_email(api_conn, email)
+
+def reset_password(api_conn):
+    password = "superbpasssssss312412"
+    reset_token = "cc1ce950c5255d9"
+    payload = {"password": password,
+               "token": reset_token}
+    UsersApi.reset_password(api_conn, payload)
+
+def verify_token(api_conn):
+    token = ""
+    UsersApi.validate_reset_token(api_conn, token)
+
 def basic_auth(api_conn):
     api_conn.validate_via_basic_auth("s.r.eriksen@gmail.com", "xxx")
 
@@ -78,9 +93,12 @@ if __name__ == '__main__':
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "976894677")
     #get_user_by_pk(api_conn)
     #get_profile_by_pk_embedded(api_conn)
-    list_users_embedded(api_conn)
+    #list_users_embedded(api_conn)
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "922675163")
     #register_companies(api_conn)
     #create_company(api_conn)
     #create_user(api_conn)
+    #send_reset_password_email(api_conn)
+    reset_password(api_conn)
+    verify_token(api_conn)
     #update_company(api_conn)
