@@ -15,15 +15,18 @@ def localize_strtime(strtime, loczone):
     unaware_dt = parser.isoparse(strtime)
     return localize_datetime(unaware_dt)
 
-def convert_datime_to_utcstr(dt):
-    dtutc=convert_timezone(dt)
-    s_dt = dtutc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
-    return s_dt
+def convert_loc_datime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
+    local_tz = pytz.timezone(loczone)
+    d_aware = local_tz.localize(naive_local_dt)
+    d_utc = d_aware.astimezone(pytz.UTC)
+    s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
+    return s_dt_utc
 
 def convert_datime_to_locstr(dt, loczone="Europe/Oslo"):
     dtutc=localize_datetime(dt, loczone)
     s_dt = dtutc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     return s_dt
+
 
 # Data retrieved from server are in UTC time ("GMT without daylight savings time")
 # This function converts to local time
