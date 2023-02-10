@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_dateime_to_utcstr
+from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -84,8 +84,8 @@ class Contract:
                                     'price':gen_json_money(self.contract_price),
                                     'quantity': self.quantity})
         else:
-            self.otc_multi_delivery_periods.append({'period_from':convert_datime_to_utcstr(delivery_from),
-                                    'period_until':convert_datime_to_utcstr(delivery_until),
+            self.otc_multi_delivery_periods.append({'period_from':convert_loc_datetime_to_utcstr(delivery_from),
+                                    'period_until':convert_loc_datetime_to_utcstr(delivery_until),
                                     'price':gen_json_money(self.contract_price),
                                     'quantity': self.quantity})
 

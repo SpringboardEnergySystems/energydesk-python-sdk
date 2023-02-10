@@ -15,7 +15,7 @@ def localize_strtime(strtime, loczone):
     unaware_dt = parser.isoparse(strtime)
     return localize_datetime(unaware_dt)
 
-def convert_loc_dateime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
+def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
     local_tz = pytz.timezone(loczone)
     d_aware = local_tz.localize(naive_local_dt)
     d_utc = d_aware.astimezone(pytz.UTC)
