@@ -78,7 +78,11 @@ class ProfilesApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/profilemanager/volumeprofiles/',profile.get_dict(api_connection))
+        if profile.pk>0:
+            print("It is an existing profile")
+            success, returned_data, status_code, error_msg =True, 0,0,0
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/profilemanager/volumeprofiles/',profile.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
     @staticmethod
