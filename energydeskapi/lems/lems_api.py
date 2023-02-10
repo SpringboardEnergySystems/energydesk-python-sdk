@@ -4,14 +4,14 @@ import logging
 import pandas as pd
 from datetime import datetime, timedelta
 from energydeskapi.marketdata.markets_api import MarketsApi
-from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr
+from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 logger = logging.getLogger(__name__)
 
 
 def check_fix_date2str(dt):
     if isinstance(dt, str):
         return dt
-    return convert_datime_to_utcstr(dt)
+    return convert_loc_datetime_to_utcstr(dt)
 
 class CustomProfile:
     """ Class for local product profile
