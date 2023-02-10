@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from energydeskapi.sdk.common_utils import parse_enum_type,convert_datime_to_utcstr
+from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_dateime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileCategoryEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
