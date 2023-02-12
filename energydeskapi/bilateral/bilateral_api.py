@@ -101,9 +101,12 @@ class BilateralApi:
                                                                                         currency_code, curve_model,
                                  wacc, inflation, monthly_profile, weekday_profile, hours)
         if success:
-            print(json_res)
+            #print(json_res)
             period_prices = json_res['period_prices']
-            df_curve = pd.DataFrame(data=eval(json_res['forward_curve']))
+            curve=json_res['forward_curve']
+            print("PRICS", period_prices)
+            print("CURVE", curve)
+            df_curve = pd.DataFrame(data=eval(curve))
             df_curve.index=df_curve['date']
             df_curve=convert_dataframe_to_localtime(df_curve)
             cprices=[]
