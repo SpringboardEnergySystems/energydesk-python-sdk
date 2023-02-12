@@ -1,6 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import check_fix_date2str
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
 
 class FixedPriceApi:
@@ -9,7 +10,8 @@ class FixedPriceApi:
     """
     @staticmethod
     def calculate_contract_price(api_connection ,profile_name, delivery_from, delivery_until, price_area,
-                                 monthly_profile=[], weekday_profile=[],hours=list(range(24))):
+                                 monthly_profile=get_baseload_months(), weekday_profile=get_baseload_weekdays(),hours=
+                                 get_baseload_dailyhours()):
         """Calculated fix price in period
 
         :param api_connection: class with API token for use with API

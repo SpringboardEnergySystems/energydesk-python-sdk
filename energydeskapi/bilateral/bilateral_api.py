@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 import pytz
 from dateutil import relativedelta
 from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
+from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
 
 class BilateralApi:
@@ -45,10 +46,10 @@ class BilateralApi:
 
     @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
-                                 curve_model,curve_resolution=PeriodResolutionEnum.DAILY.value,
-                                 wacc=0.06, inflation=0,
-                                 profile_type="BASELOAD", monthly_profile=[],
-                                 weekday_profile=[],hours=list(range(24))):
+                                 curve_model, wacc=0.06, inflation=0,
+                                 monthly_profile=get_baseload_months(),
+                                 weekday_profile=get_baseload_weekdays(),
+                                 hours=get_baseload_dailyhours()):
         """Fetches hourly price curve
 
         :param api_connection: class with API token for use with API
@@ -77,9 +78,7 @@ class BilateralApi:
                 "curve_model":curve_model,
                 "wacc":wacc,
                 "inflation":inflation,
-                "curve_resolution":curve_resolution,
                 "periods":dict_periods,
-                "contract_type":profile_type,
                 "monthly_profile":monthly_profile,
                 "weekday_profile": weekday_profile,
                 "daily_profile": hours
@@ -90,15 +89,17 @@ class BilateralApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calculate_contract_price_df(api_connection, periods, price_area, currency_code,
-                                    curve_model,curve_resolution=PeriodResolutionEnum.MONTHLY.value,
+    def calculate_contract_price_df(api_connection, periods, price_area, currency_code,curve_model,
                                     wacc=0.06, inflation=0,
-                                 profile_type="BASELOAD", monthly_profile=[], weekday_profile=[], hours=list(range(24))):
+                                    monthly_profile=get_baseload_months(),
+                                    weekday_profile=get_baseload_weekdays(),
+                                    hours=get_baseload_dailyhours()
+                                    ):
 
-        print(periods, price_area, currency_code, curve_model,curve_resolution)
+        print(periods, price_area, currency_code, curve_model)
         success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area,
-                                                                                        currency_code, curve_model,curve_resolution,
-                                 wacc, inflation,profile_type, monthly_profile, weekday_profile, hours)
+                                                                                        currency_code, curve_model,
+                                 wacc, inflation, monthly_profile, weekday_profile, hours)
         if success:
             period_prices = json_res['period_prices']
             df_curve = pd.DataFrame(data=eval(json_res['forward_curve']))
