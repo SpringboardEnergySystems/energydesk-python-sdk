@@ -37,6 +37,6 @@ class BlockSizeEnum(Enum):
     WEEK = 3
     WEEKEND = 4
     MONTH = 5
-    QUATER = 6
+    QUARTER = 6
     SEASON = 7
     YEAR = 8
