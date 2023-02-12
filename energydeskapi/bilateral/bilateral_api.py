@@ -104,8 +104,8 @@ class BilateralApi:
             #print(json_res)
             period_prices = json_res['period_prices']
             curve=json_res['forward_curve']
-            print("PRICS", period_prices)
-            print("CURVE", curve)
+            #print("PRICS", period_prices)
+            #print("CURVE", curve)
             df_curve = pd.DataFrame(data=eval(curve))
             df_curve.index=df_curve['date']
             df_curve=convert_dataframe_to_localtime(df_curve)
