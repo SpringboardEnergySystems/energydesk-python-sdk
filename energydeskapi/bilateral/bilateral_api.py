@@ -8,6 +8,35 @@ from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
 
+class PricingConfiguration:
+    def __init__(self):
+        self.pk = 0
+        self.currency_code = None
+        self.wacc = 0
+        self.inflation = 0
+        self.price_areas = None
+        self.basic_curve_model = None
+        self.yearly_epad_converging = 0
+        self.spread_adjustment_epad = 0
+        self.spread_adjustment_sys = 0
+        self.counterpart_override = None
+        self.is_default_config = True
+
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.currency_code is not None: dict['currency_code'] = self.currency_code
+        if self.wacc != 0: dict['wacc'] = self.wacc
+        if self.inflation != 0: dict['inflation'] = self.inflation
+        if self.price_areas is not None: dict['price_areas'] = self.price_areas
+        if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
+        if self.yearly_epad_converging != 0: dict['yearly_epad_converging'] = self.yearly_epad_converging
+        if self.spread_adjustment_epad != 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
+        if self.spread_adjustment_sys != 0: dict['spread_adjustment_sys'] = self.spread_adjustment_sys
+        if self.counterpart_override is not None: dict['counterpart_override'] = self.counterpart_override
+        if self.is_default_config is not False: dict['is_default_config'] = self.is_default_config
+        return dict
+
 class BilateralApi:
     """Class for price curves
 
@@ -125,6 +154,22 @@ class BilateralApi:
             pass#print(error_msg)
         return None, "error_msg", []
 
+    @staticmethod
+    def upsert_pricing_configuration(api_connection, pricing_conf):
+        logger.info("Registering pricing configuration")
+        if type(pricing_conf) is dict:
+            pk = pricing_conf['key']
+            pricing_dict = pricing_conf
+        else:
+            pk = pricing_conf.pk
+            pricing_dict = pricing_conf.get_dict()
+        if pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/bilateral/pricingconfiguration/' + str(pk) + "/", pricing_dict)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/bilateral/pricingconfiguration/', pricing_dict)
+        return success, returned_data, status_code, error_msg
 
 
 

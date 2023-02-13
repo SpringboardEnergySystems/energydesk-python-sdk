@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.bilateral.bilateral_api import BilateralApi
+from energydeskapi.bilateral.bilateral_api import BilateralApi, PricingConfiguration
 from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
@@ -67,8 +67,26 @@ def generate_sell_prices(api_conn):
             LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
 
 
+def register_pricing_configuration(api_conn):
+    pricing_configuration = PricingConfiguration()
+    pricing_configuration.pk = 0
+    pricing_configuration.currency_code = "EUR",
+    pricing_configuration.wacc = 1
+    pricing_configuration.inflation = 2
+    pricing_configuration.price_areas = "NO1"
+    pricing_configuration.basic_curve_model = "PRICEIT"
+    pricing_configuration.yearly_epad_converging = 3
+    pricing_configuration.spread_adjustment_epad = 4
+    pricing_configuration.spread_adjustment_sys = 5
+    pricing_configuration.counterpart_override = "http://127.0.0.1:8001/api/customers/companies/721/"
+    pricing_configuration.is_default_config = True
+    print(pricing_configuration.get_dict())
+    BilateralApi.upsert_pricing_configuration(api_conn, pricing_configuration)
+
+
 if __name__ == '__main__':
     api_conn=init_api()
 
     generate_sell_prices(api_conn)
+    register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)
