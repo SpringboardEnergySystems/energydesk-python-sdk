@@ -182,7 +182,7 @@ class BilateralApi:
     def upsert_pricing_configuration(api_connection, pricing_conf):
         logger.info("Registering pricing configuration")
         if type(pricing_conf) is dict:
-            pk = pricing_conf['key']
+            pk = pricing_conf['pk']
             pricing_dict = pricing_conf
         else:
             pk = pricing_conf.pk
