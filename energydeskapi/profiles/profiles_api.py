@@ -72,6 +72,17 @@ class ProfilesApi:
 
 
     @staticmethod
+    def delete_volume_profile(api_connection, pk):
+        """Fetches credit ratings for counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/profilemanager/volumeprofiles/' + str(pk) + "/")
+        return success, returned_data, status_code, error_msg
+
+
+    @staticmethod
     def upsert_volume_profile(api_connection, profile):
         """Fetches credit ratings for counterparts
 
