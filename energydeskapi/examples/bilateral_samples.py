@@ -70,7 +70,7 @@ def generate_sell_prices(api_conn):
 def register_pricing_configuration(api_conn):
     pricing_configuration = PricingConfiguration()
     pricing_configuration.pk = 0
-    pricing_configuration.currency_code = "EUR",
+    pricing_configuration.currency_code = "EUR"
     pricing_configuration.wacc = 1
     pricing_configuration.inflation = 2
     pricing_configuration.price_areas = "NO1"
