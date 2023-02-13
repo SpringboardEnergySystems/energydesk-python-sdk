@@ -66,6 +66,14 @@ def generate_sell_prices(api_conn):
             print(result['period_tag'], result['contract_price'])
             LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
 
+def fetch_pricing_configurations(api_conn):
+    json_pricing_configurations = BilateralApi.get_pricing_configurations(api_conn)
+    print(json_pricing_configurations)
+
+def fetch_pricing_configuration_pk(api_conn):
+    pk = 2
+    json_pricing_configurations = BilateralApi.get_pricing_configuration_by_pk(api_conn, pk)
+    print(json_pricing_configurations)
 
 def register_pricing_configuration(api_conn):
     pricing_configuration = PricingConfiguration()
@@ -87,6 +95,8 @@ def register_pricing_configuration(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
 
-    generate_sell_prices(api_conn)
-    register_pricing_configuration(api_conn)
+    #generate_sell_prices(api_conn)
+    #fetch_pricing_configurations(api_conn)
+    fetch_pricing_configuration_pk(api_conn)
+    #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)

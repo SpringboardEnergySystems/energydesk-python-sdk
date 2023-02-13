@@ -155,6 +155,30 @@ class BilateralApi:
         return None, "error_msg", []
 
     @staticmethod
+    def get_pricing_configurations(api_connection):
+        """Fetches pricing configurations
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching pricing configurations")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/pricingconfiguration/')
+        return json_res
+
+    @staticmethod
+    def get_pricing_configuration_by_pk(api_connection, pk):
+        """Fetches pricing configuration from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching pricing configuration")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/pricingconfiguration/' + str(pk) + '/')
+        return json_res
+
+    @staticmethod
     def upsert_pricing_configuration(api_connection, pricing_conf):
         logger.info("Registering pricing configuration")
         if type(pricing_conf) is dict:
