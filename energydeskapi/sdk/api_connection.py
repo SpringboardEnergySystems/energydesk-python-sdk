@@ -169,6 +169,32 @@ class ApiConnection(object):
                 raise TokenException("Token is invalid")
             return False, None, result.status_code, result.text
 
+    def exec_delete_url(self, trailing_url,extra_headers={}):
+        """Posts content from URL
+
+        :param trailing_url: description...
+        :type trailing_url: str, required
+        :param extra_headers: description...
+        :type extra_headers: str, required
+        """
+        headers = self.get_authorization_header()
+        for key in extra_headers:
+            headers[key] = extra_headers[key]
+        server_url = self.get_base_url() + trailing_url
+        logger.info("Calling URL " + str(server_url))
+        result = requests.delete(server_url, headers=headers)
+        if result.status_code < 210:
+            if result.status_code > 200 and result.text.strip() == "":
+                return True, [], result.status_code, None
+            json_data = result.json()
+            return True, json_data, result.status_code, None
+        else:
+            logger.error("Problens calling EnergyDesk API " + str(result.status_code))
+            if result.status_code == 401:
+                raise TokenException("Token is invalid")
+            return False, None, result.status_code, result.text
+
+
     def exec_patch_url(self, trailing_url, payload, extra_headers={}):
         """Posts content from URL
 
