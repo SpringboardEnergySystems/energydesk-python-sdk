@@ -187,6 +187,7 @@ class BilateralApi:
         else:
             pk = pricing_conf.pk
             pricing_dict = pricing_conf.get_dict()
+        print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/bilateral/pricingconfiguration/' + str(pk) + "/", pricing_dict)
