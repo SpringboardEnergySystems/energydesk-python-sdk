@@ -11,10 +11,11 @@ logger = logging.getLogger(__name__)
 class PricingConfiguration:
     def __init__(self):
         self.pk = 0
+        self.description=None
         self.currency_code = None
         self.wacc = 0
         self.inflation = 0
-        self.price_areas = None
+        self.price_area = None
         self.basic_curve_model = None
         self.yearly_epad_converging = 0
         self.spread_adjustment_epad = 0
@@ -28,7 +29,8 @@ class PricingConfiguration:
         if self.currency_code is not None: dict['currency_code'] = self.currency_code
         if self.wacc != 0: dict['wacc'] = self.wacc
         if self.inflation != 0: dict['inflation'] = self.inflation
-        if self.price_areas is not None: dict['price_areas'] = self.price_areas
+        if self.description is not None: dict['description'] = self.description
+        if self.price_area is not None: dict['price_area'] = self.price_area
         if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
         if self.yearly_epad_converging != 0: dict['yearly_epad_converging'] = self.yearly_epad_converging
         if self.spread_adjustment_epad != 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
