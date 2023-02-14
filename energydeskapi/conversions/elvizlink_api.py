@@ -1,6 +1,8 @@
 import logging
 import requests
 import environ
+import json
+from rauth import OAuth2Service
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -78,6 +80,20 @@ class ElvizLinksApi:
         """
         logger.info("Looking up user mappings")
         return api_connection.exec_get_url('/api/elvizmapping/users/')
+
+    @staticmethod
+    def obtain_session():
+        env = environ.Env()
+        client_id = env.str('ELVIZ_CLIENT_ID')
+        client_secret = env.str('ELVIZ_CLIENT_SECRET')
+        scope = env.str('ELVIZ_SCOPE')
+        service = OAuth2Service(client_id=client_id,
+                                client_secret=client_secret,
+                                access_token_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/token")
+        auth_session = service.get_auth_session(data={'grant_type': 'client_credentials', "scope": scope},
+                                           decoder=json.loads)
+        print(auth_session)
+        return auth_session
 
     @staticmethod
     def lookup_user_mapping(api_connection, elviz_user_id):
@@ -218,7 +234,11 @@ class ElvizLinksApi:
             "company_mappings":company_mappings,
         }
         logger.debug("...with payload " + str(payload) )
-        response = requests.post(server_url, json=payload)
+
+        h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
+        authsess=ElvizLinksApi.obtain_session()
+        #oauth_session.post("", headers=h, data=payload)
+        response = authsess.post(server_url,headers=h, data=payload)
         return response.json()
 
     @staticmethod

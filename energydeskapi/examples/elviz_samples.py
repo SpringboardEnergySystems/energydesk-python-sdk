@@ -56,8 +56,12 @@ def load_elviz_trades(api_conn):
     print(contracts)
     return elviz_trades
 
+def get_sessions():
+    ElvizLinksApi.obtain_session()
+
 
 if __name__ == '__main__':
 
     api_conn=init_api()
     load_elviz_trades(api_conn)
+    #get_sessions()
