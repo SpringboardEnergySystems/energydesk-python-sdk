@@ -122,8 +122,11 @@ class DerivativesApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/area-product-prices/', qry_payload)
         if json_res is None:
             return None
+        js=json.loads(json_res)
+        #print(json.dumps(js, indent=2))
+        #print(json_res)
         #df = pd.read_json(result.json()['dataframe'], orient='records')
-        df = pd.DataFrame(data=eval(json_res))
+        df = pd.DataFrame(data=js)
         return df
 
     @staticmethod
