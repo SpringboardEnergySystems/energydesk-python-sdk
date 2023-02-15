@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.customers.customers_api import CustomersApi
 logger = logging.getLogger(__name__)
 #  Change
 class GoContract:
@@ -213,7 +214,7 @@ class GosApi:
 
 
     @staticmethod
-    def register_source_collection(api_connection, local_area_pk, asset_list):
+    def register_source_collection(api_connection, local_area_pk,go_manager_pk, asset_list):
         """Registers a souce collection
 
         :param api_connection: class with API token for use with API
@@ -229,6 +230,7 @@ class GosApi:
 
         payload={
             "local_area": LocationApi.get_local_area_url(api_connection, local_area_pk),
+            'go_manager':CustomersApi.get_company_url(api_connection,go_manager_pk),
             "assets_in_area":asset_url_list
         }
         print(payload)
