@@ -21,9 +21,10 @@ def load_elviz_trades(api_conn):
         success, json_res, status_code, error_msg = ProductsApi.generate_market_product_from_ticker(api_conn,
                                                                                                     "Nordic Power",
                                                                                                     t['commodity']['product_code'])
+        print(success, status_code, error_msg)
         if success:
             print(json_res)
-            market_product_key = json_res[0]['pk']
+            #market_product_key = json_res[0]['pk']
         print(t)
         # contract = ApiContract()
         # contract.external_contract_id = t['external_contract_id']

@@ -89,10 +89,17 @@ class ElvizLinksApi:
         scope = env.str('ELVIZ_SCOPE')
         service = OAuth2Service(client_id=client_id,
                                 client_secret=client_secret,
-                                access_token_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/token")
-        auth_session = service.get_auth_session(data={'grant_type': 'client_credentials', "scope": scope},
-                                           decoder=json.loads)
-        print(auth_session)
+                                access_token_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/token",
+                                authorize_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/authorize",
+                                base_url="https://graph.microsoft.com/oidc/userinfo")
+        # params = {'redirect_uri': 'https://login.microsoftonline.com/',
+        #           'response_type': 'code'}
+        # url = service.get_authorize_url(**params)
+        data = {'grant_type': 'client_credentials',
+                'scope': scope,
+                }
+        auth_session = service.get_auth_session(data=data, decoder=json.loads)
+        print(auth_session.access_token)
         return auth_session
 
     @staticmethod
@@ -236,9 +243,13 @@ class ElvizLinksApi:
         logger.debug("...with payload " + str(payload) )
 
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
-        authsess=ElvizLinksApi.obtain_session()
+        #authsess=ElvizLinksApi.obtain_session()
+        #response = authsess.get(server_url)
+        #print(response)
         #oauth_session.post("", headers=h, data=payload)
-        response = authsess.post(server_url,headers=h, data=payload)
+        #response = authsess.post(server_url,headers=h, data=json.dumps(payload))
+        response = requests.post(server_url, json=payload)
+        #print(response.text)
         return response.json()
 
     @staticmethod
