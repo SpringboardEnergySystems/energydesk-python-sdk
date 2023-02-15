@@ -91,12 +91,16 @@ def register_pricing_configuration(api_conn):
     print(pricing_configuration.get_dict())
     BilateralApi.upsert_pricing_configuration(api_conn, pricing_configuration)
 
+def generate_adjusted_curve(api_conn):
+    success, returned_data, status_code, error_msg=BilateralApi.generate_adjusted_curve(api_conn,1)
+    df_curve = pd.DataFrame(data=eval(returned_data))
+    print(df_curve)
 
 if __name__ == '__main__':
     api_conn=init_api()
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    fetch_pricing_configuration_pk(api_conn)
+    generate_adjusted_curve(api_conn)
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)

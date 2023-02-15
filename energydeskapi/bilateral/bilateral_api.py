@@ -197,6 +197,15 @@ class BilateralApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/bilateral/pricingconfiguration/', pricing_dict)
         return success, returned_data, status_code, error_msg
-
+    @staticmethod
+    def generate_adjusted_curve(api_connection, pricing_config_pk):
+        logger.info("Adjusting curve")
+        payload={
+            'pricing_parameters_pk':pricing_config_pk,
+            'curve_date':"2023-01-01"
+        }
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/bilateral/curveadjustment/', payload)
+        return success, returned_data, status_code, error_msg
 
 
