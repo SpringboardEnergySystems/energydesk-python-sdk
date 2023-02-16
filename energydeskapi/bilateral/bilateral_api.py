@@ -198,14 +198,29 @@ class BilateralApi:
                 '/api/bilateral/pricingconfiguration/', pricing_dict)
         return success, returned_data, status_code, error_msg
     @staticmethod
-    def generate_adjusted_curve(api_connection, pricing_config_pk):
+    def generate_adjusted_curve_from_config(api_connection, pricing_config_pk, curve_date=datetime.today()):
         logger.info("Adjusting curve")
         payload={
-            'pricing_parameters_pk':pricing_config_pk,
-            'curve_date':"2023-01-01"
+            'pricing_config_pk':pricing_config_pk,
+            'curve_date':curve_date.strftime(("%Y-%m-%d"))
+        }
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/bilateral/curveadjustment/fromconfig/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def generate_adjusted_curve(api_connection, price_area,
+                                yearly_epad_converging, spread_adjustment_epad,
+                                spread_adjustment_sys, curve_date=datetime.today()):
+        logger.info("Adjusting curve from parameters")
+        payload={
+            'price_area':price_area,
+            'yearly_epad_converging':yearly_epad_converging,
+            'spread_adjustment_epad':spread_adjustment_epad,
+            'spread_adjustment_sys':spread_adjustment_sys,
+            'curve_date':curve_date.strftime(("%Y-%m-%d"))
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/bilateral/curveadjustment/', payload)
         return success, returned_data, status_code, error_msg
-
 

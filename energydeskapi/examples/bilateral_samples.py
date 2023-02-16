@@ -92,7 +92,7 @@ def register_pricing_configuration(api_conn):
     BilateralApi.upsert_pricing_configuration(api_conn, pricing_configuration)
 
 def generate_adjusted_curve(api_conn):
-    success, returned_data, status_code, error_msg=BilateralApi.generate_adjusted_curve(api_conn,1)
+    success, returned_data, status_code, error_msg=BilateralApi.generate_adjusted_curve_from_config(api_conn,1)
     df_curve = pd.DataFrame(data=eval(returned_data))
     print(df_curve)
 
