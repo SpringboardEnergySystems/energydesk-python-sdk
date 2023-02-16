@@ -11,7 +11,7 @@ from energydeskapi.contracts.masteragreement_api import MasterContractAgreement
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
-from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
+from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 from energydeskapi.types.contract_enum_types import ContractStatusEnum, GosEnergySources
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
@@ -98,8 +98,8 @@ def register_master_contract_agreement(api_conn, regnmb):
 
 def get_sample_contract(api_conn, commodity):
     yester = (datetime.today() + timedelta(days=-1)).replace( hour=0, minute=0, second=0, microsecond=0)
-    dtstr1=convert_datime_to_utcstr(yester)
-    dtstr2=convert_datime_to_locstr(yester, "Europe/Oslo")  #In order to get the date correct
+    dtstr1=convert_loc_datetime_to_utcstr(yester)
+    dtstr2=convert_loc_datetime_to_utcstr(yester, "Europe/Oslo")  #In order to get the date correct
     #trading_book = 1  # Use lookup function to set correct trading book key. Server will check if user allowed still
 
     commodity_type = commodity
@@ -124,8 +124,9 @@ def get_sample_contract(api_conn, commodity):
 
     return c
 
-def master_agreements(api_conn):
-    MasterContractAgreement
+def list_master_agreements(api_conn):
+    rets=MasterAgreementApi.get_master_agreements_embedded(api_conn)
+    print(rets)
 
 def register_normal_contract(api_conn):
     deliv_start = (datetime.today() + timedelta(days=100)).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -155,8 +156,8 @@ def register_sample_contract(api_conn):
     go_contract.underlying_source=LocationApi.get_local_area_url(api_conn, res[3]['pk'])
     go_contract.invoice_with_mva=False
     go_contract.extra_info="blablabla"
-    go_contract.invoice_date= convert_datime_to_utcstr(deliv_start)[:10]
-    go_contract.delivery_date = convert_datime_to_utcstr(deliv_start)[:10]
+    go_contract.invoice_date= convert_loc_datetime_to_utcstr(deliv_start)[:10]
+    go_contract.delivery_date = convert_loc_datetime_to_utcstr(deliv_start)[:10]
 
 
     print(go_contract.get_dict(api_conn))
@@ -188,7 +189,7 @@ def query_sources(api_conn):
     print(json.dumps(x, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contracts(api_conn, 31)
+    list_master_agreements(api_conn)
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)

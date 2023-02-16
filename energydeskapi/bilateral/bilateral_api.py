@@ -21,7 +21,7 @@ class PricingConfiguration:
         self.spread_adjustment_epad = 0
         self.spread_adjustment_sys = 0
         self.counterpart_override = None
-        self.is_default_config = True
+        self.is_active = True
 
     def get_dict(self):
         dict = {}
@@ -36,7 +36,7 @@ class PricingConfiguration:
         if self.spread_adjustment_epad != 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
         if self.spread_adjustment_sys != 0: dict['spread_adjustment_sys'] = self.spread_adjustment_sys
         if self.counterpart_override is not None: dict['counterpart_override'] = self.counterpart_override
-        if self.is_default_config is not False: dict['is_default_config'] = self.is_default_config
+        if self.is_active is not False: dict['is_active'] = self.is_active
         return dict
 
 class BilateralApi:
