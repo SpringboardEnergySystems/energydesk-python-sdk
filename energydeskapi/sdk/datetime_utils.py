@@ -1,6 +1,16 @@
 import pytz
 from dateutil import parser
 from datetime import date, datetime, timedelta
+
+
+# WIll convert both naive and datetimes that were previously localized
+def localize_datetime_safe(dt, tz=pytz.timezone("UTC")):
+    try:
+        loc_dt=tz.localize(dt)
+    except:
+        loc_dt=dt.astimezone(tz)
+    return loc_dt
+
 def localize_datetime(dt,  loczone="UTC"):
     timezone = pytz.timezone(loczone)
     d_aware = timezone.localize(dt)

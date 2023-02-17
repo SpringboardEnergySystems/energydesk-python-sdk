@@ -1,5 +1,8 @@
 
 import logging
+
+import pandas as pd
+
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
@@ -9,11 +12,13 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 def query_trading_books(api_conn):
-    trading_books=TradingBooksApi.get_tradingbooks_embedded(api_conn,{"page_size":100})
-    tb_map={}
-    for tb in trading_books['results']:
-        tb_map[tb['pk']]={'pk':tb['pk'], 'description':tb['description']}
-    print(tb_map)
+    trading_books=TradingBooksApi.get_tradingbooks_compact(api_conn,{"page_size":100})
+    print(trading_books['results'])
+    df=pd.DataFrame(data=trading_books['results'])
+    print(df)
+
+
+
 def query_trading_books_by_type(api_conn):
     df=TradingBooksApi.get_tradingbooks_embedded(api_conn,[CommodityTypeEnum.POWER])
     print(df)

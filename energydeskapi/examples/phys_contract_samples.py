@@ -33,4 +33,4 @@ def get_exposure(api_conn, trading_book=None):
 if __name__ == '__main__':
     api_conn=init_api()
     get_contracts(api_conn, 31)
-    get_exposure(api_conn, 31)
+    #get_exposure(api_conn, 31)
