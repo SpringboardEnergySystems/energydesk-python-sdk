@@ -131,7 +131,7 @@ class BilateralApi:
         success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area,
                                                                                         currency_code, curve_model,
                                  wacc, inflation, monthly_profile, weekday_profile, hours)
-        if success:
+        if success and 'period_prices' in json_res:
             #print(json_res)
             period_prices = json_res['period_prices']
             curve=json_res['forward_curve']
@@ -152,8 +152,10 @@ class BilateralApi:
                 cpricedet.append(df_pricing)
             return df_curve, cprices, cpricedet
         else:
-            print("An error occured")
-            pass#print(error_msg)
+            print("No prices returned")
+            if success==False:
+                print(error_msg)
+
         return None, "error_msg", []
 
     @staticmethod

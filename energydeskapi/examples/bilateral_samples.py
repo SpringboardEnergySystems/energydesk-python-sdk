@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveModels
-from energydeskapi.sdk.pandas_utils import get_summer_profile, get_winter_profile, get_workweek, get_weekend
+from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -37,17 +37,25 @@ def calculate_price(api_conn):
     untild = "2024-10-01"
     periods=[["A", fromd, untild]]
 
-    fromd="2023-10-01"
-    untild = "2026-10-01"
-    periods.append(["B", fromd, untild])
+    months=get_baseload_months()
+    months['January'] = 8
+    months['February'] = 8
+    months['March'] = 4
+    months['October'] = 4
+    months['November'] = 8
+    months['December'] = 8
+    print(months)
+    weekdays=get_baseload_weekdays()
+    hours=get_baseload_dailyhours()
+
     print(periods)
     df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
-                                            "PRICEIT",curve_resolution=PeriodResolutionEnum.DAILY.value,
+                                            "CUST_1",
                                          wacc=0.06, inflation=0,
-                                        profile_type="BASELOAD",
-                                        monthly_profile=get_winter_profile(),
-                                        weekday_profile=get_workweek(),
-                                        hours=list(range(5)))
+                                        monthly_profile=months,
+                                        weekday_profile=weekdays,
+                                        hours=hours)
+    print(cprices)
 
 
 
@@ -101,6 +109,6 @@ if __name__ == '__main__':
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    generate_adjusted_curve(api_conn)
+    calculate_price(api_conn)
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)
