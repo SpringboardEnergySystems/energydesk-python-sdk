@@ -60,6 +60,20 @@ class TradingBooksApi:
         return json_res
 
     @staticmethod
+    def get_tradingbooks_compact(api_connection, parameters={}):
+        """Fetches all tradingbooks
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching trading books")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/tradingbooks/compact/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+
+    @staticmethod
     def get_tradingbooks_df(api_connection, parameters={}):
         """Fetches all tradingbooks and displays in a dataframe
 
