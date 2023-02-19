@@ -1,4 +1,4 @@
-import logging
+import logging, json
 import pandas as pd
 from energydeskapi.portfolios.portfoliotree_utils import convert_nodes_from_jstree, create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
 from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, sample_portfolio_tree_embedded
@@ -55,7 +55,7 @@ class PortfolioTreeApi:
       logger.info("Fetching portfolio flat tree")
       json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
       f=open("./ptree_load.json", "w")
-      f.write(json_res)
+      f.write(json.dumps(json_res))
       f.close()
       if json_res is None:
           return None
@@ -65,7 +65,7 @@ class PortfolioTreeApi:
   def save_portfolio_flat_tree(api_connection, portfolio_nodes):
       logger.info("Saving portfolio tree")
       f=open("./ptree.json", "w")
-      f.write(portfolio_nodes)
+      f.write(json.dumps(portfolio_nodes))
       f.close()
       print(portfolio_nodes)
       result_json=convert_nodes_from_jstree(portfolio_nodes)
