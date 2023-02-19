@@ -62,6 +62,9 @@ class PortfolioTreeApi:
   @staticmethod
   def save_portfolio_flat_tree(api_connection, portfolio_nodes):
       logger.info("Saving portfolio tree")
+      f=open("ptree.json")
+      f.write(portfolio_nodes)
+      f.close()
       print(portfolio_nodes)
       result_json=convert_nodes_from_jstree(portfolio_nodes)
       print(result_json)
