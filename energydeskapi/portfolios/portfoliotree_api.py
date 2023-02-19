@@ -1,6 +1,6 @@
 import logging, json
 import pandas as pd
-from energydeskapi.portfolios.portfoliotree_utils import convert_nodes_from_jstree, create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
+from energydeskapi.portfolios.portfoliotree_utils import convert_embedded_tree_to_jstree,convert_nodes_from_jstree, create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
 from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, sample_portfolio_tree_embedded
 
 
@@ -53,23 +53,25 @@ class PortfolioTreeApi:
   @staticmethod
   def get_portfolio_flat_tree(api_connection, parameters={}):
       logger.info("Fetching portfolio flat tree")
-      json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
-      f=open("./ptree_load.json", "w")
-      f.write(json.dumps(json_res))
-      f.close()
+      #json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
+      #print("WHAT WE GET",json.dumps(json_res, indent=4))
+      json_res=PortfolioTreeApi.get_portfolio_tree(api_connection, parameters)
+      #f=open("./ptree_load.json", "w")
+      ##f.write(json.dumps(json_res))
+      #f.close()
       if json_res is None:
           return None
-      return create_flat_tree_for_jstree(json_res)
+      return convert_embedded_tree_to_jstree(json_res)
 
   @staticmethod
   def save_portfolio_flat_tree(api_connection, portfolio_nodes):
       logger.info("Saving portfolio tree")
-      f=open("./ptree.json", "w")
-      f.write(json.dumps(portfolio_nodes))
-      f.close()
-      print(portfolio_nodes)
-      result_json=convert_nodes_from_jstree(portfolio_nodes)
-      print(result_json)
+      #f=open("./ptree.json", "w")
+      #f.write(json.dumps(portfolio_nodes))
+      #f.close()
+      #print(portfolio_nodes)
+      #result_json=convert_nodes_from_jstree(portfolio_nodes)
+      #print(result_json)
       #Need to test that result_json is what is expected in upsert_portfolio...
       #return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, result_json)
       return True

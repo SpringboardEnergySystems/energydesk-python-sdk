@@ -162,6 +162,7 @@ def create_flat_tree2(embedded_tree):
 from energydeskapi.sdk.common_utils import key_from_url
 def create_embedded_tree_recursive(flat_tree):
     roots=[]
+    nodes_with_parents={}
     def lookup_node_by_id(id):
         for p in flat_tree:
             if p['pk']==id:
@@ -177,7 +178,8 @@ def create_embedded_tree_recursive(flat_tree):
             "portfolio_id":node['pk'],
             "portfolio_name": node['description'],
             "percentage": 1,
-            "portfolio_manager": node['manager']['name']
+            "portfolio_manager": node['manager']['name'],
+            "portfolio_manager_id": node['manager']['pk']
         }
         assets_as_json = []
         for a in node['assets']:
@@ -193,22 +195,35 @@ def create_embedded_tree_recursive(flat_tree):
             subkey=key_from_url(child)
             child_node= lookup_node_by_id(subkey)
             cn=manage_node(child_node)
+            cn['parent_id']=node['pk']
+            nodes_with_parents[subkey]=subkey
             if cn is not None:
                 children_as_json.append(cn)
         localnode['children']=children_as_json  # Replace list of INTs with list of json obj
         return localnode
 
-    root=None
     for i in range(len(flat_tree)):
         if flat_tree[i]['parent_portfolio'] is None:
             new_root=manage_node(flat_tree[i])
             roots.append(new_root)
 
-    return roots
+    # CLEANUP
+    new_roots=[]
+    for r in roots:
+        if r['portfolio_id'] in nodes_with_parents:
+            continue
+        new_roots.append(r)
+    return new_roots
 
 def convert_nodes_from_jstree(portfolio_nodes):
     jstreelist = []
     ## TODO generate format for saving on API
+    for rec in portfolio_nodes:
+        dict={
+            'pk':rec['id'],
+            'description': rec['data']['original_text']
+        }
+        jstreelist.append(dict)
     return jstreelist
 
 def create_flat_tree_for_jstree(flat_tree):
@@ -244,8 +259,6 @@ def create_flat_tree_for_jstree(flat_tree):
                 "parent":node['pk']
             }
             jstreelist.append(anode)
-            #assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
-        #localnode['assets'] = assets_as_json
 
         tradingbooks_as_json = []
         for tb in node['trading_books']:
@@ -257,14 +270,7 @@ def create_flat_tree_for_jstree(flat_tree):
                 "parent":node['pk']
             }
             jstreelist.append(tbnode)
-            #tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
-        #localnode['trading_books'] = tradingbooks_as_json
 
-        #children_as_json = []
-        #for child in node['sub_portfolios']:
-        #    subkey=key_from_url(child)
-        #    children_as_json.append(subkey)
-        #localnode['children'] = children_as_json
 
         return localnode
 
@@ -272,6 +278,67 @@ def create_flat_tree_for_jstree(flat_tree):
         #if flat_tree[i]['parent_portfolio'] is None:
         dict_node=create_node(flat_tree[i])
         jstreelist.append(dict_node)
+
+    return jstreelist
+
+
+def convert_embedded_tree_to_jstree(embedded_tree):
+    jstreelist=[]
+
+    def create_node(node):
+        print('XXX NODE START XXX')
+        print(node)
+        print('XXX NODE END XXX')
+        percentage=1  # Defaul for now...
+        parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
+        type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
+        localnode = {
+            "id": node['portfolio_id'],
+            "text": node['portfolio_name'] + ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
+            "type": type_tag,
+            "data": {
+                "original_text": node['portfolio_name'],
+                "calculation": str(percentage*100),
+                "company": node['portfolio_manager_id']
+            },
+            "parent": parent,
+            "calculation": percentage,
+            "state": {"opened": True}
+        }
+        assets_as_json = []
+        for a in node['assets']:
+            anode={
+                "id": "a"+str(a['pk']),
+                "text": a['description'],
+                "type": "assets",
+                "data": [],
+                "parent":node['pk']
+            }
+            jstreelist.append(anode)
+
+        tradingbooks_as_json = []
+        for tb in node['trading_books']:
+            tbnode={
+                "id": "a"+str(tb['pk']),
+                "text": tb['description'],
+                "type": "trading_books",
+                "data": [],
+                "parent":node['pk']
+            }
+            jstreelist.append(tbnode)
+
+
+        return localnode
+
+    def parse_embedded_node(emb_node):
+        dict_node=create_node(emb_node)
+        jstreelist.append(dict_node)
+        for ch in emb_node['children']:
+            parse_embedded_node(ch)
+
+    for i in range(len(embedded_tree)):
+        #if flat_tree[i]['parent_portfolio'] is None:
+        parse_embedded_node(embedded_tree[i])
 
     return jstreelist
 
