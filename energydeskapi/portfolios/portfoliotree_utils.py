@@ -4,7 +4,7 @@ from energydeskapi.customers.customers_api import CustomersApi
 #from energydeskapi.assets.assets_api import AssetsApi
 #from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from operator import itemgetter
-
+from energydeskapi.portfolios.portfolio_api import PortfolioNode
 
 
 sample_portfolio_tree=[
@@ -218,7 +218,7 @@ def create_embedded_tree_recursive(flat_tree):
         new_roots.append(r)
     return new_roots
 
-def convert_nodes_from_jstree(api_connection, portfolio_nodes):
+def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
     def get_portfolio_url(portfolio_pk):
         return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
     def get_asset_url(asset_pk):
@@ -286,6 +286,78 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             for book in pbooks[j['pk']]:
                 nlist.append(get_tradingbook_url(book[2:]))
             j['trading_books']=nlist
+    return jstreelist
+
+def convert_nodes_from_jstree(api_connection, portfolio_nodes):
+    def get_portfolio_url(portfolio_pk):
+        return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
+    def get_asset_url(asset_pk):
+        return api_connection.get_base_url() + '/api/assets/' + str(asset_pk) + "/"
+    def get_tradingbook_url(trading_book_pk):
+        return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(trading_book_pk) + "/"
+    jstreelist = []
+    pbooks = {}
+    passets = {}
+    pchildren={}
+    for rec in portfolio_nodes:
+        name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
+        # dict={
+        #     'pk':rec['id'],
+        #     'description':name
+        # }
+        node=PortfolioNode()
+        node.pk=int(rec['id']) if rec['type'] == "default" else rec['id']
+        node.description=name
+
+        if "company" in rec['data'] and rec['data']['company'] is not None:
+            node.manager=CustomersApi.get_company_url(api_connection, rec['data']['company'])
+
+        if rec['parent']!="#":
+            pid=rec['parent']
+            if rec['type'] == "trading_books":
+                if pid not in pbooks:
+                    pbooks[pid] = []
+                pbooks[pid].append(rec['id'])
+                continue
+            if rec['type'] == "assets":
+                if pid not in passets:
+                    passets[pid] = []
+                passets[pid].append(rec['id'])
+                continue
+            node.parent_id=int(pid)
+            if pid not in pchildren:
+                pchildren[pid]=[]
+            pchildren[pid].append(rec['id'])
+        else:
+            print("Node without parent", rec['parent'])
+
+        jstreelist.append(node)
+
+    for j in jstreelist:
+        if j.pk not in pchildren:
+            #j['sub_portfolios']=[]
+            continue
+        ch=pchildren[j.pk]
+        newlist=[]
+        for c in ch:
+            purl=get_portfolio_url(c)
+            newlist.append(purl)
+        j.sub_portfolios=newlist
+    print(passets)
+    print(pbooks)
+    for j in jstreelist:
+        if j.pk in passets:
+            nlist=[]
+            for x in passets[j.pk]:
+                nlist.append(get_asset_url(x[2:]))
+            print(nlist)
+            j.assets=nlist
+        if j.pk in pbooks:
+            nlist=[]
+            for book in pbooks[j.pk]:
+                nlist.append(get_tradingbook_url(book[2:]))
+            print(nlist)
+            j.trading_books=nlist
     return jstreelist
 
 def create_flat_tree_for_jstree(flat_tree):
