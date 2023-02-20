@@ -10,3 +10,6 @@ class ClearingReportTypeEnum(Enum):
     NONPROPMRGINTRA = 6
     COLLATVALUE = 7
     CASHOPTIMIZATION = 8
+    SPAN_PARAM_FILEHEADERLIST = 9
+
+
