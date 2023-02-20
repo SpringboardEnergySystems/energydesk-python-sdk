@@ -178,7 +178,7 @@ def create_embedded_tree_recursive(flat_tree):
             return None
 
         localnode={
-            "portfolio_id":node['pk'],
+            "pk":node['pk'],
             "portfolio_name": node['description'],
             "percentage": 1,
             "portfolio_manager": node['manager']['name'],
@@ -198,7 +198,7 @@ def create_embedded_tree_recursive(flat_tree):
             subkey=key_from_url(child)
             child_node= lookup_node_by_id(subkey)
             cn=manage_node(child_node)
-            cn['pk']=node['pk']
+            cn['parent_id']=node['pk']
             nodes_with_parents[subkey]=subkey
             if cn is not None:
                 children_as_json.append(cn)
@@ -213,7 +213,8 @@ def create_embedded_tree_recursive(flat_tree):
     # CLEANUP
     new_roots=[]
     for r in roots:
-        if r['portfolio_id'] in nodes_with_parents:
+        print(r)
+        if r['pk'] in nodes_with_parents:
             continue
         new_roots.append(r)
     return new_roots
@@ -427,7 +428,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
-            "id": node['portfolio_id'],
+            "id": node['pk'],
             "text": node['portfolio_name'] + ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
