@@ -8,13 +8,12 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-
-
 def query_asset_info(api_conn):
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn, [1,2,3])
+    df = AssetDataApi.get_assetgroup_forecast_df(api_conn, [1, 2, 3])
     print(df)
+
 
 if __name__ == '__main__':
 
-    api_conn=init_api()
+    api_conn = init_api()
     query_asset_info(api_conn)
