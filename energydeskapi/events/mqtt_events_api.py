@@ -47,7 +47,12 @@ class MqttClient(EventClient):
                 self.client.subscribe(paho_topics)  #Only subscribe if topics given here. Some clients are *publish only*
         try:
             logger.info("Initializing MQTT")
-            self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
+            if self.mqtt_port == "8080":
+                self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
+                print("Using Websockets")
+            else:
+                self.client = mqtt.Client(client_name)  # create new instance
+                print("Using Mqtt")
             self.client.on_message = on_message_callback  # attach function to callback
             self.client.on_connect = on_connect
             if self.username is not None:
@@ -56,8 +61,12 @@ class MqttClient(EventClient):
             logger.info("Connecting " + str(self.mqtt_host) + ":"  + str(self.mqtt_port))
             print(self.client_certificate)
             if self.client_certificate is not None:
-                self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
-                                    keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
+                if self.mqtt_port == "8080":
+                    self.client.tls_set(certfile=self.client_certificate,
+                                        keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
+                else:
+                    self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
+                                        keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 self.client.tls_insecure_set(True)
             self.client.connect(self.mqtt_host, port=int(self.mqtt_port))  # connect to broker
         except Exception as e:
@@ -87,13 +96,14 @@ if __name__ == '__main__':
     env = environ.Env()
     mqtt_broker = env.str('MQTT_HOST')
     mqtt_port = env.str('MQTT_PORT')
+    mqtt_websocket_port = env.str('MQTT_WEBSOCKET_PORT')
     mqtt_usr = None if "MQTT_USERNAME" not in env else env.str("MQTT_USERNAME")
     mqtt_pwd = None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
     ca_cert = None if "MQTT_CA_CERT" not in env else env.str('MQTT_CA_CERT')
     client_cert = None if "MQTT_CLIENT_CERT" not in env else env.str('MQTT_CLIENT_CERT')
     client_key = None if "MQTT_CLIENT_KEY" not in env else env.str('MQTT_CLIENT_KEY')
     mqtt_certs = {'ca_certificate': ca_cert, 'client_certificate': client_cert, 'client_key': client_key}
-    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd, mqtt_certs)
+    mqttcli=MqttClient(mqtt_broker,mqtt_websocket_port,mqtt_usr,mqtt_pwd, mqtt_certs)
     es=EventSubscriber("/marketdata/nordicpower/#",on_my_callback)
     mqttcli.connect( [es], "Feed Listener")
     mqttcli.start_listener()
