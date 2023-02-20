@@ -38,6 +38,11 @@ class PortfolioTreeApi:
       f=open("./ptree.json", "w")
       f.write(json.dumps(portfolio_nodes))
       f.close()
+      pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
+      for p in pnodes:
+          # print("PPORT", p, p.trading_books)
+          print(json.dumps(p.get_dict(api_connection), indent=4))
+          PortfoliosApi.upsert_portfolio(api_connection, p)
       #print(portfolio_nodes)
       #result_json=convert_nodes_from_jstree(portfolio_nodes)
       #print(result_json)
