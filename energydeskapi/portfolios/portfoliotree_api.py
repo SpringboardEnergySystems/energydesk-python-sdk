@@ -45,7 +45,8 @@ class PortfolioTreeApi:
   def get_portfolio_tree(api_connection, parameters={}):
       logger.info("Fetching portfolio tree")
       json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
-      print(json_res)
+      print(json.dumps(json_res, indent=4))
+
       if json_res is None:
           return None
       return create_embedded_tree_recursive(json_res)
@@ -102,3 +103,14 @@ class PortfolioTreeApi:
       return None
     return create_embedded_tree_for_dropdown(json_res)
     #return arr
+
+  @staticmethod
+  def get_portfolio_url(api_connection, portfolio_pk):
+      """Fetches url for portfolio from pk
+
+      :param api_connection: class with API token for use with API
+      :type api_connection: str, required
+      :param company_pk: personal key of company
+      :type company_pk: str, required
+      """
+      return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"

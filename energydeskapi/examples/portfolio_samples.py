@@ -12,14 +12,16 @@ logging.basicConfig(level=logging.INFO,
 
 
 def save_conversion(api_conn, portfolio_nodes):
-    result_json = convert_nodes_from_jstree(portfolio_nodes)
+    result_json = convert_nodes_from_jstree(api_conn, portfolio_nodes)
     print(result_json)
+    print(json.dumps(result_json, indent=4))
 
 def query_portfolios(api_conn):
     x=PortfolioTreeApi.get_portfolio_tree(api_conn)
-    print(json.dumps(x, indent=4))
+    #print(json.dumps(x, indent=4))
     x2=convert_embedded_tree_to_jstree(x)
-    print(json.dumps(x2, indent=4))
+    #print(json.dumps(x2, indent=4))
+    save_conversion(api_conn, x2)
     #js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
     #print(json.dumps(js, indent=4))
     #x=create_flat_tree_for_jstree(js)
@@ -31,8 +33,13 @@ def query_portfolios(api_conn):
     save_conversion(api_conn, js)
 
 
+def load_tree(api_conn):
 
+    js=open("./ptree.json","r").read()
+    jss=json.loads(js)
+    print(json.dumps(jss, indent=4))
+    save_conversion(api_conn,jss)
 
 if __name__ == '__main__':
     api_conn=init_api()
-    query_portfolios(api_conn)
+    load_tree(api_conn)
