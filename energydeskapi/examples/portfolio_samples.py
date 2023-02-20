@@ -15,9 +15,9 @@ logging.basicConfig(level=logging.INFO,
 def save_conversion(api_conn, portfolio_nodes):
     pnodes = convert_nodes_from_jstree(api_conn, portfolio_nodes)
     for p in pnodes:
-        print("PPORT", p, p.trading_books)
-        #print(json.dumps(p.get_dict(api_conn), indent=4))
-        #PortfoliosApi.upsert_portfolio(api_conn, p)
+        #print("PPORT", p, p.trading_books)
+        print(json.dumps(p.get_dict(api_conn), indent=4))
+        PortfoliosApi.upsert_portfolio(api_conn, p)
 
     #print(result_json)
     #print(json.dumps(result_json, indent=4))
@@ -49,5 +49,5 @@ def load_tree(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    load_tree(api_conn)
-    #query_portfolios(api_conn)
+    #load_tree(api_conn)
+    query_portfolios(api_conn)

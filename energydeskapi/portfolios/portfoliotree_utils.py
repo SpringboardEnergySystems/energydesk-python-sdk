@@ -186,19 +186,19 @@ def create_embedded_tree_recursive(flat_tree):
         }
         assets_as_json = []
         for a in node['assets']:
-            assets_as_json.append({'asset_id': a['pk'],'asset_name': a['description'] })
+            assets_as_json.append({'pk': a['pk'],'description': a['description'] })
         localnode['assets'] = assets_as_json
 
         tradingbooks_as_json = []
         for tb in node['trading_books']:
-            tradingbooks_as_json.append({'tradingbook_id': tb['pk'],'tradingbook_name': tb['description'] })
+            tradingbooks_as_json.append({'pk': tb['pk'],'description': tb['description'] })
         localnode['trading_books'] = tradingbooks_as_json
         children_as_json = []
         for child in node['sub_portfolios']:
             subkey=key_from_url(child)
             child_node= lookup_node_by_id(subkey)
             cn=manage_node(child_node)
-            cn['parent_id']=node['pk']
+            cn['pk']=node['pk']
             nodes_with_parents[subkey]=subkey
             if cn is not None:
                 children_as_json.append(cn)
@@ -313,7 +313,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             node.manager=CustomersApi.get_company_url(api_connection, rec['data']['company'])
 
         if rec['parent']!="#":
-            pid=rec['parent']
+            pid=int(rec['parent'])
+            #print("PID", pid)
             if rec['type'] == "trading_books":
                 if pid not in pbooks:
                     pbooks[pid] = []
@@ -324,7 +325,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                     passets[pid] = []
                 passets[pid].append(rec['id'])
                 continue
-            node.parent_id=int(pid)
+            node.parent_id=pid
             if pid not in pchildren:
                 pchildren[pid]=[]
             pchildren[pid].append(rec['id'])
@@ -350,13 +351,12 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             nlist=[]
             for x in passets[j.pk]:
                 nlist.append(get_asset_url(x[2:]))
-            print(nlist)
             j.assets=nlist
+
         if j.pk in pbooks:
             nlist=[]
             for book in pbooks[j.pk]:
                 nlist.append(get_tradingbook_url(book[2:]))
-            print(nlist)
             j.trading_books=nlist
     return jstreelist
 
@@ -452,6 +452,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
 
         tradingbooks_as_json = []
         for tb in node['trading_books']:
+            print(tb)
             tbnode={
                 "id": "a"+str(tb['pk']),
                 "text": tb['description'],
