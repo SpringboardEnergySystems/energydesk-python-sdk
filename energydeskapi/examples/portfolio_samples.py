@@ -25,7 +25,8 @@ def save_conversion(api_conn, portfolio_nodes):
 
 def query_portfolios(api_conn):
     x=PortfolioTreeApi.get_portfolio_tree(api_conn)
-    print(json.dumps(x, indent=4))
+    #print(json.dumps(x, indent=4))
+
     x2=convert_embedded_tree_to_jstree(x)
     print(json.dumps(x2, indent=4))
     #save_conversion(api_conn, x2)
