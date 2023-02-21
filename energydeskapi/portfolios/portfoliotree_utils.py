@@ -309,7 +309,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         node=PortfolioNode()
         if rec['type'] == "default":
             if str(rec['id'])[:2]=="pk":
-                node.pk = rec['id']
+                node.pk = 0#rec['id']
             else:
                 node.pk = int(rec['id'])
         else:
