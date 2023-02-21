@@ -99,7 +99,6 @@ class ElvizLinksApi:
                 'scope': scope,
                 }
         auth_session = service.get_auth_session(data=data, decoder=json.loads)
-        print(auth_session.access_token)
         return auth_session
 
     @staticmethod
