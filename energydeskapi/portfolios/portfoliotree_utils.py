@@ -317,6 +317,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pid=int(rec['parent'])
             #print("PID", pid)
             if rec['type'] == "trading_books":
+                print(rec)
                 if pid not in pbooks:
                     pbooks[pid] = []
                 pbooks[pid].append(rec['id'])
