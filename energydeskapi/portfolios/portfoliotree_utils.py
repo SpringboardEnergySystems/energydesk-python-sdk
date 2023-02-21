@@ -293,7 +293,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     def get_portfolio_url(portfolio_pk):
         return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
     def get_asset_url(asset_pk):
-        return api_connection.get_base_url() + '/api/assets/' + str(asset_pk) + "/"
+        return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
     def get_tradingbook_url(trading_book_pk):
         return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(trading_book_pk) + "/"
     jstreelist = []
