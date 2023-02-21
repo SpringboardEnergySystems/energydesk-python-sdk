@@ -307,7 +307,13 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         #     'description':name
         # }
         node=PortfolioNode()
-        node.pk=int(rec['id']) if rec['type'] == "default" else rec['id']
+        if rec['type'] == "default":
+            if str(rec['id'])[:2]=="pk":
+                node.pk = rec['id']
+            else:
+                node.pk = int(rec['id'])
+        else:
+            node.pk=rec['id']
         node.description=name
 
         if "company" in rec['data'] and rec['data']['company'] is not None:
