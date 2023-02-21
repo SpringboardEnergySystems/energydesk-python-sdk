@@ -449,7 +449,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         assets_as_json = []
         for a in node['assets']:
             anode={
-                "id": ""+str(a['pk']),
+                "id": "pk"+str(a['pk']),
                 "text": a['description'],
                 "type": "assets",
                 "data": [],
@@ -461,7 +461,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         for tb in node['trading_books']:
             print(tb)
             tbnode={
-                "id": ""+str(tb['pk']),
+                "id": "pk"+str(tb['pk']),
                 "text": tb['description'],
                 "type": "trading_books",
                 "data": [],
