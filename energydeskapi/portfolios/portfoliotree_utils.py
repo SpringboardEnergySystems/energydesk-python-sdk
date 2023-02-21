@@ -323,6 +323,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pbooks[pid].append(rec['id'])
                 continue
             if rec['type'] == "assets":
+                print("ASS", rec)
                 if pid not in passets:
                     passets[pid] = []
                 passets[pid].append(rec['id'])
