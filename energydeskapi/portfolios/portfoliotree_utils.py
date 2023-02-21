@@ -352,13 +352,13 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if j.pk in passets:
             nlist=[]
             for x in passets[j.pk]:
-                nlist.append(get_asset_url(x[2:]))
+                nlist.append(get_asset_url(x))
             j.assets=nlist
 
         if j.pk in pbooks:
             nlist=[]
             for book in pbooks[j.pk]:
-                nlist.append(get_tradingbook_url(book[2:]))
+                nlist.append(get_tradingbook_url(book))
             j.trading_books=nlist
     return jstreelist
 
