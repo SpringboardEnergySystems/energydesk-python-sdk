@@ -14,18 +14,18 @@ logging.basicConfig(level=logging.INFO,
 
 
 def load_elviz_trades(api_conn):
-    elviz_trades = ElvizLinksApi.get_latest_elviz_trades(api_conn)
+    elviz_trades = ElvizLinksApi.get_latest_elviz_trades(api_conn, 20)
     contracts = []
     for t in elviz_trades:
         market_product_key = 0
         success, json_res, status_code, error_msg = ProductsApi.generate_market_product_from_ticker(api_conn,
                                                                                                     "Nordic Power",
                                                                                                     t['commodity']['product_code'])
-        print(success, status_code, error_msg)
-        if success:
-            print(json_res)
+        #print(success, status_code, error_msg)
+        #if success:
+            #print(json_res)
             #market_product_key = json_res[0]['pk']
-        print(t)
+        #print(t)
         # contract = ApiContract()
         # contract.external_contract_id = t['external_contract_id']
         # contract.trade_date = t['trade_date']
