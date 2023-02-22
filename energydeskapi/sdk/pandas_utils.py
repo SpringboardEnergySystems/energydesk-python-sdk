@@ -14,8 +14,9 @@ def make_none_tz( utc_dt):
 
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timeznoe=None):
     df=pd.DataFrame()
-    ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res, tz=timeznoe)
+    ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
+    df_new=df_new.tz_convert(timeznoe)
     return df_new
 
 def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
