@@ -253,10 +253,10 @@ class ElvizLinksApi:
         return response.json()
 
     @staticmethod
-    def get_latest_elviz_trades(api_connection):
+    def get_latest_elviz_trades(api_connection, days_back=1):
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
-        elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps )
+        elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, days_back )
         return elviz_trades
 
