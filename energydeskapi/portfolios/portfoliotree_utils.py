@@ -307,7 +307,13 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         #     'description':name
         # }
         node=PortfolioNode()
-        node.pk=int(rec['id']) if rec['type'] == "default" else rec['id']
+        if rec['type'] == "default":
+            if str(rec['id'])[:2]=="pk":
+                node.pk = 0#rec['id']
+            else:
+                node.pk = int(rec['id'])
+        else:
+            node.pk=rec['id']
         node.description=name
 
         if "company" in rec['data'] and rec['data']['company'] is not None:
@@ -354,7 +360,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             nlist=[]
             for x in passets[j.pk]:
                 if str(x)[:2]=="pk":
-                    x=int(x[2:])
+                    x=int(x[3:])
                 nlist.append(get_asset_url(x))
             j.assets=nlist
 
@@ -362,7 +368,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             nlist=[]
             for X in pbooks[j.pk]:
                 if str(x)[:2]=="pk":  #Strip away pk se by UI
-                    x=int(x[2:])
+                    x=int(x[3:])
                 nlist.append(get_tradingbook_url(X))
             j.trading_books=nlist
     return jstreelist
@@ -393,7 +399,7 @@ def create_flat_tree_for_jstree(flat_tree):
         assets_as_json = []
         for a in node['assets']:
             anode={
-                "id": "pk"+str(a['pk']),
+                "id": "pka"+str(a['pk']),
                 "text": a['description'],
                 "type": "assets",
                 "data": [],
@@ -404,7 +410,7 @@ def create_flat_tree_for_jstree(flat_tree):
         tradingbooks_as_json = []
         for tb in node['trading_books']:
             tbnode={
-                "id": "pk"+str(tb['pk']),
+                "id": "pkt"+str(tb['pk']),
                 "text": tb['description'],
                 "type": "trading_books",
                 "data": [],
@@ -449,7 +455,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         assets_as_json = []
         for a in node['assets']:
             anode={
-                "id": "pk"+str(a['pk']),
+                "id": "pka"+str(a['pk']),
                 "text": a['description'],
                 "type": "assets",
                 "data": [],
@@ -461,7 +467,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         for tb in node['trading_books']:
             print(tb)
             tbnode={
-                "id": "pk"+str(tb['pk']),
+                "id": "pkt"+str(tb['pk']),
                 "text": tb['description'],
                 "type": "trading_books",
                 "data": [],
