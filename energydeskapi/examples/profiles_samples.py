@@ -6,9 +6,12 @@ from energydeskapi.profiles.profiles import GenericProfile
 import pandas as pd
 import pytz
 import json
+from energydeskapi.sdk.profiles_utils import get_baseload_profile
+from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
+from energydeskapi.sdk.profiles_utils import generate_normalized_profile
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
-from energydeskapi.sdk.pandas_utils import get_winter_profile, get_workweek, get_weekend
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -23,14 +26,35 @@ def load_profiles(api_conn):
     jsdata = ProfilesApi.get_volume_profile_by_key(api_conn, 1)
     print(jsdata)
 
-def create_profile(api_conn):
+def create_profiles(api_conn):
+
+    cust_a_profil=get_baseload_profile()
+    cust_a__monthly_relative_profile = [11.0, 11.0, 11.0, 8.0, 7.0, 5.0, 5.0, 5.0, 7.0, 8.0, 11.0, 11.0]
+    cust_a_profil['monthly_profile']={k:v for k,v  in zip(get_month_list(), cust_a__monthly_relative_profile)}
+
+    cust_b_profil=get_baseload_profile()
+    cust_b__monthly_relative_profile=[10.29, 9.37,9.81,8.74,7.58,6.79,6,6.66,6.94,8.07,8.93,10.81]
+    cust_b_profil['monthly_profile']={k:v for k,v  in zip(get_month_list(), cust_b__monthly_relative_profile)}
+
+    cust_c_profil=get_baseload_profile()
+    cust_c__monthly_relative_profile=[12.31, 11.06,10.20,8.16,7.04,5.47,4.69,5.14,6.33,8.90,9.58,11.12]
+    cust_c_profil['monthly_profile']={k:v for k,v  in zip(get_month_list(), cust_c__monthly_relative_profile)}
+
     v=StoredProfile()
-    v.profile={
-        'monthly_profile': get_winter_profile(),
-        'weekday_profile': get_workweek(),
-        'daily_profile': list(range(8, 18))
-    }
-    v.description="winterprofile"
+    v.profile=cust_a_profil
+    v.description="Customer A std profil"
+    jsres = ProfilesApi.upsert_volume_profile(api_conn, v)
+    print(jsres)
+
+    v=StoredProfile()
+    v.profile=cust_b_profil
+    v.description="Customer B std profil"
+    jsres = ProfilesApi.upsert_volume_profile(api_conn, v)
+    print(jsres)
+
+    v=StoredProfile()
+    v.profile=cust_c_profil
+    v.description="Customer C std profil"
     jsres = ProfilesApi.upsert_volume_profile(api_conn, v)
     print(jsres)
 
@@ -72,5 +96,5 @@ def convert_volume_profile(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    convert_volume_profile(api_conn)
-    #load_profiles(api_conn)
+    create_profiles(api_conn)
+    load_profiles(api_conn)
