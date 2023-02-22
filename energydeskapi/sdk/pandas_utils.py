@@ -100,8 +100,11 @@ def get_summer_profile():
     return m1
 
 if __name__ == '__main__':
-    #pd.set_option('display.max_rows', None)
-    print(get_weekend())
-    print(get_summer_profile())
-    df=create_empty_df_with_pattern(get_summer_profile(), get_weekend())
-    print(df)
+    tz = pytz.timezone("Europe/Oslo")
+    year_start = datetime.today().replace(month=3, day=1, hour=0, minute=0, second=0, microsecond=0)
+    tz_aware_start = tz.localize(year_start)
+    tz_aware_start=tz_aware_start.astimezone(pytz.utc)
+    year_end=tz_aware_start + relativedelta(years=3)
+    df=make_empty_timeseries_df(tz_aware_start, year_end, "H", tz )
+    df['one']=1
+    print(df['2023-10-29':'2023-10-30'])
