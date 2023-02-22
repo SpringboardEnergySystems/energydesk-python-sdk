@@ -33,9 +33,14 @@ def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
     return s_dt_utc
 
 def convert_datime_to_locstr(dt, loczone="Europe/Oslo"):
-    dtutc=localize_datetime(dt, loczone)
-    s_dt = dtutc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
-    return s_dt
+    tz=pytz.timezone(loczone)
+    dtutc=localize_datetime_safe(dt, tz)
+    s_dt = dtutc.strftime('%Y-%m-%dT%H:%M:%S%z')
+    timestamp_string = "{0}:{1}".format(
+        s_dt[:-2],
+        s_dt[-2:]
+    )
+    return timestamp_string
 
 
 # Data retrieved from server are in UTC time ("GMT without daylight savings time")

@@ -1,6 +1,7 @@
 
 import logging
 import pandas as pd
+from energydeskapi.bilateral.bilateral_api import BilateralApi, PricingConfiguration
 from energydeskapi.profiles.profiles_api import ProfilesApi
 from energydeskapi.profiles.profiles import GenericProfile
 from energydeskapi.sdk.common_utils import init_api
@@ -73,5 +74,7 @@ def get_commodity_profile(api_conn, ticker):
 if __name__ == '__main__':
     #   pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_commodity_profile(api_conn, "PROF3_NO1_7YR")
+    rets=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_7YR", 72000)
+    print(rets)
+    #get_commodity_profile(api_conn, "PROF3_NO1_7YR")
 

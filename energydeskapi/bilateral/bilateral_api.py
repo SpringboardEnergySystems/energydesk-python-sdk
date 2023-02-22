@@ -2,7 +2,13 @@ import logging
 import pandas as pd
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from datetime import datetime, timedelta, timezone
+from dateutil import parser
 import pytz
+from energydeskapi.profiles.profiles_api import ProfilesApi
+from energydeskapi.profiles.profiles import GenericProfile
+import json
+from energydeskapi.sdk.datetime_utils import convert_datime_to_locstr
+from energydeskapi.marketdata.products_api import ProductsApi
 from dateutil import relativedelta
 from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
@@ -225,4 +231,57 @@ class BilateralApi:
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/bilateral/curveadjustment/', payload)
         return success, returned_data, status_code, error_msg
+
+
+
+    # Loads a relative profile with delivery period, applied with a yearly volume
+    @staticmethod
+    def load_profiled_volume(api_connection, product_code, yearly_volume, include_hourly_series=False):
+        """Loads a relative profile with delivery period, applied with a yearly volume
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        res = ProductsApi.get_commodity_definitions(api_connection, {"product_code": product_code})
+        cr = res['results']
+        if len(cr) == 1:
+            print("Loaded commodity profile")
+            dprof = GenericProfile.from_dict(cr[0]['commodity_profile'])
+            print(cr[0])
+            delivery_from = cr[0]['delivery_from']
+            delivery_until = cr[0]['delivery_until']
+            success, returned_data, status_code, error_msg = ProfilesApi.convert_relativeprofile_to_yearlyfactors(
+                api_connection, delivery_from, delivery_until, dprof
+            )
+            if not success:
+                return success, returned_data, status_code, error_msg
+
+            df = pd.DataFrame(data=json.loads(returned_data))
+            df.index = df['datetime']
+            df.index = pd.to_datetime(df.index)
+            df = df.tz_convert("Europe/Oslo")
+            df['hourly_consumption'] = yearly_volume * df['monthly_factor'] * df['weekday_factor'] * df['hourly_factor']
+
+            f2list = [pd.Grouper(level='datetime', freq="YS")]
+            df_yearly = df.groupby(f2list).agg({'hourly_consumption': sum, 'count': sum})
+            df_yearly = df_yearly.rename(columns={"hourly_consumption": "yearly_consumption", "count": "hours"})
+
+            f2list = [pd.Grouper(level='datetime', freq="MS")]
+            df_monthly = df.groupby(f2list).agg({'hourly_consumption': sum, 'count': sum})
+            df_yearly = df_yearly.rename(columns={"hourly_consumption": "monthly_consumption", "count": "hours"})
+
+
+            retval={
+                "df_monthly":df_monthly,
+                "df_yearly": df_yearly,
+                "delivery_from": convert_datime_to_locstr(parser.isoparse(cr[0]['delivery_from'])),
+                "delivery_until": convert_datime_to_locstr(parser.isoparse(cr[0]['delivery_until'])),
+                "area": cr[0]['area']
+            }
+            if include_hourly_series:
+                retval['df_hourly']=df
+            return True, retval , 0, None
+        else:
+            return False, None, 0, "Profile with code " + product_code + " not found for period"
+
 
