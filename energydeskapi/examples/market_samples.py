@@ -1,6 +1,8 @@
 
 import logging
 import pandas as pd
+from energydeskapi.profiles.profiles_api import ProfilesApi
+from energydeskapi.profiles.profiles import GenericProfile
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -47,7 +49,29 @@ def get_market_types(api_conn):
     print(res)
     res=MarketsApi.get_commodity_types(api_conn)
     print(res)
+
+
+import json
+def get_commodity_profile(api_conn, ticker):
+    res=ProductsApi.get_commodity_definitions(api_conn, {"product_code": ticker})
+    cr=res['results']
+    if len(cr)==1:
+        print("Loaded commodity profile")
+        dprof=GenericProfile.from_dict(cr[0]['commodity_profile'])
+        print(dprof)
+        delivery_from=cr[0]['delivery_from']
+        delivery_until = cr[0]['delivery_until']
+        success, returned_data, status_code, error_msg=ProfilesApi.convert_relativeprofile_to_yearlyfactors(
+            api_conn, delivery_from, delivery_until,dprof
+        )
+        df=pd.DataFrame(data=json.loads(returned_data))
+        df.index=df['datetime']
+        df.index = pd.to_datetime(df.index)
+        df=df.tz_convert("Europe/Oslo")
+        print(df)
+
 if __name__ == '__main__':
-    pd.set_option('display.max_rows', None)
+    #   pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    query_market_prices(api_conn)
+    get_commodity_profile(api_conn, "PROF3_NO1_7YR")
+
