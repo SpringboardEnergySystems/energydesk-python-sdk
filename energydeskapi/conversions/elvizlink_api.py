@@ -243,12 +243,12 @@ class ElvizLinksApi:
         logger.debug("...with payload " + str(payload) )
 
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
-        #authsess=ElvizLinksApi.obtain_session()
+        authsess = ElvizLinksApi.obtain_session()
         #response = authsess.get(server_url)
         #print(response)
         #oauth_session.post("", headers=h, data=payload)
-        #response = authsess.post(server_url,headers=h, data=json.dumps(payload))
-        response = requests.post(server_url, json=payload)
+        response = authsess.post(server_url, headers=h, data=json.dumps(payload))
+        #response = requests.post(server_url, json=payload)
         #print(response.text)
         return response.json()
 
