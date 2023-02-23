@@ -185,7 +185,7 @@ class BilateralApi:
         """
         logger.info("Fetching pricing configurations")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/pricingconfigurations/')
+            '/api/bilateral/pricingconfiguration/')
         return json_res
 
     @staticmethod
@@ -197,7 +197,7 @@ class BilateralApi:
         """
         logger.info("Fetching curve configurations")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/curveconfigurations/')
+            '/api/bilateral/curveconfiguration/')
         return json_res
 
     @staticmethod
