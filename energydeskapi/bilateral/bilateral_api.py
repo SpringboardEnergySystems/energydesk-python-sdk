@@ -209,7 +209,7 @@ class BilateralApi:
         """
         logger.info("Fetching pricing configuration")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/pricingconfigurations/' + str(pk) + '/')
+            '/api/bilateral/pricingconfiguration/' + str(pk) + '/')
         return json_res
 
     @staticmethod
@@ -221,7 +221,7 @@ class BilateralApi:
         """
         logger.info("Fetching curve configuration")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/curveconfigurations/' + str(pk) + '/')
+            '/api/bilateral/curveconfiguration/' + str(pk) + '/')
         return json_res
 
     @staticmethod
@@ -236,10 +236,10 @@ class BilateralApi:
         print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/bilateral/pricingconfigurations/' + str(pk) + "/", pricing_dict)
+                '/api/bilateral/pricingconfiguration/' + str(pk) + "/", pricing_dict)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/bilateral/pricingconfigurations/', pricing_dict)
+                '/api/bilateral/pricingconfiguration/', pricing_dict)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
