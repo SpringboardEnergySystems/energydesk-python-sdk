@@ -14,6 +14,28 @@ from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
 
+class CurveConfiguration:
+    def __init__(self):
+        self.pk = 0
+        self.description=None
+        self.price_area = None
+        self.basic_curve_model = None
+        self.yearly_epad_converging = []
+        self.spread_adjustment_epad = []
+        self.spread_adjustment_sys = []
+
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.description is not None: dict['description'] = self.description
+        if self.price_area is not None: dict['price_area'] = self.price_area
+        if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
+        if len(self.yearly_epad_converging)>0: dict['yearly_epad_converging'] = self.yearly_epad_converging
+        if len(self.spread_adjustment_epad)> 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
+        if len(self.spread_adjustment_sys)>0: dict['spread_adjustment_sys'] = self.spread_adjustment_sys
+        return dict
+
+
 class PricingConfiguration:
     def __init__(self):
         self.pk = 0
@@ -21,13 +43,8 @@ class PricingConfiguration:
         self.currency_code = None
         self.wacc = 0
         self.inflation = 0
-        self.price_area = None
-        self.basic_curve_model = None
-        self.yearly_epad_converging = 0
-        self.spread_adjustment_epad = 0
-        self.spread_adjustment_sys = 0
+        self.discount_rate = 0
         self.counterpart_override = None
-        self.is_active = True
 
     def get_dict(self):
         dict = {}
@@ -35,14 +52,9 @@ class PricingConfiguration:
         if self.currency_code is not None: dict['currency_code'] = self.currency_code
         if self.wacc != 0: dict['wacc'] = self.wacc
         if self.inflation != 0: dict['inflation'] = self.inflation
+        if self.discount_rate != 0: dict['discount_rate'] = self.inflation
         if self.description is not None: dict['description'] = self.description
-        if self.price_area is not None: dict['price_area'] = self.price_area
-        if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
-        if self.yearly_epad_converging != 0: dict['yearly_epad_converging'] = self.yearly_epad_converging
-        if self.spread_adjustment_epad != 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
-        if self.spread_adjustment_sys != 0: dict['spread_adjustment_sys'] = self.spread_adjustment_sys
         if self.counterpart_override is not None: dict['counterpart_override'] = self.counterpart_override
-        if self.is_active is not False: dict['is_active'] = self.is_active
         return dict
 
 class BilateralApi:
@@ -173,7 +185,19 @@ class BilateralApi:
         """
         logger.info("Fetching pricing configurations")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/pricingconfiguration/')
+            '/api/bilateral/pricingconfigurations/')
+        return json_res
+
+    @staticmethod
+    def get_curve_configurations(api_connection):
+        """Fetches pricing configurations
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching curve configurations")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/curveconfigurations/')
         return json_res
 
     @staticmethod
@@ -185,7 +209,19 @@ class BilateralApi:
         """
         logger.info("Fetching pricing configuration")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/pricingconfiguration/' + str(pk) + '/')
+            '/api/bilateral/pricingconfigurations/' + str(pk) + '/')
+        return json_res
+
+    @staticmethod
+    def get_curve_configuration_by_pk(api_connection, pk):
+        """Fetches pricing configuration from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching curve configuration")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/curveconfigurations/' + str(pk) + '/')
         return json_res
 
     @staticmethod
@@ -200,11 +236,31 @@ class BilateralApi:
         print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/bilateral/pricingconfiguration/' + str(pk) + "/", pricing_dict)
+                '/api/bilateral/pricingconfigurations/' + str(pk) + "/", pricing_dict)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/bilateral/pricingconfiguration/', pricing_dict)
+                '/api/bilateral/pricingconfigurations/', pricing_dict)
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def upsert_curve_configuration(api_connection, curve_conf):
+        logger.info("Registering pricing configuration")
+        if type(curve_conf) is dict:
+            pk = curve_conf['pk']
+            pricing_dict = curve_conf
+        else:
+            pk = curve_conf.pk
+            pricing_dict = curve_conf.get_dict()
+        print(pricing_dict)
+        if pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/bilateral/curveconfigurations/' + str(pk) + "/", pricing_dict)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/bilateral/curveconfigurations/', pricing_dict)
+        return success, returned_data, status_code, error_msg
+
+
     @staticmethod
     def generate_adjusted_curve_from_config(api_connection, pricing_config_pk, curve_date=datetime.today()):
         logger.info("Adjusting curve")

@@ -74,7 +74,16 @@ def get_commodity_profile(api_conn, ticker):
 if __name__ == '__main__':
     #   pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    rets=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_7YR", 72000)
-    print(rets)
-    #get_commodity_profile(api_conn, "PROF3_NO1_7YR")
+    context = {}
+    success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
+
+    context['price_area']=returned_data['area']
+    context['delivery_from'] = returned_data['delivery_from']
+    context['delivery_until'] = returned_data['delivery_until']
+    context['df_yearly'] = returned_data['df_yearly'].to_json(orient='records',date_format='iso')
+    context['df_monthly'] = returned_data['df_monthly'].to_json(orient='records',date_format='iso')
+
+
+
+
 
