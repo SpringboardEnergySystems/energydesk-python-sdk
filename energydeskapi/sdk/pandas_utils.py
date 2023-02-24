@@ -18,6 +18,7 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None):
     df_new = df.reindex(ix, fill_value='NaN')
     df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
+    df_new=df_new.head(-1)
     return df_new
 
 def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
@@ -101,10 +102,10 @@ def get_summer_profile():
 
 if __name__ == '__main__':
     tz = pytz.timezone("Europe/Oslo")
-    year_start = datetime.today().replace(month=3, day=1, hour=0, minute=0, second=0, microsecond=0)
+    year_start = datetime.today().replace(month=2, day=1, hour=0, minute=0, second=0, microsecond=0)
     tz_aware_start = tz.localize(year_start)
     tz_aware_start=tz_aware_start.astimezone(pytz.utc)
-    year_end=tz_aware_start + relativedelta(years=3)
+    year_end=tz_aware_start + relativedelta(months=1)
     df=make_empty_timeseries_df(tz_aware_start, year_end, "H", tz )
     df['one']=1
-    print(df['2023-10-29':'2023-10-30'])
+    print(df)
