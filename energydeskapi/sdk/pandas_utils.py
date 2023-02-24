@@ -12,12 +12,27 @@ def make_none_tz( utc_dt):
     tmp =str(utc_dt)[:19]
     return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S')
 
+def check_convert_datetime(d, timezone=None):
+    if d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None:
+        d = d.astimezone(pytz.UTC)
+        return d
+    else:
+        if timezone is None:
+            timezone=pytz.UTC
+        d = timezone.localize(d)
+        d = d.astimezone(pytz.UTC)
+        return d
+
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None):
+    period_from=check_convert_datetime(period_from, timezone)
+    period_to = check_convert_datetime(period_to, timezone)
     df=pd.DataFrame()
     ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
+    if len(df_new.index)>0:
+        df_new=df_new.head(-1)
     return df_new
 
 def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
@@ -101,10 +116,10 @@ def get_summer_profile():
 
 if __name__ == '__main__':
     tz = pytz.timezone("Europe/Oslo")
-    year_start = datetime.today().replace(month=3, day=1, hour=0, minute=0, second=0, microsecond=0)
+    year_start = datetime.today().replace(month=2, day=1, hour=0, minute=0, second=0, microsecond=0)
     tz_aware_start = tz.localize(year_start)
-    tz_aware_start=tz_aware_start.astimezone(pytz.utc)
-    year_end=tz_aware_start + relativedelta(years=3)
+    #tz_aware_start=tz_aware_start.astimezone(pytz.UTC)
+    year_end=tz_aware_start + relativedelta(months=1)
     df=make_empty_timeseries_df(tz_aware_start, year_end, "H", tz )
     df['one']=1
-    print(df['2023-10-29':'2023-10-30'])
+    print(df)
