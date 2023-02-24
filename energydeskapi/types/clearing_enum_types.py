@@ -25,4 +25,31 @@ class ClearingReportTypeEnum(Enum):
     SPAN_PARAM_TIMEPERIODLIST = 21
     SPAN_PARAM_TRAILERLIST = 22
 
+    @staticmethod
+    def clearing_report_type_code(x):
+        return {
+            1: 'TRANSACTIONS',
+            2: 'POSITIONS',
+            3: 'ACCMVALUE',
+            4: 'DELIVERY',
+            5: 'FUTMTM',
+            6: 'NONPROPMRGINTRA',
+            7: 'COLLATVALUE',
+            8: 'CASHOPTIMIZATION',
+            9: 'SPAN_PARAM_FILEHEADERLIST',
+            10: 'SPAN_PARAM_RISKGROUPLIST',
+            11: 'SPAN_PARAM_CONTRACTINFOLIST',
+            12: 'SPAN_PARAM_RISKARRAYSLIST',
+            13: 'SPAN_PARAM_CORRELATIONLIST',
+            14: 'SPAN_PARAM_TIMESPREADLIST',
+            15: 'SPAN_PARAM_CURRENCYCONVERSIONLIST',
+            16: 'SPAN_PARAM_RNPDEFINITIONSLIST',
+            17: 'SPAN_PARAM_RNPELEMENTSLIST',
+            18: 'SPAN_PARAM_INTERCOMMODITYSPREADCREDITSLIST',
+            19: 'SPAN_PARAM_DELIVERYCALENDARDATALIST',
+            20: 'SPAN_PARAM_NONDELIVERYDATESLIST',
+            21: 'SPAN_PARAM_TIMEPERIODLIST',
+            22: 'SPAN_PARAM_TRAILERLIST',
+        }.get(x.value, '')
+
 
