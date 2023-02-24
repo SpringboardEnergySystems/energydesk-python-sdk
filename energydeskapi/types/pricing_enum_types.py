@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class PricingPurpose(Enum):
+class PricingApplication(Enum):
     BilateralFixedPrice = 1
     IndustrialBilateralContracts = 2
 
