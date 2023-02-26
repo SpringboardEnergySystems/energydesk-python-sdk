@@ -44,7 +44,8 @@ def get_contract_filter_pk(api_conn):
 
 def get_contracts(api_conn, trading_book=None):
     json_contractfilter = ContractsApi.list_contracts_compact(api_conn)
-    print(json.dumps(json_contractfilter, indent=2))
+    myres=json.loads(json_contractfilter['results'])
+    print(json.dumps(myres, indent=2))
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)
@@ -189,7 +190,7 @@ def query_sources(api_conn):
     print(json.dumps(x, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    list_master_agreements(api_conn)
+    get_contracts(api_conn, 31)
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
