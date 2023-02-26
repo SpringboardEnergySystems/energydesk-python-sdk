@@ -14,7 +14,7 @@ from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
 
-class curvesconfigurations:
+class CurvesConfigurations:
     def __init__(self):
         self.pk = 0
         self.description=None
@@ -36,7 +36,7 @@ class curvesconfigurations:
         return dict
 
 
-class ratesconfigurations:
+class RatesConfigurations:
     def __init__(self):
         self.pk = 0
         self.description=None
