@@ -14,7 +14,7 @@ from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
 
-class CurveConfiguration:
+class curvesconfigurations:
     def __init__(self):
         self.pk = 0
         self.description=None
@@ -36,7 +36,7 @@ class CurveConfiguration:
         return dict
 
 
-class PricingConfiguration:
+class ratesconfigurations:
     def __init__(self):
         self.pk = 0
         self.description=None
@@ -177,7 +177,7 @@ class BilateralApi:
         return None, "error_msg", []
 
     @staticmethod
-    def get_pricing_configurations(api_connection):
+    def get_rates_configurations(api_connection):
         """Fetches pricing configurations
 
         :param api_connection: class with API token for use with API
@@ -185,7 +185,7 @@ class BilateralApi:
         """
         logger.info("Fetching pricing configurations")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/pricingconfiguration/')
+            '/api/bilateral/ratesconfigurations/')
         return json_res
 
     @staticmethod
@@ -197,11 +197,11 @@ class BilateralApi:
         """
         logger.info("Fetching curve configurations")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/curveconfiguration/')
+            '/api/bilateral/curvesconfigurations/')
         return json_res
 
     @staticmethod
-    def get_pricing_configuration_by_pk(api_connection, pk):
+    def get_rates_configuration_by_pk(api_connection, pk):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API
@@ -209,7 +209,7 @@ class BilateralApi:
         """
         logger.info("Fetching pricing configuration")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/pricingconfiguration/' + str(pk) + '/')
+            '/api/bilateral/ratesconfigurations/' + str(pk) + '/')
         return json_res
 
     @staticmethod
@@ -221,11 +221,11 @@ class BilateralApi:
         """
         logger.info("Fetching curve configuration")
         json_res = api_connection.exec_get_url(
-            '/api/bilateral/curveconfiguration/' + str(pk) + '/')
+            '/api/bilateral/curvesconfigurations/' + str(pk) + '/')
         return json_res
 
     @staticmethod
-    def upsert_pricing_configuration(api_connection, pricing_conf):
+    def upsert_rates_configuration(api_connection, pricing_conf):
         logger.info("Registering pricing configuration")
         if type(pricing_conf) is dict:
             pk = pricing_conf['pk']
@@ -236,10 +236,10 @@ class BilateralApi:
         print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/bilateral/pricingconfiguration/' + str(pk) + "/", pricing_dict)
+                '/api/bilateral/ratesconfigurations/' + str(pk) + "/", pricing_dict)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/bilateral/pricingconfiguration/', pricing_dict)
+                '/api/bilateral/ratesconfigurations/', pricing_dict)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
@@ -254,10 +254,10 @@ class BilateralApi:
         print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/bilateral/curveconfigurations/' + str(pk) + "/", pricing_dict)
+                '/api/bilateral/curvesconfigurations/' + str(pk) + "/", pricing_dict)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/bilateral/curveconfigurations/', pricing_dict)
+                '/api/bilateral/curvesconfigurations/', pricing_dict)
         return success, returned_data, status_code, error_msg
 
 
