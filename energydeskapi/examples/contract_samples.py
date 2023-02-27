@@ -189,7 +189,10 @@ def query_sources(api_conn):
     print(json.dumps(x, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    list_master_agreements(api_conn)
+    #list_master_agreements(api_conn)
+    json_contractfilter = ContractsApi.list_contracts_compact(api_conn,{'trading_book':31})
+    df=pd.DataFrame(data=eval(json_contractfilter['results']))
+    print(df)
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
