@@ -40,25 +40,25 @@ class CurvesConfigurations:
 
 
 class RatesConfigurations:
-    def __init__(self):
+    def __init__(self, wacc, discount_factor=0):
         self.pk = 0
-        self.description=None
-        self.rates_data=RatesConfig()
+        self.description="Default Rates"
+        self.rates_data=RatesConfig(wacc, discount_factor)
         self.rates_application = 1
 
-    def get_dict(self):
+    def get_dict(self,api_conn):
         dict = {}
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
-        if self.rates_data.wacc != 0: dict['wacc'] = self.rates_data.wacc
-        if self.rates_data.inflation != 0: dict['inflation'] = self.rates_data.inflation
-        if self.rates_data.discount_factor != 0: dict['discount_factor'] = self.rates_data.discount_factor
-        if self.rates_data.company_tax_rate != 0: dict['company_tax_rate'] = self.rates_data.company_tax_rate
-        if self.rates_data.land_value_tax_rate != 0: dict['land_value_tax_rate'] = self.rates_data.land_value_tax_rate
-        if self.rates_data.high_price_tax_rate != 0: dict['high_price_tax_rate'] = self.rates_data.high_price_tax_rate
+        dict['wacc'] = self.rates_data.wacc
+        dict['inflation'] = self.rates_data.inflation
+        dict['discount_factor'] = self.rates_data.discount_factor
+        dict['company_tax_rate'] = self.rates_data.company_tax_rate
+        dict['land_value_tax_rate'] = self.rates_data.land_value_tax_rate
+        dict['high_price_tax_rate'] = self.rates_data.high_price_tax_rate
         dict['high_price_tax_start_date'] = self.rates_data.high_price_tax_start_date.strftime("%Y-%m-%d")
         dict['high_price_tax_end_date'] = self.rates_data.high_price_tax_end_date.strftime("%Y-%m-%d")
-        if self.rates_application != 0: dict['rates_application'] = self.rates_application
+        if self.rates_application != 0: dict['rates_application'] = BilateralApi.get_rates_application_url(api_conn,self.rates_application)
 
         return dict
 
@@ -242,7 +242,7 @@ class BilateralApi:
             pricing_dict = pricing_conf
         else:
             pk = pricing_conf.pk
-            pricing_dict = pricing_conf.get_dict()
+            pricing_dict = pricing_conf.get_dict(api_connection)
         print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
@@ -351,3 +351,14 @@ class BilateralApi:
             return False, None, 0, "Profile with code " + product_code + " not found for period"
 
 
+    @staticmethod
+    def get_rates_application_url(api_connection, rates_application_enum):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param quantity_type_enum: type of contract
+        :type quantity_type_enum: str, required
+        """
+        type_pk = rates_application_enum if isinstance(rates_application_enum, int) else rates_application_enum.value
+        return api_connection.get_base_url() + '/api/bilateral/ratesapplication/' + str(type_pk) + "/"
