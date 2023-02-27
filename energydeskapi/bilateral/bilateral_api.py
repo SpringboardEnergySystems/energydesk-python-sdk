@@ -22,9 +22,9 @@ class CurvesConfigurations:
         self.price_area = None
         self.currency_code = "NOK"
         self.basic_curve_model = None
-        self.yearly_epad_converging = []
-        self.spread_adjustment_epad = []
-        self.spread_adjustment_sys = []
+        self.yearly_epad_reduction = {'yearly_values':[0.25,0.25,0.25]}
+        self.spread_adjustment_epad = {'yearly_values':[-3,-3,-3]}
+        self.spread_adjustment_sys = {'yearly_values':[-5,-5,-5]}
 
     def get_dict(self):
         dict = {}
@@ -33,9 +33,9 @@ class CurvesConfigurations:
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.currency_code is not None: dict['currency_code'] = self.currency_code
         if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
-        if len(self.yearly_epad_converging)>0: dict['yearly_epad_converging'] = self.yearly_epad_converging
-        if len(self.spread_adjustment_epad)> 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
-        if len(self.spread_adjustment_sys)>0: dict['spread_adjustment_sys'] = self.spread_adjustment_sys
+        dict['yearly_epad_reduction'] = self.yearly_epad_reduction
+        dict['spread_adjustment_epad'] = self.spread_adjustment_epad
+        dict['spread_adjustment_sys'] = self.spread_adjustment_sys
         return dict
 
 
