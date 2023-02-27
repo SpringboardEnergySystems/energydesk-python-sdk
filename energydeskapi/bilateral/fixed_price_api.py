@@ -57,16 +57,16 @@ class FixedPriceApi:
     def add_order_from_priceoffer_id(api_connection ,priceoffer_id, buy_or_sell, quantity,
                                      quantity_type=QuantityTypeEnum.VOLUME_YEARLY.name,
                                      quantity_unit=QuantityUnitEnum.KW.name):
-        """Calculated fix price in period
+        """Add order with reference to a price quote
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param delivery_from: period from
-        :type from_period: str, required
-        :param delivery_until: period to
-        :type until_period: str, required
-        :param price_area: price area
-        :type price_area: str, required
+        :param buy_or_sell: period from
+        :type buy_or_sell: str, required
+        :param priceoffer_id: GUID repr price offer
+        :type priceoffer_id: str, GUID as str
+        :param quantity: quantity
+        :type quantity: float, quantity requested
         """
         logger.info("Adding order")
 
@@ -78,6 +78,6 @@ class FixedPriceApi:
                 "quantity_unit": quantity_unit
         }
 
-        print(qry_payload)
+        logger.info(str(qry_payload))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbypriceoffer/', qry_payload)
         return success, json_res, status_code, error_msg

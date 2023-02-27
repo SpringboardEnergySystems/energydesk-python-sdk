@@ -108,9 +108,7 @@ def get_own_orders_per_product(api_conn):
 
 
 
-def get_contract_doc(api_conn,  deal_id):
-    #r=BilateralApi.load_profiled_volume(api_conn, ticker, float(quantity))
-    #print(r)
+def get_contract_doc(api_conn, deal_id):
     tex_content = LemsApi.get_contract_doc(api_conn,deal_id)
     print(tex_content)
     f=open("./sample.tex","w")
@@ -137,11 +135,8 @@ def get_contract_doc_lastdeal(api_conn):
         return None
     deal=deals.iloc[len(deals.index)-1]
     print(deal)
-    tex_content=LemsApi.get_contract_doc(api_conn,deal['deal_id'])
-    print(tex_content)
-    f=open("./sample.tex","w")
-    f.write(tex_content['tex_file'])
-    f.close()
+    get_contract_doc(api_conn, deal['deal_id'])
+
 if __name__ == '__main__':
 
     api_conn = init_api()
