@@ -19,6 +19,7 @@ class CurvesConfigurations:
         self.pk = 0
         self.description=None
         self.price_area = None
+        self.currency_code = "NOK"
         self.basic_curve_model = None
         self.yearly_epad_converging = []
         self.spread_adjustment_epad = []
@@ -29,6 +30,7 @@ class CurvesConfigurations:
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
         if self.price_area is not None: dict['price_area'] = self.price_area
+        if self.currency_code is not None: dict['currency_code'] = self.currency_code
         if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
         if len(self.yearly_epad_converging)>0: dict['yearly_epad_converging'] = self.yearly_epad_converging
         if len(self.spread_adjustment_epad)> 0: dict['spread_adjustment_epad'] = self.spread_adjustment_epad
@@ -73,7 +75,7 @@ class RatesConfigurations:
 
 
 class BilateralApi:
-    """Class for price curves
+    """Class for managing pricing of bilateral contracts
 
     """
 
