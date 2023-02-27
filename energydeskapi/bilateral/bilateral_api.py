@@ -208,6 +208,7 @@ class BilateralApi:
         logger.info("Fetching curve configurations")
         json_res = api_connection.exec_get_url(
             '/api/bilateral/curvesconfigurations/')
+        print("RETURNED CURVES CONFIGS", json_res)
         return json_res
 
     @staticmethod
