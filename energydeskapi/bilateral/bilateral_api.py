@@ -23,8 +23,8 @@ class CurvesConfigurations:
         self.currency_code = "NOK"
         self.basic_curve_model = None
         self.yearly_epad_reduction = {'yearly_values':[0.25,0.25,0.25]}
-        self.spread_adjustment_epad = {'yearly_values':[-3,-3,-3]}
-        self.spread_adjustment_sys = {'yearly_values':[-5,-5,-5]}
+        self.spread_adjustment_epad = {'yearly_values':[0.55,0.25,0.25]}
+        self.spread_adjustment_sys = {'yearly_values':[0.65,0.25,0.25]}
 
     def get_dict(self):
         dict = {}
