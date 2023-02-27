@@ -3,6 +3,7 @@ import pandas as pd
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from datetime import datetime, timedelta, timezone, date
 from dateutil import parser
+from energydeskapi.bilateral.rates_config import RatesConfig
 import pytz
 from energydeskapi.profiles.profiles_api import ProfilesApi
 from energydeskapi.profiles.profiles import GenericProfile
@@ -42,29 +43,21 @@ class RatesConfigurations:
     def __init__(self):
         self.pk = 0
         self.description=None
-        self.wacc = 0
-        self.inflation = 0
-        self.discount_factor = 0
-        self.company_tax_rate=0
-        self.land_value_tax_rate=0
-        self.high_price_tax_rate=0
-        self.high_price_tax_trigger=0
-        self.high_price_tax_start_date=date(2022,1,1)
-        self.high_price_tax_end_date = date(2025, 1, 1)
+        self.rates_data=RatesConfig()
         self.rates_application = 1
 
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
-        if self.wacc != 0: dict['wacc'] = self.wacc
-        if self.inflation != 0: dict['inflation'] = self.inflation
-        if self.discount_factor != 0: dict['discount_factor'] = self.discount_factor
-        if self.company_tax_rate != 0: dict['company_tax_rate'] = self.company_tax_rate
-        if self.land_value_tax_rate != 0: dict['land_value_tax_rate'] = self.land_value_tax_rate
-        if self.high_price_tax_rate != 0: dict['high_price_tax_rate'] = self.high_price_tax_rate
-        if self.high_price_tax_start_date != 0: dict['high_price_tax_start_date'] = self.high_price_tax_start_date.strftime("%Y-%m-%d")
-        if self.high_price_tax_end_date != 0: dict['high_price_tax_end_date'] = self.high_price_tax_end_date.strftime("%Y-%m-%d")
+        if self.rates_data.wacc != 0: dict['wacc'] = self.rates_data.wacc
+        if self.rates_data.inflation != 0: dict['inflation'] = self.rates_data.inflation
+        if self.rates_data.discount_factor != 0: dict['discount_factor'] = self.rates_data.discount_factor
+        if self.rates_data.company_tax_rate != 0: dict['company_tax_rate'] = self.rates_data.company_tax_rate
+        if self.rates_data.land_value_tax_rate != 0: dict['land_value_tax_rate'] = self.rates_data.land_value_tax_rate
+        if self.rates_data.high_price_tax_rate != 0: dict['high_price_tax_rate'] = self.rates_data.high_price_tax_rate
+        dict['high_price_tax_start_date'] = self.rates_data.high_price_tax_start_date.strftime("%Y-%m-%d")
+        dict['high_price_tax_end_date'] = self.rates_data.high_price_tax_end_date.strftime("%Y-%m-%d")
         if self.rates_application != 0: dict['rates_application'] = self.rates_application
 
         return dict
