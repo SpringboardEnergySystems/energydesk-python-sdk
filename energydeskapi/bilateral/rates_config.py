@@ -22,5 +22,5 @@ class RatesConfig:
     land_value_tax_rate: float = 0.4501
     high_price_tax_rate: float = 0.23
     high_price_tax_trigger: float = 700  # NOK/MWh
-    high_price_tax_start_date: datetime =  datetime(2022, 1, 1, 0, 0, 0, 0, tzinfo= pytz.timezone("Europe/Oslo"))
-    high_price_tax_end_date: datetime = datetime(2025, 1, 1, 0, 0, 0, 0, tzinfo= pytz.timezone("Europe/Oslo"))
+    high_price_tax_start_date: datetime =  datetime(2022, 1, 1, 0, 0, 0,  tzinfo= pytz.timezone("Europe/Oslo"))
+    high_price_tax_end_date: datetime = datetime(2025, 1, 1, 0, 0, 0,  tzinfo= pytz.timezone("Europe/Oslo"))
