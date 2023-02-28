@@ -56,6 +56,7 @@ class RatesConfigurations:
         dict['company_tax_rate'] = self.rates_data.company_tax_rate
         dict['land_value_tax_rate'] = self.rates_data.land_value_tax_rate
         dict['high_price_tax_rate'] = self.rates_data.high_price_tax_rate
+        dict['high_price_tax_trigger'] = self.rates_data.high_price_tax_trigger
         dict['high_price_tax_start_date'] = self.rates_data.high_price_tax_start_date.strftime("%Y-%m-%d")
         dict['high_price_tax_end_date'] = self.rates_data.high_price_tax_end_date.strftime("%Y-%m-%d")
         if self.rates_application != 0: dict['rates_application'] = BilateralApi.get_rates_application_url(api_conn,self.rates_application)
