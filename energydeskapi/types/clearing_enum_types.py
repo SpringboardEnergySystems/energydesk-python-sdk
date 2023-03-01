@@ -53,3 +53,8 @@ class ClearingReportTypeEnum(Enum):
         }.get(x.value, '')
 
 
+class ReconciliationStatusEnum(Enum):
+    SUCCESS = 1
+    ERROR = 2
+
+
