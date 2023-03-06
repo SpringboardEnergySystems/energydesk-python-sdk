@@ -290,12 +290,12 @@ class BilateralApi:
 
     @staticmethod
     def generate_adjusted_curve(api_connection, price_area,
-                                yearly_epad_converging, spread_adjustment_epad,
-                                spread_adjustment_sys, curve_date=datetime.today()):
+                                yearly_epad_reduction,
+                                spread_adjustment_sys, spread_adjustment_epad, curve_date=datetime.today()):
         logger.info("Adjusting curve from parameters")
         payload={
             'price_area':price_area,
-            'yearly_epad_reduction':yearly_epad_converging,
+            'yearly_epad_reduction':yearly_epad_reduction,
             'spread_adjustment_epad':spread_adjustment_epad,
             'spread_adjustment_sys':spread_adjustment_sys,
             'curve_date':curve_date.strftime(("%Y-%m-%d"))
