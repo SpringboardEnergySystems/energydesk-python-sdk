@@ -20,18 +20,22 @@ class CurvesConfigurations:
         self.pk = 0
         self.description=None
         self.price_area = None
-        self.currency_code = "NOK"
+        self.is_active_for_area = True
         self.basic_curve_model = None
-        self.yearly_epad_reduction = {'yearly_values':[0.25,0.25,0.25]}
-        self.spread_adjustment_epad = {'yearly_values':[0.55,0.25,0.25]}
-        self.spread_adjustment_sys = {'yearly_values':[0.65,0.25,0.25]}
+        self.yearly_epad_reduction = {'yearly_values':[]}
+        # Each point in list list above should be of format
+        # {"from_date": "2026-01-01", "value": 0.9}  90%
+        # Each point in list lists below should be of format
+        # {"from_date": "2026-01-01", "currency_code": "NOK", "value": -50}
+        self.spread_adjustment_epad = {'yearly_values':[]}
+        self.spread_adjustment_sys = {'yearly_values':[]}
 
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
         if self.price_area is not None: dict['price_area'] = self.price_area
-        if self.currency_code is not None: dict['currency_code'] = self.currency_code
+        if self.is_active_for_area is not None: dict['is_active_for_area'] = self.is_active_for_area
         if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
         dict['yearly_epad_reduction'] = self.yearly_epad_reduction
         dict['spread_adjustment_epad'] = self.spread_adjustment_epad
