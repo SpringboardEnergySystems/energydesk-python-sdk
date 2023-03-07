@@ -2,6 +2,8 @@ import logging
 from os.path import join, dirname
 from dotenv import load_dotenv
 import environ
+import jsonfield
+import json
 from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
@@ -43,7 +45,6 @@ def parse_enum_type(etype):
         return etype.value
 
 
-
 # Given a REST entity url https://.../..././/object/x/  will return thee X value
 def key_from_url(url):
     if url is None:
@@ -53,3 +54,8 @@ def key_from_url(url):
         return int(cols[-2:-1][0])
     except:
         return 0
+
+def safe_prepare_json(json_input):  #If type is json string load as json
+    if type(json_input)==str or type(json_input)==jsonfield.json.JSONString:
+        json_input=json.loads(json_input)
+    return json_input
