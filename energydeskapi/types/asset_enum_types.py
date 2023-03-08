@@ -9,3 +9,4 @@ class AssetTypeEnum(Enum):
     WIND = 5
     HYDRO = 6
     ACCOUNT = 7
+    HEAT = 8
