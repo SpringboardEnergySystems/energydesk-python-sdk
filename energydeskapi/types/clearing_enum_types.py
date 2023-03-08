@@ -57,4 +57,9 @@ class ReconciliationStatusEnum(Enum):
     SUCCESS = 1
     ERROR = 2
 
-
+    @staticmethod
+    def reconciliation_status_code(x):
+        return {
+            1: 'SUCCESS',
+            2: 'ERROR',
+        }.get(x.value, '')
