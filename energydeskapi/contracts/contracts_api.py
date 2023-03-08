@@ -414,6 +414,32 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/quantityunits/' + str(type_pk) + "/"
 
     @staticmethod
+    def get_quantity_units(api_connection, parameters={}):
+        """Fetches all quantity units
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/quantityunits/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_quantity_types(api_connection, parameters={}):
+        """Fetches all quantity types
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/quantitytypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):
         """Fetches url for a contract type from enum value
 
