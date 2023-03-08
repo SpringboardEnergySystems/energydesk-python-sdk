@@ -421,7 +421,7 @@ class ContractsApi:
         :type api_connection: str, required
         """
 
-        json_res=api_connection.exec_get_url('/api/markets/quantityunits/', parameters)
+        json_res=api_connection.exec_get_url('/api/portfoliomanager/quantityunits/', parameters)
         if json_res is None:
             return None
         return json_res
@@ -434,7 +434,7 @@ class ContractsApi:
         :type api_connection: str, required
         """
 
-        json_res=api_connection.exec_get_url('/api/markets/quantitytypes/', parameters)
+        json_res=api_connection.exec_get_url('/api/portfoliomanager/quantitytypes/', parameters)
         if json_res is None:
             return None
         return json_res
