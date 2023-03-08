@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def load_elviz_trades(api_conn):
-    elviz_trades = ElvizLinksApi.get_latest_elviz_trades(api_conn, 1)
+    elviz_trades = ElvizLinksApi.get_latest_elviz_trades(api_conn, 20)
     contracts = []
     for t in elviz_trades:
         # market_product_key = 0
@@ -23,6 +23,8 @@ def load_elviz_trades(api_conn):
         #                                                                                             t['commodity']['product_code'])
         contract_obj=ApiContract.from_simple_dict(t)
         contracts.append(contract_obj)
+    print(contracts)
+    ContractsApi.bulk_insert_contracts(api_conn, contracts)
     return contracts
 
 def get_sessions():

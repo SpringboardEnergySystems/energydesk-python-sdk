@@ -91,11 +91,12 @@ class Contract:
 
     @staticmethod
     def from_simple_dict(d):
+        print(d)
         c=Contract()
         c.pk=d['pk']
         c.instrument_type=d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
-        c.profile_category = d['commodity']['profile_category']
+        c.profile_category = ProfileCategoryEnum.BASELOAD if d['commodity']['profile_category']=="BASELOAD" else ProfileCategoryEnum.PROFILE
         c.delivery_type = d['commodity']['delivery_type']
         c.commodity_delivery_from = d['commodity']['delivery_from']
         c.commodity_delivery_until = d['commodity']['delivery_until']
