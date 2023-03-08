@@ -36,6 +36,19 @@ class ClearingApi:
         return True
 
     @staticmethod
+    def perform_reconciliation(api_connection, date):
+        """Reconcile internal and external contracts for a given date
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Reconciling contracts")
+        payload = {"date": date}
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            '/api/clearing/perform-reconciliation/', payload)
+        return json_res
+
+    @staticmethod
     def get_clearing_report_records(api_connection, parameters={}):
         """Fetches a list of clearing report records
 
