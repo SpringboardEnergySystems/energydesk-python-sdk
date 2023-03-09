@@ -50,7 +50,8 @@ def retrieve_stored_curve(api_conn):
 
 import json
 def query_forward_curves(api_conn):
-    res=CurveApi.get_latest_forward_curve(api_conn, {'forward_curve_type':
+    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
+                                                     'forward_curve_type':
                                                      FwdCurveTypesEnum.PRICEIT.value})
     if len(res)==0:
         print("No curves returned")
@@ -58,7 +59,14 @@ def query_forward_curves(api_conn):
         curve_data=res[0]
         print(curve_data['currency_date'])
         print(curve_data['price_date'])
+        df = pd.DataFrame(data=safe_prepare_json(curve_data['data']))
+        df.index=df['period_from']
+        df.index = pd.to_datetime(df.index)
+        df.index = df.index.tz_convert("Europe/Oslo")
+        df = df.drop(columns=['period_from', 'period_until'])
+        print(df)
 
 if __name__ == '__main__':
     api_conn=init_api()
     query_forward_curves(api_conn)
+    #retrieve_stored_curve(api_conn)
