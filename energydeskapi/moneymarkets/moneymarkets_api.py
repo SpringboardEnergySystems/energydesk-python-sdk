@@ -86,7 +86,9 @@ class MoneyMarketsApi:
         """
         json_res = api_connection.exec_get_url('/api/currencies/fwdrates/', parameters)
         if json_res is None:
-            return None
-        df = pd.DataFrame(eval(json_res))
-        return df
+            return None, None
+        currency_date = json_res['currency_date']
+        dataframe=json_res['dataframe']
+        df = None if dataframe is None else pd.DataFrame(data=safe_prepare_json(dataframe))
+        return currency_date, df
 
