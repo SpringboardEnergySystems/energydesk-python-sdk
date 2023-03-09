@@ -6,3 +6,4 @@ requests
 networkx==2.6.3
 paho-mqtt
 kafka-python==2.0.2
+jsonfield==3.1.0

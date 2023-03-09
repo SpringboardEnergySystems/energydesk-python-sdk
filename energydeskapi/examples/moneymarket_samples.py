@@ -14,7 +14,8 @@ def get_moneymarket_data(api_conn):
     pass
 
 def fetch_fxspot(api_conn):
-    df = MoneyMarketsApi.get_fxspot(api_conn)
+    currency_date, df = MoneyMarketsApi.get_fxspot(api_conn, {"days_back":53, "currency_date":"2023-03-04"})
+    print("Got FX spot rates for date ", currency_date)
     print(df)
 
 def fetch_fxtenors(api_conn):
@@ -32,6 +33,6 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     # get_moneymarket_data(api_conn)
-    #fetch_fxspot(api_conn)
-    fetch_yieldcurves(api_conn)
-    fetch_fxtenors(api_conn)
+    fetch_fxspot(api_conn)
+    #fetch_yieldcurves(api_conn)
+    #fetch_fxtenors(api_conn)
