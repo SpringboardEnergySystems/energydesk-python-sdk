@@ -140,3 +140,31 @@ class ClearingApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_reconciled_trades(api_connection, params={}):
+        """Fetches reconciled trades
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching reconciled trades")
+        json_res = api_connection.exec_get_url('/api/clearing/reconciledtrades/', params)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
+    def get_embedded_reconciled_trades(api_connection, params={}):
+        """Fetches reconciled trades
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching reconciled trades")
+        json_res = api_connection.exec_get_url('/api/clearing/reconciledtrades/embedded/', params)
+        if json_res is None:
+            return None
+        #df = pd.DataFrame(data=json_res)
+        return json_res
