@@ -19,20 +19,20 @@ def fetch_fxspot(api_conn):
     print(df)
 
 def fetch_fxtenors(api_conn):
-    df = MoneyMarketsApi.get_fxtenors(api_conn)
+    currency_date, df =  MoneyMarketsApi.get_fxtenors(api_conn, {"days_back":53, "currency_date":"2023-03-09"})
     print(df)
 
 def fetch_yieldcurves(api_conn):
-    param = {"country": "NOK"}
-    df = MoneyMarketsApi.get_yieldcurves_df(api_conn, param)
+    param = {"country": "NOK", "currency_date":"2023-03-09"}
+    currency_date, df =  MoneyMarketsApi.get_yieldcurves_df(api_conn, param)
     print(df)
-    df2 = MoneyMarketsApi.get_fwdrates(api_conn, param)
-    print(df2)
+    #df2 = MoneyMarketsApi.get_fwdrates(api_conn, param)
+    #print(df2)
 
 if __name__ == '__main__':
 
     api_conn=init_api()
     # get_moneymarket_data(api_conn)
-    fetch_fxspot(api_conn)
-    #fetch_yieldcurves(api_conn)
+    #fetch_fxspot(api_conn)
+    fetch_yieldcurves(api_conn)
     #fetch_fxtenors(api_conn)
