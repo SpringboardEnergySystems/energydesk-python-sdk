@@ -104,6 +104,19 @@ class CurveApi:
         print(price_area)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/upload-forwardcurve/', payload)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_latest_forward_curve(api_connection, parameters={}):
+        """Fetches all companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=api_connection.exec_get_url('/api/curvemanager/forwardcurves/latest/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
     @staticmethod
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,
@@ -127,6 +140,7 @@ class CurveApi:
                                 currency_code, forward_curve_model,
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
                                market_name="Nordic Power"):
+
 
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
                                 currency_code, forward_curve_model,period_resolution,market_name)
