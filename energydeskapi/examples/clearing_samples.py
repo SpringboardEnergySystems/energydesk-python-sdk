@@ -38,9 +38,15 @@ def fetch_clearing_report_types(api_conn):
     df=ClearingApi.get_clearing_report_types(api_conn)
     print(df)
 
-def reconcile_contracts(api_conn):
+def reconcile_trades(api_conn):
     date = "2023-03-01"
     result = ClearingApi.perform_reconciliation(api_conn, date)
+    print(result)
+
+def fetch_reconciled_trades(api_conn):
+    param = {"clearing_date__gte": "2023-03-01",
+             "clearing_date__lte": "2023-03-01"}
+    result = ClearingApi.get_reconciled_trades(api_conn, param)
     print(result)
 
 
@@ -53,4 +59,5 @@ if __name__ == '__main__':
     #fetch_embedded_clearing_report_records(api_conn)
     #fetch_clearing_report_types(api_conn)
     #test_clearing_data(api_conn)
-    reconcile_contracts(api_conn)
+    #reconcile_trades(api_conn)
+    fetch_reconciled_trades(api_conn)
