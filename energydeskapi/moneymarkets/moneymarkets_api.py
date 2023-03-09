@@ -67,6 +67,8 @@ class MoneyMarketsApi:
         currency_date = json_res['currency_date']
         dataframe=json_res['dataframe']
         df = None if dataframe is None else pd.DataFrame(data=safe_prepare_json(dataframe))
+        if df is None or len(df.index)==0:
+            return currency_date, df
         norzone = pytz.timezone('Europe/Oslo')
         df['date'] = df['date'].astype('datetime64[ns]')
         df['date'] = df['date'].dt.tz_localize(tz=norzone)
