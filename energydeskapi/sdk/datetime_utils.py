@@ -32,6 +32,11 @@ def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
     s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     return s_dt_utc
 
+def convert_tzaware_datetime_to_utcstr(tzaware_local_dt):
+    d_utc = tzaware_local_dt.astimezone(pytz.UTC)
+    s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
+    return s_dt_utc
+
 def convert_datime_to_locstr(dt, loczone="Europe/Oslo"):
     tz=pytz.timezone(loczone)
     dtutc=localize_datetime_safe(dt, tz)

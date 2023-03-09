@@ -91,11 +91,12 @@ class Contract:
 
     @staticmethod
     def from_simple_dict(d):
+        print(d)
         c=Contract()
         c.pk=d['pk']
         c.instrument_type=d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
-        c.profile_category = d['commodity']['profile_category']
+        c.profile_category = ProfileCategoryEnum.BASELOAD if d['commodity']['profile_category']=="BASELOAD" else ProfileCategoryEnum.PROFILE
         c.delivery_type = d['commodity']['delivery_type']
         c.commodity_delivery_from = d['commodity']['delivery_from']
         c.commodity_delivery_until = d['commodity']['delivery_until']
@@ -411,6 +412,32 @@ class ContractsApi:
         """
         type_pk = quantity_unit_enum if isinstance(quantity_unit_enum, int) else quantity_unit_enum.value
         return api_connection.get_base_url() + '/api/portfoliomanager/quantityunits/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_quantity_units(api_connection, parameters={}):
+        """Fetches all quantity units
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/portfoliomanager/quantityunits/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_quantity_types(api_connection, parameters={}):
+        """Fetches all quantity types
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/portfoliomanager/quantitytypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_contract_type_url(api_connection, contract_type_enum):

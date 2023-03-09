@@ -54,6 +54,18 @@ class FixedPriceApi:
         return None
 
     @staticmethod
+    def get_avaiable_fixprice_periods(api_connection):
+        """Fetches pricing configurations
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching current open fixprice periods")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/contractpricer/allowedperiods/')
+        return json_res
+
+    @staticmethod
     def add_order_from_priceoffer_id(api_connection ,priceoffer_id, buy_or_sell, quantity,
                                      quantity_type=QuantityTypeEnum.VOLUME_YEARLY.name,
                                      quantity_unit=QuantityUnitEnum.KW.name):

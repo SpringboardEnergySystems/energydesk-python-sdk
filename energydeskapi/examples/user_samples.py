@@ -99,6 +99,6 @@ if __name__ == '__main__':
     #create_company(api_conn)
     #create_user(api_conn)
     #send_reset_password_email(api_conn)
-    reset_password(api_conn)
-    verify_token(api_conn)
+    #reset_password(api_conn)
+    #verify_token(api_conn)
     #update_company(api_conn)

@@ -59,6 +59,10 @@ def enter_order_from_priceoffer(api_conn, priceoffer_id, yearly_kwh):
     success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, priceoffer_id, "BUY",  yearly_kwh)
     print(json_res)
 
+def get_available_periods(api_conn):
+    periods=FixedPriceApi.get_avaiable_fixprice_periods(api_conn)
+    print(periods)
+
 if __name__ == '__main__':
 
     api_conn=init_api()
@@ -66,7 +70,7 @@ if __name__ == '__main__':
     # next call: load_current_offers
     # Use priceoffer_id to input a Buy order with a given KWh/year volume.
     #calculate_price(api_conn)
-    most_recent=load_current_offers(api_conn)
-    print("Most recent price offer ",most_recent['priceoffer_id'], most_recent['priceoffer_data']['price'] )
+    most_recent=get_available_periods(api_conn)
+    #print("Most recent price offer ",most_recent['priceoffer_id'], most_recent['priceoffer_data']['price'] )
     #enter_order_from_priceoffer(api_conn, most_recent['priceoffer_id'], 125000)
 
