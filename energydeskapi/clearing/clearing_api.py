@@ -152,4 +152,5 @@ class ClearingApi:
         json_res = api_connection.exec_get_url('/api/clearing/reconciledtrades/', params)
         if json_res is None:
             return None
-        return json_res
+        df = pd.DataFrame(data=json_res['results'])
+        return df

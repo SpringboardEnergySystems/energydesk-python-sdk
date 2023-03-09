@@ -44,8 +44,8 @@ def reconcile_trades(api_conn):
     print(result)
 
 def fetch_reconciled_trades(api_conn):
-    param = {"clearing_date__gte": "2023-03-01",
-             "clearing_date__lte": "2023-03-01"}
+    param = {"clearing_date__gte": "2023-02-20",
+             "clearing_date__lte": "2023-03-09"}
     result = ClearingApi.get_reconciled_trades(api_conn, param)
     print(result)
 
