@@ -5,8 +5,10 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.fixed_price_api import FixedPriceApi
+from energydeskapi.profiles.profiles_api import ProfilesApi, StoredProfile
 
-from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
+from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_flat_months,\
+get_default_profile_months
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -20,40 +22,62 @@ def load_current_offers(api_conn):
         return current_active_priceoffers[0]
     return None
 
-def calculate_price(api_conn):
-    thismonth = date.today().replace(day=1)
-    expiry = date.today() + relativedelta(days=3)
-    dt_from = (thismonth + relativedelta(month=3))
-    dt_until = (dt_from + relativedelta(years=2)).strftime("%Y-%m-%d")
-    dt_from = dt_from.strftime("%Y-%m-%d")
-    print("Calculate price for ", dt_from, dt_until)
-    price_area="NO1"
-    months=get_baseload_months()
+def load_stored_profiles(api_conn):
+    existing_profiles = ProfilesApi.get_volume_profiles(api_conn)
+    print(existing_profiles)
+    return None
+
+def delete_stored_profiles(api_conn, key):
+    res = ProfilesApi.delete_volume_profile(api_conn, key)
+    print(res)
+
+def create_save_profile(api_conn):
+    months=get_flat_months()   # Returns 1 for each month, so easy to adjust
     months['January'] = 8
     months['February'] = 8
     months['March'] = 4
     months['October'] = 4
     months['November'] = 8
     months['December'] = 8
-    print(months)
     weekdays=get_baseload_weekdays()
-    hours=get_baseload_dailyhours()
-    profile_name="Winterprofile"
+    dailyhours=get_baseload_dailyhours()
 
-    success, json_res, status_code, error_msg =FixedPriceApi.calculate_contract_price(api_conn, profile_name, dt_from, dt_until,price_area,
-                                                                                      months,weekdays, hours
-                                                                                      )
+    v = StoredProfile()
+    v.profile = {
+        'monthly_profile':months,
+        'weekday_profile': weekdays,
+        'daily_profile': dailyhours
+    }
+    v.description="Winterprofile"
+    print(v.get_dict(api_conn))
+    res=ProfilesApi.upsert_volume_profile(api_conn, v)
+    print(res)
+
+def enter_order_on_priceoffer(api_conn, price_offer_id,yearly_kwh=100000):
+    success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, price_offer_id,
+                                                                                          "BUY", yearly_kwh)
+    print(json_res)
+
+def calculate_price(api_conn, profile_type, custom_profile_key):
+    thismonth = date.today().replace(day=1)
+    dt_from = thismonth + relativedelta(months=3)
+    print(dt_from, thismonth)
+    dt_until = (dt_from + relativedelta(years=5)).strftime("%Y-%m-%d")
+    dt_from = dt_from.strftime("%Y-%m-%d")
+    print("Calculate price for ", dt_from, dt_until)
+    price_area="NO1"
+    price_offer_id=None
+    price=-1
+    success, json_res, status_code, error_msg =FixedPriceApi.calculate_contract_price(api_conn,
+                                     dt_from, dt_until,price_area,profile_type,custom_profile_key)
     if success:
         print(json_res)
-        offer_id=json_res['priceoffer_id']
-        # Could enter a buy order directly on this price (referring to priceoffer_id=
-        #yearly_kwh=100000
-        #success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, pid, "BUY", yearly_kwh)
-        #print(json_res)
+        price_offer_id=json_res['priceoffer_id']
+        price = json_res['price']
     else:
         print("Error occured when calculating price")
         print(error_msg)
-
+    return price_offer_id, price
 def enter_order_from_priceoffer(api_conn, priceoffer_id, yearly_kwh):
     # This order entry places a limit order at the price given in the offer, with validity time equal to the price offer (can be cancelled)
     success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, priceoffer_id, "BUY",  yearly_kwh)
@@ -69,8 +93,17 @@ if __name__ == '__main__':
     # Calculates a price for a give  profile. It will expire at the end of the week, but current active offers can also be returned on the
     # next call: load_current_offers
     # Use priceoffer_id to input a Buy order with a given KWh/year volume.
-    #calculate_price(api_conn)
-    most_recent=get_available_periods(api_conn)
-    #print("Most recent price offer ",most_recent['priceoffer_id'], most_recent['priceoffer_data']['price'] )
+
+    # most_recent=get_available_periods(api_conn)
+
+    load_stored_profiles(api_conn)
+    #delete_stored_profiles(api_conn,12)   # Will only delete objects created by company of user
+    #create_save_profile(api_conn)
+
+    priceoffer_id, price=calculate_price(api_conn, "BASELOAD", custom_profile_key=None)
+    #calculate_price(api_conn, "CUSDTOM", custom_profile_key=12)  #Use key of stored profiloe
+
+    print("May enter a volume order for price offer ",priceoffer_id, ", Price=", price )
     #enter_order_from_priceoffer(api_conn, most_recent['priceoffer_id'], 125000)
+    enter_order_from_priceoffer(api_conn,priceoffer_id,125000)  #Yearly KWh at the current moment
 

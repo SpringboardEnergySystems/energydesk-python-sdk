@@ -1,6 +1,8 @@
 import pandas as pd
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 import numpy as np
+from datetime import date
+from dateutil.relativedelta import relativedelta
 def check_flat_profile(vmap):
     df=pd.DataFrame.from_dict(vmap, orient='index')
     df.rename(columns={0:'counts'}, inplace=True)
@@ -20,9 +22,28 @@ def get_baseload_dailyhours():
     hours=list(range(24))
     return {k: 1.0 for k in hours}
 
+# This function may be misguiding for users since identical months weights is not
+# the same as basloed on a fixed volume.   Specify BASELOAD as profile category in addition
 def get_baseload_months():
     months=get_month_list()
     return {k: 1.0 for k in months}
+
+def get_flat_months():
+    months=get_month_list()
+    return {k: 1.0 for k in months}
+
+
+# Used to get a default profile that factorize months based on hours. Using 2022 as sample year
+def get_month_hours(month_idx):
+    dt1=date(2022, month_idx,1)
+    dt2 = dt1+ relativedelta(months=1)
+    hours=(dt2-dt1).total_seconds() // 3600
+    return hours
+
+
+def get_default_profile_months():
+    months=get_month_list()
+    return {k: get_month_hours((idx+1)) for k,idx in zip(months, list(range(12)))}
 
 def get_baseload_profile():
     return {

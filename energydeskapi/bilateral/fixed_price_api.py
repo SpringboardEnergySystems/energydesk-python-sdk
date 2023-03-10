@@ -9,9 +9,8 @@ class FixedPriceApi:
 
     """
     @staticmethod
-    def calculate_contract_price(api_connection ,profile_name, delivery_from, delivery_until, price_area,
-                                 monthly_profile=get_baseload_months(), weekday_profile=get_baseload_weekdays(),hours=
-                                 get_baseload_dailyhours()):
+    def calculate_contract_price(api_connection , delivery_from, delivery_until, price_area,
+                                 profile_type="BASELOAD", custom_profile_key=None):
         """Calculated fix price in period
 
         :param api_connection: class with API token for use with API
@@ -26,14 +25,14 @@ class FixedPriceApi:
         logger.info("Calculate bilateral fix price")
 
         qry_payload = {
-                'profile_name':profile_name,
                 "delivery_until": delivery_until,
                 "delivery_from": delivery_from,
                 "price_area":price_area,
-                "monthly_profile":monthly_profile,
-                "weekday_profile": weekday_profile,
-                "daily_profile": hours
+                'profile_type': profile_type,
         }
+        if custom_profile_key is not None:
+            qry_payload['custom_profile_key']= custom_profile_key
+
 
         print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/external/', qry_payload)
