@@ -46,6 +46,18 @@ class Asset:
         return dict
 
 
+class AssetSubType:
+    def __init__(self):
+        self.pk = 0
+        self.description = ""
+
+    def get_dict(self):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.description is not None: dict['description'] = self.description
+        return dict
+
+
 class AssetsApi:
     """ Class for assets
 
@@ -206,3 +218,33 @@ class AssetsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_asset_subtypes(api_connection):
+        """Fetches asset subtypes
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching asset subtypes")
+        json_res = api_connection.exec_get_url('/api/assets/assetsubtypes/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_asset_subtypes(api_connection, subtype):
+        """Upserts asset subtypes
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param subtype: asset subtype object
+        :type subtype: str, required
+        """
+        if subtype.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/assets/assetsubtypes/' + str(subtype.pk) + "/", subtype.get_dict())
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/assets/assetsubtypes/', subtype.get_dict())
+        return success, returned_data, status_code, error_msg

@@ -1,7 +1,7 @@
 import json
 import logging
 
-from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.assets.assets_api import AssetsApi, AssetSubType
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetTypeEnum
 
@@ -25,8 +25,21 @@ def query_asset_info(api_conn):
     u = AssetsApi.get_asset_type_url(api_conn, 0)
     print(u)
 
+def fetch_asset_subtypes(api_conn):
+    result = AssetsApi.get_asset_subtypes(api_conn)
+    print(result)
+
+def register_asset_subtype(api_conn):
+    ast = AssetSubType()
+    ast.pk = 0
+    ast.description = "test subtype"
+    success, returned_data, status_code, error_msg = AssetsApi.upsert_asset_subtypes(api_conn, ast)
+    print(success, returned_data, status_code, error_msg)
+
 
 if __name__ == '__main__':
 
     api_conn = init_api()
-    get_clearing_accounts(api_conn)
+    #get_clearing_accounts(api_conn)
+    fetch_asset_subtypes(api_conn)
+    #register_asset_subtype(api_conn)
