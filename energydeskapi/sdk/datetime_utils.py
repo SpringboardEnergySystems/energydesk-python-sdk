@@ -1,7 +1,7 @@
 import pytz
 from dateutil import parser
 from datetime import date, datetime, timedelta
-
+import pendulum
 
 # WIll convert both naive and datetimes that were previously localized
 def localize_datetime_safe(dt, tz=pytz.timezone("UTC")):
@@ -63,7 +63,9 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
     d_loc = utc_dt.astimezone(timezone)
     return d_loc
 
-
+def conv_from_pendulum(pendulum_dt):
+    datetime_string = pendulum_dt.to_datetime_string()
+    return datetime.fromisoformat(datetime_string)
 
 def safe_set_utc(indate):
     try:
