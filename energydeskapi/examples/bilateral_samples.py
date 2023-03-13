@@ -49,7 +49,7 @@ def calculate_price(api_conn):
     hours=get_baseload_dailyhours()
 
     print(periods)
-    df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
+    price_date, currency_date, df_curve, cprices, cpricedet=BilateralApi.calculate_contract_price_df(api_conn,periods, "NO1", "NOK",
                                             "CUST_1",
                                          wacc=0.06, inflation=0,
                                         monthly_profile=months,

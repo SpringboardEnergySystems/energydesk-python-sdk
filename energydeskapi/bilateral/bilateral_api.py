@@ -180,8 +180,8 @@ class BilateralApi:
             #print(json_res)
             period_prices = json_res['period_prices']
             curve=json_res['forward_curve']
-            #print("PRICS", period_prices)
-            #print("CURVE", curve)
+            price_date = json_res['price_date']
+            currency_date = json_res['currency_date']
             df_curve = pd.DataFrame(data=eval(curve))
             df_curve.index=df_curve['date']
             df_curve=convert_dataframe_to_localtime(df_curve)
@@ -195,13 +195,13 @@ class BilateralApi:
                 df_pricing.index=df_pricing['period_from']
                 df_pricing = convert_dataframe_to_localtime(df_pricing)
                 cpricedet.append(df_pricing)
-            return df_curve, cprices, cpricedet
+            return price_date,currency_date, df_curve, cprices, cpricedet
         else:
             print("No prices returned")
             if success==False:
                 print(error_msg)
 
-        return None, "error_msg", []
+        return None, None, None, "error_msg", []
 
     @staticmethod
     def get_rates_configurations(api_connection):
