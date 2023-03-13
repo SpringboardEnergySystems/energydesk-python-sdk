@@ -2,7 +2,8 @@ import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.curves.curve_api import CurveApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
-from energydeskapi.types.fwdcurve_enum_types import FwdCurveInternalEnum
+from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
+from energydeskapi.sdk.common_utils import safe_prepare_json
 import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -24,7 +25,7 @@ def generate_curve(api_conn):
 
 
     success, df, status_code, error_msg =CurveApi.generate_forward_curve_df(api_conn,fromd, untild, "NO1", "NOK",
-                                            FwdCurveInternalEnum.CUBIC_SPLINE.value)
+                                            FwdCurveTypesEnum.PRICEIT.value)
 
     df.index=df.date
     print(df)
@@ -47,6 +48,25 @@ def retrieve_stored_curve(api_conn):
                 print(df)
                 df.to_excel("priskurve_" + area + "_" + curr + ".xlsx")
 
+import json
+def query_forward_curves(api_conn):
+    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
+                                                     'forward_curve_type':
+                                                     FwdCurveTypesEnum.PRICEIT.value})
+    if len(res)==0:
+        print("No curves returned")
+    else:
+        curve_data=res[0]
+        print(curve_data['currency_date'])
+        print(curve_data['price_date'])
+        df = pd.DataFrame(data=safe_prepare_json(curve_data['data']))
+        df.index=df['period_from']
+        df.index = pd.to_datetime(df.index)
+        df.index = df.index.tz_convert("Europe/Oslo")
+        df = df.drop(columns=['period_from', 'period_until'])
+        print(df)
+
 if __name__ == '__main__':
     api_conn=init_api()
-    retrieve_stored_curve(api_conn)
+    query_forward_curves(api_conn)
+    #retrieve_stored_curve(api_conn)
