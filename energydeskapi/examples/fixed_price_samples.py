@@ -103,6 +103,11 @@ def get_current_own_orders(api_conn):
         print(row['order_id'],row['ticker'],row['price'],row['quantity'])
     return df
 
+def get_current_own_trades(api_conn):
+    df=LemsApi.get_own_trades_df(api_conn)  #Returned as Pandas dataframe
+    print(df)
+    return df
+
 if __name__ == '__main__':
 
     api_conn=init_api()
@@ -124,11 +129,14 @@ if __name__ == '__main__':
     success, order_id, ticker=enter_order_from_priceoffer(api_conn,priceoffer_id,125000)  #Yearly KWh at the current moment
     if success:
         print("Order entered successfully:",order_id, ticker)
-    sys.exit(0)
+
+    df_trades= get_current_own_trades(api_conn)  #Orders that have been accepted / matched by producer
+
     df_orders=get_current_own_orders(api_conn)
     if df_orders is not None:
         print(df_orders)  # All recent orders, cancelled or active
         df_active_orders=df_orders.loc[df_orders['order_status']=="ACTIVE"]
-        if df_active_orders is not None:
-            remove_last_entered_order(api_conn,df_active_orders.iloc[-1])
+        #Example of deleting the last order that is active
+        #if df_active_orders is not None:
+        #    remove_last_entered_order(api_conn,df_active_orders.iloc[-1])
 
