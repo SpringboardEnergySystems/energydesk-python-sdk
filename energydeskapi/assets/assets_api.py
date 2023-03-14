@@ -110,6 +110,24 @@ class AssetsApi:
                 logger.info("Asset registered " + asset.description)
 
     @staticmethod
+    def upsert_asset(api_connection, asset):
+        """Registers/Updates asset
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset: asset object
+        :type asset: str, required
+        """
+        logger.info("Upserting asset")
+        if asset.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/assets/assets/' + str(asset.pk) + "/", asset.get_dict())
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/assets/assets/', asset.get_dict())
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def get_asset_types(api_connection):
         """Fetches the type of all assets
 
