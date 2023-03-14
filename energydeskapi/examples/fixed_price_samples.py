@@ -33,7 +33,7 @@ def delete_stored_profiles(api_conn, key):
     print(res)
 
 def create_save_profile(api_conn):
-    months=get_flat_months()   # Returns 1 for each month, so easy to adjust
+    months=get_flat_months()   # Returns 1 for each month, so easy to adjust a couple of them
     months['January'] = 8
     months['February'] = 8
     months['March'] = 4
