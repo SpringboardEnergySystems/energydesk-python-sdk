@@ -5,6 +5,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.fixed_price_api import FixedPriceApi
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.lems.lems_api import LemsApi
 from energydeskapi.profiles.profiles_api import ProfilesApi, StoredProfile
 import sys
@@ -63,7 +64,7 @@ def calculate_price(api_conn, profile_type, custom_profile_key):
     thismonth = date.today().replace(day=1)
     dt_from = thismonth + relativedelta(months=3)
     print(dt_from, thismonth)
-    dt_until = (dt_from + relativedelta(years=5)).strftime("%Y-%m-%d")
+    dt_until = (dt_from + relativedelta(years=6)).strftime("%Y-%m-%d")
     dt_from = dt_from.strftime("%Y-%m-%d")
     print("Calculate price for ", dt_from, dt_until)
     price_area="NO1"
@@ -108,6 +109,19 @@ def get_current_own_trades(api_conn):
     print(df)
     return df
 
+def get_contract_exposure(api_conn):
+    fromd = "2023-01-01"
+    untild = "2025-02-01"
+    success, json_res, status_code, error_msg =FixedPriceApi.query_deliveries(api_conn, fromd, untild,
+                                                resolution=PeriodResolutionEnum.DAILY.value)
+    deliveries = json_res['bilateral_deliveries']
+    if len(deliveries) == 0:
+        return None
+    df_deliveries = pd.DataFrame(data=eval(deliveries))
+    df_deliveries.index = df_deliveries['period_from']
+    print(df_deliveries)
+
+
 if __name__ == '__main__':
 
     api_conn=init_api()
@@ -117,12 +131,14 @@ if __name__ == '__main__':
 
     periods=get_available_periods(api_conn)
     print(periods)
-
+    get_contract_exposure(api_conn)
+    sys.exit(0)
     load_stored_profiles(api_conn)
     #delete_stored_profiles(api_conn,12)   # Will only delete objects created by company of user
     #create_and_save_profile(api_conn)
 
     priceoffer_id, price=calculate_price(api_conn, "BASELOAD", custom_profile_key=None)
+    #sys.exit(0)
     #priceoffer_id, price=calculate_price(api_conn, "CUSDTOM", custom_profile_key=12)  #Use key of stored profile
 
     #print("May enter a volume order for price offer ",priceoffer_id, ", Price=", price )

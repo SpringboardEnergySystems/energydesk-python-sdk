@@ -1,5 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import check_fix_date2str
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
@@ -36,6 +37,19 @@ class FixedPriceApi:
 
         print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/external/', qry_payload)
+        return success, json_res, status_code, error_msg
+
+
+    @staticmethod
+    def query_deliveries(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value, area_filter=None):
+        qry_payload = {
+                "period_from": period_from,
+                "period_until": period_until,
+                "resolution":resolution,
+        }
+        if area_filter is not None:
+            qry_payload['area_filter']=area_filter
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/external/', qry_payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
