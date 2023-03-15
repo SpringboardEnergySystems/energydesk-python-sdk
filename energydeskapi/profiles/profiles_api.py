@@ -64,7 +64,7 @@ class ProfilesApi:
         :param key: personal key
         :type key: str, required
         """
-        logger.info("Fetching volume profiles")
+        logger.info("Fetching volume profiles by key " + str(key))
         json_res = api_connection.exec_get_url('/api/profilemanager/volumeprofiles/' + str(key) + "/")
         if json_res is not None:
             return json_res

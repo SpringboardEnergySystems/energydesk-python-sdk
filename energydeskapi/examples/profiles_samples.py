@@ -6,7 +6,7 @@ from energydeskapi.profiles.profiles import GenericProfile
 import pandas as pd
 import pytz
 import json
-from energydeskapi.sdk.profiles_utils import get_baseload_profile
+from energydeskapi.sdk.profiles_utils import get_baseload_profile, get_default_profile_months
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.sdk.profiles_utils import generate_normalized_profile
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
@@ -96,5 +96,7 @@ def convert_volume_profile(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    create_profiles(api_conn)
-    load_profiles(api_conn)
+    mnts=get_default_profile_months()
+    print(mnts)
+    #create_profiles(api_conn)
+    #load_profiles(api_conn)

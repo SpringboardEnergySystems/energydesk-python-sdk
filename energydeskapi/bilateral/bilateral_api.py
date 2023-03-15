@@ -105,7 +105,7 @@ class BilateralApi:
         df_deliveries.index = df_deliveries['period_from']
         trades = json_res['bilateral_trades']
         df_trades = pd.DataFrame(data=eval(trades))
-        #df_deliveries = convert_dataframe_to_localtime(df_deliveries)
+
         return True, df_deliveries,df_trades, status_code, error_msg
 
     @staticmethod
