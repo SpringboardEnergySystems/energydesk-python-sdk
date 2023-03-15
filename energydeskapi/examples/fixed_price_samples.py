@@ -114,13 +114,20 @@ def get_contract_exposure(api_conn):
     untild = "2025-02-01"
     success, json_res, status_code, error_msg =FixedPriceApi.query_deliveries(api_conn, fromd, untild,
                                                 resolution=PeriodResolutionEnum.DAILY.value)
-    deliveries = json_res['bilateral_deliveries']
+    deliveries = json_res['bilateral_exposure']
     if len(deliveries) == 0:
         return None
     df_deliveries = pd.DataFrame(data=eval(deliveries))
     df_deliveries.index = df_deliveries['period_from']
+    df_deliveries.index = pd.to_datetime(df_deliveries.index)
+    df_deliveries=df_deliveries.tz_convert("Europe/Oslo")
+    df_deliveries['period_from']=df_deliveries.index
     print(df_deliveries)
-
+    #df_deliveries=df_deliveries.drop(columns=['period_from'])
+    df_deliveries = df_deliveries.reset_index(level=0, drop=True).reset_index()
+    df_deliveries = df_deliveries.pivot_table(index='period_from', columns=['area', 'counterpart'], values='netvol', aggfunc='sum',
+                              margins=True, margins_name='SUM')
+    print(df_deliveries)
 
 if __name__ == '__main__':
 
