@@ -13,16 +13,16 @@ class Asset:
         self.extern_asset_id=None
         self.description=""
         self.asset_type=None
-        self.grid_company=None
+        self.grid_connection=None
         self.power_supplier=None
         self.asset_owner=None
         self.asset_manager=None
-        self.price_area= None
+        self.vendor = None
         self.meter_id=""
         self.sub_meter_id=""
-        self.vendor=None
         self.is_main_meter=True
         self.location="0,0"
+        self.price_area = None
         self.is_active=True
 
     def get_dict(self):
@@ -32,7 +32,7 @@ class Asset:
         if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
         if self.description is not None: dict['description'] = self.description
         if self.asset_type is not None: dict['asset_type'] = self.asset_type
-        if self.grid_company is not None: dict['grid_connection'] = self.grid_company
+        if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
