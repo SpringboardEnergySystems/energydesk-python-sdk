@@ -1,7 +1,7 @@
 import json
 import logging
 
-from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset
+from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, AssetTechData
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetTypeEnum
 
@@ -31,10 +31,13 @@ def fetch_asset_subtypes(api_conn):
 
 def register_asset(api_conn):
     a = Asset()
+    at = AssetTechData()
+    a.pk = 99
     a.extern_asset_id = "Test asset 1"
     a.description = "Test asset 1"
     a.asset_type = "http://127.0.0.1:8001/api/assets/assettypes/1/"
-
+    at.max_effect_mw = 2.0
+    a.tech_data = at
     a.grid_connection = "http://127.0.0.1:8001/api/customers/companies/195/"
     a.power_supplier = "http://127.0.0.1:8001/api/customers/companies/721/"
     a.asset_owner = "http://127.0.0.1:8001/api/customers/companies/721/"
