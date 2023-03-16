@@ -24,7 +24,7 @@ def demo_data(api_conn):
     ts.description="Base rebate"
     ts.value=0.95
     ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value
-    ts.denomination="%"
+    ts.denomination_type_pk=1
     tss.adjustments.append(ts)
 
 
@@ -34,14 +34,14 @@ def demo_data(api_conn):
     ts.period_from=curr
     ts.period_until=next
     ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value
-    ts.denomination="%"
+    ts.denomination_type_pk=1
     tss.adjustments.append(ts)
 
     ts=TimeSeriesAdjustment()
     ts.description = "Option cust rebate"
     ts.value=0.70
     ts.adjustment_type_pk=AssetForecastAdjustEnum.EUROP_OPTION.value
-    ts.denomination="NOK strike"
+    ts.denomination_type_pk=2
     tss.adjustments.append(ts)
 
     print(tss.get_dict())

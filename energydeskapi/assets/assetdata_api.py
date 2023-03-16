@@ -12,7 +12,7 @@ class TimeSeriesAdjustment:
         self.pk = 0
         self.description = None
         self.adjustment_type_pk=None
-        self.denomination=None
+        self.denomination_type_pk=None
         self.value = None
         self.value2 = None
         self.period_from = None
@@ -20,8 +20,8 @@ class TimeSeriesAdjustment:
     def get_dict(self):
         dict = {}
         if self.description is not None: dict['description'] = self.description
-        if self.adjustment_type_pk is not None: dict['adjustment_type'] = self.adjustment_type_pk
-        if self.denomination is not None: dict['denomination'] = self.denomination
+        if self.adjustment_type_pk is not None: dict['adjustment_type_pk'] = self.adjustment_type_pk
+        if self.denomination_type_pk is not None: dict['denomination_type_pk'] = self.denomination_type_pk
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
         if self.period_from is not None: dict['period_from'] = self.period_from
@@ -55,8 +55,8 @@ def demo_data(api_conn):
     ts=TimeSeriesAdjustment()
     ts.description="Base rebate"
     ts.value=0.95
-    ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value
-    ts.denomination="%"
+    ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value#AssetDataApi.get_timeseries_adjustment_type_url(api_conn, AssetForecastAdjustEnum.PERCENTAGE.value)
+    ts.denomination_type_pk=1#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 1)
     tss.adjustments.append(ts)
 
 
@@ -65,15 +65,15 @@ def demo_data(api_conn):
     ts.value=0.30
     ts.period_from=curr
     ts.period_until=next
-    ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value
-    ts.denomination="%"
+    ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value#AssetDataApi.get_timeseries_adjustment_type_url(api_conn, AssetForecastAdjustEnum.PERCENTAGE.value)
+    ts.denomination_type_pk=1#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 1)
     tss.adjustments.append(ts)
 
     ts=TimeSeriesAdjustment()
     ts.description = "Option cust rebate"
     ts.value=0.70
-    ts.adjustment_type_pk=AssetForecastAdjustEnum.EUROP_OPTION.value
-    ts.denomination="NOK strike"
+    ts.adjustment_type_pk=AssetForecastAdjustEnum.EUROP_OPTION.value#AssetDataApi.get_timeseries_adjustment_type_url(api_conn, AssetForecastAdjustEnum.EUROP_OPTION.value)
+    ts.denomination_type_pk=2#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 2)
     tss.adjustments.append(ts)
 
     print(tss.get_dict())
@@ -134,6 +134,32 @@ class AssetDataApi:
         denoms=[(1,'%'),(2,'NOK')]
         return denoms
 
+
+    @staticmethod
+    def get_timeseries_adjustment_denomination_type_url(api_connection, denomination_type):
+        """Fetches url for company types from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_type_enum: type of company
+        :type company_type_enum: str, required
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = denomination_type if isinstance(denomination_type, int) else denomination_type.value
+        return api_connection.get_base_url() + '/api/assetdata/timeseriesadjustmenttypes/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_timeseries_adjustment_type_url(api_connection, adjustment_type):
+        """Fetches url for company types from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_type_enum: type of company
+        :type company_type_enum: str, required
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = adjustment_type if isinstance(adjustment_type, int) else adjustment_type.value
+        return api_connection.get_base_url() + '/api/assetdata/adjustdenominationtypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_forecast_adjustment(api_connection, assets):
