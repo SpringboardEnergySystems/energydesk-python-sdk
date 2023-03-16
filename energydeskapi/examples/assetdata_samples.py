@@ -46,6 +46,8 @@ def demo_data(api_conn):
 
     print(tss.get_dict())
 
+    print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
+
 if __name__ == '__main__':
 
     api_conn = init_api()

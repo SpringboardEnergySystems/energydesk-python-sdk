@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 from datetime import datetime, timedelta
-from energydeskapi.assets.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
+
 from datetime import datetime, timedelta
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 from energydeskapi.assets.assets_api import AssetsApi
@@ -111,7 +111,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def get_timeseries_adjustment(api_connection,  parameters={}):
+    def get_timeseries_adjustment_types(api_connection,  parameters={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -119,10 +119,10 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        json_res = api_connection.exec_get_url('/api/assetdata/timeseriesadjustment/', parameters)
-        if json_res is not None:
-            return json_res
-        return None
+        atype_list=[(el.value, el.name) for el in AssetForecastAdjustEnum]
+        return atype_list
+
+
 
     @staticmethod
     def get_forecast_adjustment(api_connection, assets):
