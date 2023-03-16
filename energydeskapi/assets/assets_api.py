@@ -21,6 +21,8 @@ class AssetTechData:
         if self.elcert_support_percentage is not None: dict['elcert_support_percentage'] = self.elcert_support_percentage
         if self.licenced_until is not None: dict['licenced_until'] = self.licenced_until
         if self.startup_date is not None: dict['startup_date'] = self.startup_date
+        return dict
+
 class Asset:
     def __init__(self):
         self.pk=0
@@ -28,6 +30,7 @@ class Asset:
         self.extern_asset_id=None
         self.description=""
         self.asset_type=None
+        self.tech_data = None
         self.grid_connection=None
         self.power_supplier=None
         self.asset_owner=None
@@ -39,7 +42,6 @@ class Asset:
         self.location="0,0"
         self.price_area = None
         self.is_active=True
-        self.tech_data=None
 
     def get_dict(self):
         dict = {}
@@ -48,6 +50,7 @@ class Asset:
         if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
         if self.description is not None: dict['description'] = self.description
         if self.asset_type is not None: dict['asset_type'] = self.asset_type
+        if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
@@ -59,7 +62,6 @@ class Asset:
         if self.is_active is not None: dict['is_active'] = self.is_active
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
-        if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         return dict
 
 
