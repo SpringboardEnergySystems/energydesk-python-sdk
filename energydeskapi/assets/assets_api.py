@@ -5,7 +5,22 @@ logger = logging.getLogger(__name__)
 #fields = ['pk', 'asset_id', 'extern_asset_id', 'description', 'asset_type', 'grid_connection', 'power_supplier',
  #         'asset_owner', 'asset_manager', 'meter_id', 'sub_meter_id', 'vendor', 'is_active']
 
-
+class AssetTechData:
+    def __init__(self):
+        self.pk = 0
+        self.max_effect_mw = None
+        self.yearly_volume_mwh = None
+        self.elcert_support_percentage = None
+        self.licenced_until = None
+        self.startup_date = None
+    def get_dict(self):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.max_effect_mw is not None: dict['max_effect_mw'] = self.max_effect_mw
+        if self.yearly_volume_mwh is not None: dict['yearly_volume_mwh'] = self.yearly_volume_mwh
+        if self.elcert_support_percentage is not None: dict['elcert_support_percentage'] = self.elcert_support_percentage
+        if self.licenced_until is not None: dict['licenced_until'] = self.licenced_until
+        if self.startup_date is not None: dict['startup_date'] = self.startup_date
 class Asset:
     def __init__(self):
         self.pk=0
@@ -24,6 +39,7 @@ class Asset:
         self.location="0,0"
         self.price_area = None
         self.is_active=True
+        self.tech_data=None
 
     def get_dict(self):
         dict = {}
@@ -43,6 +59,7 @@ class Asset:
         if self.is_active is not None: dict['is_active'] = self.is_active
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
+        if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         return dict
 
 
