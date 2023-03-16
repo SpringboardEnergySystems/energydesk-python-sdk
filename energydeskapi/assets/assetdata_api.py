@@ -15,6 +15,28 @@ class AssetDataApi:
 
 
     @staticmethod
+    def get_forecast_adjustment(api_connection, assets):
+        """Fetches forecast for asset group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param assets: personal key of asset(s) in asset group
+        :type assets: str, required
+        """
+        assets_list=[]
+        for key in assets:
+            asset=AssetsApi.get_asset_by_key(api_connection, key)
+            if asset is not None:
+                assets_list.append({"pk":asset['pk'], "asset_id":asset['asset_id']})
+        payload={
+            "assets":assets_list,
+            "datatype":"FORECAST"
+
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/query-summed-timeseries/', payload)
+        return json_res
+
+    @staticmethod
     def get_assetgroup_forecast(api_connection, assets):
         """Fetches forecast for asset group
 
