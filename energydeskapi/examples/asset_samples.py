@@ -32,7 +32,7 @@ def fetch_asset_subtypes(api_conn):
 def register_asset(api_conn):
     a = Asset()
     at = AssetTechData()
-    a.pk = 0
+    a.pk = 101
     a.extern_asset_id = "Test asset 3"
     a.description = "Test asset 3"
     a.asset_type = "http://127.0.0.1:8001/api/assets/assettypes/1/"
@@ -52,7 +52,7 @@ def register_asset(api_conn):
     a.is_main_meter = True
     a.location = "63,10"
     a.price_area = "NO1"
-    a.is_active = True
+    a.is_active = False
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset(api_conn, a)
     print(success, returned_data, status_code, error_msg)
 

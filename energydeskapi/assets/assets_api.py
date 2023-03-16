@@ -39,6 +39,8 @@ class Asset:
         self.meter_id=""
         self.sub_meter_id=""
         self.is_main_meter=True
+        self.address = None
+        self.city = None
         self.location="0,0"
         self.price_area = None
         self.is_active=True
@@ -59,7 +61,9 @@ class Asset:
         if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
         if self.vendor is not None: dict['vendor'] = self.vendor
         if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
-        if self.is_active is not None: dict['is_active'] = self.is_active
+        if self.address is not None: dict['address'] = self.address
+        if self.city is not None: dict['city'] = self.city
+        if self.is_active is not True: dict['is_active'] = self.is_active
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
         return dict
