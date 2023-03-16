@@ -6,6 +6,7 @@ from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.users_api import UsersApi
 from moneyed import EUR
+import pandas as pd
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.contracts.masteragreement_api import MasterContractAgreement
 from energydeskapi.geolocation.location_api import LocationApi
@@ -43,8 +44,12 @@ def get_contract_filter_pk(api_conn):
     print(json_contractfilter)
 
 def get_contracts(api_conn, trading_book=None):
-    json_contractfilter = ContractsApi.list_contracts_compact(api_conn)
-    print(json.dumps(json_contractfilter, indent=2))
+    filter={'page_size':200}
+    json_data = ContractsApi.list_contracts_compact(api_conn,filter)
+    records=json_data['results']  # 200 at a time
+    print(json.dumps(records, indent=2))
+    df=pd.DataFrame(data=eval(records))
+    print(df)
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)
