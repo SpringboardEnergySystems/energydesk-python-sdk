@@ -10,3 +10,9 @@ class AssetTypeEnum(Enum):
     HYDRO = 6
     ACCOUNT = 7
     HEAT = 8
+
+class AssetForecastAdjustEnum(Enum):
+    PERCENTAGE = 1
+    EUROP_OPTION = 2
+    ASIAN_OPTION = 3
+
