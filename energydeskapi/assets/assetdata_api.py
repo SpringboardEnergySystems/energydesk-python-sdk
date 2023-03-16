@@ -122,6 +122,17 @@ class AssetDataApi:
         atype_list=[(el.value, el.name) for el in AssetForecastAdjustEnum]
         return atype_list
 
+    @staticmethod
+    def get_timeseries_adjustment_denomination_types(api_connection,  parameters={}):
+        """Fetches forecast for asset group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param parameters: dictionary of filters to query
+        :type parameters: dict, required
+        """
+        denoms=[(1,'%'),(2,'NOK')]
+        return denoms
 
 
     @staticmethod

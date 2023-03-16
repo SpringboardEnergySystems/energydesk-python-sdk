@@ -51,4 +51,7 @@ def demo_data(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    demo_data(api_conn)
+    print(AssetDataApi.get_timeseries_adjustments(api_conn))
+    print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
+    print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
+
