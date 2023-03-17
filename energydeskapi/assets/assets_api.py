@@ -5,6 +5,23 @@ logger = logging.getLogger(__name__)
 #fields = ['pk', 'asset_id', 'extern_asset_id', 'description', 'asset_type', 'grid_connection', 'power_supplier',
  #         'asset_owner', 'asset_manager', 'meter_id', 'sub_meter_id', 'vendor', 'is_active']
 
+class AssetTechData:
+    def __init__(self):
+        self.pk = 0
+        self.max_effect_mw = None
+        self.yearly_volume_mwh = None
+        self.elcert_support_percentage = None
+        self.licenced_until = None
+        self.startup_date = None
+    def get_dict(self):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.max_effect_mw is not None: dict['max_effect_mw'] = self.max_effect_mw
+        if self.yearly_volume_mwh is not None: dict['yearly_volume_mwh'] = self.yearly_volume_mwh
+        if self.elcert_support_percentage is not None: dict['elcert_support_percentage'] = self.elcert_support_percentage
+        if self.licenced_until is not None: dict['licenced_until'] = self.licenced_until
+        if self.startup_date is not None: dict['startup_date'] = self.startup_date
+        return dict
 
 class Asset:
     def __init__(self):
@@ -13,16 +30,19 @@ class Asset:
         self.extern_asset_id=None
         self.description=""
         self.asset_type=None
-        self.grid_company=None
+        self.tech_data = None
+        self.grid_connection=None
         self.power_supplier=None
         self.asset_owner=None
         self.asset_manager=None
-        self.price_area= None
+        self.vendor = None
         self.meter_id=""
         self.sub_meter_id=""
-        self.vendor=None
         self.is_main_meter=True
+        self.address = None
+        self.city = None
         self.location="0,0"
+        self.price_area = None
         self.is_active=True
 
     def get_dict(self):
@@ -32,7 +52,8 @@ class Asset:
         if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
         if self.description is not None: dict['description'] = self.description
         if self.asset_type is not None: dict['asset_type'] = self.asset_type
-        if self.grid_company is not None: dict['grid_connection'] = self.grid_company
+        if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
+        if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
@@ -40,7 +61,9 @@ class Asset:
         if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
         if self.vendor is not None: dict['vendor'] = self.vendor
         if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
-        if self.is_active is not None: dict['is_active'] = self.is_active
+        if self.address is not None: dict['address'] = self.address
+        if self.city is not None: dict['city'] = self.city
+        if self.is_active is not True: dict['is_active'] = self.is_active
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
         return dict

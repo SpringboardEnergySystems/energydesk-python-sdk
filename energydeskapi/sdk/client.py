@@ -30,7 +30,7 @@ def load_env():
 
     """
     logging.info("Loading environment")
-    dotenv_path = join(dirname(__file__), 'sample.env')
+    dotenv_path = join(dirname(__file__), '.env')
     load_dotenv(dotenv_path)
 
 if __name__ == '__main__':
