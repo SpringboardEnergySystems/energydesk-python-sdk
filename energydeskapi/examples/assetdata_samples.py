@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.assets.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
+from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
 from datetime import datetime, timedelta
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 logging.basicConfig(level=logging.INFO,
