@@ -51,6 +51,7 @@ class PortfolioNode:
         dict['stakeholders'] = self.stakeholders
         if self.parent_id>0:
             dict['parent_id']=self.parent_id
+        if self.parent_name is not None:
             dict['parent_name'] = self.parent_name
             #dict['parent_portfolio'] = PortfoliosApi.get_portfolio_url(api_conn, self.parent_id)
         return dict
