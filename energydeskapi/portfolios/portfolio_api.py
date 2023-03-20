@@ -47,7 +47,7 @@ class PortfolioNode:
         dict['manager'] = self.manager
         dict['percentage']=self.percentage
         dict['assets'] = self.assets
-        dict['sub_portfolios'] = self.sub_portfolios
+        dict['children'] = self.sub_portfolios
         dict['stakeholders'] = self.stakeholders
         if self.parent_id>0:
             dict['parent_portfolio'] = PortfoliosApi.get_portfolio_url(api_conn, self.parent_id)
