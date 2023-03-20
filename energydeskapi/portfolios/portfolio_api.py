@@ -41,7 +41,7 @@ class PortfolioNode:
 
     def get_simple_dict(self, api_conn):
         dict = {}
-        dict['pk'] = self.pk
+        dict['portfolio_id'] = self.pk
         dict['portfolio_name'] = self.description
         dict['trading_books']=self.trading_books
         dict['manager'] = self.manager
