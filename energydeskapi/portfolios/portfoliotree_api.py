@@ -64,7 +64,7 @@ class PortfolioTreeApi:
     print("SAVING TREE", portfolio_nodes)
     list=[]
     for p in portfolio_nodes:
-        list.append(p.get_dict(api_connection))
+        list.append(p.get_simple_dict(api_connection))
     print(list)
     return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, list)
 
