@@ -10,6 +10,7 @@ class AssetTypeEnum(Enum):
     HYDRO = 6
     ACCOUNT = 7
     HEAT = 8
+    GENERAL_CONSUMPTION = 9
 
 class AssetForecastAdjustEnum(Enum):
     PERCENTAGE = 1
