@@ -17,7 +17,7 @@ class PeriodResolutionEnum(Enum):
     HOURLY = "Hourly"
     DAILY = "Daily"
     WEEKLY = "Weekly"
-    SEMI_MONTHLY = "Semi Monthly"
+    SEMI_MONTHLY = "SemiMonthly"
     MONTHLY = "Monthly"
     QUARTERLY = "Quarterly"
     YEARLY = "Yearly"
