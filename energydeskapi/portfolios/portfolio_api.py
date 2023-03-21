@@ -39,6 +39,23 @@ class PortfolioNode:
             dict['parent_portfolio'] = PortfoliosApi.get_portfolio_url(api_conn, self.parent_id)
         return dict
 
+    def get_simple_dict(self, api_conn):
+        dict = {}
+        dict['portfolio_id'] = self.pk
+        dict['portfolio_name'] = self.description
+        dict['trading_books']=self.trading_books
+        dict['manager'] = self.manager
+        dict['percentage']=self.percentage
+        dict['assets'] = self.assets
+        dict['children'] = self.sub_portfolios
+        dict['stakeholders'] = self.stakeholders
+        if self.parent_id>0:
+            dict['parent_id']=self.parent_id
+        if self.parent_name is not None:
+            dict['parent_name'] = self.parent_name
+            #dict['parent_portfolio'] = PortfoliosApi.get_portfolio_url(api_conn, self.parent_id)
+        return dict
+
 class PortfoliosApi:
     """Class for portfolios
 

@@ -441,7 +441,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
             "id": node['pk'],
-            "text": node['portfolio_name'] + ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
+            "text": node['portfolio_name'] + " (" + str(node['pk'])  + ") "+ ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
                 "original_text": node['portfolio_name'],
