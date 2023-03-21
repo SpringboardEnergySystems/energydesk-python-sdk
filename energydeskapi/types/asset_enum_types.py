@@ -11,6 +11,7 @@ class AssetTypeEnum(Enum):
     ACCOUNT = 7
     HEAT = 8
     GENERAL_CONSUMPTION = 9
+    GROUPED_ASSET = 10
 
 class AssetForecastAdjustEnum(Enum):
     PERCENTAGE = 1
