@@ -183,6 +183,7 @@ class Contract:
         if self.instrument_type is not None: prod['instrument_type'] = MarketsApi.get_instrument_type_url(api_conn,self.instrument_type)
         if self.commodity_type is not None: prod['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn, self.commodity_type)
         if self.profile_category is not None: prod['profile_category'] = str(self.profile_category.name)
+        print(prod['profile_category'], self.profile_category )
         if self.delivery_type is not None: prod['delivery_type'] = MarketsApi.get_delivery_type_url(api_conn,
                                                                                                        self.delivery_type)
         if self.commodity_delivery_from is not None:prod['delivery_from'] = check_fix_date2str(self.commodity_delivery_from)
