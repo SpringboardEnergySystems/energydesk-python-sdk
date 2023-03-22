@@ -32,12 +32,14 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a.is_active = True
     #print(a.get_dict())
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset(api_conn, a)
-    print(returned_data)
+    #print(returned_data)
     ag=AssetGroup()
+    ag.description="Asset Group" + " - " + str(group)
     ag.main_asset=returned_data['pk']
     for sub in sub_assets:
         ag.sub_assets.append(sub['pk'])
     print(ag.get_dict(api_conn))
+    AssetGroupApi.upsert_asset_group(api_conn, ag)
 
 
 
@@ -45,20 +47,16 @@ def register_asset_groups(api_conn):
     groups={}
     jsondata = AssetsApi.get_assets_embedded(
         api_conn)
-    print(json.dumps(jsondata, indent=2))
     for a in jsondata['results']:
+        if a['asset_type']['pk']==10:
+            continue
         key=a['asset_type']['description']
-        if not key in groups:
+        if  key not in groups:
             groups[key]=[]
         groups[key].append(a)
-    #print(groups)
-    print(len(groups[key]))
-    #for key in groups.keys():
-    #    register_grouped_asset(api_conn, key, groups[key])
 
-
-
-
+    for key in groups.keys():
+        register_grouped_asset(api_conn, key, groups[key])
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ from energydeskapi.assets.assets_api import AssetsApi
 class AssetGroup:
     def __init__(self):
         self.pk=0
+        self.description=None
         self.main_asset=None
         self.sub_assets=[]
         self.valid_from=None
@@ -16,6 +17,7 @@ class AssetGroup:
     def get_dict(self, api_connection):
         dict = {}
         dict['pk']=self.pk
+        if self.description is not None: dict['description'] = self.description
         if self.main_asset is not None: dict['main_asset'] = AssetsApi.get_asset_url(api_connection,self.main_asset)
         subs=[]
         for sub in self.sub_assets:
@@ -41,10 +43,10 @@ class AssetGroupApi:
         logger.info("Upserting assetgroups")
         if asset_group.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/assets/assetgroups/' + str(asset_group.pk) + "/", asset_group.get_dict())
+                '/api/assets/assetgroups/' + str(asset_group.pk) + "/", asset_group.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/assets/assetgroups/', asset_group.get_dict())
+                '/api/assets/assetgroups/', asset_group.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
     @staticmethod
