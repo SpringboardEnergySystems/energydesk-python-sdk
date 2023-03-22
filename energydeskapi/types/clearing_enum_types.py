@@ -10,7 +10,7 @@ class ClearingReportTypeEnum(Enum):
     NONPROPMRGINTRA = 6
     COLLATVALUE = 7
     CASHOPTIMIZATION = 8
-    ACCMMVALUE = 9
+    ACCUMMVALUE = 9
     SPAN_PARAM_FILEHEADERLIST = 10
     SPAN_PARAM_RISKGROUPLIST = 11
     SPAN_PARAM_CONTRACTINFOLIST = 12
@@ -37,7 +37,7 @@ class ClearingReportTypeEnum(Enum):
             6: 'NONPROPMRGINTRA',
             7: 'COLLATVALUE',
             8: 'CASHOPTIMIZATION',
-            9: 'ACCMMVALUE',
+            9: 'ACCUMMVALUE',
             10: 'SPAN_PARAM_FILEHEADERLIST',
             11: 'SPAN_PARAM_RISKGROUPLIST',
             12: 'SPAN_PARAM_CONTRACTINFOLIST',
