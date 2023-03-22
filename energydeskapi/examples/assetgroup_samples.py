@@ -33,6 +33,12 @@ def register_grouped_asset(api_conn, group, sub_assets):
     #print(a.get_dict())
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset(api_conn, a)
     print(returned_data)
+    ag=AssetGroup()
+    ag.main_asset=returned_data['pk']
+    for sub in sub_assets:
+        ag.sub_assets.append(sub['pk'])
+    print(ag.get_dict(api_conn))
+
 
 
 def register_asset_groups(api_conn):
@@ -46,8 +52,9 @@ def register_asset_groups(api_conn):
             groups[key]=[]
         groups[key].append(a)
     #print(groups)
-    for key in groups.keys():
-        register_grouped_asset(api_conn, key, groups[key])
+    print(len(groups[key]))
+    #for key in groups.keys():
+    #    register_grouped_asset(api_conn, key, groups[key])
 
 
 

@@ -13,14 +13,14 @@ class AssetGroup:
         self.valid_from=None
         self.valid_until=None
 
-    def get_dict(self):
+    def get_dict(self, api_connection):
         dict = {}
         dict['pk']=self.pk
-        if self.main_asset is not None: dict['main_asset'] = AssetsApi.get_asset_url(self.main_asset)
+        if self.main_asset is not None: dict['main_asset'] = AssetsApi.get_asset_url(api_connection,self.main_asset)
         subs=[]
         for sub in self.sub_assets:
-            subs.append(AssetsApi.get_asset_url(sub))
-        dict['main_asset']=subs
+            subs.append(AssetsApi.get_asset_url(api_connection, sub))
+        dict['sub_assets'] = subs
         if self.valid_from is not None: dict['valid_from'] = self.valid_from
         if self.valid_until is not None: dict['valid_until'] = self.valid_until
         return dict
