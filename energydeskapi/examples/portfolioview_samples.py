@@ -13,6 +13,8 @@ logging.basicConfig(level=logging.INFO,
 def get_period_view(api_conn):
     filter={
         "trading_book":31,
+        "view_period_from__gte":"2023-02-01",
+        "view_period_until__lt": "2023-06-01",
         "resolution":PeriodResolutionEnum.DAILY.value,
         "groupby":[PeriodViewGroupingEnum.AREA.value]
     }

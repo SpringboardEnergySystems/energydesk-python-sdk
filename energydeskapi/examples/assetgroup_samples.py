@@ -5,7 +5,7 @@ from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, Asse
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
 from energydeskapi.types.asset_enum_types import AssetTypeEnum
-
+from energydeskapi.sdk.common_utils import key_from_url
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -23,10 +23,17 @@ def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
     context['assets'] =asset_list
 
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
-def list_asset_groups(api_conn):
-    context={}
-    res=AssetGroupApi.get_asset_groups(api_conn)
-    print(res)
+def list_asset_groups(api_conn, asset_group_pk=1):
+    res=AssetGroupApi.get_asset_groups(api_conn, {"id":asset_group_pk})
+    sub_asset_list=[]
+    for rec in res:
+        for s in rec['sub_assets']:
+            print(s)
+            sub_asset_pk=key_from_url(s)
+            sub_asset_list.append(sub_asset_pk)
+    print(sub_asset_list)
+
+
 
 
 def register_grouped_asset(api_conn, group, sub_assets):
