@@ -11,6 +11,23 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+from energydeskapi.types.asset_enum_types import AssetTypeEnum
+
+def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
+    context={}
+    res=AssetsApi.get_assets(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
+    asset_list=[]
+    for asset in res['results']:
+        print(asset['pk'], asset['description'])
+        asset_list.append((asset['pk'], asset['description']))  #List of tuples with key and description
+    context['assets'] =asset_list
+
+from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
+def list_asset_groups(api_conn):
+    context={}
+    res=AssetGroupApi.get_asset_groups(api_conn)
+    print(res)
+
 
 def register_grouped_asset(api_conn, group, sub_assets):
     sub=sub_assets[0]
@@ -21,7 +38,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a.extern_asset_id = "Asset Group" + " - " + str(group)
     a.description = a.extern_asset_id
     a.tech_data=at
-    a.asset_type = AssetsApi.get_asset_type_url(api_conn,10)
+    a.asset_type = AssetsApi.get_asset_type_url(api_conn,AssetTypeEnum.GROUPED_ASSET.value)
     a.grid_connection = sample['grid_connection']
     a.power_supplier = sample['power_supplier']
     a.asset_owner = sample['asset_owner']
@@ -30,9 +47,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a.location = sub['location']
     a.price_area = sub['price_area']
     a.is_active = True
-    #print(a.get_dict())
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset(api_conn, a)
-    #print(returned_data)
     ag=AssetGroup()
     ag.description="Asset Group" + " - " + str(group)
     ag.main_asset=returned_data['pk']
@@ -48,7 +63,7 @@ def register_asset_groups(api_conn):
     jsondata = AssetsApi.get_assets_embedded(
         api_conn)
     for a in jsondata['results']:
-        if a['asset_type']['pk']==10:
+        if a['asset_type']['pk']!=AssetTypeEnum.WIND.value:
             continue
         key=a['asset_type']['description']
         if  key not in groups:
@@ -62,5 +77,5 @@ def register_asset_groups(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    register_asset_groups(api_conn)
+    list_asset_groups(api_conn)
 
