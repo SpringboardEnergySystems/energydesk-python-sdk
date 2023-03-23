@@ -24,7 +24,8 @@ def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
 
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
 def list_asset_groups(api_conn, asset_group_pk=1):
-    res=AssetGroupApi.get_asset_groups(api_conn, {"id":asset_group_pk})
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {"id":asset_group_pk})
+    print(json.dumps(res, indent=2))
     sub_asset_list=[]
     for rec in res:
         for s in rec['sub_assets']:

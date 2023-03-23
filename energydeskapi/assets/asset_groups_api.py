@@ -49,18 +49,6 @@ class AssetGroupApi:
                 '/api/assets/assetgroups/', asset_group.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
-    @staticmethod
-    def get_asset_groups(api_connection):
-        """Fetches the type of all assets
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        """
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/')
-        if json_res is None:
-            return None
-        df = pd.DataFrame(data=json_res)
-        return df
 
     @staticmethod
     def get_asset_groups(api_connection, parameters={}):
