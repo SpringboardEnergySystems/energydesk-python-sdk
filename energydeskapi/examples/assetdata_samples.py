@@ -1,7 +1,11 @@
 import logging
+
+import pandas as pd
+
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
 from datetime import datetime, timedelta
+import json
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -9,9 +13,14 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-def query_asset_info(api_conn):
-    res = AssetDataApi.get_latest_forecast(api_conn,{})
-    print(res)
+def query_asset_info(api_conn, asset_pk):
+    res = AssetDataApi.get_latest_forecast(api_conn,{'asset_id':asset_pk})
+
+    df=pd.DataFrame(data=json.loads(res['data']))
+    df.index=df['timestamp']
+    df.index=pd.to_datetime(df.index)
+    df=df.tz_convert("Europe/Oslo")
+    print(df)
 
 def demo_data(api_conn):
     curr=datetime.today().strftime(("%Y-%m-%d"))
@@ -51,7 +60,8 @@ def demo_data(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    print(AssetDataApi.get_timeseries_adjustments(api_conn))
-    print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
-    print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
+    query_asset_info(api_conn, 2)
+    #print(AssetDataApi.get_timeseries_adjustments(api_conn))
+    #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
+    #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
 
