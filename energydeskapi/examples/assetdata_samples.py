@@ -13,13 +13,13 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-def query_asset_info(api_conn, asset_pk):
-    res = AssetDataApi.get_latest_forecast(api_conn,{'asset_id':asset_pk})
-
-    df=pd.DataFrame(data=json.loads(res['data']))
+def query_asset_info(api_conn, asset_pk_list):
+    res = AssetDataApi.get_assetgroup_forecast(api_conn,{'asset_id_in':asset_pk_list})
+    df=pd.DataFrame(data=json.loads(res))
     df.index=df['timestamp']
     df.index=pd.to_datetime(df.index)
     df=df.tz_convert("Europe/Oslo")
+    df['timestamp']=df.index
     print(df)
 
 def demo_data(api_conn):
@@ -60,7 +60,7 @@ def demo_data(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    query_asset_info(api_conn, 2)
+    query_asset_info(api_conn, [98])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
