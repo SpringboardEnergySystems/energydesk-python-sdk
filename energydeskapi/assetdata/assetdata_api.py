@@ -78,7 +78,7 @@ def demo_data(api_conn):
     ts.denomination_type_pk=2#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 2)
     tss.adjustments.append(ts)
 
-    return tss.get_dict()
+    return tss.get_dict(api_conn)
 
 class AssetDataApi:
     """ Class for asset data
