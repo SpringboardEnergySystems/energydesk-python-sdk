@@ -23,8 +23,8 @@ def fetch_fxtenors(api_conn):
     print(df)
 
 def fetch_yieldcurves(api_conn):
-    param = {"country": "NOK", "currency_date":"2023-03-09"}
-    currency_date, df =  MoneyMarketsApi.get_yieldcurves_df(api_conn, param)
+    param = {"currency_date":"2023-03-22"}
+    currency_date, df =  MoneyMarketsApi.get_fwd_curves(api_conn, param)
     print(df)
     #df2 = MoneyMarketsApi.get_fwdrates(api_conn, param)
     #print(df2)

@@ -92,3 +92,18 @@ class MoneyMarketsApi:
         df = None if dataframe is None else pd.DataFrame(data=safe_prepare_json(dataframe))
         return currency_date, df
 
+    @staticmethod
+    def get_fwd_curves(api_connection, parameters={}):
+        """Fetches yieldcurves
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/currencies/fwdrates/curves/', parameters)
+        if json_res is None:
+            return None, None
+        currency_date = json_res['currency_date']
+        dataframe=json_res['dataframe']
+        df = None if dataframe is None else pd.DataFrame(data=safe_prepare_json(dataframe))
+        return currency_date, df
+

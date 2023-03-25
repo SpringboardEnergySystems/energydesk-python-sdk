@@ -17,11 +17,11 @@ class TimeSeriesAdjustment:
         self.value2 = None
         self.period_from = None
         self.period_until = None
-    def get_dict(self):
+    def get_dict(self, api_conn):
         dict = {}
         if self.description is not None: dict['description'] = self.description
-        if self.adjustment_type_pk is not None: dict['adjustment_type_pk'] = self.adjustment_type_pk
-        if self.denomination_type_pk is not None: dict['denomination_type_pk'] = self.denomination_type_pk
+        if self.adjustment_type_pk is not None: dict['adjustment_type'] = AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.adjustment_type_pk)
+        if self.denomination_type_pk is not None: dict['denomination'] = "test"#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
         if self.period_from is not None: dict['period_from'] = self.period_from
@@ -33,14 +33,16 @@ class TimeSeriesAdjustments:
         self.pk = 0
         self.asset_pk=None
         self.adjustments = []
+        self.time_series_type_pk=None
         self.is_active_for_asset = True
-    def get_dict(self):
+    def get_dict(self,api_conn):
         dict = {}
         dict['pk']=self.pk
-        if self.asset_pk is not None: dict['asset'] = self.asset_pk
+        if self.time_series_type_pk is not None: dict['time_series_type'] = AssetDataApi.get_timeseries_type_url(api_conn,self.time_series_type_pk)
+        if self.asset_pk is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn,self.asset_pk)
         dict_list=[]
         for el in self.adjustments:
-            dict_list.append(el.get_dict())
+            dict_list.append(el.get_dict(api_conn))
         dict['adjustments']=dict_list
         if self.is_active_for_asset is not None: dict['is_active_for_asset'] = self.is_active_for_asset
         return dict
@@ -96,7 +98,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def upsert_timeseries_adjustments(api_connection,  timeseries_adjustments):
+    def upsert_timeseries_adjustments(api_connection,  adjustments):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -104,11 +106,14 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        json_res = api_connection.exec_get_url('/api/assetdata/timeseriesadjustments/')
-        if json_res is not None:
-            return json_res
-        return None
 
+        if adjustments.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/assetdata/timeseriesadjustments/' + str(adjustments.pk) + "/", adjustments.get_dict(api_connection))
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/assetdata/timeseriesadjustments/', adjustments.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_timeseries_adjustment_types(api_connection,  parameters={}):
@@ -159,7 +164,20 @@ class AssetDataApi:
         """
         # Will accept both integers of the actual enum type
         type_pk = adjustment_type if isinstance(adjustment_type, int) else adjustment_type.value
-        return api_connection.get_base_url() + '/api/assetdata/adjustdenominationtypes/' + str(type_pk) + "/"
+        return api_connection.get_base_url() + '/api/assetdata/timeseriesadjustmenttypes/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_timeseries_type_url(api_connection, ts_type):
+        """Fetches url for company types from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_type_enum: type of company
+        :type company_type_enum: str, required
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = ts_type if isinstance(ts_type, int) else ts_type.value
+        return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_forecast_adjustment(api_connection, assets):

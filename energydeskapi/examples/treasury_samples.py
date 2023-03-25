@@ -8,6 +8,10 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+def load_fwd_forex(api_conn):
+    df=TreasuryApi.register_treasury_bank(api_conn, "880824872", "SWEDDDDDBANK")
+    #df=TreasuryApi.get_treasury_banks(api_conn)
+    print(df)
 
 
 
@@ -20,4 +24,4 @@ def list_banks(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    list_banks(api_conn)
+    load_fwd_forex(api_conn)

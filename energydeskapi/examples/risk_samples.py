@@ -18,5 +18,5 @@ def calc_covariance_var(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    calc_covariance_var(api_conn)
+    calc_volats(api_conn)
 

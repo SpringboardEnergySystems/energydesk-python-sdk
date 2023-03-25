@@ -2,9 +2,13 @@ import logging
 
 import pandas as pd
 
+from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, AssetTechData
+from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.types.asset_enum_types import AssetTypeEnum
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
 from datetime import datetime, timedelta
+from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 import json
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 logging.basicConfig(level=logging.INFO,
@@ -12,6 +16,22 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+
+def add_expressions(api_conn, asset_desc):
+    jsondata = AssetsApi.get_assets(api_conn, {'extern_asset_id':asset_desc})
+    asset=jsondata['results'][0]
+    print(asset['pk'])
+    tas=TimeSeriesAdjustments()
+    tas.asset_pk=asset['pk']
+    tas.is_active_for_asset=True
+    tas.time_series_type_pk=2
+    ta=TimeSeriesAdjustment()
+    ta.description="Rebate"
+    ta.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value
+    ta.value=0.94
+    ta.denomination_type_pk=1
+    tas.adjustments.append(ta)
+    AssetDataApi.upsert_timeseries_adjustments(api_conn, tas)
 
 def query_asset_info(api_conn, asset_pk_list):
     res = AssetDataApi.get_assetgroup_forecast(api_conn,{'asset_id_in':asset_pk_list})
@@ -60,7 +80,8 @@ def demo_data(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    query_asset_info(api_conn, [98])
+    #query_asset_info(api_conn, [98])
+    add_expressions(api_conn, "08-Trepellets")
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
