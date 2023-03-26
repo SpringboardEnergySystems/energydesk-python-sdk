@@ -58,32 +58,14 @@ def demo_data(api_conn):
     tss = TimeSeriesAdjustments()
     tss.is_active_for_asset=True
     tss.asset_pk=AssetsApi.get_asset_url(api_conn,5)
+    explist=[]
+    ta=TimeSeriesAdjustment(0,"Base Rebate",AssetForecastAdjustEnum.PERCENTAGE.value, "Prc", 0.94,0,None,None )
+    explist.append(ta)
+    ta=TimeSeriesAdjustment(0,"High tax Calc",AssetForecastAdjustEnum.PERCENTAGE.value, "Prc", 0.2,0,curr,next )
+    explist.append(ta)
+    tas=TimeSeriesAdjustments(0,0,1,True, explist)
 
-    ts=TimeSeriesAdjustment()
-    ts.description="Base rebate"
-    ts.value=0.95
-    ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value#AssetDataApi.get_timeseries_adjustment_type_url(api_conn, AssetForecastAdjustEnum.PERCENTAGE.value)
-    ts.denomination_type_pk=1#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 1)
-    tss.adjustments.append(ts)
-
-
-    ts=TimeSeriesAdjustment()
-    ts.description = "High tax rebate"
-    ts.value=0.30
-    ts.period_from=curr
-    ts.period_until=next
-    ts.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value#AssetDataApi.get_timeseries_adjustment_type_url(api_conn, AssetForecastAdjustEnum.PERCENTAGE.value)
-    ts.denomination_type_pk=1#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 1)
-    tss.adjustments.append(ts)
-
-    ts=TimeSeriesAdjustment()
-    ts.description = "Option cust rebate"
-    ts.value=0.70
-    ts.adjustment_type_pk=AssetForecastAdjustEnum.EUROP_OPTION.value#AssetDataApi.get_timeseries_adjustment_type_url(api_conn, AssetForecastAdjustEnum.EUROP_OPTION.value)
-    ts.denomination_type_pk=2#AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn, 2)
-    tss.adjustments.append(ts)
-
-    return tss.get_dict(api_conn)
+    return tas.get_dict(api_conn)
 
 class AssetDataApi:
     """ Class for asset data
