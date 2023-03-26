@@ -55,15 +55,12 @@ class TimeSeriesAdjustments:
 def demo_data(api_conn):
     curr=datetime.today().strftime(("%Y-%m-%d"))
     next = (datetime.today() + timedelta(days=1000)).strftime(("%Y-%m-%d"))
-    tss = TimeSeriesAdjustments()
-    tss.is_active_for_asset=True
-    tss.asset_pk=AssetsApi.get_asset_url(api_conn,5)
     explist=[]
     ta=TimeSeriesAdjustment(0,"Base Rebate",AssetForecastAdjustEnum.PERCENTAGE.value, "Prc", 0.94,0,None,None )
     explist.append(ta)
     ta=TimeSeriesAdjustment(0,"High tax Calc",AssetForecastAdjustEnum.PERCENTAGE.value, "Prc", 0.2,0,curr,next )
     explist.append(ta)
-    tas=TimeSeriesAdjustments(0,0,1,True, explist)
+    tas=TimeSeriesAdjustments(0,5,1,True, explist)
 
     return tas.get_dict(api_conn)
 
