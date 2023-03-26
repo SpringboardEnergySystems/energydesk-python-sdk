@@ -1,40 +1,45 @@
 import logging
 import pandas as pd
 from datetime import datetime, timedelta
-
+from dataclasses import dataclass, asdict, field
+from datetime import timezone, datetime, date
+import json
+from json import JSONEncoder
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 from energydeskapi.assets.assets_api import AssetsApi
 logger = logging.getLogger(__name__)
 
+
+@dataclass
 class TimeSeriesAdjustment:
-    def __init__(self):
-        self.pk = 0
-        self.description = None
-        self.adjustment_type_pk=None
-        self.denomination_type_pk=None
-        self.value = None
-        self.value2 = None
-        self.period_from = None
-        self.period_until = None
+    pk : int
+    description : str
+    adjustment_type_pk : int
+    denomination : str
+    value : float
+    value2 : float
+    period_from :datetime
+    period_until: datetime
     def get_dict(self, api_conn):
         dict = {}
         if self.description is not None: dict['description'] = self.description
         if self.adjustment_type_pk is not None: dict['adjustment_type'] = AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.adjustment_type_pk)
-        if self.denomination_type_pk is not None: dict['denomination'] = "test"#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
+        if self.denomination is not None: dict['denomination'] = self.denomination#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
         if self.period_from is not None: dict['period_from'] = self.period_from
         if self.period_until is not None: dict['period_until'] = self.period_until
         return dict
-
+@dataclass
 class TimeSeriesAdjustments:
-    def __init__(self):
-        self.pk = 0
-        self.asset_pk=None
-        self.adjustments = []
-        self.time_series_type_pk=None
-        self.is_active_for_asset = True
+    pk : int
+    asset_pk : int
+    time_series_type_pk: int
+    is_active_for_asset: bool
+    adjustments : list
+
     def get_dict(self,api_conn):
         dict = {}
         dict['pk']=self.pk
