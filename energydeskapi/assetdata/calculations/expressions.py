@@ -28,8 +28,8 @@ class Expression:
     adjustment_type: str  # AssetForecastAdjustEnum
     value: float
     denomination: str
-    effective_from_date: datetime
-    effective_until_date: datetime
+    period_from: datetime
+    period_until: datetime
     @property
     def __dict__(self):
         """
