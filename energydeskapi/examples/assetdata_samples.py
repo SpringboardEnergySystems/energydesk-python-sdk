@@ -6,10 +6,11 @@ from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, Asse
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetTypeEnum
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
+
 from datetime import datetime, timedelta
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 import json
+from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -74,6 +75,14 @@ def demo_data(api_conn):
     tss.adjustments.append(ts)
 
     print(tss.get_dict())
+
+    lst_expressions=[]
+    ta=TimeSeriesAdjustment(0,description="Base Rebate",adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value, denomination="Prc", value=0.94,value2=0,period_from=None,period_until=None )
+    lst_expressions.append(ta)
+    ta=TimeSeriesAdjustment(0,description="High tax",adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value, denomination="Prc",value= 0.7,value2=0,period_from=dtFrom,period_until=dtUntil )
+    lst_expressions.append(ta)
+    tas=TimeSeriesAdjustments(pk=0,asset_pk=0,time_series_type_pk=1,is_active_for_asset=True, lst_expressions=lst_expressions)
+    AssetDataApi.upsert_timeseries_adjustments(api_conn, tas)
 
     print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
 
