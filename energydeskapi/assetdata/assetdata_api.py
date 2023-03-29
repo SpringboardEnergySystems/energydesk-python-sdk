@@ -78,7 +78,7 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        return TimeSeriesAdjustments(0,5,1,True, [])
+        return TimeSeriesAdjustments(0,5,1,True, []).get_dict(api_connection)
 
 
     @staticmethod
