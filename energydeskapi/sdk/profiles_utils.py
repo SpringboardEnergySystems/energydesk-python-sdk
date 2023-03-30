@@ -61,7 +61,8 @@ def normalize_elements(elements):
     return elements
 
 def generate_normalized_profile(profile):
-    profile['monthly_profile'] = normalize_elements(profile['monthly_profile'])
+    print(profile)
+    profile['monthly_profile'] = normalize_elements(profile['monthly_profile']) #if 'monthly_profile' in profile['monthly_profile'] else profile['monthly_profile']
     profile['weekday_profile'] = normalize_elements(profile['weekday_profile'])
     profile['daily_profile'] = normalize_elements(profile['daily_profile'])
     return profile
