@@ -4,6 +4,7 @@ from energydeskapi.portfolios.portfolioviews_api import PortfolioViewsApi
 from energydeskapi.types.portfolio_enum_types import PeriodViewGroupingEnum
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.types.market_enum_types import CommodityTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -24,7 +25,8 @@ def get_period_view(api_conn):
 
 def get_product_view(api_conn):
     filter={
-        "trading_book":31
+        "trading_book":11,
+        "commodity__commodity_type": CommodityTypeEnum.POWER.value
     }
     df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
@@ -33,4 +35,4 @@ def get_product_view(api_conn):
     #print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_period_view(api_conn)
+    get_product_view(api_conn)
