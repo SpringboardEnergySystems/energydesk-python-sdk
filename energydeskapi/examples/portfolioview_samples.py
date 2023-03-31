@@ -4,6 +4,7 @@ from energydeskapi.portfolios.portfolioviews_api import PortfolioViewsApi
 from energydeskapi.types.portfolio_enum_types import PeriodViewGroupingEnum
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.types.market_enum_types import CommodityTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
