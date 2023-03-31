@@ -190,11 +190,14 @@ def query_sources(api_conn):
     x=GosApi.get_source_collections_embedded(api_conn)
     #x=json.loads(x)
     #x=GosApi.get_source_data(api_conn)
-
-    print(json.dumps(x, indent=2))
+def currcontr(api_conn):
+    res=ContractsApi.list_contracts_compact(api_conn,
+                                        {"page_size": 100, "commodity__commodity_type": CommodityTypeEnum.CURRENCY.value})
+    df=pd.DataFrame(json.loads(res['results']))
+    print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contracts(api_conn)
+    currcontr(api_conn)
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)

@@ -24,7 +24,7 @@ def get_period_view(api_conn):
 
 def get_product_view(api_conn):
     filter={
-        "trading_book":31
+        "trading_book":11
     }
     df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
@@ -33,4 +33,4 @@ def get_product_view(api_conn):
     #print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_period_view(api_conn)
+    get_product_view(api_conn)
