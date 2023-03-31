@@ -506,10 +506,8 @@ def create_embedded_tree_for_dropdown(flat_tree):
 
         localnode={
             "portfolio_id":node['pk'],
-            "data": node['pk'],
-            "title": node['description'],
-            #"percentage": 1,
-            #"portfolio_manager": node['manager']['name']
+            "title": str(node['pk']) + "." + node['description'],
+
         }
 
         children_as_json = []
