@@ -22,6 +22,9 @@ def save_conversion(api_conn, portfolio_nodes):
     #print(result_json)
     #print(json.dumps(result_json, indent=4))
 
+def load_portfolio(api_conn, name):
+    ut=PortfoliosApi.get_portfolios_embedded(api_conn, {'description':name})
+    print(ut)
 
 def query_portfolios(api_conn):
     x=PortfolioTreeApi.get_portfolio_tree(api_conn)
@@ -51,4 +54,4 @@ def load_tree(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
-    query_portfolios(api_conn)
+    load_portfolio(api_conn, 'HEV Total')
