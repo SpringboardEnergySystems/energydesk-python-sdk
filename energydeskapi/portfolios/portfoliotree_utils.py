@@ -301,6 +301,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     passets = {}
     pchildren={}
     for rec in portfolio_nodes:
+        print(rec)
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         # dict={
         #     'pk':rec['id'],
