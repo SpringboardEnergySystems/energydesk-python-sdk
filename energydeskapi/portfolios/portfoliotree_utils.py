@@ -361,8 +361,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             print(passets[j.pk])
             for x in passets[j.pk]:
                 if str(x)[:2]=="pk":
-                    print("ASS", x,x[3:] )
-                    x=int(x[3:])
+                    print("ASS", x,x[2:] )
+                    x=int(x[2:])
                 nlist.append(get_asset_url(x))
             j.assets=nlist
 
