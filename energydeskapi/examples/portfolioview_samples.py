@@ -24,10 +24,7 @@ def get_period_view(api_conn):
     #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
-    filter={
-        "trading_book":11,
-        "commodity__commodity_type": CommodityTypeEnum.POWER.value
-    }
+    filter={'portfolio': 5}
     df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
 

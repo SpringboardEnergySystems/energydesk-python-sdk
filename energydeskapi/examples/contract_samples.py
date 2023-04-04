@@ -172,9 +172,9 @@ def register_sample_contract(api_conn):
     GosApi.upsert_contract(api_conn, go_contract)
 import pandas as pd
 def load_contracts(api_conn):
-    res=GosApi.get_contracts(api_conn, {'page_size':30})
+    res=ContractsApi.list_contracts_compact(api_conn, {'tradingbook':11})
     print(res)
-    df=pd.DataFrame(res)
+    df=pd.DataFrame(data=eval(res['results']))
     print(df)
 def test_gos(api_conn):
     #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
@@ -193,8 +193,11 @@ def query_sources(api_conn):
     x=GosApi.get_source_collections_embedded(api_conn)
     #x=json.loads(x)
     #x=GosApi.get_source_data(api_conn)
-
-    print(json.dumps(x, indent=2))
+def currcontr(api_conn):
+    res=ContractsApi.list_contracts_compact(api_conn,
+                                        {"page_size": 100, "commodity__commodity_type": CommodityTypeEnum.CURRENCY.value})
+    df=pd.DataFrame(json.loads(res['results']))
+    print(df)
 if __name__ == '__main__':
     api_conn=init_api()
     get_contract_filters(api_conn)
