@@ -361,8 +361,9 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             nlist=[]
             print(passets[j.pk])
             for x in passets[j.pk]:
-                if str(x)[:2]=="pk":
-                    print("ASS", x,x[2:] )
+                if str(x)[:3]=="pka":
+                    x=int(x[3:])
+                elif str(x)[:2]=="pk":
                     x=int(x[2:])
                 nlist.append(get_asset_url(x))
             j.assets=nlist
@@ -370,9 +371,10 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if j.pk in pbooks:
             nlist=[]
             for x in pbooks[j.pk]:
-                if str(x)[:2]=="pk":  #Strip away pk se by UI
-                    print("Books", x, x[3:])
+                if str(x)[:3]=="pkt":  #Strip away pk se by UI
                     x=int(x[3:])
+                elif str(x)[:2]=="pk":  #Strip away pk se by UI
+                    x=int(x[2:])
                 nlist.append(get_tradingbook_url(x))
             j.trading_books=nlist
     return jstreelist
