@@ -370,7 +370,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             nlist=[]
             for x in pbooks[j.pk]:
                 if str(x)[:2]=="pk":  #Strip away pk se by UI
-                    x=int(x[3:])
+                    x=int(x[2:])
                 nlist.append(get_tradingbook_url(x))
             j.trading_books=nlist
     return jstreelist
