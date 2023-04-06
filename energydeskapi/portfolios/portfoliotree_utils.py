@@ -303,10 +303,6 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     for rec in portfolio_nodes:
         print(rec)
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        # dict={
-        #     'pk':rec['id'],
-        #     'description':name
-        # }
         node=PortfolioNode()
         if rec['type'] == "default":
             if str(rec['id'])[:2]=="pk":
@@ -319,18 +315,14 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
 
         if "company" in rec['data'] and rec['data']['company'] is not None:
             node.manager=CustomersApi.get_company_url(api_connection, rec['data']['company'])
-
         if rec['parent']!="#":
             pid=int(rec['parent'])
-            #print("PID", pid)
             if rec['type'] == "trading_books":
-                print(rec)
                 if pid not in pbooks:
                     pbooks[pid] = []
                 pbooks[pid].append(rec['id'])
                 continue
             if rec['type'] == "assets":
-
                 if pid not in passets:
                     passets[pid] = []
                 passets[pid].append(rec['id'])
@@ -512,10 +504,8 @@ def create_embedded_tree_for_dropdown(flat_tree):
 
         localnode={
             "portfolio_id":node['pk'],
-            #"title": str(node['pk']) + "." + node['description'],
             "title": node['description'],
         }
-
         children_as_json = []
         for child in node['sub_portfolios']:
             subkey=key_from_url(child)
@@ -531,7 +521,7 @@ def create_embedded_tree_for_dropdown(flat_tree):
         if flat_tree[i]['parent_portfolio'] is None:
             new_root=manage_node(flat_tree[i])
             roots.append(new_root)
-
+    print(roots)
     return roots
 
 
