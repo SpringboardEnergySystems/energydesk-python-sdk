@@ -71,6 +71,12 @@ def get_rolling(api_conn):
     print(df_res)
     df2 = df_res.pivot_table(index='price_date', columns=['product'], values='price', aggfunc='sum')
     print(df2)
+    df3 = df_res.pivot_table(index='price_date', columns=['product'], values='yearly_vol', aggfunc='sum')
+    print(df3)
+    df4=df3.loc[df3.index[0]]
+    df4=df4*100.0
+    print(df4)
+    print(df4.to_json())
 if __name__ == '__main__':
     api_conn=init_api()
     get_rolling(api_conn)
