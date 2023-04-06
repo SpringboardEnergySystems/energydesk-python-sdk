@@ -117,6 +117,14 @@ class CurveApi:
             return None
         return json_res
 
+
+    @staticmethod
+    def retrieve_rolling_products(api_connection , price_area):
+        json_res=api_connection.exec_get_url('/api/curvemanager/getrollingproducts/', {"price_area":price_area})
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=eval(json_res))
+        return df
     @staticmethod
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,

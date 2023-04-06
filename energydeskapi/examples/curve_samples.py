@@ -66,7 +66,12 @@ def query_forward_curves(api_conn):
         df = df.drop(columns=['period_from', 'period_until'])
         print(df)
 
+def get_rolling(api_conn):
+    df_res=CurveApi.retrieve_rolling_products(api_conn, "NO1")
+    print(df_res)
+    df2 = df_res.pivot_table(index='price_date', columns=['product'], values='price', aggfunc='sum')
+    print(df2)
 if __name__ == '__main__':
     api_conn=init_api()
-    query_forward_curves(api_conn)
+    get_rolling(api_conn)
     #retrieve_stored_curve(api_conn)
