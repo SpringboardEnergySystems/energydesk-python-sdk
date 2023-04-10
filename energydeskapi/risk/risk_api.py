@@ -16,7 +16,7 @@ class RiskParameters:
         if self.risk_free_rate is not None:
             dict['risk_free_rate']=self.risk_free_rate
         if self.volatlity is not None:
-            dict['volatlity']=self.volatlity
+            dict['volatility']=self.volatlity
         return dict
 class RiskApi:
     """Class for risk
@@ -28,7 +28,7 @@ class RiskApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-
+        print(risk_params.get_dict(api_connection))
         if risk_params.pk>0:
             print("It is an existing configuration")
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/riskmanager/globalriskparameters/' + str(risk_params.pk) + "/",risk_params.get_dict(api_connection))

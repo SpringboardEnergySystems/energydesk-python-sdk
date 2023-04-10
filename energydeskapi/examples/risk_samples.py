@@ -20,7 +20,7 @@ def test_update_riskparams(api_conn):
     print(res)
     rp=RiskParameters()
     rp.risk_free_rate=0.04
-    rp.volatlity=0.4
+    rp.volatlity=0.33
     RiskApi.upsert_global_risk_parameters(api_conn, rp)
 
 if __name__ == '__main__':
