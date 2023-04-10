@@ -2,11 +2,51 @@ import logging
 import pandas as pd
 logger = logging.getLogger(__name__)
 
+class RiskParameters:
+
+    def __init__(self,pk=0,
+                 risk_free_rate=None,
+                 volatlity=None):
+        self.risk_free_rate=risk_free_rate
+        self.volatlity=volatlity
+        self.pk=pk
+    def get_dict(self,api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.risk_free_rate is not None:
+            dict['risk_free_rate']=self.risk_free_rate
+        if self.volatlity is not None:
+            dict['volatlity']=self.volatlity
+        return dict
 class RiskApi:
-    """Class for price curves
+    """Class for risk
 
     """
+    @staticmethod
+    def upsert_global_risk_parameters(api_connection, risk_params):
+        """Updates global risk parameters
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
 
+        if risk_params.pk>0:
+            print("It is an existing configuration")
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/riskmanager/globalriskparameters/' + str(risk_params.pk) + "/",risk_params.get_dict(api_connection))
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/globalriskparameters/',risk_params.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
+    @staticmethod
+    def get_risk_parameters(api_connection, parameters={}):
+        """Fetches credit ratings for counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching risk parameters")
+        json_res = api_connection.exec_get_url('/api/riskmanager/globalriskparameters/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
     @staticmethod
     def calc_volatilities(api_connection, months_back, price_areas):
         """Lists the types of commodities

@@ -67,8 +67,8 @@ def query_forward_curves(api_conn):
         print(df)
 
 def get_rolling(api_conn):
-    df_res=CurveApi.retrieve_rolling_products(api_conn, "NO1")
-    print(df_res)
+    df_res=CurveApi.retrieve_rolling_products(api_conn, "NO2")
+    print(list(df_res["product"].unique()))
     df2 = df_res.pivot_table(index='price_date', columns=['product'], values='price', aggfunc='sum')
     print(df2)
     df3 = df_res.pivot_table(index='price_date', columns=['product'], values='yearly_vol', aggfunc='sum')
@@ -77,7 +77,18 @@ def get_rolling(api_conn):
     df4=df4*100.0
     print(df4)
     print(df4.to_json())
+
+import http.client
+
+import requests
+def apply_julia_smoothcurve():
+    url="http://127.0.0.1:8080/"
+    result = requests.post(url)
+    #response = connection.getresponse()
+    print(result.text)
+
 if __name__ == '__main__':
     api_conn=init_api()
-    get_rolling(api_conn)
+    apply_julia_smoothcurve()
+    #get_rolling(api_conn)
     #retrieve_stored_curve(api_conn)
