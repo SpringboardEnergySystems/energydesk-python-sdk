@@ -72,7 +72,7 @@ class RiskApi:
         return df
 
     @staticmethod
-    def calc_covariance_var(api_connection, trading_books=[], days_back=40):
+    def calc_covariance_var(api_connection, portfolio_id, days_back=40):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -81,7 +81,7 @@ class RiskApi:
         logger.info("Calc Covariance Var")
         payload={
             'price_days':days_back,
-            'trading_books':trading_books
+            'portfolio_id':portfolio_id
         }
         print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calccovariancevar/', payload)
@@ -93,6 +93,9 @@ class RiskApi:
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, trading_books, days_back)
         if success ==False:
             return None
-        print(json_res)
+        var_bins=json_res['var_bins']
+        portfolio_mean = json_res['portfolio_mean']
+        portfolio_stdev = json_res['portfolio_stdev']
+        dfvars=pd.DataFrame(data=var_bins)
         #df=pd.DataFrame(data=eval(json_res))
-        return None
+        return dfvars,portfolio_mean,portfolio_stdev
