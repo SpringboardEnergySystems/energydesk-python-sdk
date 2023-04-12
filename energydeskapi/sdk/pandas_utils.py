@@ -115,6 +115,7 @@ def get_summer_profile():
     m1=get_month_list()[4:8]
     return m1
 
+# Usage , with a dataframe full of decimals: df = df.apply(cast_decimals_to_number, axis=1)
 def cast_decimals_to_number(row):
     for c in list(row.index):
         if type(row[c])==Decimal:
