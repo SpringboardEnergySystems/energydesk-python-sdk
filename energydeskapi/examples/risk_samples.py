@@ -13,8 +13,8 @@ def calc_volats(api_conn):
     print(df)
 
 def calc_covariance_var(api_conn):
-    df=RiskApi.calc_covariance_var(api_conn, [11], days_back=40)
-
+    df,portfolio_mean,portfolio_stdev=RiskApi.calc_covariance_var_df(api_conn, 9, days_back=40)
+    print(df)
 def test_update_riskparams(api_conn):
     res=RiskApi.get_risk_parameters(api_conn)
     print(res)
@@ -26,5 +26,5 @@ def test_update_riskparams(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    test_update_riskparams(api_conn)
+    calc_covariance_var(api_conn)
 
