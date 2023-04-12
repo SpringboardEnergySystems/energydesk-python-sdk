@@ -92,6 +92,7 @@ class RiskApi:
     def calc_covariance_var_df(api_connection, trading_books=[], days_back=40):
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, trading_books, days_back)
         if success ==False:
+            print(error_msg)
             return None,None,None
         var_bins=json_res['var_bins']
         portfolio_mean = json_res['portfolio_mean']
