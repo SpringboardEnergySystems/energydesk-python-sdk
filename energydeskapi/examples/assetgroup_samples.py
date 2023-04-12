@@ -43,7 +43,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a = Asset()
     at = AssetTechData()
     a.pk = 0
-    a.extern_asset_id = "Asset Group" + " - " + str(group)
+    a.extern_asset_id = "Hydro Assets" + " - " + str(group)
     a.description = a.extern_asset_id
     a.tech_data=at
     a.asset_type = AssetsApi.get_asset_type_url(api_conn,AssetTypeEnum.GROUPED_ASSET.value)
@@ -57,7 +57,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a.is_active = True
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset(api_conn, a)
     ag=AssetGroup()
-    ag.description="Asset Group" + " - " + str(group)
+    ag.description="Hydro Assets" + " - " + str(group)
     ag.main_asset=returned_data['pk']
     for sub in sub_assets:
         ag.sub_assets.append(sub['pk'])
@@ -69,15 +69,14 @@ def register_grouped_asset(api_conn, group, sub_assets):
 def register_asset_groups(api_conn):
     groups={}
     jsondata = AssetsApi.get_assets_embedded(
-        api_conn)
+        api_conn, {'page_size':200})
     for a in jsondata['results']:
-        if a['asset_type']['pk']!=AssetTypeEnum.WIND.value:
+        if a['asset_type']['pk']!=AssetTypeEnum.HYDRO.value:
             continue
-        key=a['asset_type']['description']
-        if  key not in groups:
-            groups[key]=[]
-        groups[key].append(a)
-
+        price_area=a['price_area']
+        if  price_area not in groups:
+            groups[price_area]=[]
+        groups[price_area].append(a)
     for key in groups.keys():
         register_grouped_asset(api_conn, key, groups[key])
 
@@ -85,5 +84,5 @@ def register_asset_groups(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    list_asset_groups(api_conn)
+    register_asset_groups(api_conn)
 
