@@ -12,12 +12,24 @@ def fetch_system_features(api_conn):
     result = SystemApi.get_system_features(api_conn)
     print(result)
 
+def fetch_system_feature_by_key(api_conn):
+    pk = 2
+    result = SystemApi.get_system_feature_by_key(api_conn, pk)
+    print(result)
+
 def fetch_system_access_types(api_conn):
     result = SystemApi.get_system_access_types(api_conn)
+    print(result)
+
+def fetch_system_access_type_by_key(api_conn):
+    pk = 2
+    result = SystemApi.get_system_access_type_by_key(api_conn, pk)
     print(result)
 
 
 if __name__ == '__main__':
     api_conn = init_api()
     #fetch_system_features(api_conn)
-    fetch_system_access_types(api_conn)
+    #fetch_system_feature_by_key(api_conn)
+    #fetch_system_access_types(api_conn)
+    fetch_system_access_type_by_key(api_conn)
