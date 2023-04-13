@@ -62,6 +62,15 @@ class AssetGroupApi:
             return None
         return json_res
 
+    @staticmethod
+    def delete_asset_group(api_connection, pk):
+        """Deletes an assset group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/assets/assetgroups/' + str(pk) + "/")
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_asset_groups_embedded(api_connection, parameters={}):

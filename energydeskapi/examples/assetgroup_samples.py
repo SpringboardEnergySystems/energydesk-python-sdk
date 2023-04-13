@@ -23,18 +23,27 @@ def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
     context['assets'] =asset_list
 
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
-def list_asset_groups(api_conn, asset_group_pk=1):
-    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {"id":asset_group_pk})
-    print(json.dumps(res, indent=2))
+def list_asset_groups(api_conn, tp=AssetTypeEnum.GROUPED_ASSET.value):
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
     sub_asset_list=[]
     for rec in res:
-        for s in rec['sub_assets']:
-            print(s)
-            sub_asset_pk=key_from_url(s)
-            sub_asset_list.append(sub_asset_pk)
-    print(sub_asset_list)
+        print(rec['pk'], rec['description'])
 
+        #for s in rec['main_asset']:
+        #    print(s['pk'], s['description'])
+        #    sub_asset_pk=s['pk']#key_from_url(s)
+        #    sub_asset_list.append(sub_asset_pk)
+    #print(sub_asset_list)
 
+def delete_asset_groups(api_conn):
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
+    sub_asset_list=[]
+    for rec in res:
+        print(rec['pk'], rec['description'])
+        AssetGroupApi.delete_asset_group(api_conn, rec['pk'])
+        mn=rec['main_asset']
+        print(mn['pk'], mn['description'])
+        AssetsApi.delete_asset(api_conn, mn['pk'])
 
 
 def register_grouped_asset(api_conn, group, sub_assets):
@@ -85,4 +94,6 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     register_asset_groups(api_conn)
+    #delete_asset_groups(api_conn)
+    list_asset_groups(api_conn)
 

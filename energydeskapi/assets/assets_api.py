@@ -175,6 +175,16 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
 
     @staticmethod
+    def delete_asset(api_connection, pk):
+        """Deletes an assset
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/assets/assets/' + str(pk) + "/")
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def get_assets(api_connection, parameters={}):
         """Fetches all assets
 
