@@ -264,6 +264,19 @@ class UsersApi:
         return df
 
     @staticmethod
+    def get_user_feature_access(api_connection, params={}):
+        """Fetches accesses to features for user roles
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user feature access")
+        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/', params)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_user_url(api_connection, user_pk):
         """Fetches user from url
 
