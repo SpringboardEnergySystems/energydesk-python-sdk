@@ -79,9 +79,14 @@ def create_user(api_conn):
 
 def create_user_group(api_conn):
     ug = UserGroup()
-    ug.pk = 13
+    ug.pk = 0
     ug.description = "test group 1"
     result = UsersApi.upsert_user_groups(api_conn, ug)
+    print(result)
+
+def del_user_group(api_conn):
+    pk = 16
+    result = UsersApi.delete_user_groups(api_conn, pk)
     print(result)
 
 def send_reset_password_email(api_conn):
@@ -121,4 +126,5 @@ if __name__ == '__main__':
     #update_company(api_conn)
     #list_user_feature_access(api_conn)
     #list_user_groups(api_conn)
-    create_user_group(api_conn)
+    #create_user_group(api_conn)
+    del_user_group(api_conn)
