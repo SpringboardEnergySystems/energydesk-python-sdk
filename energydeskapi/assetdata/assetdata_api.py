@@ -66,7 +66,18 @@ class TimeSeriesAdjustments:
     time_series_type_pk: int
     is_active_for_asset: bool
     adjustments : list
-
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
     def get_dict(self,api_conn):
         dict = {}
         dict['pk']=self.pk
