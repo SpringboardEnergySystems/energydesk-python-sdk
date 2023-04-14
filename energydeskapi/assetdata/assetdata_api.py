@@ -50,14 +50,14 @@ class TimeSeriesAdjustment:
         """
         return json.dumps(self.__dict__, cls=DateTimeEncoder)
     def get_dict(self, api_conn):
-        dict = {}
+        dict = {'pk':self.pk}
         if self.description is not None: dict['description'] = self.description
         if self.adjustment_type_pk is not None: dict['adjustment_type'] = AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.adjustment_type_pk)
         if self.denomination is not None: dict['denomination'] = self.denomination#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
-        if self.period_from is not None: dict['period_from'] = self.period_from
-        if self.period_until is not None: dict['period_until'] = self.period_until
+        if self.period_from is not None and self.period_from!="": dict['period_from'] = self.period_from.strftime("%Y-%m-%d")
+        if self.period_until is not None and self.period_until!="": dict['period_until'] = self.period_until.strftime("%Y-%m-%d")
         return dict
 @dataclass
 class TimeSeriesAdjustments:
@@ -66,7 +66,18 @@ class TimeSeriesAdjustments:
     time_series_type_pk: int
     is_active_for_asset: bool
     adjustments : list
-
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
     def get_dict(self,api_conn):
         dict = {}
         dict['pk']=self.pk
@@ -122,7 +133,7 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-
+        print(adjustments.get_dict(api_connection))
         if adjustments.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/assetdata/timeseriesadjustments/' + str(adjustments.pk) + "/", adjustments.get_dict(api_connection))
@@ -152,7 +163,7 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        denoms=[('Perc','Perc'),('NOK','NOK')]
+        denoms=[(1,'Perc'),(2,'NOK')]
         return denoms
 
 
