@@ -12,6 +12,21 @@ from energydeskapi.assets.assets_api import AssetsApi
 logger = logging.getLogger(__name__)
 
 
+class DateTimeEncoder(JSONEncoder):
+    # Override the default method
+    def default(self, obj):
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+
+
+def date_hook(json_dict):
+    for (key, value) in json_dict.items():
+        try:
+            json_dict[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S+00:00")
+        except:
+            pass
+    return json_dict
+
 @dataclass
 class TimeSeriesAdjustment:
     pk : int
@@ -22,6 +37,18 @@ class TimeSeriesAdjustment:
     value2 : float
     period_from :datetime
     period_until: datetime
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
     def get_dict(self, api_conn):
         dict = {}
         if self.description is not None: dict['description'] = self.description
