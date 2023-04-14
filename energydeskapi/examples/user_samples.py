@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.customers.users_api import UsersApi, User
+from energydeskapi.customers.users_api import UsersApi, User, UserGroup
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.company_enum_types import UserRoleEnum
 
@@ -56,6 +56,10 @@ def get_profile_by_pk_embedded(api_conn):
     json_profiles = UsersApi.get_embedded_profile_by_key(api_conn, pk)
     print(json_profiles)
 
+def list_user_groups(api_conn):
+    result = UsersApi.get_user_groups(api_conn)
+    print(result)
+
 def list_user_feature_access(api_conn):
     params = {'group': 4,
               'system_feature': 2}
@@ -72,6 +76,13 @@ def create_user(api_conn):
     u.company_registry_number="666"
     print(u.get_dict())
     UsersApi.create_users(api_conn, [u])
+
+def create_user_group(api_conn):
+    ug = UserGroup()
+    ug.pk = 13
+    ug.description = "test group 1"
+    result = UsersApi.upsert_user_groups(api_conn, ug)
+    print(result)
 
 def send_reset_password_email(api_conn):
     email = "morteb1507@gmail.com"
@@ -108,4 +119,6 @@ if __name__ == '__main__':
     #reset_password(api_conn)
     #verify_token(api_conn)
     #update_company(api_conn)
-    list_user_feature_access(api_conn)
+    #list_user_feature_access(api_conn)
+    #list_user_groups(api_conn)
+    create_user_group(api_conn)
