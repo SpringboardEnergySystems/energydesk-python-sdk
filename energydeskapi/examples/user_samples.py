@@ -57,7 +57,7 @@ def get_profile_by_pk_embedded(api_conn):
     print(json_profiles)
 
 def list_user_feature_access(api_conn):
-    params = {'role': 4,
+    params = {'group': 4,
               'system_feature': 2}
     result = UsersApi.get_user_feature_access(api_conn, params)
     print(result)
