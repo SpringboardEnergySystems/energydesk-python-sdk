@@ -78,7 +78,12 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        return TimeSeriesAdjustments(0,5,1,True, []).get_dict(api_connection)
+
+        json_res = api_connection.exec_get_url('/api/assetdata/timeseriesadjustments/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
+        #return TimeSeriesAdjustments(0,5,1,True, []).get_dict(api_connection)
 
 
     @staticmethod
