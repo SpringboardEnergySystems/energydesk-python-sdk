@@ -56,6 +56,12 @@ def get_profile_by_pk_embedded(api_conn):
     json_profiles = UsersApi.get_embedded_profile_by_key(api_conn, pk)
     print(json_profiles)
 
+def list_user_feature_access(api_conn):
+    params = {'role': 4,
+              'system_feature': 2}
+    result = UsersApi.get_user_feature_access(api_conn, params)
+    print(result)
+
 def create_user(api_conn):
     u = User()
     u.username = "myuser@gmail.com"
@@ -79,7 +85,7 @@ def reset_password(api_conn):
     UsersApi.reset_password(api_conn, payload)
 
 def verify_token(api_conn):
-    token = ""
+    token = "f166277d2aecd06f30d6353b9c9bf5ce8dc"
     UsersApi.validate_reset_token(api_conn, token)
 
 def basic_auth(api_conn):
@@ -102,3 +108,4 @@ if __name__ == '__main__':
     #reset_password(api_conn)
     #verify_token(api_conn)
     #update_company(api_conn)
+    list_user_feature_access(api_conn)
