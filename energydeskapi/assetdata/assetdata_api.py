@@ -50,7 +50,7 @@ class TimeSeriesAdjustment:
         """
         return json.dumps(self.__dict__, cls=DateTimeEncoder)
     def get_dict(self, api_conn):
-        dict = {}
+        dict = {'pk':self.pk}
         if self.description is not None: dict['description'] = self.description
         if self.adjustment_type_pk is not None: dict['adjustment_type'] = AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.adjustment_type_pk)
         if self.denomination is not None: dict['denomination'] = self.denomination#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
