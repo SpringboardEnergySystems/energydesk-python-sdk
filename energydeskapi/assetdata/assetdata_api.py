@@ -163,7 +163,7 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        denoms=[('Perc','Perc'),('NOK','NOK')]
+        denoms=[(1,'Perc'),(2,'NOK')]
         return denoms
 
 
