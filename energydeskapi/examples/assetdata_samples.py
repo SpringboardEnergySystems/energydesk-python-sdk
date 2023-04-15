@@ -112,9 +112,9 @@ def load_adjustments(api_conn, asset_id):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    #query_asset_info(api_conn, [98])
+    query_asset_info(api_conn, [14])
     #add_expressions(api_conn, "08-Trepellets")
-    load_adjustments(api_conn, 14)
+    #load_adjustments(api_conn, 14)
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
 
