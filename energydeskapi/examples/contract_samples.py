@@ -34,9 +34,12 @@ def get_contract_types(api_conn):
     print(df)
 
 def get_contract_filters(api_conn):
-    parameter = {"user": 1}
-    json_contractfilters = ContractsApi.get_contract_filters(api_conn, parameter)
-    print(json_contractfilters)
+    parameter = {"page_size": 100}
+    #json_contractfilters = ContractsApi.get_contract_filters(api_conn, parameter)
+    from energydeskapi.marketdata.markets_api import MarketsApi
+    x=MarketsApi.get_instrument_types(api_conn)
+    print(x)
+
 
 def get_contract_filter_pk(api_conn):
     pk = 1
@@ -197,7 +200,7 @@ def currcontr(api_conn):
     print(df)
 if __name__ == '__main__':
     api_conn=init_api()
-    load_contracts(api_conn)
+    get_contract_filters(api_conn)
     #query_sources(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)

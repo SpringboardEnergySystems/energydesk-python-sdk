@@ -8,6 +8,7 @@ from pandas.errors import ParserError
 import pytz
 from dateutil.relativedelta import relativedelta
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
+from decimal import Decimal
 def make_none_tz( utc_dt):
     tmp =str(utc_dt)[:19]
     return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S')
@@ -113,6 +114,13 @@ def get_winter_profile():
 def get_summer_profile():
     m1=get_month_list()[4:8]
     return m1
+
+# Usage , with a dataframe full of decimals: df = df.apply(cast_decimals_to_number, axis=1)
+def cast_decimals_to_number(row):
+    for c in list(row.index):
+        if type(row[c])==Decimal:
+            row[c] = float(row[c])
+    return row
 
 if __name__ == '__main__':
     tz = pytz.timezone("Europe/Oslo")

@@ -23,18 +23,27 @@ def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
     context['assets'] =asset_list
 
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
-def list_asset_groups(api_conn, asset_group_pk=1):
-    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {"id":asset_group_pk})
-    print(json.dumps(res, indent=2))
+def list_asset_groups(api_conn, tp=AssetTypeEnum.GROUPED_ASSET.value):
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
     sub_asset_list=[]
     for rec in res:
-        for s in rec['sub_assets']:
-            print(s)
-            sub_asset_pk=key_from_url(s)
-            sub_asset_list.append(sub_asset_pk)
-    print(sub_asset_list)
+        print(rec['pk'], rec['description'])
 
+        #for s in rec['main_asset']:
+        #    print(s['pk'], s['description'])
+        #    sub_asset_pk=s['pk']#key_from_url(s)
+        #    sub_asset_list.append(sub_asset_pk)
+    #print(sub_asset_list)
 
+def delete_asset_groups(api_conn):
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
+    sub_asset_list=[]
+    for rec in res:
+        print(rec['pk'], rec['description'])
+        AssetGroupApi.delete_asset_group(api_conn, rec['pk'])
+        mn=rec['main_asset']
+        print(mn['pk'], mn['description'])
+        AssetsApi.delete_asset(api_conn, mn['pk'])
 
 
 def register_grouped_asset(api_conn, group, sub_assets):
@@ -43,7 +52,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a = Asset()
     at = AssetTechData()
     a.pk = 0
-    a.extern_asset_id = "Asset Group" + " - " + str(group)
+    a.extern_asset_id = "Hydro Assets" + " - " + str(group)
     a.description = a.extern_asset_id
     a.tech_data=at
     a.asset_type = AssetsApi.get_asset_type_url(api_conn,AssetTypeEnum.GROUPED_ASSET.value)
@@ -57,7 +66,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a.is_active = True
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset(api_conn, a)
     ag=AssetGroup()
-    ag.description="Asset Group" + " - " + str(group)
+    ag.description="Hydro Assets" + " - " + str(group)
     ag.main_asset=returned_data['pk']
     for sub in sub_assets:
         ag.sub_assets.append(sub['pk'])
@@ -69,15 +78,14 @@ def register_grouped_asset(api_conn, group, sub_assets):
 def register_asset_groups(api_conn):
     groups={}
     jsondata = AssetsApi.get_assets_embedded(
-        api_conn)
+        api_conn, {'page_size':200})
     for a in jsondata['results']:
-        if a['asset_type']['pk']!=AssetTypeEnum.WIND.value:
+        if a['asset_type']['pk']!=AssetTypeEnum.HYDRO.value:
             continue
-        key=a['asset_type']['description']
-        if  key not in groups:
-            groups[key]=[]
-        groups[key].append(a)
-
+        price_area=a['price_area']
+        if  price_area not in groups:
+            groups[price_area]=[]
+        groups[price_area].append(a)
     for key in groups.keys():
         register_grouped_asset(api_conn, key, groups[key])
 
@@ -85,5 +93,7 @@ def register_asset_groups(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
+    register_asset_groups(api_conn)
+    #delete_asset_groups(api_conn)
     list_asset_groups(api_conn)
 

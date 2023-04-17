@@ -31,6 +31,18 @@ class User:
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
         return dict
 
+class UserGroup:
+    def __init__(self):
+        self.pk=0
+        self.description=None
+
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.description is not None: dict['description'] = self.description
+        return dict
+
+
 class UsersApi:
     """Class for user profiles and companies
 
@@ -262,6 +274,84 @@ class UsersApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_user_groups(api_connection):
+        """Fetches user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user groups")
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_user_group_by_key(api_connection, pk):
+        """Fetches user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user group key
+        :type pk: str, required
+        """
+        logger.info("Fetching user group " + str(pk))
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/' + str(pk) + '/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_user_groups(api_connection, user_group):
+        """Creates/Updates user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param user_group: user group object
+        :type user_group: str, required
+        """
+        logger.info("Upserting user group")
+        payload = user_group.get_dict()
+        key = int(payload['pk'])
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/customers/usergroups/' + str(payload['pk']) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/customers/usergroups/', payload)
+        if success:
+            return returned_data
+        return None
+
+    @staticmethod
+    def delete_user_groups(api_connection, pk):
+        """Deletes user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user group key
+        :type pk: str, required
+        """
+        logger.info("Deleting user group")
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/customers/usergroups/' + str(pk) + '/')
+        if success:
+            return "User group successfully deleted", status_code
+        return None
+
+    @staticmethod
+    def get_user_feature_access(api_connection, params={}):
+        """Fetches accesses to features for user roles
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user feature access")
+        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/', params)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_user_url(api_connection, user_pk):

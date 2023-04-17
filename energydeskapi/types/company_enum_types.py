@@ -33,3 +33,4 @@ class UserRoleEnum(Enum):
     STAKEHOLDER = 5
     BACKOFFICE = 6
     EXTERNAL_GUEST = 7
+    ORIGINATOR = 8

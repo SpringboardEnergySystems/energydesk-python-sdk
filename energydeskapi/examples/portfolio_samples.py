@@ -2,6 +2,7 @@
 import logging
 import json
 from energydeskapi.portfolios.portfolio_api import PortfoliosApi
+from energydeskapi.portfolios.portfolio_api import PortfolioNode
 from energydeskapi.portfolios.portfoliotree_api import PortfolioTreeApi
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.portfolios.portfoliotree_utils import convert_nodes_from_jstree,convert_embedded_tree_to_jstree, create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
@@ -22,8 +23,8 @@ def save_conversion(api_conn, portfolio_nodes):
     #print(result_json)
     #print(json.dumps(result_json, indent=4))
 
-def load_portfolio(api_conn, name):
-    ut=PortfoliosApi.get_portfolios_embedded(api_conn, {'description':name})
+def load_portfolio(api_conn):
+    ut=PortfoliosApi.get_portfolios_embedded(api_conn)
     print(ut)
 
 def query_portfolios(api_conn):
@@ -43,6 +44,13 @@ def query_portfolios(api_conn):
     print(json.dumps(js, indent=4))
     query_portfolios(api_conn, js)
 
+def create_portfolio(api_conn):
+    d={'pk': 0, 'description': 'Fuels', 'portfolio_name': 'Fuels', 'trading_books': [], 'manager': None, 'assets': [], 'sub_portfolios': [], 'stakeholders': [], 'parent_portfolio': 'http://127.0.0.1:8001/api/portfoliomanager/portfolios/2/'}
+    pnode=PortfolioNode()
+    pnode.description="Fuel"
+    pnode.parent_id=2
+    print(pnode.get_dict(api_conn))
+    PortfoliosApi.upsert_portfolio(api_conn, pnode)
 
 def load_tree(api_conn):
 
@@ -54,4 +62,4 @@ def load_tree(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
-    load_portfolio(api_conn, 'HEV Total')
+    query_portfolios(api_conn)

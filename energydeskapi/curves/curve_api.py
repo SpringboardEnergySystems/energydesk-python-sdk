@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+import json
+import ast
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 logger = logging.getLogger(__name__)
@@ -117,6 +119,17 @@ class CurveApi:
             return None
         return json_res
 
+
+    @staticmethod
+    def retrieve_rolling_products(api_connection , price_area):
+        json_res=api_connection.exec_get_url('/api/curvemanager/getrollingproducts/', {"price_area":price_area})
+        if json_res is None:
+            return None
+        #js=eval(json_res)
+        if type(json_res)==str:
+            json_res=json.loads(json_res)
+        df = pd.DataFrame(data=json_res)
+        return df
     @staticmethod
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,
