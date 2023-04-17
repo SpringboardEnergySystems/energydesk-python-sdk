@@ -90,8 +90,8 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #query_asset_info(api_conn, [98])
-    add_expressions(api_conn, "08-Trepellets")
-    #print(AssetDataApi.get_timeseries_adjustments(api_conn))
+    #add_expressions(api_conn, "08-Trepellets")
+    print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
 
