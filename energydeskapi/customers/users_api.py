@@ -283,7 +283,22 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching user groups")
-        json_res = api_connection.exec_get_url('/api/customers/usergroups/',)
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_user_group_by_key(api_connection, pk):
+        """Fetches user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user group key
+        :type pk: str, required
+        """
+        logger.info("Fetching user group " + str(pk))
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/' + str(pk) + '/')
         if json_res is None:
             return None
         return json_res
@@ -294,6 +309,8 @@ class UsersApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param user_group: user group object
+        :type user_group: str, required
         """
         logger.info("Upserting user group")
         payload = user_group.get_dict()

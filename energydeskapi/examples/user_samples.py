@@ -60,6 +60,11 @@ def list_user_groups(api_conn):
     result = UsersApi.get_user_groups(api_conn)
     print(result)
 
+def get_user_group_from_pk(api_conn):
+    pk = 4
+    result = UsersApi.get_user_group_by_key(api_conn, pk)
+    print(result)
+
 def list_user_feature_access(api_conn):
     params = {'group': 4,
               'system_feature': 2}
@@ -126,5 +131,6 @@ if __name__ == '__main__':
     #update_company(api_conn)
     #list_user_feature_access(api_conn)
     #list_user_groups(api_conn)
+    get_user_group_from_pk(api_conn)
     #create_user_group(api_conn)
-    del_user_group(api_conn)
+    #del_user_group(api_conn)
