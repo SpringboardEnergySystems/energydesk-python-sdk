@@ -56,8 +56,10 @@ class TimeSeriesAdjustment:
         if self.denomination is not None: dict['denomination'] = self.denomination#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
-        if self.period_from is not None and self.period_from!="": dict['period_from'] = self.period_from.strftime("%Y-%m-%d")
-        if self.period_until is not None and self.period_until!="": dict['period_until'] = self.period_until.strftime("%Y-%m-%d")
+        if self.period_from is not None and self.period_from!="":
+            dict['period_from'] = self.period_from if type(self.period_from) == str else self.period_from.strftime("%Y-%m-%d")
+        if self.period_until is not None and self.period_until!="":
+            dict['period_until'] = self.period_until if type(self.period_until)==str else self.period_until.strftime("%Y-%m-%d")
         return dict
 @dataclass
 class TimeSeriesAdjustments:
