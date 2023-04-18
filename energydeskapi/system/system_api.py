@@ -38,6 +38,17 @@ class SystemApi:
         return None
 
     @staticmethod
+    def get_system_feature_url(api_connection, pk):
+        """Fetches user from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: personal key of system feature
+        :type pk: str, required
+        """
+        return api_connection.get_base_url() + '/api/system/systemfeatures/' + str(pk) + "/"
+
+    @staticmethod
     def get_system_access_types(api_connection):
         """Fetches system access types
 
@@ -57,6 +68,8 @@ class SystemApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param pk: personal key of access type
+        :type pk: str, required
         """
         logger.info("Fetching system access type " + str(pk))
         json_res = api_connection.exec_get_url(
@@ -64,3 +77,14 @@ class SystemApi:
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def get_system_access_type_url(api_connection, pk):
+        """Fetches user from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: personal key of access type
+        :type pk: str, required
+        """
+        return api_connection.get_base_url() + '/api/system/systemaccesstypes/' + str(pk) + "/"
