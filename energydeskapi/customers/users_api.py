@@ -290,6 +290,20 @@ class UsersApi:
         return json_res
 
     @staticmethod
+    def get_user_groups_df(api_connection):
+        """Fetches user groups and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user groups")
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/')
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
     def get_user_group_by_key(api_connection, pk):
         """Fetches user groups
 
