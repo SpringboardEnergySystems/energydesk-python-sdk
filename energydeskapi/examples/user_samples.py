@@ -60,9 +60,18 @@ def list_user_groups(api_conn):
     result = UsersApi.get_user_groups(api_conn)
     print(result)
 
+def list_user_groups_df(api_conn):
+    result = UsersApi.get_user_groups_df(api_conn)
+    print(result)
+
 def get_user_group_from_pk(api_conn):
-    pk = 4
+    pk = 18
     result = UsersApi.get_user_group_by_key(api_conn, pk)
+    print(result)
+
+def list_users_in_user_group(api_conn):
+    pk = 19
+    result = UsersApi.get_users_from_user_group(api_conn, pk)
     print(result)
 
 def list_user_feature_access(api_conn):
@@ -85,7 +94,8 @@ def create_user(api_conn):
 def create_user_group(api_conn):
     ug = UserGroup()
     ug.pk = 0
-    ug.description = "test group 1"
+    ug.description = "test group 12"
+    ug.users = [UsersApi.get_user_url(api_conn, 1), UsersApi.get_user_url(api_conn, 2)]
     result = UsersApi.upsert_user_groups(api_conn, ug)
     print(result)
 
@@ -131,6 +141,8 @@ if __name__ == '__main__':
     #update_company(api_conn)
     #list_user_feature_access(api_conn)
     #list_user_groups(api_conn)
-    get_user_group_from_pk(api_conn)
+    #list_user_groups_df(api_conn)
+    #get_user_group_from_pk(api_conn)
     #create_user_group(api_conn)
     #del_user_group(api_conn)
+    list_users_in_user_group(api_conn)

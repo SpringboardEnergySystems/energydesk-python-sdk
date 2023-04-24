@@ -35,11 +35,13 @@ class UserGroup:
     def __init__(self):
         self.pk=0
         self.description=None
+        self.users=[]
 
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
+        if self.users is not None: dict['users'] = self.users
         return dict
 
 
@@ -317,6 +319,22 @@ class UsersApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_users_from_user_group(api_connection, pk):
+        """Fetches user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user group key
+        :type pk: str, required
+        """
+        logger.info("Fetching users from user group " + str(pk))
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/' + str(pk) + '/')
+        if json_res is None:
+            return None
+        users = json_res['users']
+        return users
 
     @staticmethod
     def upsert_user_groups(api_connection, user_group):
