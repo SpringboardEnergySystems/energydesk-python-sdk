@@ -330,10 +330,11 @@ class UsersApi:
         :type pk: str, required
         """
         logger.info("Fetching users from user group " + str(pk))
-        json_res = api_connection.exec_get_url('/api/customers/usergroups/' + str(pk) + '/')
+        params = {"id": pk}
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/embedded', params)
         if json_res is None:
             return None
-        users = json_res['users']
+        users = json_res[0]['users']
         return users
 
     @staticmethod

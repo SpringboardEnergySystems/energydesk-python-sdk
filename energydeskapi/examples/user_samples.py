@@ -94,8 +94,8 @@ def create_user(api_conn):
 def create_user_group(api_conn):
     ug = UserGroup()
     ug.pk = 0
-    ug.description = "test group 12"
-    ug.users = [UsersApi.get_user_url(api_conn, 1), UsersApi.get_user_url(api_conn, 2)]
+    ug.description = "test groups"
+    ug.users = [UsersApi.get_user_url(api_conn, 1), UsersApi.get_user_url(api_conn, 2), UsersApi.get_user_url(api_conn, 3)]
     result = UsersApi.upsert_user_groups(api_conn, ug)
     print(result)
 
@@ -143,6 +143,6 @@ if __name__ == '__main__':
     #list_user_groups(api_conn)
     #list_user_groups_df(api_conn)
     #get_user_group_from_pk(api_conn)
-    #create_user_group(api_conn)
+    create_user_group(api_conn)
     #del_user_group(api_conn)
-    list_users_in_user_group(api_conn)
+    #list_users_in_user_group(api_conn)
