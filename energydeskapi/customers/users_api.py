@@ -322,7 +322,23 @@ class UsersApi:
 
     @staticmethod
     def get_users_from_user_group(api_connection, pk):
-        """Fetches user groups
+        """Fetches users from user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user group key
+        :type pk: str, required
+        """
+        logger.info("Fetching users from user group " + str(pk))
+        json_res = api_connection.exec_get_url('/api/customers/usergroups/' + str(pk) + '/')
+        if json_res is None:
+            return None
+        users = json_res['users']
+        return users
+
+    @staticmethod
+    def get_users_from_user_group_embedded(api_connection, pk):
+        """Fetches users from user groups with embedding
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
