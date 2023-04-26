@@ -93,15 +93,20 @@ def create_user(api_conn):
 
 def create_user_group(api_conn):
     ug = UserGroup()
-    ug.pk = 0
-    ug.description = "test groups"
-    ug.users = [UsersApi.get_user_url(api_conn, 1), UsersApi.get_user_url(api_conn, 2), UsersApi.get_user_url(api_conn, 3)]
+    ug.pk = 20
+    ug.users = [UsersApi.get_user_url(api_conn, 1), UsersApi.get_user_url(api_conn, 2), UsersApi.get_user_url(api_conn, 4)]
     result = UsersApi.upsert_user_groups(api_conn, ug)
     print(result)
 
 def del_user_group(api_conn):
     pk = 16
     result = UsersApi.delete_user_groups(api_conn, pk)
+    print(result)
+
+def remove_user_user_group(api_conn):
+    user_group_pk = 20
+    user_pk = 4
+    result = UsersApi.remove_user_from_user_group(api_conn, user_group_pk, user_pk)
     print(result)
 
 def send_reset_password_email(api_conn):
@@ -143,6 +148,7 @@ if __name__ == '__main__':
     #list_user_groups(api_conn)
     #list_user_groups_df(api_conn)
     #get_user_group_from_pk(api_conn)
-    create_user_group(api_conn)
+    #create_user_group(api_conn)
     #del_user_group(api_conn)
     #list_users_in_user_group(api_conn)
+    remove_user_user_group(api_conn)

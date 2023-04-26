@@ -391,6 +391,26 @@ class UsersApi:
         return None
 
     @staticmethod
+    def remove_user_from_user_group(api_connection, group_pk, user_pk):
+        """Removes users from user group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param group_pk: user group key
+        :type group_pk: str, required
+        :param user_pk: user profile key
+        :type user_pk: str, required
+        """
+        logger.info("Removing user from user group")
+        payload = {"user_group": group_pk,
+                   "users": user_pk}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/customers/usergroups/remove_user/', payload)
+        if success:
+            return "User successfully removed from user group", status_code
+        return None
+
+    @staticmethod
     def get_user_feature_access(api_connection, params={}):
         """Fetches accesses to features for user roles
 
