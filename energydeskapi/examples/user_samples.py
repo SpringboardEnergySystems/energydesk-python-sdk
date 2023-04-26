@@ -156,6 +156,6 @@ if __name__ == '__main__':
     #get_user_group_from_pk(api_conn)
     #create_user_group(api_conn)
     #del_user_group(api_conn)
-    #list_users_in_user_group(api_conn)
-    remove_user_user_group(api_conn)
+    list_users_in_user_group(api_conn)
+    #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
