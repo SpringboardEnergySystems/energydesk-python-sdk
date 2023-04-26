@@ -103,6 +103,12 @@ def del_user_group(api_conn):
     result = UsersApi.delete_user_groups(api_conn, pk)
     print(result)
 
+def add_user_user_group(api_conn):
+    user_group_pk = 20
+    user = 4
+    result = UsersApi.add_user_to_user_group(api_conn, user_group_pk, user)
+    print(result)
+
 def remove_user_user_group(api_conn):
     user_group_pk = 20
     user_pk = 4
@@ -152,3 +158,4 @@ if __name__ == '__main__':
     #del_user_group(api_conn)
     #list_users_in_user_group(api_conn)
     remove_user_user_group(api_conn)
+    #add_user_user_group(api_conn)

@@ -391,6 +391,26 @@ class UsersApi:
         return None
 
     @staticmethod
+    def add_user_to_user_group(api_connection, group_pk, user_pk):
+        """Removes users from user group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param group_pk: user group key
+        :type group_pk: str, required
+        :param user_pk: user profile key
+        :type user_pk: str, required
+        """
+        logger.info("Adding user to user group")
+        payload = {"user_group": group_pk,
+                   "users": user_pk}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/customers/usergroups/add_user/', payload)
+        if success:
+            return "User successfully added to user group", status_code
+        return None
+
+    @staticmethod
     def remove_user_from_user_group(api_connection, group_pk, user_pk):
         """Removes users from user group
 
