@@ -99,6 +99,11 @@ def create_user_feature_access(api_conn):
     result = UsersApi.upsert_user_feature_access(api_conn, uf)
     print(result)
 
+def del_user_feature_access(api_conn):
+    pk = 7
+    result = UsersApi.delete_user_feature_access(api_conn, pk)
+    print(result)
+
 def create_user(api_conn):
     u = User()
     u.username = "myuser@gmail.com"
@@ -181,3 +186,4 @@ if __name__ == '__main__':
     #add_user_user_group(api_conn)
     #create_user_feature_access(api_conn)
     list_user_feature_access_to_group(api_conn)
+    #del_user_feature_access(api_conn)

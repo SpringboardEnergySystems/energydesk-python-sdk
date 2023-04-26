@@ -464,6 +464,8 @@ class UsersApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+        :param group_pk: user group key
+        :type group_pk: str, required
         """
         logger.info("Fetching user feature access")
         params = {'group': group_pk}
@@ -490,6 +492,22 @@ class UsersApi:
                 '/api/customers/userfeatureaccesses/', payload)
         if success:
             return returned_data
+        return None
+
+    @staticmethod
+    def delete_user_feature_access(api_connection, pk):
+        """Deletes features to user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user feature access key
+        :type pk: str, required
+        """
+        logger.info("Deleting user feature access")
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url(
+            '/api/customers/userfeatureaccesses/' + str(pk) + '/')
+        if success:
+            return "User feature access successfully deleted", status_code
         return None
 
     @staticmethod
