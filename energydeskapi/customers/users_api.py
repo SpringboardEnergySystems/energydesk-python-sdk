@@ -45,6 +45,22 @@ class UserGroup:
         return dict
 
 
+class UserFeatureAccess:
+    def __init__(self):
+        self.pk=0
+        self.group=None
+        self.system_feature=None
+        self.system_access_type=None
+
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.group is not None: dict['group'] = self.group
+        if self.system_feature is not None: dict['system_feature'] = self.system_feature
+        if self.system_access_type is not None: dict['system_access_type'] = self.system_access_type
+        return dict
+
+
 class UsersApi:
     """Class for user profiles and companies
 
@@ -431,7 +447,7 @@ class UsersApi:
 
     @staticmethod
     def get_user_feature_access(api_connection, params={}):
-        """Fetches accesses to features for user roles
+        """Fetches accesses to features for user groups
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -441,6 +457,40 @@ class UsersApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_user_feature_access_for_user_group(api_connection, group_pk):
+        """Fetches features to user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user feature access")
+        params = {'group': group_pk}
+        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/', params)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_user_feature_access(api_connection, user_feature_access):
+        """Upserts accesses to features for user groups
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Upserting user feature access")
+        payload = user_feature_access.get_dict()
+        key = int(payload['pk'])
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/customers/userfeatureaccesses/' + str(payload['pk']) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/customers/userfeatureaccesses/', payload)
+        if success:
+            return returned_data
+        return None
 
     @staticmethod
     def get_user_url(api_connection, user_pk):

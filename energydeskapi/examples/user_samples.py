@@ -1,6 +1,6 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.customers.users_api import UsersApi, User, UserGroup
+from energydeskapi.customers.users_api import UsersApi, User, UserGroup, UserFeatureAccess
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.company_enum_types import UserRoleEnum
 
@@ -85,6 +85,20 @@ def list_user_feature_access(api_conn):
     result = UsersApi.get_user_feature_access(api_conn, params)
     print(result)
 
+def list_user_feature_access_to_group(api_conn):
+    group_pk = 19
+    result = UsersApi.get_user_feature_access_for_user_group(api_conn, group_pk)
+    print(result)
+
+def create_user_feature_access(api_conn):
+    uf = UserFeatureAccess()
+    uf.pk = 6
+    uf.group = "http://127.0.0.1:8001/api/customers/usergroups/19/"
+    uf.system_feature = "http://127.0.0.1:8001/api/system/systemfeatures/1/"
+    uf.system_access_type = "http://127.0.0.1:8001/api/system/systemaccesstypes/1/"
+    result = UsersApi.upsert_user_feature_access(api_conn, uf)
+    print(result)
+
 def create_user(api_conn):
     u = User()
     u.username = "myuser@gmail.com"
@@ -162,6 +176,8 @@ if __name__ == '__main__':
     #create_user_group(api_conn)
     #del_user_group(api_conn)
     #list_users_in_user_group(api_conn)
-    list_users_in_user_group_embedded(api_conn)
+    #list_users_in_user_group_embedded(api_conn)
     #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
+    #create_user_feature_access(api_conn)
+    list_user_feature_access_to_group(api_conn)
