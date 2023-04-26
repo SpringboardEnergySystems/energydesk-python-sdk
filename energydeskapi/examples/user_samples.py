@@ -74,6 +74,11 @@ def list_users_in_user_group(api_conn):
     result = UsersApi.get_users_from_user_group(api_conn, pk)
     print(result)
 
+def list_users_in_user_group_embedded(api_conn):
+    pk = 19
+    result = UsersApi.get_users_from_user_group_embedded(api_conn, pk)
+    print(result)
+
 def list_user_feature_access(api_conn):
     params = {'group': 4,
               'system_feature': 2}
@@ -156,6 +161,7 @@ if __name__ == '__main__':
     #get_user_group_from_pk(api_conn)
     #create_user_group(api_conn)
     #del_user_group(api_conn)
-    list_users_in_user_group(api_conn)
+    #list_users_in_user_group(api_conn)
+    list_users_in_user_group_embedded(api_conn)
     #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
