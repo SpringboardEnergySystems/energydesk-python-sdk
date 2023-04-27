@@ -194,9 +194,16 @@ class UsersApi:
         return UsersApi.get_profile_by_key(api_connection,user_profile_key)
 
     @staticmethod
-    def get_user_by_key(api_connection, user_key):
-        logger.info("Fetching user with key " + str(user_key))
-        json_res = api_connection.exec_get_url('/api/customers/users/' + str(user_key) + "/")
+    def get_user_by_key(api_connection, pk):
+        """Fetches user from key
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: personal key of user
+        :type pk: str, required
+        """
+        logger.info("Fetching user with key " + str(pk))
+        json_res = api_connection.exec_get_url('/api/customers/users/' + str(pk) + "/")
         if json_res is None:
             return None
         return json_res
