@@ -403,7 +403,7 @@ class UsersApi:
         success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/customers/usergroups/' + str(pk) + '/')
         if success:
             return "User group successfully deleted", status_code
-        return returned_data, status_code
+        return "User group has users and can't be deleted", status_code
 
     @staticmethod
     def add_user_to_user_group(api_connection, group_pk, user_pk):
