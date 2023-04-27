@@ -89,8 +89,8 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calc_covariance_var_df(api_connection, trading_books=[], days_back=40):
-        success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, trading_books, days_back)
+    def calc_covariance_var_df(api_connection, portfolio_id, days_back=40):
+        success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, portfolio_id, days_back)
         if success ==False:
             print(error_msg)
             return None,None,None
