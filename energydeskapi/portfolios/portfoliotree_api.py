@@ -40,14 +40,13 @@ class PortfolioTreeApi:
       f.close()
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       for p in pnodes:
-          # print("PPORT", p, p.trading_books)
           print(json.dumps(p.get_dict(api_connection), indent=4))
-          PortfoliosApi.upsert_portfolio(api_connection, p)
-      #print(portfolio_nodes)
-      #result_json=convert_nodes_from_jstree(portfolio_nodes)
-      #print(result_json)
-      #Need to test that result_json is what is expected in upsert_portfolio...
-      #return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, result_json)
+          print("Upsering portfolio ", p.description)
+          success, json_res, status_code, error_msg=PortfoliosApi.upsert_portfolio(api_connection, p)
+          if not success:
+              logger.warning("Problems saving tree")
+              logger.warning(error_msg)
+
       return True
 
 
