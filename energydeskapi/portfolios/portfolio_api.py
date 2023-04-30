@@ -19,11 +19,11 @@ class PortfolioNode:
         self.parent_id=0
         self.parent_name = None
 
-    def __str__(self):
-        chs=""
-        for c in self.sub_portfolios:
-          chs+=str(c)
-        return str(self.pk) + " " + self.description + " Children " + chs
+    # def __str__(self):
+    #     chs=""
+    #     for c in self.sub_portfolios:
+    #       chs+=str(c)
+    #     return str(self.pk) + " " + self.description + " Children " + chs
 
     def get_dict(self, api_conn):
         dict = {}
@@ -49,7 +49,9 @@ class PortfolioNode:
         dict['manager'] = self.manager
         dict['percentage']=self.percentage
         dict['assets'] = self.assets
-        dict['children'] = self.sub_portfolios
+        dict['children'] = []
+        for sub in self.sub_portfolios:
+            dict['children'].append()
         dict['stakeholders'] = self.stakeholders
         if self.parent_id>0:
             dict['parent_id']=self.parent_id
