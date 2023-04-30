@@ -6,7 +6,7 @@ from energydeskapi.customers.customers_api import CustomersApi
 from operator import itemgetter
 from energydeskapi.portfolios.portfolio_api import PortfolioNode
 
-
+from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 sample_portfolio_tree=[
   {
     "portfolio_id": 1,
@@ -219,7 +219,44 @@ def create_embedded_tree_recursive(flat_tree):
         new_roots.append(r)
     return new_roots
 
+
+def convert_nodes_from_jstree(api_connection, portfolio_nodes):
+    pmap={}
+    subportfolios={}
+    portfolios=[]
+    for rec in portfolio_nodes:
+        name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
+        pnode=PortfolioNode()
+        pnode.description=name
+        pnode.pk=rec['id']
+        if "company" in rec['data'] and rec['data']['company'] is not None:
+            comp = CustomersApi.get_companies(api_connection, {'name':rec['data']['company']})
+            if comp is not None and len(comp)>0:
+                pnode.manager=comp[0]['pk']
+        pmap[pnode.description]=pnode
+        portfolios.append(pnode)
+        pid=0
+        if rec['parent'] != "#":
+            pid = str(rec['parent'])
+        if rec['type'] == "trading_books":
+            tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['name']})
+            if len(tbdict['results'])>0:
+                print(tbdict['results'])
+                subdict=tbdict['results']
+                pnode.trading_books.append(subdict[0]['pk'])
+            continue
+        if rec['type'] == "assets":
+            pnode.assets.append(rec['id'])
+            continue
+        print(rec)
+        pnode.sub_portfolios.append({rec['id']})
+        portfolios.append(pnode)
+
+    print(pnode.get_dict(api_connection))
+
+    return portfolios
 def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
+    print("INSIDE 2")
     def get_portfolio_url(portfolio_pk):
         return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
     def get_asset_url(asset_pk):
@@ -237,9 +274,23 @@ def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
             'description':name
         }
 
-
         if "company" in rec['data'] and rec['data']['company'] is not None:
             dict['manager']=CustomersApi.get_company_url(api_connection, rec['data']['company'])
+
+
+            if rec['type'] == "trading_books":
+                if pid not in pbooks:
+                    pbooks[pid] = []
+                pbooks[pid].append(rec['id'])
+                continue
+            if rec['type'] == "assets":
+                if pid not in passets:
+                    passets[pid] = []
+                passets[pid].append(rec['id'])
+                continue
+            if pid not in pchildren:
+                pchildren[pid]=[]
+            pchildren[pid].append(rec['id'])
 
         if rec['parent']!="#":
             pid=str(rec['parent'])
@@ -289,7 +340,7 @@ def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
             j['trading_books']=nlist
     return jstreelist
 
-def convert_nodes_from_jstree(api_connection, portfolio_nodes):
+def convert_nodes_from_jstree3(api_connection, portfolio_nodes):
     def get_portfolio_url(portfolio_pk):
         return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
     def get_asset_url(asset_pk):

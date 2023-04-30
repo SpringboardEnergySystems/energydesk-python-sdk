@@ -126,7 +126,7 @@ class PortfoliosApi:
         :param tradingbooks: list of tradingbooks
         :type tradingbooks: str, required
         """
-        logger.info("Updating a tradingbook")
+        logger.info("Updating a portfoliolist")
         payload=portfolio.get_dict(api_connection)
         stmp=json.dumps(payload)
         js=json.loads(stmp)
