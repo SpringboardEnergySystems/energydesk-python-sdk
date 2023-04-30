@@ -245,14 +245,14 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pnode.trading_books.append(int(subdict[0]['pk']))
             continue
         if rec['type'] == "assets":
-            pnode.assets.append(rec['id'])
+            pnode.assets.append(int(rec['id']))
             continue
         pmap_children[pnode.description].append(int(rec['id']))
         portfolios.append(pnode)
     for pkey in pmap_children.keys():
         porto=pmap[pkey]
         for child in porto.sub_portfolios:
-            child.parent_id=porto.pk
+            child.parent_id=int(porto.pk)
             child.parent_name=porto.description
 
     print(pnode.get_dict(api_connection))
