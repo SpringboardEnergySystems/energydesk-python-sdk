@@ -229,7 +229,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         pnode=PortfolioNode()
         pnode.description=name
-        pnode.pk=rec['id']
+        pnode.pk=int(rec['id'])
         if "company" in rec['data'] and rec['data']['company'] is not None:
             pnode.manager=rec['data']['company']
         pmap[pnode.description]=pnode
@@ -242,18 +242,18 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             if len(tbdict['results'])>0:
                 print(tbdict['results'])
                 subdict=tbdict['results']
-                pnode.trading_books.append(subdict[0]['pk'])
+                pnode.trading_books.append(int(subdict[0]['pk']))
             continue
         if rec['type'] == "assets":
             pnode.assets.append(rec['id'])
             continue
-        pmap_children[pnode.description].append(rec['id'])
+        pmap_children[pnode.description].append(int(rec['id']))
         portfolios.append(pnode)
     for pkey in pmap_children.keys():
-        portfolio=pmap[pkey]
-        subport=pmap_children[pkey]
-        parent_id = portfolio.pk
-        parent_name = portfolio.description
+        porto=pmap[pkey]
+        for child in porto.sub_portfolios:
+            child.parent_id=porto.pk
+            child.parent_name=porto.description
 
     print(pnode.get_dict(api_connection))
 
