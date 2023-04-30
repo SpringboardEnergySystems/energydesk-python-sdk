@@ -222,6 +222,7 @@ def create_embedded_tree_recursive(flat_tree):
 
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     pmap={}
+    pmap_children={}
     subportfolios={}
     portfolios=[]
     for rec in portfolio_nodes:
@@ -230,10 +231,9 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         pnode.description=name
         pnode.pk=rec['id']
         if "company" in rec['data'] and rec['data']['company'] is not None:
-            print("lookup", {'name':rec['data']['company']})
             pnode.manager=rec['data']['company']
         pmap[pnode.description]=pnode
-        #portfolios.append(pnode)
+        pmap_children[pnode.description]=[]
         pid=0
         if rec['parent'] != "#":
             pid = str(rec['parent'])
@@ -247,9 +247,13 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if rec['type'] == "assets":
             pnode.assets.append(rec['id'])
             continue
-        print(rec)
-        pnode.sub_portfolios.append({rec['id']})
+        pmap_children[pnode.description].append(rec['id'])
         portfolios.append(pnode)
+    for pkey in pmap_children.keys():
+        portfolio=pmap[pkey]
+        subport=pmap_children[pkey]
+        parent_id = portfolio.pk
+        parent_name = portfolio.description
 
     print(pnode.get_dict(api_connection))
 
