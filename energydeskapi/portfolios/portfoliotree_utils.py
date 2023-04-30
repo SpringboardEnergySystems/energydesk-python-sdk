@@ -231,10 +231,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         pnode.pk=rec['id']
         if "company" in rec['data'] and rec['data']['company'] is not None:
             print("lookup", {'name':rec['data']['company']})
-            comp = CustomersApi.get_companies(api_connection, {'name':rec['data']['company']})
-            if comp is not None and len(comp)>0:
-                print(comp[0])
-                pnode.manager=comp[0]['pk']
+            pnode.manager=rec['data']['company']
         pmap[pnode.description]=pnode
         #portfolios.append(pnode)
         pid=0
