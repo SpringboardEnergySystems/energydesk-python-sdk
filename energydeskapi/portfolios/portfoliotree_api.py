@@ -38,17 +38,23 @@ class PortfolioTreeApi:
       f=open("./ptree.json", "w")
       f.write(json.dumps(portfolio_nodes))
       f.close()
-      print(portfolio_nodes)
+      print("NOW SAVING ALL NODES")
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
+      dictlist=[]
       for p in pnodes:
-          print(json.dumps(p.get_dict(api_connection), indent=4))
-          print("Upsering portfolio ", p.description)
-          success, json_res, status_code, error_msg=PortfoliosApi.upsert_portfolio(api_connection, p)
-          if not success:
-              logger.warning("Problems saving tree")
-              logger.warning(error_msg)
-
+          dictlist.append(p.get_dict(api_connection))
+          print(p.get_dict(api_connection))
+      PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
       return True
+      # for p in pnodes:
+      #     print(json.dumps(p.get_dict(api_connection), indent=4))
+      #     print("Upsering portfolio ", p.description)
+      #     success, json_res, status_code, error_msg=PortfoliosApi.upsert_portfolio(api_connection, p)
+      #     if not success:
+      #         logger.warning("Problems saving tree")
+      #         logger.warning(error_msg)
+      #
+      # return True
 
 
   @staticmethod
