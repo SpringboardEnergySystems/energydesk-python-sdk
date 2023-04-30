@@ -331,7 +331,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             if pid not in pchildren:
                 pchildren[pid]=[]
                 print("Appending porttfoliosub, ", rec)
-            pchildren[pid].append(rec['id'])
+            if 'data' in rec:
+                pchildren[pid].append((rec['id'], rec['data']['original_text']))
         else:
             print("Node without parent", rec['parent'])
 
@@ -345,9 +346,10 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         newlist=[]
         for c in ch:
             print("Lookup porttfoliosub, ", c)
-            purl=get_portfolio_url(c)
-            print(purl)
-            newlist.append(purl)
+            #purl=get_portfolio_url(c)
+            print({'portfolio_id': c[0],'portfolio_name': c[1]})
+            #print(purl)
+            newlist.append({'portfolio_id': c[0],'portfolio_name': c[1]})
         j.sub_portfolios=newlist
     print(passets)
     print(pbooks)
