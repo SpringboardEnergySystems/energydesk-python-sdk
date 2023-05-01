@@ -271,8 +271,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         for child in children:
             child.parent_id=portnode.pk
             child.parent_name = portnode.description
-            portnode.sub_portfolios.append({'portfolio_id':parkey,
-                                         'portfolio_name':portnode.description})
+            portnode.sub_portfolios.append({'portfolio_id':child.pk,
+                                         'portfolio_name':child.description})
 
     print("DONE CONVERTING")
     print(pnode.get_dict(api_connection))
