@@ -33,7 +33,7 @@ class PortfolioTreeApi:
       return convert_embedded_tree_to_jstree(json_res)
 
   @staticmethod
-  def save_portfolio_flat_tree(api_connection, portfolio_nodes):
+  def save_portfolio_flat_tree(api_connection,comp_key, portfolio_nodes):
       logger.info("Saving portfolio tree")
       f=open("./ptree.json", "w")
       f.write(json.dumps(portfolio_nodes))
@@ -42,6 +42,8 @@ class PortfolioTreeApi:
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       dictlist=[]
       for p in pnodes:
+          if p.manager is None or p.manager==0:
+            p.manager=comp_key
           dictlist.append(p.get_dict(api_connection))
           print(p.get_dict(api_connection))
       PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
