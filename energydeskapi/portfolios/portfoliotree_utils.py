@@ -598,6 +598,7 @@ def create_embedded_tree_for_dropdown(flat_tree):
 
     root=None
     for i in range(len(flat_tree)):
+        print(flat_tree[i])
         if flat_tree[i]['parent_portfolio'] is None:
             new_root=manage_node(flat_tree[i])
             roots.append(new_root)

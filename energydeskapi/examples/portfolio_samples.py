@@ -33,13 +33,14 @@ def query_portfolios(api_conn):
 
     x2=convert_embedded_tree_to_jstree(x)
     print("Ready")
-    print(json.dumps(x2, indent=4))
+    #print(json.dumps(x2, indent=4))
     print("DONE")
     #save_conversion(api_conn, x2)
     #js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
     #print(json.dumps(js, indent=4))
     #x=create_flat_tree_for_jstree(js)
-
+    res=PortfolioTreeApi.get_portfolio_tree_for_dropdown(api_conn)
+    print(json.dumps(res, indent=4))
 
     return
     js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
