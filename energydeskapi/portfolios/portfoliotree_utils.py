@@ -235,7 +235,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pnode.pk=int(rec['id'])
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
-            pmap[pnode.description]=pnode
+            pmap[pnode.pk]=pnode
             pmap_children[pnode.description]=[]
         pid=0
         if rec['parent'] != "#":
@@ -243,14 +243,15 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if rec['type'] == "trading_books":
             tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['name']})
             if len(tbdict['results'])>0:
-                print(tbdict['results'])
+                pnode=pmap[pnode.pk]
                 subdict=tbdict['results']
                 pnode.trading_books.append(int(subdict[0]['pk']))
             continue
         if rec['type'] == "assets":
             pnode.assets.append(int(rec['id']))
             continue
-        pmap_children[pnode.description].append(int(rec['id']))
+
+        #pmap_children[pnode.description].append(int(rec['id']))
         portfolios.append(pnode)
 
     print("pmap_children",pmap_children)
