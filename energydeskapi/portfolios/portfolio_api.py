@@ -29,6 +29,7 @@ class PortfolioNode:
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
+        dict['portfolio_id'] = self.pk
         dict['description'] = self.description
         dict['portfolio_name'] = self.description
         dict['trading_books']=self.trading_books
