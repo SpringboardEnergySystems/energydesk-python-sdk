@@ -230,8 +230,6 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if rec['type']=="default":
             pnode=PortfolioNode()
             pnode.description=name
-            print(name, "ID=", rec['id'])
-            print(rec)
             try:
                 pnode.pk=int(rec['id'])
             except:
@@ -255,15 +253,18 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pnode.assets.append(int(rec['id']))
             continue
         print(rec)
-        #pmap_children[pnode.description].append(int(rec['id']))
+        pmap_children[pnode.pk].append(pid)
         portfolios.append(pnode)
 
     for pkey in pmap_children.keys():
-        porto=pmap[pkey]
-        for child in porto.sub_portfolios:
-            child.parent_id=int(porto.pk)
-            child.parent_name=porto.description
-            print("Mapping child", )
+        parent_id=pmap_children[pnode.pk]
+        porto=pmap[parent_id]
+        porto.sub_portfolios.append({'portfolio_id':pnode.pk,
+                                     'portfolio_name':pnode.description})
+        # for child in porto.sub_portfolios:
+        #     child.parent_id=int(porto.pk)
+        #     child.parent_name=porto.description
+        #     print("Mapping child", )
 
     print(pnode.get_dict(api_connection))
 
