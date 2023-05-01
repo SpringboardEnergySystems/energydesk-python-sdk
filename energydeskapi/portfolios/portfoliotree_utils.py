@@ -262,7 +262,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if pid>0:
             if pid not in pmap_parents:
                 pmap_parents[pid]=[]
-            pmap_parents[pid].apppend(pnode)
+            pmap_parents[pid].append(pnode)
         portfolios.append(pnode)
     for parkey in pmap_parents.keys():
         portnode = pmap[parkey]
