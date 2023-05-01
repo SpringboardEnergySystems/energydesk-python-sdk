@@ -229,6 +229,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     pmap={}
     pmap_children={}
     portfolios=[]
+    pmap_parents={}
     for rec in portfolio_nodes:
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         if rec['type']=="default":
@@ -259,23 +260,20 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             continue
         print(rec)
         if pid>0:
-            pmap_children[pnode.pk].append(pid)
+            if pid not in pmap_parents:
+                pmap_parents[pid]=[]
+            pmap_parents[pid].apppend(pnode)
         portfolios.append(pnode)
-    print(pmap_children)
-    for pkey in pmap_children.keys():
-        parents=pmap_children[pkey]
-        #parents=pmap_children[pnode.pk]
-        for parent_id in parents:
-            print("Parent", parent_id)
-            porto=pmap[parent_id]
-            print("Adding to ",porto.description,{'portfolio_id':parent_id,
-                                         'portfolio_name':porto.description})
-            porto.sub_portfolios.append({'portfolio_id':parent_id,
-                                         'portfolio_name':porto.description})
-        # for child in porto.sub_portfolios:
-        #     child.parent_id=int(porto.pk)
-        #     child.parent_name=porto.description
-        #     print("Mapping child", )
+    for parkey in pmap_parents.keys():
+        portnode = pmap[parkey]
+        children=pmap_parents[parkey]
+        for child in children:
+            portnode.sub_portfolios.append({'portfolio_id':parkey,
+                                         'portfolio_name':portnode.description})
+            child.parent_id=portnode.pk
+            child.parent_name = portnode.description
+
+
 
     print(pnode.get_dict(api_connection))
 
