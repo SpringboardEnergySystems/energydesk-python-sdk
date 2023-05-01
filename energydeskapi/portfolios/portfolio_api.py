@@ -10,6 +10,7 @@ class PortfolioNode:
     def __init__(self):
         self.pk=0
         self.description=""
+        self.percentage = 1
         self.trading_books=[]
         self.percentage=1
         self.manager=None
@@ -32,7 +33,7 @@ class PortfolioNode:
         dict['portfolio_name'] = self.description
         dict['trading_books']=self.trading_books
         dict['manager'] = self.manager
-        #dict['percentage']=self.percentage
+        dict['percentage']=self.percentage
         dict['assets'] = self.assets
         dict['sub_portfolios'] = self.sub_portfolios
         dict['stakeholders'] = self.stakeholders
