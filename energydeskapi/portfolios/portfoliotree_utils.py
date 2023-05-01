@@ -253,11 +253,13 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pnode.assets.append(int(rec['id']))
             continue
         print(rec)
-        pmap_children[pnode.pk].append(pid)
+        if pid>0:
+            pmap_children[pnode.pk].append(pid)
         portfolios.append(pnode)
-
+    print(pmap_children)
     for pkey in pmap_children.keys():
         parent_id=pmap_children[pnode.pk]
+        print("Parent", parent_id)
         porto=pmap[parent_id]
         porto.sub_portfolios.append({'portfolio_id':pnode.pk,
                                      'portfolio_name':pnode.description})
