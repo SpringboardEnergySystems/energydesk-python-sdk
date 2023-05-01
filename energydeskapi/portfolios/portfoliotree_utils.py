@@ -241,6 +241,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if rec['parent'] != "#":
             pid = str(rec['parent'])
         if rec['type'] == "trading_books":
+            print(rec)
             tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['data']['original_text']})
             if len(tbdict['results'])>0:
                 pnode=pmap[pnode.pk]
