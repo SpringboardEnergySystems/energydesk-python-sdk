@@ -164,6 +164,8 @@ def create_flat_tree2(embedded_tree):
 
 from energydeskapi.sdk.common_utils import key_from_url
 def create_embedded_tree_recursive(flat_tree):
+    print(flat_tree)
+    return []
     roots=[]
     nodes_with_parents={}
     def lookup_node_by_id(id):
