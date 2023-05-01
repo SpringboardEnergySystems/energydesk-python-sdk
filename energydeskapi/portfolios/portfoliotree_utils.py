@@ -164,8 +164,6 @@ def create_flat_tree2(embedded_tree):
 
 from energydeskapi.sdk.common_utils import key_from_url
 def create_embedded_tree_recursive(flat_tree):
-    print(flat_tree)
-    return []
     roots=[]
     nodes_with_parents={}
     def lookup_node_by_id(id):
@@ -566,6 +564,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
             parse_embedded_node(ch)
 
     for i in range(len(embedded_tree)):
+        print(i)
         #if flat_tree[i]['parent_portfolio'] is None:
         parse_embedded_node(embedded_tree[i])
 

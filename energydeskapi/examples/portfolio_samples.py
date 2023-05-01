@@ -32,7 +32,9 @@ def query_portfolios(api_conn):
     #print(json.dumps(x, indent=4))
 
     x2=convert_embedded_tree_to_jstree(x)
+    print("Ready")
     print(json.dumps(x2, indent=4))
+    print("DONE")
     #save_conversion(api_conn, x2)
     #js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
     #print(json.dumps(js, indent=4))
@@ -49,8 +51,18 @@ def create_portfolio(api_conn):
     pnode=PortfolioNode()
     pnode.description="Fuel"
     pnode.parent_id=2
-    print(pnode.get_dict(api_conn))
+    #print(pnode.get_dict(api_conn))
+    print(json.dumps(pnode.get_dict(api_conn), indent=4))
     PortfoliosApi.upsert_portfolio(api_conn, pnode)
+
+def create_empty(api_conn):
+    pnode = PortfolioNode()
+    pnode.description = "Root"
+    pnode.pk = 0
+    pnode.manager = 197
+    tree = [pnode]
+    success = PortfolioTreeApi.upsert_portfolio_tree(api_conn, tree)
+
 
 def load_tree(api_conn):
 
@@ -62,4 +74,5 @@ def load_tree(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
+    #create_empty(api_conn)
     query_portfolios(api_conn)
