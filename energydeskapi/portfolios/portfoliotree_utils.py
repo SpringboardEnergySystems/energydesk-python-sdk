@@ -267,14 +267,14 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     for parkey in pmap_parents.keys():
         portnode = pmap[parkey]
         children=pmap_parents[parkey]
+        print("Saving children", children)
         for child in children:
-            portnode.sub_portfolios.append({'portfolio_id':parkey,
-                                         'portfolio_name':portnode.description})
             child.parent_id=portnode.pk
             child.parent_name = portnode.description
+            portnode.sub_portfolios.append({'portfolio_id':parkey,
+                                         'portfolio_name':portnode.description})
 
-
-
+    print("DONE CONVERTING")
     print(pnode.get_dict(api_connection))
 
     return portfolios
