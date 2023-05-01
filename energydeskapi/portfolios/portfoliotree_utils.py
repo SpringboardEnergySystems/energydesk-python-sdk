@@ -250,7 +250,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         if rec['type'] == "assets":
             pnode.assets.append(int(rec['id']))
             continue
-
+        print(rec)
         #pmap_children[pnode.description].append(int(rec['id']))
         portfolios.append(pnode)
 
