@@ -227,15 +227,16 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     portfolios=[]
     for rec in portfolio_nodes:
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        pnode=PortfolioNode()
-        pnode.description=name
-        print(name, "ID=", rec['id'])
-        print(rec)
-        pnode.pk=int(rec['id'])
-        if "company" in rec['data'] and rec['data']['company'] is not None:
-            pnode.manager=rec['data']['company']
-        pmap[pnode.description]=pnode
-        pmap_children[pnode.description]=[]
+        if rec['type']!="default":
+            pnode=PortfolioNode()
+            pnode.description=name
+            print(name, "ID=", rec['id'])
+            print(rec)
+            pnode.pk=int(rec['id'])
+            if "company" in rec['data'] and rec['data']['company'] is not None:
+                pnode.manager=rec['data']['company']
+            pmap[pnode.description]=pnode
+            pmap_children[pnode.description]=[]
         pid=0
         if rec['parent'] != "#":
             pid = str(rec['parent'])
