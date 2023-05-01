@@ -223,13 +223,13 @@ def create_embedded_tree_recursive(flat_tree):
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     pmap={}
     pmap_children={}
-    subportfolios={}
     portfolios=[]
     for rec in portfolio_nodes:
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         if rec['type']=="default":
             pnode=PortfolioNode()
             pnode.description=name
+            print("Mapping ", name)
             try:
                 pnode.pk=int(rec['id'])
             except:
