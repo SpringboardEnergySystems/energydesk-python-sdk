@@ -232,7 +232,10 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pnode.description=name
             print(name, "ID=", rec['id'])
             print(rec)
-            pnode.pk=int(rec['id'])
+            try:
+                pnode.pk=int(rec['id'])
+            except:
+                pnode.pk=0
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
             pmap[pnode.pk]=pnode
