@@ -263,6 +263,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         for parent_id in parents:
             print("Parent", parent_id)
             porto=pmap[parent_id]
+            print("Adding to ",porto.description,{'portfolio_id':pnode.pk,
+                                         'portfolio_name':pnode.description})
             porto.sub_portfolios.append({'portfolio_id':pnode.pk,
                                          'portfolio_name':pnode.description})
         # for child in porto.sub_portfolios:
