@@ -195,8 +195,13 @@ def create_embedded_tree_recursive(flat_tree):
         localnode['trading_books'] = tradingbooks_as_json
         children_as_json = []
         for child in node['sub_portfolios']:
+            print(child)
             subkey=key_from_url(child)
+            if int(subkey) == node['pk']:
+                continue
+            #print("SUB", subkey)
             child_node= lookup_node_by_id(subkey)
+            print("Child", child_node)
             cn=manage_node(child_node)
             cn['parent_id']=node['pk']
             nodes_with_parents[subkey]=subkey
