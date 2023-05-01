@@ -236,7 +236,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
             pmap[pnode.pk]=pnode
-            pmap_children[pnode.description]=[]
+            pmap_children[pnode.pk]=[]
         pid=0
         if rec['parent'] != "#":
             pid = str(rec['parent'])
@@ -254,8 +254,6 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         #pmap_children[pnode.description].append(int(rec['id']))
         portfolios.append(pnode)
 
-    print("pmap_children",pmap_children)
-    print("pmap", pmap)
     for pkey in pmap_children.keys():
         porto=pmap[pkey]
         for child in porto.sub_portfolios:
