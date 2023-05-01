@@ -229,6 +229,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         pnode=PortfolioNode()
         pnode.description=name
+        print(rec)
         pnode.pk=int(rec['id'])
         if "company" in rec['data'] and rec['data']['company'] is not None:
             pnode.manager=rec['data']['company']
