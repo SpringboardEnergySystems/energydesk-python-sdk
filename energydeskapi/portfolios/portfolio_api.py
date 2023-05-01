@@ -51,7 +51,7 @@ class PortfolioNode:
         dict['assets'] = self.assets
         dict['children'] = []
         for sub in self.sub_portfolios:
-            dict['children'].append()
+            dict['children'].append(sub)
         dict['stakeholders'] = self.stakeholders
         if self.parent_id>0:
             dict['parent_id']=self.parent_id
