@@ -7,7 +7,7 @@ import json
 from json import JSONEncoder
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
+from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 from energydeskapi.assets.assets_api import AssetsApi
 logger = logging.getLogger(__name__)
 
@@ -32,9 +32,10 @@ class TimeSeriesAdjustment:
     pk : int
     description : str
     adjustment_type_pk : int
-    denomination : str
-    value : float
-    value2 : float
+    value : str
+    value_denomination: int
+    value2 : str
+    value2_denomination: int
     period_from :datetime
     period_until: datetime
     @property
@@ -53,9 +54,11 @@ class TimeSeriesAdjustment:
         dict = {'pk':self.pk}
         if self.description is not None: dict['description'] = self.description
         if self.adjustment_type_pk is not None: dict['adjustment_type'] = AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.adjustment_type_pk)
-        if self.denomination is not None: dict['denomination'] = self.denomination#AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.denomination_type_pk)
+        if self.value_denomination is not None: dict['value_denomination'] = AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn,self.value_denomination)
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
+        if self.value2_denomination is not None: dict['value2_denomination'] = AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn,self.value2_denomination)
+
         if self.period_from is not None and self.period_from!="":
             dict['period_from'] = self.period_from if type(self.period_from) == str else self.period_from.strftime("%Y-%m-%d")
         if self.period_until is not None and self.period_until!="":
@@ -157,7 +160,7 @@ class AssetDataApi:
         return atype_list
 
     @staticmethod
-    def get_timeseries_adjustment_denomination_types(api_connection,  parameters={}):
+    def get_timeseries_adjustment_denominations(api_connection,  parameters={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -165,8 +168,8 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        denoms=[(1,'Perc'),(2,'NOK')]
-        return denoms
+        atype_list=[(el.value, el.name) for el in AssetForecastAdjustDenomEnum]
+        return atype_list
 
 
     @staticmethod
@@ -180,7 +183,7 @@ class AssetDataApi:
         """
         # Will accept both integers of the actual enum type
         type_pk = denomination_type if isinstance(denomination_type, int) else denomination_type.value
-        return api_connection.get_base_url() + '/api/assetdata/timeseriesadjustmenttypes/' + str(type_pk) + "/"
+        return api_connection.get_base_url() + '/api/assetdata/timeseriesdenominations/' + str(type_pk) + "/"
 
     @staticmethod
     def get_timeseries_adjustment_type_url(api_connection, adjustment_type):

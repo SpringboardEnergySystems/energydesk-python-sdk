@@ -34,6 +34,14 @@ def add_expressions(api_conn, asset_desc):
     tas.adjustments.append(ta)
     AssetDataApi.upsert_timeseries_adjustments(api_conn, tas)
 
+
+def query_assetdata_types(api_conn):
+    print("Adj types")
+    res = AssetDataApi.get_timeseries_adjustment_types(api_conn)
+    print(res)
+    print("Adj denoms")
+    res = AssetDataApi.get_timeseries_adjustment_denominations(api_conn)
+    print(res)
 def query_asset_info(api_conn, asset_pk_list):
     res = AssetDataApi.get_assetgroup_forecast(api_conn,{'asset_id_in':asset_pk_list})
     df=pd.DataFrame(data=json.loads(res))
@@ -113,7 +121,7 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #query_asset_info(api_conn, [98])
-    load_adjustments(api_conn, 31)
+    query_assetdata_types(api_conn)
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
