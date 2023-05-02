@@ -16,8 +16,10 @@ class AssetTypeEnum(Enum):
 class AssetForecastAdjustDenomEnum(Enum):
     PERC = 1
     NOK = 2
+
 class AssetForecastAdjustEnum(Enum):
     PERCENTAGE = 1
     EUROP_OPTION = 2
     ASIAN_OPTION = 3
+    MONTHLY_PERC = 4
 
