@@ -13,6 +13,9 @@ class AssetTypeEnum(Enum):
     GENERAL_CONSUMPTION = 9
     GROUPED_ASSET = 10
 
+class AssetForecastAdjustDenomEnum(Enum):
+    PERC = 1
+    NOK = 2
 class AssetForecastAdjustEnum(Enum):
     PERCENTAGE = 1
     EUROP_OPTION = 2
