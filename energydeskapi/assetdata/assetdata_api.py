@@ -54,6 +54,7 @@ class TimeSeriesAdjustment:
         dict = {'pk':self.pk}
         if self.description is not None: dict['description'] = self.description
         if self.adjustment_type_pk is not None: dict['adjustment_type'] = AssetDataApi.get_timeseries_adjustment_type_url(api_conn,self.adjustment_type_pk)
+        print(self.value_denomination, self.value2_denomination)
         if self.value_denomination is not None: dict['value_denomination'] = AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn,self.value_denomination)
         if self.value is not None: dict['value'] = self.value
         if self.value2 is not None: dict['value2'] = self.value2
@@ -181,6 +182,7 @@ class AssetDataApi:
         :param company_type_enum: type of company
         :type company_type_enum: str, required
         """
+        print("Demon type", denomination_type)
         # Will accept both integers of the actual enum type
         type_pk = denomination_type if isinstance(denomination_type, int) else denomination_type.value
         return api_connection.get_base_url() + '/api/assetdata/timeseriesdenominations/' + str(type_pk) + "/"
