@@ -133,7 +133,7 @@ def load_adjustments(api_conn, asset_id):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    #add_expressions(api_conn, "Asset group - B2C")
+    add_expressions(api_conn, "Asset group - B2C")
     #query_asset_info(api_conn, [98])
     load_adjustments(api_conn, 36)
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
