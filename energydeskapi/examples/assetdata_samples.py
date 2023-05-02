@@ -6,12 +6,13 @@ from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, Asse
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetTypeEnum
 from energydeskapi.sdk.common_utils import init_api
+
 from dateutil import parser
 from datetime import datetime, timedelta
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
 import json
 from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
-from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
+from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -19,20 +20,31 @@ logging.basicConfig(level=logging.INFO,
 
 
 def add_expressions(api_conn, asset_desc):
-    jsondata = AssetsApi.get_assets(api_conn, {'extern_asset_id':asset_desc})
+    jsondata = AssetsApi.get_assets(api_conn, {'description':asset_desc})
+    print(jsondata['results'])
+    #sondata=json.loads(jsondata)
     asset=jsondata['results'][0]
     print(asset['pk'])
-    tas=TimeSeriesAdjustments()
-    tas.asset_pk=asset['pk']
-    tas.is_active_for_asset=True
-    tas.time_series_type_pk=2
-    ta=TimeSeriesAdjustment()
-    ta.description="Rebate"
-    ta.adjustment_type_pk=AssetForecastAdjustEnum.PERCENTAGE.value
-    ta.value=0.94
-    ta.denomination_type_pk=1
-    tas.adjustments.append(ta)
-    AssetDataApi.upsert_timeseries_adjustments(api_conn, tas)
+    epk = 0#asset['pk']
+    description = "supertest"
+    expression_type_pk = AssetForecastAdjustEnum.PERCENTAGE.value
+    denomination =AssetForecastAdjustDenomEnum.PERC.value
+    value ="0.67"
+    value2 = None
+    denomination2=None
+    period_from = None
+    period_until = None
+    adjustments = []
+    ta = TimeSeriesAdjustment(epk, description, expression_type_pk, value, denomination,  value2, denomination2,period_from,
+                              period_until)
+    adjustments.append(ta)
+    tss = TimeSeriesAdjustments(0, asset['pk'], 1,  True, adjustments)
+
+
+    success, returned_data, status_code, error_msg = AssetDataApi.upsert_timeseries_adjustments(
+       api_conn, tss)
+    print('XXXXX')
+    print(returned_data)
 
 
 def query_assetdata_types(api_conn):
@@ -108,20 +120,22 @@ def load_adjustments(api_conn, asset_id):
             pk = int(a['pk'])
             description=a['description']
             adjustment_type_pk=key_from_url(a['adjustment_type'])
-            denomination=a['denomination']
-            value=float(a['value'])
-            value2 = None if a['value2'] is None else float(a['value2'])
+            denomination=key_from_url(a['value_denomination'])
+            value=a['value']
+            value2 = None if a['value2'] is None else a['value2']
+            denomination2 = None if a['value2_denomination'] is None else key_from_url(a['value2_denomination'])
             period_from = None if a['period_from'] is None else get_date_part(a['period_from'])
             period_until = None if a['period_until']is None else get_date_part(a['period_until'])
-            ta = TimeSeriesAdjustment(pk,description,adjustment_type_pk,denomination, value, value2,period_from,period_until )
+            ta = TimeSeriesAdjustment(pk,description,adjustment_type_pk,value, denomination,value2, denomination2, period_from,period_until )
             ut.append(json.loads(ta.json))
     print(ut)
 
 if __name__ == '__main__':
 
     api_conn = init_api()
+    #add_expressions(api_conn, "Asset group - B2C")
     #query_asset_info(api_conn, [98])
-    query_assetdata_types(api_conn)
+    load_adjustments(api_conn, 36)
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
