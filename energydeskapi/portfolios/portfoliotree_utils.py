@@ -5,7 +5,7 @@ from energydeskapi.customers.customers_api import CustomersApi
 #from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from operator import itemgetter
 from energydeskapi.portfolios.portfolio_api import PortfolioNode
-
+import re
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 sample_portfolio_tree=[
   {
@@ -253,7 +253,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             if len(tbdict['results'])>0:
                 pnode=pmap[pnode.pk]
                 subdict=tbdict['results']
-                pnode.trading_books.append(int(subdict[0]['pk']))
+                numpart=re.sub("[^0-9]", "",subdict[0]['pk']) #Remove non num chars
+                pnode.trading_books.append(int(numpart))
             continue
         if rec['type'] == "assets":
             pnode.assets.append(int(rec['id']))
