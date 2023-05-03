@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict, field
 from datetime import timezone, datetime, date
 import json
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from json import JSONEncoder
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -261,7 +262,7 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def get_assetgroup_forecast_df(api_connection, assets):
+    def get_assetgroup_forecast_df(api_connection, assets, reso=PeriodResolutionEnum.MONTHLY):
         """Fetches forecast for asset group and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -269,12 +270,15 @@ class AssetDataApi:
         :param assets: personal key of asset(s) in asset group
         :type assets: str, required
         """
-        json_res=AssetDataApi.get_assetgroup_forecast(api_connection, assets)
+
+        params={"asset_id_in":assets, "resolution":reso.value}
+        json_res=AssetDataApi.get_assetgroup_forecast(api_connection, params)
         if json_res is not None and len(json_res)>0:
-            df = pd.DataFrame(data=eval(json_res))
-            df['date']= pd.to_datetime(df['date'])
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
-            df.index=df['timestamp']
+            df = pd.DataFrame(data=json.loads(json_res))
+            df.index = df['timestamp']
+            df.index = pd.to_datetime(df.index)
+            df = df.tz_convert("Europe/Oslo")
+            df['timestamp'] = df.index
             return df
         return None
 

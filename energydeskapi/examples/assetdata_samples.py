@@ -55,12 +55,8 @@ def query_assetdata_types(api_conn):
     res = AssetDataApi.get_timeseries_adjustment_denominations(api_conn)
     print(res)
 def query_asset_info(api_conn, asset_pk_list):
-    res = AssetDataApi.get_assetgroup_forecast(api_conn,{'asset_id_in':asset_pk_list})
-    df=pd.DataFrame(data=json.loads(res))
-    df.index=df['timestamp']
-    df.index=pd.to_datetime(df.index)
-    df=df.tz_convert("Europe/Oslo")
-    df['timestamp']=df.index
+    df = AssetDataApi.get_assetgroup_forecast_df(api_conn,asset_pk_list)
+
     print(df)
 
 def demo_data(api_conn):
@@ -135,7 +131,7 @@ if __name__ == '__main__':
     api_conn = init_api()
     add_expressions(api_conn, "Asset group - B2C")
     #query_asset_info(api_conn, [98])
-    load_adjustments(api_conn, 36)
+    query_asset_info(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
