@@ -633,6 +633,19 @@ class ContractsApi:
         return df
 
     @staticmethod
+    def get_contract_status(api_connection, enum):
+        """Gets contract status from enum
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param enum: id of contract status
+        :type enum: str, required
+        """
+        logger.info("Fetching contract status " + str(enum))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractstatuses/' + str(enum) + "/")
+        return json_res
+
+    @staticmethod
     def get_contract_filters(api_connection, parameters={}):
         """Fetches contract filters
 
