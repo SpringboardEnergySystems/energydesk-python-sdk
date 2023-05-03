@@ -66,6 +66,9 @@ class TimeSeriesAdjustment:
             dict['period_from'] = self.period_from if type(self.period_from) == str else self.period_from.strftime("%Y-%m-%d")
         if self.period_until is not None and self.period_until!="":
             dict['period_until'] = self.period_until if type(self.period_until)==str else self.period_until.strftime("%Y-%m-%d")
+        dict['denomination']=self.value_denomination
+        if self.value2_denomination is not None:
+            dict['denomination2'] = self.value2_denomination
         return dict
 @dataclass
 class TimeSeriesAdjustments:

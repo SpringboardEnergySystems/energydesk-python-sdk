@@ -109,7 +109,7 @@ def get_date_part(isostr):
     return dt.strftime("%Y-%m-%d")
 def load_adjustments(api_conn, asset_id):
     res=AssetDataApi.get_timeseries_adjustments(api_conn, {'asset__id': asset_id})
-    print(res)
+    print("Adjustments for ", asset_id)
     ut=[]
     if res is not None and len(res)>0:
         for a in res[0]['adjustments']:
@@ -123,7 +123,7 @@ def load_adjustments(api_conn, asset_id):
             period_from = None if a['period_from'] is None else get_date_part(a['period_from'])
             period_until = None if a['period_until']is None else get_date_part(a['period_until'])
             ta = TimeSeriesAdjustment(pk,description,adjustment_type_pk,value, denomination,value2, denomination2, period_from,period_until )
-            ut.append(json.loads(ta.json))
+            ut.append(ta    )
     print(ut)
 
 if __name__ == '__main__':
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     api_conn = init_api()
     add_expressions(api_conn, "Asset group - B2C")
     #query_asset_info(api_conn, [98])
-    query_asset_info(api_conn, [4])
+    load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_denomination_types(api_conn))
