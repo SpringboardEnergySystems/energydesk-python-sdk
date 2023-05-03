@@ -253,6 +253,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             if len(tbdict['results'])>0:
                 pnode=pmap[pnode.pk]
                 subdict=tbdict['results']
+                print(subdict[0]['pk'])
                 numpart=re.sub("[^0-9]", "",subdict[0]['pk']) #Remove non num chars
                 print("numpart",numpart)
                 pnode.trading_books.append(int(numpart))
