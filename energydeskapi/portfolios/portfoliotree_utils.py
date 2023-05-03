@@ -254,6 +254,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pnode=pmap[pnode.pk]
                 subdict=tbdict['results']
                 numpart=re.sub("[^0-9]", "",subdict[0]['pk']) #Remove non num chars
+                print("numpart",numpart)
                 pnode.trading_books.append(int(numpart))
             continue
         if rec['type'] == "assets":
