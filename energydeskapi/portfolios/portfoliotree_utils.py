@@ -254,13 +254,13 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pnode=pmap[pnode.pk]
                 subdict=tbdict['results']
                 tbkey_str=str(subdict[0]['pk'])
-                #print(subdict[0]['pk'])
                 numpart=re.sub("[^0-9]", "",tbkey_str) #Remove non num chars
-                print("numpart",numpart)
                 pnode.trading_books.append(int(numpart))
             continue
         if rec['type'] == "assets":
-            pnode.assets.append(int(rec['id']))
+            tbkey_str = str(rec['id'])
+            numpart = re.sub("[^0-9]", "", tbkey_str)  # Remove non num chars
+            pnode.assets.append(int(numpart))
             continue
         print("pid", pnode.pk, pid)
         if pid>0:
