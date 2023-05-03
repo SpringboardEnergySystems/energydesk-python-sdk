@@ -10,6 +10,15 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
+def register_testdata(api_conn):
+    def initialize_certificates(api_conn, certs):
+        for c in certs:
+            res = GosApi.register_certificate(api_conn, c, c)
+
+        rr = GosApi.get_certificates(api_conn)
+        print(rr)
+
+    initialize_certificates(api_conn, ['super green', 'not so green'])
 def query_source_data(api_conn):
     parameters_dict={}
     parameters_dict['undelying_source'] = 2
@@ -27,5 +36,6 @@ def query_sources(api_conn):
     print(json.dumps(x, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    query_sources(api_conn)
+    register_testdata(api_conn)
+    #query_sources(api_conn)
 
