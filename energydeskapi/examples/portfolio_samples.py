@@ -76,4 +76,4 @@ if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
     #create_empty(api_conn)
-    query_portfolios(api_conn)
+    load_portfolio(api_conn)

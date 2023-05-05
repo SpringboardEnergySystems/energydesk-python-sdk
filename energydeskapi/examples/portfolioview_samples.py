@@ -13,14 +13,15 @@ logging.basicConfig(level=logging.INFO,
 
 def get_period_view(api_conn):
     filter={
-        "portfolio":78,
+        "portfolio":82,
         "view_period_from__gte":"2023-02-01",
         "view_period_until__lt": "2023-06-01",
         "resolution":PeriodResolutionEnum.MONTHLY.value,
-        "groupby":[PeriodViewGroupingEnum.AREA.value]
+        "groupby":[PeriodViewGroupingEnum.ASSET.value]
     }
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
-    print(df)
+    print(df[1])
+    print(df[1]['asset'].unique().tolist())
     #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
