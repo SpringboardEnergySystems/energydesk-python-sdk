@@ -22,6 +22,11 @@ def calc_covariance_var(api_conn):
     print(pd)
     y11 = np.exp(-(x - port_mean) ** 2 / (2 * port_stdev ** 2)) / (np.sqrt(2 * np.pi * port_stdev ** 2))
     print(y11)
+
+def calc_covariance_matrix(api_conn):
+    df_covar=RiskApi.calc_covariance_matrix_df(api_conn,days_back=40)
+    print(df_covar)
+
 def test_update_riskparams(api_conn):
     res=RiskApi.get_risk_parameters(api_conn)
     print(res)
@@ -33,5 +38,5 @@ def test_update_riskparams(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    calc_covariance_var(api_conn)
+    calc_covariance_matrix(api_conn)
 

@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+import json
 logger = logging.getLogger(__name__)
 
 class RiskParameters:
@@ -100,3 +101,28 @@ class RiskApi:
         dfvars=pd.DataFrame(data=var_bins)
         #df=pd.DataFrame(data=eval(json_res))
         return dfvars,portfolio_mean,portfolio_stdev
+
+    @staticmethod
+    def calc_covariance_matrix(api_connection, days_back=40):
+        """Lists the types of commodities
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Calc Covariance Matrix")
+        payload={
+            'price_days':days_back,
+        }
+        print(payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calccovariancematrix/', payload)
+        #print(error_msg)
+        return success, json_res, status_code, error_msg
+    @staticmethod
+    def calc_covariance_matrix_df(api_connection, days_back=40):
+        success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back)
+        if success ==False:
+            print(error_msg)
+            return None,None,None
+        dfvars=pd.DataFrame(data=json.loads(json_res))
+        dfvars.index=dfvars.columns.to_flat_index()
+        return dfvars
