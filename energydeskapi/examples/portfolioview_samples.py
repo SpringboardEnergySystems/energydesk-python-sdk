@@ -19,10 +19,14 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":9       ,
+        "portfolio":'61',
+        'contract_filter':'0',
+        "view_period_from__gte":'2023-01-01',
+        "view_period_until__lt": '2026-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
-        "groupby":[PeriodViewGroupingEnum.ASSET.value]
+        "groupby":PeriodViewGroupingEnum.ASSET.value
     }
+    print(filter)
     df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
     print(df[1])
     print(df[1]['asset'].unique().tolist())
