@@ -58,3 +58,15 @@ class SchedulerApi:
             return None
         return json_res
 
+    @staticmethod
+    def get_job_definition_by_key(api_connection, pk):
+        """Fetches scheduled jobs and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/schedulemanager/jobdefinitions/' + str(pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
