@@ -578,7 +578,6 @@ def create_embedded_tree_for_dropdown(flat_tree):
     def lookup_node_by_id(id):
         for p in flat_tree:
             if p['pk']==id:
-                #nd={"portfolio_id":p['pk'],"portfolio_name":p['description']}
                 return p
         return None # Not found
 
@@ -588,7 +587,7 @@ def create_embedded_tree_for_dropdown(flat_tree):
 
         localnode={
             "portfolio_id":node['pk'],
-            "title": node['description'],
+            "title": str(node['pk']) + ":" + node['description'],
         }
         children_as_json = []
         for child in node['sub_portfolios']:
@@ -602,11 +601,9 @@ def create_embedded_tree_for_dropdown(flat_tree):
 
     root=None
     for i in range(len(flat_tree)):
-        print(flat_tree[i])
         if flat_tree[i]['parent_portfolio'] is None:
             new_root=manage_node(flat_tree[i])
             roots.append(new_root)
-    print(roots)
     return roots
 
 
