@@ -2,7 +2,7 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.scheduler.scheduler_api import SchedulerApi
-
+import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -11,12 +11,15 @@ logging.basicConfig(level=logging.INFO,
 
 
 
+
+
 def schedules(api_conn):
-    df=SchedulerApi.get_scheduled_jobs_df(api_conn)
-    #df=TreasuryApi.get_treasury_banks(api_conn)
+    defs=SchedulerApi.get_job_definitions(api_conn)
+    df = pd.DataFrame(data=defs)
     print(df)
     jobs = SchedulerApi.get_scheduled_jobs(api_conn)
-    print(jobs)
+    df = pd.DataFrame(data=jobs)
+    print(df)
 
 
 if __name__ == '__main__':
