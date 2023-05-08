@@ -14,10 +14,10 @@ class ScheduledJob:
 
     def get_dict(self, api_conn):
         dict = {'pk':self.pk}
-        if self.crontab is not None: dict['crontab'] = self.crontab
+        if self.job_definition_pk is not None: dict['job_definition'] = SchedulerApi.get_job_definition_url(api_conn,self.job_definition_pk)
         if self.crontab is not None: dict['crontab'] = self.crontab
         if self.dynamic_parameter is not None: dict['dynamic_parameter'] = self.dynamic_parameter
-        if self.job_definition_pk is not None: dict['job_definition_pk'] = SchedulerApi.get_job_definition_url(api_conn,self.job_definition_pk)
+        if self.is_active is not None: dict['is_active'] = self.is_active
 
         return dict
 class SchedulerApi:
@@ -62,6 +62,19 @@ class SchedulerApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_scheduled_jobs_df(api_connection, parameters={}):
+        """Fetches scheduled jobs df
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobs/', parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
 
     @staticmethod
     def get_job_definitions(api_connection, parameters={}):
