@@ -77,6 +77,19 @@ class SchedulerApi:
         return df
 
     @staticmethod
+    def get_scheduled_jobs_embedded_df(api_connection, parameters={}):
+        """Fetches scheduled jobs embedded df
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobs//embedded', parameters)
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
     def get_job_definitions(api_connection, parameters={}):
         """Fetches scheduled jobs and displays in a dataframe
 
