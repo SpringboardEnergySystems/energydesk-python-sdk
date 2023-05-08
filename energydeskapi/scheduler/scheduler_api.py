@@ -90,6 +90,30 @@ class SchedulerApi:
         return df
 
     @staticmethod
+    def get_scheduled_job(api_connection, pk):
+        """Fetches scheduled job by pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobs/' + str(pk) + '/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_scheduled_job_embedded(api_connection, pk):
+        """Fetches scheduled job by pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobs/' + str(pk) + '/retrieve_embedded/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_job_definitions(api_connection, parameters={}):
         """Fetches scheduled jobs and displays in a dataframe
 
@@ -107,7 +131,7 @@ class SchedulerApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        param={'job_definition__pk':job_definition_pk}
+        param={'job__id':job_definition_pk}
         json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobexecutions/', param)
         if json_res is None:
             return None
