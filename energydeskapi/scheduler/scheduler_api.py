@@ -39,6 +39,8 @@ class ScheduledJobExecution:
         if self.taskdone is not None: dict['taskdone'] = self.taskdone
         if self.success is not None: dict['success'] = self.success
 
+        return dict
+
 class SchedulerApi:
     """ Class for scheduler
 
@@ -176,8 +178,9 @@ class SchedulerApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
+        payload = execution.get_dict()
 
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/schedulemanager/scheduledjobexecutions/', execution.get_dict(api_connection))
+                '/api/schedulemanager/scheduledjobexecutions/', payload)
 
         return success, returned_data, status_code, error_msg
