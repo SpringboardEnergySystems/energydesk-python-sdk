@@ -21,6 +21,24 @@ class ScheduledJob:
         if self.is_active is not None: dict['is_active'] = self.is_active
 
         return dict
+
+class ScheduledJobExecution:
+    def __init__(self):
+        self.pk = 0
+        self.job = None
+        self.logtime = None
+        self.message = None
+        self.taskdone = False
+        self.success = False
+
+    def get_dict(self):
+        dict = {'pk': self.pk}
+        if self.job is not None: dict['job'] = self.job
+        if self.logtime is not None: dict['logtime'] = self.logtime
+        if self.message is not None: dict['message'] = self.message
+        if self.taskdone is not None: dict['taskdone'] = self.taskdone
+        if self.success is not None: dict['success'] = self.success
+
 class SchedulerApi:
     """ Class for scheduler
 
@@ -150,3 +168,16 @@ class SchedulerApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def upload_scheduled_job_execution(api_connection, execution):
+        """Uploads scheduled job executions
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/schedulemanager/scheduledjobexecutions/', execution.get_dict(api_connection))
+
+        return success, returned_data, status_code, error_msg
