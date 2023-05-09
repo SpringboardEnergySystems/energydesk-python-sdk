@@ -184,6 +184,19 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
+    def get_scheduled_job_execution_embedded(api_connection, job_definition_pk):
+        """Fetches scheduled jobs and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        param = {'job__id': job_definition_pk}
+        json_res = api_connection.exec_get_url('/api/schedulemanager/scheduledjobexecutions/embedded/', param)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def upload_scheduled_job_execution(api_connection, execution):
         """Uploads scheduled job executions
 
