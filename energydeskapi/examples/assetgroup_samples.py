@@ -45,6 +45,10 @@ def delete_asset_groups(api_conn):
         print(mn['pk'], mn['description'])
         AssetsApi.delete_asset(api_conn, mn['pk'])
 
+def del_asset_group(api_conn):
+    pk = 4
+    result = AssetGroupApi.delete_asset_group(api_conn, pk)
+    print(result)
 
 def register_grouped_asset(api_conn, group, sub_assets):
     sub=sub_assets[0]
@@ -93,7 +97,8 @@ def register_asset_groups(api_conn):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    register_asset_groups(api_conn)
+    #register_asset_groups(api_conn)
     #delete_asset_groups(api_conn)
-    list_asset_groups(api_conn)
+    #list_asset_groups(api_conn)
+    del_asset_group(api_conn)
 
