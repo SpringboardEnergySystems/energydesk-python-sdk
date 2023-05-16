@@ -5,7 +5,7 @@ from energydeskapi.customers.customers_api import CustomersApi
 #from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from operator import itemgetter
 from energydeskapi.portfolios.portfolio_api import PortfolioNode
-import re
+from energydeskapi.sdk.common_utils import remove_alpha_num
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 sample_portfolio_tree=[
   {
@@ -246,7 +246,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pmap_children[pnode.pk]=[]
         pid=0
         if rec['parent'] != "#":
-            numpart = re.sub("[^0-9]", "", str(rec['parent']))
+            numpart = remove_alpha_num(rec['parent'])
             pid = int(numpart)
         if rec['type'] == "trading_books":
             print(rec)
@@ -254,13 +254,11 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             if len(tbdict['results'])>0:
                 pnode=pmap[pnode.pk]
                 subdict=tbdict['results']
-                tbkey_str=str(subdict[0]['pk'])
-                numpart=re.sub("[^0-9]", "",tbkey_str) #Remove non num chars
+                numpart=remove_alpha_num(subdict[0]['pk']) #Remove non num chars
                 pnode.trading_books.append(int(numpart))
             continue
         if rec['type'] == "assets":
-            tbkey_str = str(rec['id'])
-            numpart = re.sub("[^0-9]", "", tbkey_str)  # Remove non num chars
+            numpart = remove_alpha_num(rec['id'])  # Remove non num chars
             pnode.assets.append(int(numpart))
             continue
         print("pid", pnode.pk, pid)
