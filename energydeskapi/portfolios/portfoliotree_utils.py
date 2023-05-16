@@ -246,7 +246,8 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             pmap_children[pnode.pk]=[]
         pid=0
         if rec['parent'] != "#":
-            pid = int(str(rec['parent']))
+            numpart = re.sub("[^0-9]", "", str(rec['parent']))
+            pid = int(numpart)
         if rec['type'] == "trading_books":
             print(rec)
             tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['text']})
