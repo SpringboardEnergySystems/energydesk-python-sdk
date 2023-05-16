@@ -9,7 +9,7 @@ class NecsApi:
     """
 
     @staticmethod
-    def get_necs_certificates(api_connection):
+    def get_necs_certificates(api_connection, parameters={}):
         """Fetches NECS certificates
 
         :param api_connection: class with API token for use with API
