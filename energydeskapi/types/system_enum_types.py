@@ -9,6 +9,7 @@ class SystemFeaturesEnum(Enum):
     CLEARING_MANAGEMENT = 5
     GOO_CONTRACTS = 6
     FX_HEDGING = 7
+    YIELD_CURVES = 8
 
 class SystemAccessTypeEnum(Enum):
     READ_ACCESS = 1
