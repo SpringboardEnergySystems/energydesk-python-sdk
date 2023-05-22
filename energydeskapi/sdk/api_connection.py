@@ -74,6 +74,7 @@ class ApiConnection(object):
         result = requests.post(server_url, json=payload)
         if result.status_code != 200:
             print("Could not validate user with backend")
+            print(result.text)
             return None
         access_token = result.json()['access_token']
         return access_token
