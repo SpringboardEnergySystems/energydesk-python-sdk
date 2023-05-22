@@ -121,8 +121,8 @@ class CurveApi:
 
 
     @staticmethod
-    def retrieve_rolling_products(api_connection , price_area):
-        json_res=api_connection.exec_get_url('/api/curvemanager/getrollingproducts/', {"price_area":price_area})
+    def retrieve_rolling_products(api_connection , price_area, days_back=40):
+        json_res=api_connection.exec_get_url('/api/curvemanager/getrollingproducts/', {"price_area":price_area, 'daysback':days_back})
         if json_res is None:
             return None
         #js=eval(json_res)
