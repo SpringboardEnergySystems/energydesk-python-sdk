@@ -281,6 +281,7 @@ class UsersApi:
         logger.info("Registering " + str(len(users) )+ " users")
         for user in users:
             payload=user.get_dict()
+            print(payload)
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/customers/register-user', payload)
             if json_res is None:
                 logger.error("Problems registering user "  + user.username)
