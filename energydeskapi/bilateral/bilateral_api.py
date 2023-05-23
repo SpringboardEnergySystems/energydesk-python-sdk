@@ -124,7 +124,7 @@ class BilateralApi:
                                                                                  qry_payload)
         if success==False:
             return success, None, status_code, error_msg
-        df_trades = pd.DataFrame(data=eval(json_res))
+        df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
         return success, df_trades, status_code, error_msg
 
     @staticmethod
