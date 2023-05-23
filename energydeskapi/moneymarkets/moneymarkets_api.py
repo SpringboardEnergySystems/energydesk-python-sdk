@@ -66,6 +66,7 @@ class MoneyMarketsApi:
             return None, None
         currency_date = json_res['currency_date']
         dataframe=json_res['dataframe']
+        print(dataframe)
         df = None if dataframe is None else pd.DataFrame(data=safe_prepare_json(dataframe))
         if df is None or len(df.index)==0:
             return currency_date, df
