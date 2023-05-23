@@ -123,7 +123,7 @@ class BilateralApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/trades/',
                                                                                  qry_payload)
 
-        df_trades = pd.DataFrame(data=eval(json_res))
+        df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
         return success, df_trades, status_code, error_msg
 
     @staticmethod
