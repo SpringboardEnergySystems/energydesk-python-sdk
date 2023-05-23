@@ -115,7 +115,7 @@ class BilateralApi:
             "period_until": period_until,
         }
 
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/trades/',
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/trades/',
                                                                                  qry_payload)
         print(success)
         if success is False:
