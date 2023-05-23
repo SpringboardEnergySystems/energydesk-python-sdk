@@ -109,6 +109,25 @@ class BilateralApi:
         return True, df_deliveries,df_trades, status_code, error_msg
 
     @staticmethod
+    def calculate_deliveries_df_trades(api_connection, period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value,
+                                       area_filter=None, counterpart_filter=None):
+        qry_payload = {
+            "period_from": period_from,
+            "period_until": period_until,
+            "resolution": resolution,
+        }
+        if area_filter is not None:
+            qry_payload['area_filter']=area_filter
+        if counterpart_filter is not None:
+            qry_payload['counterpart_filter']=counterpart_filter
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/trades/',
+                                                                                 qry_payload)
+        if success==False:
+            return success, None, status_code, error_msg
+        df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
+        return success, df_trades, status_code, error_msg
+
+    @staticmethod
     def get_avaiable_fixprice_periods(api_connection):
         """Fetches pricing configurations
 
