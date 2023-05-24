@@ -155,6 +155,19 @@ class BilateralApi:
         return json_res
 
     @staticmethod
+    def get_contract_doc(api_connection, external_id):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/bilateral/contractdoc/?external_id=' + external_id
+        json_res = api_connection.exec_get_url(url)
+        return json_res
+
+    @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
                                  curve_model, wacc=0.06, inflation=0,
                                  monthly_profile=get_baseload_months(),
