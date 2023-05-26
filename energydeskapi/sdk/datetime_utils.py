@@ -103,7 +103,7 @@ def prev_weekday(d, weekday):
     if days < 0:
         days += 7
     previous_date = d - timedelta(days=days)
-    return date(previous_date.year, previous_date.month, previous_date.day)
+    return previous_date#date(previous_date.year, previous_date.month, previous_date.day)
 
 def next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
