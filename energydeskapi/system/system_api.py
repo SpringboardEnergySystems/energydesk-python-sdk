@@ -100,7 +100,7 @@ class SystemApi:
 
         """
         json_res = api_connection.exec_get_url(
-            '/api/system/systemmanager/')
+            '/api/system/systemmanager/embedded/')
         if json_res is not None:
             return json_res
         return None
@@ -113,15 +113,16 @@ class SystemApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        system_owner_url=CustomersApi.get_company_url(system_owner_pk)
-        system_manager_url = CustomersApi.get_company_url(system_manager_pk)
+        system_owner_url=CustomersApi.get_company_url(api_connection, system_owner_pk)
+        system_manager_url = CustomersApi.get_company_url(api_connection, system_manager_pk)
         payload={
-            'description': None,
+            'description': "",
             'sysadmin': system_manager_url,
             'sysowner': system_owner_url,
         }
+        print(payload)
 
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/systemmanager/', payload)
+                '/api/system/systemmanager/', payload)
 
         return success, returned_data, status_code, error_msg
