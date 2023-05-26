@@ -98,6 +98,13 @@ def overlapping_seconds(calc_period_from, calc_period_until, test_period_from, t
     return 0
 
 
+def prev_weekday(d, weekday):
+    days = d.isoweekday() - weekday -1
+    if days < 0:
+        days += 7
+    previous_date = d - timedelta(days=days)
+    return date(previous_date.year, previous_date.month, previous_date.day)
+
 def next_weekday(d, weekday):
     days_ahead = weekday - d.weekday()
     if days_ahead <= 0: # Target day already happened this week
