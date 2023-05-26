@@ -32,6 +32,9 @@ def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
     s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     return s_dt_utc
 
+
+
+
 def convert_tzaware_datetime_to_utcstr(tzaware_local_dt):
     d_utc = tzaware_local_dt.astimezone(pytz.UTC)
     s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
@@ -103,6 +106,7 @@ def prev_weekday(d, weekday):
     if days < 0:
         days += 7
     previous_date = d - timedelta(days=days)
+    previous_date=localize_datetime(previous_date, "Europe/Oslo")
     return previous_date#date(previous_date.year, previous_date.month, previous_date.day)
 
 def next_weekday(d, weekday):
