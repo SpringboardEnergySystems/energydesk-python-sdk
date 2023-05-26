@@ -20,6 +20,8 @@ class CurvesConfigurations:
         self.pk = 0
         self.description=None
         self.price_area = None
+        self.weekday_cutoff = 0
+        self.date_cutoff_override = None
         self.is_active_for_area = True
         self.basic_curve_model = None
         self.yearly_epad_reduction = {'yearly_values':[]}
@@ -35,8 +37,11 @@ class CurvesConfigurations:
         dict['pk']=self.pk
         if self.description is not None: dict['description'] = self.description
         if self.price_area is not None: dict['price_area'] = self.price_area
+        if self.price_area is not None: dict['price_area'] = self.price_area
+        if self.date_cutoff_override is not None: dict['date_cutoff_override'] = self.date_cutoff_override
         if self.is_active_for_area is not None: dict['is_active_for_area'] = self.is_active_for_area
         if self.basic_curve_model is not None: dict['basic_curve_model'] = self.basic_curve_model
+        dict['weekday_cutoff'] = self.weekday_cutoff
         dict['yearly_epad_reduction'] = self.yearly_epad_reduction
         dict['spread_adjustment_epad'] = self.spread_adjustment_epad
         dict['spread_adjustment_sys'] = self.spread_adjustment_sys
