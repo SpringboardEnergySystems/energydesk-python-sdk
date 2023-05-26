@@ -109,22 +109,37 @@ class BilateralApi:
         return True, df_deliveries,df_trades, status_code, error_msg
 
     @staticmethod
-    def calculate_deliveries_df_trades(api_connection, period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value,
-                                       area_filter=None, counterpart_filter=None):
+    def get_bilateral_trades(api_connection, period_from, period_until):
         qry_payload = {
             "period_from": period_from,
             "period_until": period_until,
-            "resolution": resolution,
         }
-        if area_filter is not None:
-            qry_payload['area_filter']=area_filter
-        if counterpart_filter is not None:
-            qry_payload['counterpart_filter']=counterpart_filter
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/deliveries/trades/',
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/trades/',
                                                                                  qry_payload)
-        if success==False:
+        print(success)
+        if success is False:
+            return success, None, status_code, error_msg
+        if len(json_res['bilateral_trades']) == 0:
             return success, None, status_code, error_msg
         df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
+        return success, df_trades, status_code, error_msg
+
+    @staticmethod
+    def get_bilateral_trades_for_externals(api_connection, period_from, period_until):
+        qry_payload = {
+            "period_from": period_from,
+            "period_until": period_until,
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/trades/external/',
+                                                                                 qry_payload)
+        print(success)
+        if success is False:
+            return success, None, status_code, error_msg
+        if len(json_res['bilateral_trades']) == 0:
+            return success, None, status_code, error_msg
+        df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
+        print(df_trades)
         return success, df_trades, status_code, error_msg
 
     @staticmethod
@@ -137,6 +152,19 @@ class BilateralApi:
         logger.info("Fetching current open fixprice periods")
         json_res = api_connection.exec_get_url(
             '/api/bilateral/contractpricer/allowedperiods/')
+        return json_res
+
+    @staticmethod
+    def get_contract_doc(api_connection, external_id):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/bilateral/contractdoc/?external_id=' + external_id
+        json_res = api_connection.exec_get_url(url)
         return json_res
 
     @staticmethod
