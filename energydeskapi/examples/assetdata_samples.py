@@ -56,7 +56,8 @@ def query_assetdata_types(api_conn):
     print(res)
 def query_asset_info(api_conn, asset_pk_list):
     df = AssetDataApi.get_assetgroup_forecast_df(api_conn,asset_pk_list)
-    print(df.where(df.timestamp <= '2025-01-01').dropna())
+    print(df)
+    #print(df.where(df.timestamp <= '2025-01-01').dropna())
 
     #print(df)
 
@@ -131,7 +132,8 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
-    query_asset_info(api_conn, [37])
+    #query_assetdata_types(api_conn)
+    query_asset_info(api_conn, [5])
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))

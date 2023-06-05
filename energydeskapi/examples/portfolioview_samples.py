@@ -19,7 +19,7 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":'61',
+        "portfolio":'2',
         'contract_filter':'0',
         "view_period_from__gte":'2023-01-01',
         "view_period_until__lt": '2026-01-01',
