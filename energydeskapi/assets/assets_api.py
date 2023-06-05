@@ -201,7 +201,7 @@ class AssetsApi:
         json_res = api_connection.exec_get_url('/api/assets/assettypes/')
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res)
+        df = pd.DataFrame(data=eval(json_res))
         return df
 
     @staticmethod
