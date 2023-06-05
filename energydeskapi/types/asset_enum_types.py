@@ -6,7 +6,8 @@ class AssetCategoryEnum(Enum):
     SHORT_POSITION = 2
     BATTERY = 3
     BEHIND_THE_METER_LOAD = 4
-    GROUPED_ASSET = 5
+    TRADING_ACCOUNT = 5
+    GROUPED_ASSET = 6
 
 class AssetForecastAdjustDenomEnum(Enum):
     PERC = 1
