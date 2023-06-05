@@ -1,9 +1,9 @@
 import json
 import logging
-
+from energydeskapi.system.default_asset_types import initialize_default_etrm_assettypes
 from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, AssetTechData
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.types.asset_enum_types import AssetTypeEnum
+from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO,
 
 def get_clearing_accounts(api_conn):
     jsondata = AssetsApi.get_assets_embedded(
-        api_conn, {"asset_type": AssetTypeEnum.ACCOUNT.value})
+        api_conn, {"asset_type": AssetCategoryEnum.TRADING_ACCOUNT.value})
     print(json.dumps(jsondata, indent=2))
 
 
@@ -25,8 +25,13 @@ def query_asset_info(api_conn):
     u = AssetsApi.get_asset_type_url(api_conn, 0)
     print(u)
 
-def fetch_asset_subtypes(api_conn):
-    result = AssetsApi.get_asset_subtypes(api_conn)
+
+
+def fetch_asset_categories(api_conn):
+    result = AssetsApi.get_asset_categories(api_conn)
+    print(result)
+def fetch_asset_types(api_conn):
+    result = AssetsApi.get_asset_types(api_conn)
     print(result)
 
 def register_asset(api_conn):
@@ -69,6 +74,8 @@ if __name__ == '__main__':
     api_conn = init_api()
     #get_clearing_accounts(api_conn)
     #fetch_asset_subtypes(api_conn)
-    register_asset(api_conn)
+    initialize_default_etrm_assettypes(api_conn)
+    fetch_asset_categories(api_conn)
+    fetch_asset_types(api_conn)
     #register_asset_subtype(api_conn)
     #query_asset_info(api_conn)
