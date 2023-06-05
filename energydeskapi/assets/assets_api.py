@@ -23,6 +23,18 @@ class AssetTechData:
         if self.startup_date is not None: dict['startup_date'] = self.startup_date
         return dict
 
+class AssetType:
+    def __init__(self):
+        self.pk=0
+        self.description=""
+        self.is_active=True
+
+    def get_dict(self):
+        dict = {}
+        dict['pk'] = self.pk
+        dict['description'] = self.description
+        dict['is_active'] = self.is_active
+        return dict
 class Asset:
     def __init__(self):
         self.pk=0
@@ -44,6 +56,7 @@ class Asset:
         self.location="0,0"
         self.price_area = None
         self.is_active=True
+        self.asset_category = None
 
     def get_dict(self):
         dict = {}
@@ -52,6 +65,7 @@ class Asset:
         if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
         if self.description is not None: dict['description'] = self.description
         if self.asset_type is not None: dict['asset_type'] = self.asset_type
+        if self.asset_category is not None: dict['asset_type'] = self.asset_category
         if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
@@ -99,7 +113,7 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod
-    def get_asset_type(api_connection, asset_type_enum):
+    def get_asset_type(api_connection, asset_type_pk):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -107,8 +121,35 @@ class AssetsApi:
         :param asset_type_enum: type of asset
         :type asset_type_enum: str, required
         """
-        atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_enum)) + "/"
+
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_pk)) + "/"
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_asset_category_url(api_connection, asset_category_enum):
+        """Fetches asset category from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset_type_enum: type of asset
+        :type asset_type_enum: str, required
+        """
+        atype_pk = asset_category_enum if isinstance(asset_category_enum, int) else asset_category_enum.value
+        return api_connection.get_base_url() + '/api/assets/assetcategories/' + str(atype_pk) + "/"
+
+    @staticmethod
+    def get_asset_category(api_connection, asset_category_enum):
+        """Fetches asset type from url
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset_type_enum: type of asset
+        :type asset_type_enum: str, required
+        """
+        atype_pk = asset_category_enum if isinstance(asset_category_enum, int) else asset_category_enum.value
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(atype_pk)) + "/"
         if json_res is None:
             return None
         return json_res
@@ -162,6 +203,37 @@ class AssetsApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_asset_categories(api_connection):
+        """Fetches the categories of all assets
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/assets/assetcategories/')
+        if json_res is None:
+            return None
+        df = pd.DataFrame(data=json_res)
+        return df
+
+    @staticmethod
+    def upsert_asset_type(api_connection, asset_type):
+        """Registers/Updates asset
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset: asset object
+        :type asset: str, required
+        """
+        logger.info("Upserting asset type")
+        if asset_type.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/assets/assettypes/' + str(asset_type.pk) + "/", asset_type.get_dict())
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/assets/assettypes/', asset_type.get_dict())
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_asset_url(api_connection, asset_pk):
