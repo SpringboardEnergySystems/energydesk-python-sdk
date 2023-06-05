@@ -1,17 +1,13 @@
 from enum import Enum
 
 
-class AssetTypeEnum(Enum):
-    DR = 1
-    BATTERY = 2
-    GENERAL_PRODUCTION =3
-    SOLAR = 4
-    WIND = 5
-    HYDRO = 6
-    ACCOUNT = 7
-    FUEL = 8
-    GENERAL_CONSUMPTION = 9
-    GROUPED_ASSET = 10
+class AssetCategoryEnum(Enum):
+    LONG_POSITION = 1
+    SHORT_POSITION = 2
+    BATTERY = 3
+    BEHIND_THE_METER_LOAD = 4
+    TRADING_ACCOUNT = 5
+    GROUPED_ASSET = 6
 
 class AssetForecastAdjustDenomEnum(Enum):
     PERC = 1
