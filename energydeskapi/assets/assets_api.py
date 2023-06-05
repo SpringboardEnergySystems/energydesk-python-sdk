@@ -227,6 +227,7 @@ class AssetsApi:
         :type asset: str, required
         """
         logger.info("Upserting asset type")
+        print(asset_type.get_dict())
         if asset_type.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/assets/assettypes/' + str(asset_type.pk) + "/", asset_type.get_dict())

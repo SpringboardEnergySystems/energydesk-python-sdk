@@ -11,7 +11,7 @@ def register_asset_type(api_conn, description):
     ast.pk = 0
     ast.description = description
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset_type(api_conn, ast)
-    print(success, returned_data, status_code, error_msg)
+    #print(success, returned_data, status_code, error_msg)
 
 def initialize_default_etrm_assettypes(api_conn):
     register_asset_type(api_conn, "Production")
