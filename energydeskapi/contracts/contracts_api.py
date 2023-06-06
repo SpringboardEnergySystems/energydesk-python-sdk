@@ -313,7 +313,7 @@ class ContractsApi:
         else:
             key=contract.pk
             contract_dict=contract.get_dict(api_connection)
-
+        print("KEYKEY", key, contract_dict)
         if key>0:
             print("Old pk", key)
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
