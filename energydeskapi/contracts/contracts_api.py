@@ -313,8 +313,9 @@ class ContractsApi:
         else:
             key=contract.pk
             contract_dict=contract.get_dict(api_connection)
-
+        print("Key", key, contract_dict)
         if key>0:
+
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(key) + "/", contract_dict)
         else:

@@ -138,25 +138,52 @@ class LocalProduct:
         return dict
 
 
+class LocalMarket:
+    """ Class for local market
+
+    """
+
+    def __init__(self):
+        self.pk = 0
+        self.description = None
+        self.operator = None
+        self.local_areas = None
+        self.master_contract_agreements = None
+        self.deal_capture = None
+        self.deal_capture_user = None
+
+    def get_dict(self):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.description is not None: dict['description'] = self.description
+        if self.operator is not None: dict['operator'] = self.operator
+        if self.local_areas is not None: dict['local_areas'] = self.local_areas
+        if self.master_contract_agreements is not None: dict['master_contract_agreements'] = self.master_contract_agreements
+        if self.deal_capture is not None: dict['deal_capture'] = self.deal_capture
+        if self.deal_capture_user is not None: dict['deal_capture_user'] = self.deal_capture_user
+
+        return dict
+
+
 class LemsApi:
     """Class for price curves
 
     """
     @staticmethod
-    def upsert_localmarket(api_connection, description, operator_url, areas):
+    def upsert_localmarket(api_connection, payload):
         """Registers local marketplace
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Registering local market")
-        payload = {
-            "description": description,
-            "operator": operator_url,
-            "local_areas": areas
-        }
-        success, json_res, status_code, error_msg = api_connection.exec_post_url(
-            '/api/lems/localmarkets/', payload)
+        payload = payload.get_dict()
+        if payload['pk'] > 0:
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/lems/localmarkets/' + str(payload['pk']) + '/', payload)
+        else:
+            success, json_res, status_code, error_msg = api_connection.exec_post_url(
+                '/api/lems/localmarkets/', payload)
         if json_res is None:
             return None
         return json_res
