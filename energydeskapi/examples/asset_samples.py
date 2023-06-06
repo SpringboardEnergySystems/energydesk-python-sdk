@@ -74,7 +74,7 @@ if __name__ == '__main__':
     api_conn = init_api()
     #get_clearing_accounts(api_conn)
     #fetch_asset_subtypes(api_conn)
-    initialize_default_etrm_assettypes(api_conn)
+    #initialize_default_etrm_assettypes(api_conn)
     fetch_asset_categories(api_conn)
     fetch_asset_types(api_conn)
     #register_asset_subtype(api_conn)

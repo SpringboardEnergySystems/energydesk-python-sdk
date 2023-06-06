@@ -65,7 +65,7 @@ class Asset:
         if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
         if self.description is not None: dict['description'] = self.description
         if self.asset_type is not None: dict['asset_type'] = self.asset_type
-        if self.asset_category is not None: dict['asset_type'] = self.asset_category
+        if self.asset_category is not None: dict['asset_category'] = self.asset_category
         if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
