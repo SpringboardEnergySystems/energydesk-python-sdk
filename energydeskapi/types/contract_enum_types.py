@@ -24,3 +24,10 @@ class QuantityUnitEnum(Enum):
 class GosEnergySources(Enum):
     HYDRO = 1
     NORWEGIAN_HYDRO = 2
+
+class ContractTypeEnum(Enum):
+    NASDAQ = 1
+    EEX = 2
+    BILAT_FIXPRICE = 3
+    GOO = 4
+    FLEXIBLE = 5
