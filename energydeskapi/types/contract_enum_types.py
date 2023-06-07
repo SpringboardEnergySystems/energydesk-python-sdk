@@ -20,7 +20,7 @@ class QuantityUnitEnum(Enum):
     MW = 2
     GW = 3
     EUR = 4
-    CERTIFICATE = 5
+    LOTS = 5
 
 
 
