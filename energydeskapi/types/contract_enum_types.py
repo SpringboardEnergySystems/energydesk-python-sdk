@@ -12,6 +12,7 @@ class QuantityTypeEnum(Enum):
     VOLUME_TOTAL = 2
     VOLUME_YEARLY = 3
     CASH_AMOUNT = 4
+    CERTIFICATE = 5
 
 
 class QuantityUnitEnum(Enum):
@@ -19,6 +20,8 @@ class QuantityUnitEnum(Enum):
     MW = 2
     GW = 3
     EUR = 4
+    CERTIFICATE = 5
+
 
 
 class GosEnergySources(Enum):
