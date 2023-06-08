@@ -3,6 +3,7 @@ import pandas as pd
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
+from energydeskapi.sdk.common_utils import check_fix_date2str
 logger = logging.getLogger(__name__)
 #  Change
 class GoContract:
@@ -26,13 +27,13 @@ class GoContract:
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
-        if self.production_from is not None: dict['production_from'] = self.production_from
-        if self.production_until is not None: dict['production_from'] = self.production_until
-        if self.asset is not None: dict['seet'] = self.seet
+        if self.production_from is not None: dict['production_from'] = check_fix_date2str(self.production_from)
+        if self.production_until is not None: dict['production_until'] = check_fix_date2str(self.production_until)
+        if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn,self.asset)
         if self.extra_info is not None: dict['extra_info'] = self.extra_info
         if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
         if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date
-        if self.delivery_date is not None: dict['delivery_date'] = self.delivery_date
+        if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
         if len(self.certificates)>0:
             dict['certificates']=self.certificates
 

@@ -33,10 +33,13 @@ logging.basicConfig(level=logging.INFO,
 
 def gen_default_contract(api_conn):
     deliv=datetime.today()
+    prod_from = datetime.today()
+    produntil = datetime.today()
     c=generate_default_gocontract(api_conn)
-    cf=generate_default_gofields(asset_pk=1, delivery_date=None)
+    cf=generate_default_gofields(asset_pk=1, delivery_date=deliv, production_from=prod_from, production_until=produntil)
     c.certificates.append(cf)
-    print(c.get_dict(api_conn))
+
+    print(json.dumps(c.get_dict(api_conn), indent=2))
 def get_sample_contract(api_conn, commodity):
     yester = (datetime.today() + timedelta(days=-1)).replace( hour=0, minute=0, second=0, microsecond=0)
     dtstr1=convert_loc_datetime_to_utcstr(yester)
