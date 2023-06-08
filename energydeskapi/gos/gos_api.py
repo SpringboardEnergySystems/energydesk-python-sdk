@@ -11,14 +11,13 @@ class GoContract:
     """
     def __init__(self):
         self.pk=0
-        self.main_contract=None
-        self.certificates=None
         self.extra_info = None
-        self.underlying_source=None
-        self.energy_source = None
+        self.asset=None
+        self.production_from = None
+        self.production_until= None
+        self.delivery_date = None
         self.invoice_date = None
         self.invoice_with_mva = None
-        self.delivery_date=None
         self.certificates=[]
 
     def add_certificates(self, certificate):
@@ -27,9 +26,9 @@ class GoContract:
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
-        if self.underlying_source is not None: dict['underlying_source'] = self.underlying_source
-        if self.main_contract is not None: dict['main_contract'] = self.main_contract.get_dict(api_conn)
-        if self.energy_source is not None: dict['energy_source'] = self.energy_source
+        if self.production_from is not None: dict['production_from'] = self.production_from
+        if self.production_until is not None: dict['production_from'] = self.production_until
+        if self.asset is not None: dict['seet'] = self.seet
         if self.extra_info is not None: dict['extra_info'] = self.extra_info
         if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
         if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date

@@ -24,13 +24,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_contract_types(api_conn):
-    df=ContractsApi.list_commodity_types(api_conn)
-    print(df)
-    df=ContractsApi.list_instrument_types(api_conn)
-    print(df)
-    df=ContractsApi.list_contract_types(api_conn)
-    print(df)
-    df=ContractsApi.list_contract_statuses(api_conn)
+    df=ContractsApi.get_contract_types(api_conn)
     print(df)
 
 def get_contract_filters(api_conn):
@@ -207,7 +201,7 @@ if __name__ == '__main__':
     #register_contract_filters(api_conn)
     #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)
-    get_contracts(api_conn, 27)
+    get_contract_types(api_conn)
     #get_master_contract_agreements(api_conn)
     #register_contract_tag(api_conn)
     #register_master_contract_agreement(api_conn, "922675163")

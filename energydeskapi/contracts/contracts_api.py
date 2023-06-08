@@ -7,7 +7,7 @@ from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.products_api import ProductHelper
 from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum, ContractTypeEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
 
@@ -41,9 +41,11 @@ class Contract:
                  profile_category=ProfileCategoryEnum.BASELOAD,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
+                 contract_type=ContractTypeEnum.NASDAQ
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
+        self.contract_type=contract_type
         self.trading_book=trading_book
         self.contract_price=contract_price
         self.quantity = contract_qty
@@ -66,12 +68,14 @@ class Contract:
         self.commodity_delivery_until = None
         self.product_code=None
         self.otc_multi_delivery_periods=[]
+        self.certificates=[]
         self.contract_tags=[]
         self.area="SYS"
         self.commodity_profile = {}
         self.spread = False
         self.otc = False
         self.delivery_type=delivery_type
+        self.contract_type=contract_type
 
 
     def add_contract_tag(self, tag):
@@ -397,6 +401,17 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def get_contract_type_url(api_connection, contract_type_enum):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_type_enum: type of contract
+        :type contract_type_enum: str, required
+        """
+        type_pk = contract_type_enum if isinstance(contract_type_enum, int) else contract_type_enum.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(type_pk) + "/"
+    @staticmethod
     def get_quantity_type_url(api_connection, quantity_type_enum):
         """Fetches url for a contract type from enum value
 
@@ -419,6 +434,20 @@ class ContractsApi:
         """
         type_pk = quantity_unit_enum if isinstance(quantity_unit_enum, int) else quantity_unit_enum.value
         return api_connection.get_base_url() + '/api/portfoliomanager/quantityunits/' + str(type_pk) + "/"
+
+
+    @staticmethod
+    def get_contract_types(api_connection, parameters={}):
+        """Fetches all quantity types
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/portfoliomanager/contracttypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_quantity_units(api_connection, parameters={}):
