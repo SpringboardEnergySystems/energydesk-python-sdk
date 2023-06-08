@@ -145,7 +145,7 @@ class GosApi:
         json_res=GosApi.get_certificates(api_connection, parameters)
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res["results"])
+        df = pd.DataFrame(data=json_res)
         return df
 
     @staticmethod
