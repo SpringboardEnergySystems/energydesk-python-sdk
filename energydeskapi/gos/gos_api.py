@@ -87,7 +87,7 @@ class GosApi:
         :param certificate_pk: type of contract
         :type certificate_pk: integer, required
         """
-        return api_connection.get_base_url() + '/api/gos/certificates/' + str(certificate_pk) + "/"
+        return api_connection.get_base_url() + '/api/portfoliomanager/certificates/' + str(certificate_pk) + "/"
     @staticmethod
     def get_contracts_embedded(api_connection, parameters={}):
         """Fetches certificates from server
@@ -130,7 +130,7 @@ class GosApi:
         :param contract_status_enum: status of contract
         :type contract_status_enum: str, required
         """
-        json_res = api_connection.exec_get_url('/api/gos/certificates/', parameters)
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/certificates/', parameters)
         return json_res
 
     @staticmethod
@@ -187,7 +187,7 @@ class GosApi:
             "shortname":certificate,
             "description":description
         }
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/certificates/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/certificates/', payload)
         return json_res
 
     @staticmethod

@@ -35,10 +35,17 @@ def get_sysmanager_info(api_conn):
 def test_weekday():
     x=prev_weekday(datetime.today(),0)
     print(x)
+
+from energydeskapi.system.default_asset_types import initialize_default_etrm_assettypes
+from energydeskapi.system.default_user_groups import initialize_default_usergroups
+def update_system_defaults(api_conn):
+    initialize_default_etrm_assettypes(api_conn)
+    initialize_default_usergroups(api_conn)
+
 if __name__ == '__main__':
     api_conn = init_api()
     #fetch_system_features(api_conn)
     #fetch_system_feature_by_key(api_conn)
     #fetch_system_access_types(api_conn)
-    test_weekday()
+    update_system_defaults(api_conn)
     #get_sysmanager_info(api_conn)
