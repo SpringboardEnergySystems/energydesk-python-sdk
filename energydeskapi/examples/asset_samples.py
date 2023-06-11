@@ -16,6 +16,10 @@ def get_clearing_accounts(api_conn):
         api_conn, {"asset_type": AssetCategoryEnum.TRADING_ACCOUNT.value})
     print(json.dumps(jsondata, indent=2))
 
+def get_assets(api_conn):
+    jsondata = AssetsApi.get_assets_embedded(
+        api_conn)
+    print(json.dumps(jsondata, indent=2))
 
 def query_asset_info(api_conn):
     df = AssetsApi.get_asset_types(api_conn)
@@ -75,7 +79,8 @@ if __name__ == '__main__':
     #get_clearing_accounts(api_conn)
     #fetch_asset_subtypes(api_conn)
     #initialize_default_etrm_assettypes(api_conn)
-    fetch_asset_categories(api_conn)
-    fetch_asset_types(api_conn)
+    #fetch_asset_categories(api_conn)
+    #fetch_asset_types(api_conn)
+    get_assets(api_conn)
     #register_asset_subtype(api_conn)
     #query_asset_info(api_conn)

@@ -192,13 +192,13 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_types(api_connection):
+    def get_asset_types(api_connection, parameters={}):
         """Fetches the type of all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/')
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/', parameters)
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -226,7 +226,7 @@ class AssetsApi:
         :param asset: asset object
         :type asset: str, required
         """
-        logger.info("Upserting asset type " + (asset_type))
+        logger.info("Upserting asset type " + str(asset_type))
         print(asset_type.get_dict())
         if asset_type.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(

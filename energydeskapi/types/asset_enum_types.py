@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class AssetCategoryEnum(Enum):
-    LONG_POSITION = 1
-    SHORT_POSITION = 2
+    PRODUCTION = 1
+    CONSUMPTION = 2
     BATTERY = 3
     BEHIND_THE_METER_LOAD = 4
     TRADING_ACCOUNT = 5
