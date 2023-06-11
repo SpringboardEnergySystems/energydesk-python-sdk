@@ -16,7 +16,10 @@ def register_asset_type(api_conn, description):
 
 
 def initialize_default_etrm_assettypes(api_conn):
-    register_asset_type(api_conn, "Production")
+    register_asset_type(api_conn, "Hydro Production")
+    register_asset_type(api_conn, "Wind Production")
+    register_asset_type(api_conn, "Solar Production")
+    register_asset_type(api_conn, "Battery")
     register_asset_type(api_conn, "Consumption")
     register_asset_type(api_conn, "Cleared Account")
     register_asset_type(api_conn, "Bilateral Trades")
