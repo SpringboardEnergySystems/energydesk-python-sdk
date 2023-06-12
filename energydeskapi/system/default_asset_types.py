@@ -30,4 +30,5 @@ def initialize_default_heatprod_assettypes(api_conn):
     register_asset_type(api_conn, "Fuels")
     register_asset_type(api_conn, "Electricity")
     register_asset_type(api_conn, "Heat Sales")
+    register_asset_type(api_conn, "ElProduction")
     register_asset_type(api_conn, "Other")
