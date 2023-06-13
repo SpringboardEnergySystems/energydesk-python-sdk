@@ -58,8 +58,9 @@ class TimeSeriesAdjustment:
         print(self.value_denomination, self.value2_denomination)
         if self.value_denomination is not None: dict['value_denomination'] = AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn,int(self.value_denomination))
         if self.value is not None: dict['value'] = self.value
-        if self.value2 is not None and len(self.value2)>0:
+        if self.value2 is not None and self.value2!="" and len(self.value2)>0:
             dict['value2'] = self.value2
+            print("Seeting",self.value2)
             if self.value2_denomination is not None: dict['value2_denomination'] = AssetDataApi.get_timeseries_adjustment_denomination_type_url(api_conn,int(self.value2_denomination))
 
         if self.period_from is not None and self.period_from!="":
@@ -69,6 +70,7 @@ class TimeSeriesAdjustment:
         #dict['denomination']=self.value_denomination
         #if self.value2_denomination is not None:
         #    dict['denomination2'] = self.value2_denomination
+        print(dict)
         return dict
 @dataclass
 class TimeSeriesAdjustments:
