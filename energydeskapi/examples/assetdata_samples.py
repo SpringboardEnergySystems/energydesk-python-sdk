@@ -29,6 +29,7 @@ def add_expressions(api_conn, asset_desc):
     description = "supertest"
     expression_type_pk = AssetForecastAdjustEnum.PERCENTAGE.value
     denomination =AssetForecastAdjustDenomEnum.PERC.value
+
     value ="0.67"
     value2 = None
     denomination2=None
