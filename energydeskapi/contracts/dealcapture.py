@@ -63,3 +63,26 @@ def bilateral_dealcapture(api_conn):
         c.product_code = loc_ticker
         c.commodity_profile="BASELOAD"
         ContractsApi.upsert_contract(api_conn,c)
+
+def get_dealcapture_config(api_connection):
+    """Fetches dealcapture
+
+    :param api_connection: class with API token for use with API
+    :type api_connection: str, required
+    """
+    json_res = api_connection.exec_get_url('/api/lems/showdealcaptureconfig/')
+    if json_res is None:
+        return None
+    return json_res
+
+def set_dealcapture_config(api_connection, payload):
+    """Sets dealcapture
+
+    :param api_connection: class with API token for use with API
+    :type api_connection: str, required
+    """
+    success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/lems/setdealcaptureconfig/',
+                                                                                  payload)
+    if success:
+        return success, returned_data, status_code, error_msg
+    return None
