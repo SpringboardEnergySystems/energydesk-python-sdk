@@ -110,6 +110,4 @@ class MasterAgreementApi:
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/portfoliomanager/mastercontractagreements/', payload)
-        if success:
-            return returned_data
-        return None
+        return success, returned_data, status_code, error_msg
