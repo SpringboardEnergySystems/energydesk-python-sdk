@@ -97,3 +97,19 @@ class NecsApi:
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def get_necs_production_device_versions(api_connection):
+        """Fetches NECS transaction bundle from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: NECS transaction bundle pk
+        :type pk: str, required
+        """
+        logger.info("Fetching NECS prod device bundles")
+        json_res = api_connection.exec_get_url(
+            '/api/necs/necs_production_device_version/')
+        if json_res is not None:
+            return json_res
+        return None
