@@ -4,18 +4,19 @@ import logging
 from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, AssetTechData
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
-from energydeskapi.types.asset_enum_types import AssetTypeEnum
 from energydeskapi.sdk.common_utils import key_from_url
+from energydeskapi.assets.assetgroup_utils import register_new_assetgroup
+from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
-from energydeskapi.types.asset_enum_types import AssetTypeEnum
 
-def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
+
+def list_assets_of_type(api_conn, tp=AssetCategoryEnum.PRODUCTION.value):
     context={}
-    res=AssetsApi.get_assets(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
+    res=AssetsApi.get_assets(api_conn, {'asset_category':AssetCategoryEnum.PRODUCTION.value, 'page_size':100})
     asset_list=[]
     for asset in res['results']:
         print(asset['pk'], asset['description'])
@@ -23,20 +24,26 @@ def list_assets_of_type(api_conn, tp=AssetTypeEnum.WIND.value):
     context['assets'] =asset_list
 
 from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
-def list_asset_groups(api_conn, tp=AssetTypeEnum.GROUPED_ASSET.value):
-    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
+
+def list_asset_groups(api_conn, tp=AssetCategoryEnum.GROUPED_ASSET.value):
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetCategoryEnum.GROUPED_ASSET.value, 'page_size':100})
     sub_asset_list=[]
     for rec in res:
         print(rec['pk'], rec['description'])
 
-        #for s in rec['main_asset']:
-        #    print(s['pk'], s['description'])
-        #    sub_asset_pk=s['pk']#key_from_url(s)
-        #    sub_asset_list.append(sub_asset_pk)
-    #print(sub_asset_list)
+
+
+def create_special_group(api_conn):
+    jsondata = AssetsApi.get_assets_embedded(
+        api_conn, {"asset_category": AssetCategoryEnum.PRODUCTION.value, 'page_size':1000})
+    sub_asset_list=[]
+    for rec in jsondata['results']:
+        if rec['description'].startswith("B"):
+            sub_asset_list.append(rec)
+    register_new_assetgroup(api_conn,"B List", sub_asset_list)
 
 def delete_asset_groups(api_conn):
-    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetTypeEnum.GROUPED_ASSET.value, 'page_size':100})
+    res=AssetGroupApi.get_asset_groups_embedded(api_conn, {'asset_type':AssetCategoryEnum.GROUPED_ASSET.value, 'page_size':100})
     sub_asset_list=[]
     for rec in res:
         print(rec['pk'], rec['description'])
@@ -59,7 +66,7 @@ def register_grouped_asset(api_conn, group, sub_assets):
     a.extern_asset_id = "Hydro Assets" + " - " + str(group)
     a.description = a.extern_asset_id
     a.tech_data=at
-    a.asset_type = AssetsApi.get_asset_type_url(api_conn,AssetTypeEnum.GROUPED_ASSET.value)
+    a.asset_type = AssetsApi.get_asset_type_url(api_conn,AssetCategoryEnum.GROUPED_ASSET.value)
     a.grid_connection = sample['grid_connection']
     a.power_supplier = sample['power_supplier']
     a.asset_owner = sample['asset_owner']
@@ -100,5 +107,5 @@ if __name__ == '__main__':
     #register_asset_groups(api_conn)
     #delete_asset_groups(api_conn)
     #list_asset_groups(api_conn)
-    del_asset_group(api_conn)
+    create_special_group(api_conn)
 
