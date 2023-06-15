@@ -12,6 +12,8 @@ class SystemFeaturesEnum(Enum):
     YIELD_CURVES = 8
 
 class SystemAccessTypeEnum(Enum):
-    READ_ACCESS = 1
-    WRITE_ACCESS = 2
+    READ = 1
+    CREATE = 2
+    UPDATE = 3
+    DELETE = 4
 
