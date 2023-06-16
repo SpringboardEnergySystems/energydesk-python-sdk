@@ -13,15 +13,47 @@ logging.basicConfig(level=logging.INFO,
 def fetch_necs_certificates(api_conn):
     result = NecsApi.get_necs_certificates(api_conn)
     df = pd.DataFrame(data=result)
-    print(df[['production_device_name', 'issued_date', 'production_device_name', 'volume']].sort_values(by="issued_date"))
-    print(df.columns)
     df = df.astype({'volume': 'float'})
+    df=df[['production_device_name', 'issued_date', 'volume']]
+    df['key'] = df.groupby(['production_device_name', 'issued_date']).cumcount()
+    df = df.pivot_table(index=['key', 'issued_date'], columns='production_device_name', values='volume', aggfunc='sum').reset_index()
+    df=df.drop(columns=['key'])
+    df = df.fillna(value=0)
+    df=df.groupby(['issued_date']).sum()
+    import numpy as np
+    df=df.sort_values(by="issued_date", ascending=False)
+    df.loc[:, 'Total'] = df.sum(axis=1, numeric_only=True)
+    df.loc['Grand Total', :] = df.sum(axis=0)
+    df = df.iloc[np.arange(-1, len(df) - 1)]
+    print(df)
+    return
+    p.loc['total'] = p.iloc[:, :-1].sum()
+    #print(p)
+    return
+    dd = p.sum(axis=0, numeric_only=True)
+    print(dd)
+    return
+    df=pd.concat([p, dd])
+    print(df)
+    p = p.sum(numeric_only=True)
+    #df5 = p.sum(axis=1, numeric_only=True)  #
+    print("TOTSUM", p)
+    return
     df2=df.pivot_table(index="issued_date",values="volume", columns="production_device_name")
-    print(df2)
-    df2=df2.fillna(method="ffill")
+    df5 = df2.sum()
+    print(df5)
+    df5 = df5.sum()
+    print(df5)
+    return
+    df4 = df2.fillna(value=0)
+    #df2=df2.fillna(method="ffill")
     df2 = df2.fillna(value=0)
     print(df2)
-    print(df2.columns)
+    df2['sum'] = df2.sum(axis=1)
+    print(df2)
+    df3=df2.sum(numeric_only=True)#, ignore_index=True)
+    print(df3)
+    #print(df2.columns)
     #print(df2[['Bagn (Sør-Aurdal)']])
     #print(df.sort_values(by="completion_date")[['completion_date', 'transaction_volume']])
     #df = df.astype({'transaction_volume': 'float', 'volume': 'float'})
