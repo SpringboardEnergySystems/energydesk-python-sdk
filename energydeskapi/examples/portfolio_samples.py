@@ -1,6 +1,9 @@
 
 import logging
 import json
+
+import pandas as pd
+
 from energydeskapi.portfolios.portfolio_api import PortfoliosApi
 from energydeskapi.portfolios.portfolio_api import PortfolioNode
 from energydeskapi.portfolios.portfoliotree_api import PortfolioTreeApi
@@ -28,24 +31,12 @@ def load_portfolio(api_conn):
     print(ut)
 
 def query_portfolios(api_conn):
-    x=PortfolioTreeApi.get_portfolio_tree(api_conn)
-    #print(json.dumps(x, indent=4))
-
-    x2=convert_embedded_tree_to_jstree(x)
-    print("Ready")
-    #print(json.dumps(x2, indent=4))
-    print("DONE")
-    #save_conversion(api_conn, x2)
-    #js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
-    #print(json.dumps(js, indent=4))
-    #x=create_flat_tree_for_jstree(js)
-    res=PortfolioTreeApi.get_portfolio_tree_for_dropdown(api_conn)
-    print(json.dumps(res, indent=4))
-
-    return
-    js=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
-    print(json.dumps(js, indent=4))
-    query_portfolios(api_conn, js)
+    #x=PortfolioTreeApi.get_portfolio_tree(api_conn)
+    #x2=convert_embedded_tree_to_jstree(x)
+    ps=PortfoliosApi.get_portfolios(api_conn)
+    print(ps)
+    df=pd.DataFrame(data=ps)
+    print(df)
 
 def create_portfolio(api_conn):
     d={'pk': 0, 'description': 'Fuels', 'portfolio_name': 'Fuels', 'trading_books': [], 'manager': None, 'assets': [], 'sub_portfolios': [], 'stakeholders': [], 'parent_portfolio': 'http://127.0.0.1:8001/api/portfoliomanager/portfolios/2/'}
@@ -76,4 +67,4 @@ if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
     #create_empty(api_conn)
-    load_portfolio(api_conn)
+    query_portfolios(api_conn)

@@ -231,6 +231,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     portfolios=[]
     pmap_parents={}
     for rec in portfolio_nodes:
+        print(rec)
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         if rec['type']=="default":
             pnode=PortfolioNode()
