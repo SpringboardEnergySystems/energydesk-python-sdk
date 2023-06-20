@@ -95,7 +95,6 @@ class Contract:
 
     @staticmethod
     def from_simple_dict(d):
-        print(d)
         c=Contract()
         c.pk=d['pk']
         c.instrument_type=d['commodity']['instrument_type']
