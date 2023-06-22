@@ -60,6 +60,7 @@ class CustomersApi:
             logger.error("Problems creating/updating company " + company.name)
         else:
             logger.info("Company created/updated " + company.name)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def create_companies(api_connection, companies):
