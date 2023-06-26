@@ -3,6 +3,7 @@ from enum import Enum
 class ProfileCategoryEnum(Enum):
     BASELOAD = 1
     PROFILE = 2
+    ABSOLUTEPROFILE = 3  #Not relative month,weekday, hours, but a list of concrete periods
 
 class MarketEnum(Enum):
     NORDIC_POWER = 1   # Key for the most commonly used markets
