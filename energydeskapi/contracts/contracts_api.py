@@ -39,6 +39,7 @@ class Contract:
                  marketplace_product=None,
                  delivery_type=DeliveryTypeEnum.FINANCIAL.value,
                  profile_type=ProfileTypeEnum.BASELOAD.value,
+                 profile_category=ProfileTypeEnum.BASELOAD.name,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  contract_type=ContractTypeEnum.NASDAQ
@@ -57,6 +58,7 @@ class Contract:
         self.quantity_type=quentity_type
         self.commodity_type=commodity_type
         self.profile_type=profile_type
+        self.profile_category=profile_category
         self.instrument_type=instrument_type
         self.contract_status=contract_status
         self.buy_or_sell=buy_or_sell
@@ -100,6 +102,9 @@ class Contract:
         c.instrument_type=d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
         c.profile_type = d['commodity']['profile_type']#ProfileTypeEnum.BASELOAD if d['commodity']['profile_type']=="BASELOAD" else ProfileTypeEnum.PROFILE
+        c.profile_category = ProfileTypeEnum.BASELOAD if d['commodity'][
+                                                             'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
+
         c.delivery_type = d['commodity']['delivery_type']
         c.commodity_delivery_from = d['commodity']['delivery_from']
         c.commodity_delivery_until = d['commodity']['delivery_until']
@@ -137,6 +142,8 @@ class Contract:
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
         if self.profile_type is not None: prod['profile_type'] = self.profile_type.value
+        if self.profile_category is not None: prod['profile_category'] = str(self.profile_category)
+
         if self.delivery_type is not None: prod['delivery_type'] = self.delivery_type.value
         if self.commodity_delivery_from is not None: prod['delivery_from'] = self.commodity_delivery_from#check_fix_date2str(
           #  )
@@ -190,7 +197,11 @@ class Contract:
         if self.commodity_type is not None: prod['commodity_type'] = MarketsApi.get_commodity_type_url(api_conn, self.commodity_type)
         if self.profile_type is not None: prod['profile_type'] = MarketsApi.get_profile_type_url(api_conn,
                                                                                                        self.profile_type)
-
+        if self.profile_category is not None:
+            if type(self.profile_category)==str:
+                prod['profile_category'] =self.profile_category
+            else:
+                prod['profile_category'] = str(self.profile_category.name)
 
         if self.delivery_type is not None: prod['delivery_type'] = MarketsApi.get_delivery_type_url(api_conn,
                                                                                                        self.delivery_type)
