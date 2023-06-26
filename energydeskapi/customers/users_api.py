@@ -19,13 +19,13 @@ class User:
 
     def get_dict(self):
         dict = {}
-        role_pk =  self.user_role if isinstance( self.user_role, int) else  self.user_role.value
+        #role_pk =  self.user_role if isinstance( self.user_role, int) else  self.user_role.value
         dict['pk']=self.pk
         if self.username is not None: dict['username'] = self.username
         if self.email is not None: dict['email'] = self.email
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
-        if self.user_role is not None: dict['user_role'] = role_pk
+        if self.user_role is not None: dict['user_role'] = self.user_role
         if self.company is not None: dict['company'] = self.company
         if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
@@ -79,10 +79,9 @@ class UsersApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/update-userprofile', payload)
         if json_res is None:
             logger.error("Problems updating user " + user.username)
-            return False
         else:
             logger.info("User profile updated " + user.username)
-            return True
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_user_profile(api_connection):
@@ -217,7 +216,7 @@ class UsersApi:
         """
         logger.info("Updating user profile")
         print(payload)
-        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/profiles/' + str(pk)  + "/", payload)
+        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/profiles/' + str(pk)  + "/", payload.get_dict())
         if success is None:
             logger.error(error_msg)
         return success, json_res, status_code, error_msg
