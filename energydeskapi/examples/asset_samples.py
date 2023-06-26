@@ -43,7 +43,7 @@ def register_asset(api_conn):
     at = AssetTechData()
     a.pk = 101
     a.extern_asset_id = "Test asset 3"
-    a.description = "Test asset 3"
+    a.description = None
     a.asset_type = "http://127.0.0.1:8001/api/assets/assettypes/1/"
     at.max_effect_mw = 2.0
     at.yearly_volume_mwh = 2.0
@@ -68,7 +68,7 @@ def register_asset(api_conn):
 def register_asset_subtype(api_conn):
     ast = AssetSubType()
     ast.pk = 0
-    ast.description = "test subtype"
+    #ast.description = "test subtype"
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset_subtypes(api_conn, ast)
     print(success, returned_data, status_code, error_msg)
 
@@ -81,6 +81,6 @@ if __name__ == '__main__':
     #initialize_default_etrm_assettypes(api_conn)
     #fetch_asset_categories(api_conn)
     #fetch_asset_types(api_conn)
-    get_assets(api_conn)
+    register_asset_subtype(api_conn)
     #register_asset_subtype(api_conn)
     #query_asset_info(api_conn)

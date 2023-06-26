@@ -5,7 +5,7 @@ from moneyed import EUR
 from energydeskapi.sdk.money_utils import FormattedMoney
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum,DeliveryTypeEnum,ProfileCategoryEnum, BlockSizeEnum, MarketEnum
+from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum,DeliveryTypeEnum,ProfileTypeEnum, BlockSizeEnum, MarketEnum
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
 from energydeskapi.types.contract_enum_types import  QuantityTypeEnum,QuantityUnitEnum, ContractTypeEnum, ContractStatusEnum
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ def generate_default_gocontract(api_conn):
     c.area="NO1"
     c.quantity_unit=QuantityUnitEnum.LOTS
     c.quantity_type=QuantityTypeEnum.CERTIFICATE
-    c.profile_category=ProfileCategoryEnum.BASELOAD
+    c.profile_category=ProfileTypeEnum.BASELOAD
     c.quantity=0
     c.delivery_type=DeliveryTypeEnum.FINANCIAL
     c.buy_or_sell="SELL"

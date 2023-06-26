@@ -19,10 +19,10 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":'13',
+        "portfolio":'20',
         'contract_filter':'0',
-        "view_period_from__gte":'2023-11-01',
-        "view_period_until__lt": '2025-01-01',
+        "view_period_from__gte":'2023-01-01',
+        "view_period_until__lt": '2029-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
         "groupby":PeriodViewGroupingEnum.ASSET.value
     }
@@ -34,13 +34,10 @@ def get_period_view(api_conn):
     #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
-    filter={'portfolio': 13}
+    filter={'portfolio': "20"}
     view_id,df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
-    print(df.columns)
-    df['GWh']=df['netvol']/1000
-    df2=df[['ticker', 'buypos', 'sellpos', 'netpos', 'netvol','GWh']]
-    print(df2)
+
 
     #df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     #print(df)
