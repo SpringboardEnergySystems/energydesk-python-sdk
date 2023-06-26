@@ -1,6 +1,6 @@
 from enum import Enum
 
-class ProfileCategoryEnum(Enum):
+class ProfileTypeEnum(Enum):
     BASELOAD = 1
     PROFILE = 2
     ABSOLUTEPROFILE = 3  #Not relative month,weekday, hours, but a list of concrete periods
