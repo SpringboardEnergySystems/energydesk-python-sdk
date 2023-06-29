@@ -5,6 +5,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 def check_flat_profile(vmap):
     df=pd.DataFrame.from_dict(vmap, orient='index')
+    print(df)
     df.rename(columns={0:'counts'}, inplace=True)
     return len(np.unique(df.counts)) == 1
 
