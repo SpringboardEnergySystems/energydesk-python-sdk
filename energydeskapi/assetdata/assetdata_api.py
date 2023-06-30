@@ -20,8 +20,8 @@ class TimeSeriesEntry:
     def __init__(self, ts_datetime_utc, value, loczone="Europe/Oslo"):
         self.value=value
         self.timestamp=ts_datetime_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
-        d_aware = pytz.UTC.localize(ts_datetime_utc)
-        d_loc = d_aware.astimezone(pytz.timezone(loczone))   #For correct date
+        #d_aware = pytz.UTC.localize(ts_datetime_utc)
+        d_loc = ts_datetime_utc.astimezone(pytz.timezone(loczone))   #For correct date
         self.localdate=d_loc.strftime('%Y-%m-%d')
     def get_dict(self):
         dict = {'timestamp': self.timestamp, 'date': self.localdate, 'value':self.value}
