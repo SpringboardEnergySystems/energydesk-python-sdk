@@ -24,7 +24,7 @@ class TimeSeriesEntry:
         d_loc = ts_datetime_utc.astimezone(pytz.timezone(loczone))   #For correct date
         self.localdate=d_loc.strftime('%Y-%m-%d')
     def get_dict(self):
-        dict = {'timestamp': self.timestamp, 'date': self.localdate, 'value':self.value}
+        dict = {'datetime': self.timestamp, 'date': self.localdate, 'value':self.value}
         return dict
 
 
