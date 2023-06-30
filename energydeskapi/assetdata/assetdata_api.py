@@ -289,10 +289,10 @@ class AssetDataApi:
     def upload_timeseries(api_connection,timeseries_data):
         logger.info("Upload and merge timeseries")
 
-        json_res = api_connection.exec_get_url('/api/assetdata/upload-timeseries/', timeseries_data.get_dict())
-        if json_res is not None:
-            return json_res
-        return None
+        #json_res = api_connection.exec('/api/assetdata/upload-timeseries/', timeseries_data.get_dict())
+        payload=timeseries_data.get_dict()
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/upload-timeseries/', payload)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_assetgroup_forecast(api_connection, parameters={}):
