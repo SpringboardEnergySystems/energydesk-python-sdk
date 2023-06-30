@@ -41,6 +41,8 @@ class TimeSeries:
         dict['timeseries']=dictlist
         return dict
 
+
+
 class DateTimeEncoder(JSONEncoder):
     # Override the default method
     def default(self, obj):
