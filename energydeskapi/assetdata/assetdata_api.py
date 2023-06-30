@@ -34,6 +34,7 @@ class TimeSeries:
         self.timeseries_list=[]
 
     def get_dict(self):
+        print(self.timeseries_type)
         dict = {'asset_id': self.asset_id, 'unit': self.unit, 'timeseries_type':self.timeseries_type.name}
         dictlist=[]
         for el in self.timeseries_list:
