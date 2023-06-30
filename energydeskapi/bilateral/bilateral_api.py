@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone, date
 from dateutil import parser
 from energydeskapi.bilateral.rates_config import RatesConfig
 import pytz
+from energydeskapi.types.market_enum_types import ProfileTypeEnum
 from energydeskapi.profiles.profiles_api import ProfilesApi
 from energydeskapi.profiles.profiles import GenericProfile
 import json
@@ -174,7 +175,7 @@ class BilateralApi:
 
     @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
-                                 curve_model, wacc=0.06, inflation=0,
+                                 curve_model, wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
                                  monthly_profile=get_baseload_months(),
                                  weekday_profile=get_baseload_weekdays(),
                                  hours=get_baseload_dailyhours()):
@@ -207,6 +208,7 @@ class BilateralApi:
                 "wacc":wacc,
                 "inflation":inflation,
                 "periods":dict_periods,
+                "profile_type": profile_type.name,
                 "monthly_profile":monthly_profile,
                 "weekday_profile": weekday_profile,
                 "daily_profile": hours
@@ -218,7 +220,7 @@ class BilateralApi:
 
     @staticmethod
     def calculate_contract_price_df(api_connection, periods, price_area, currency_code,curve_model,
-                                    wacc=0.06, inflation=0,
+                                    wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
                                     monthly_profile=get_baseload_months(),
                                     weekday_profile=get_baseload_weekdays(),
                                     hours=get_baseload_dailyhours()
@@ -227,7 +229,7 @@ class BilateralApi:
         print(periods, price_area, currency_code, curve_model)
         success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area,
                                                                                         currency_code, curve_model,
-                                 wacc, inflation, monthly_profile, weekday_profile, hours)
+                                 wacc, inflation,profile_type, monthly_profile, weekday_profile, hours)
         if success and 'period_prices' in json_res:
             #print(json_res)
             period_prices = json_res['period_prices']

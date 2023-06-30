@@ -1,6 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import check_fix_date2str
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
+from energydeskapi.types.market_enum_types import ProfileTypeEnum
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 logger = logging.getLogger(__name__)
@@ -11,7 +12,7 @@ class FixedPriceApi:
     """
     @staticmethod
     def calculate_contract_price(api_connection , delivery_from, delivery_until, price_area,
-                                 profile_type="BASELOAD", custom_profile_key=None):
+                                 profile_type=ProfileTypeEnum.BASELOAD, custom_profile_key=None):
         """Calculated fix price in period
 
         :param api_connection: class with API token for use with API
@@ -29,7 +30,7 @@ class FixedPriceApi:
                 "delivery_until": delivery_until,
                 "delivery_from": delivery_from,
                 "price_area":price_area,
-                'profile_type': profile_type
+                'profile_type': profile_type.name,
         }
         if custom_profile_key is not None:
             qry_payload['custom_profile_key']= custom_profile_key

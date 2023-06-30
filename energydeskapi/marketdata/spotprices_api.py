@@ -12,7 +12,6 @@ class SpotPricesApi:
         json_res = api_connection.exec_get_url('/api/markets/spotprices/', parameters)
         if json_res is None:
             return None
-        print(json_res)
         return json_res
 
     @staticmethod
