@@ -311,7 +311,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def get_assetgroup_timeseries(api_connection,asset_id, timseries_types=TimeSeriesTypesEnum.FORECASTS):
+    def get_assetgroup_timeseries(api_connection,assets, timseries_types=TimeSeriesTypesEnum.FORECASTS, reso=PeriodResolutionEnum.MONTHLY):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -320,7 +320,8 @@ class AssetDataApi:
         :type assets: str, required
         """
         parameters={
-            "asset_id":asset_id,
+            "asset_id_in":assets,
+            "resolution": reso.value,
             "timeseries_type":timseries_types.name
         }
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', parameters)
