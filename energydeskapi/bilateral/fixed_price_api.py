@@ -30,7 +30,7 @@ class FixedPriceApi:
                 "delivery_until": delivery_until,
                 "delivery_from": delivery_from,
                 "price_area":price_area,
-                'profile_type': profile_type.name,
+                'profile_type': profile_type.name
         }
         if custom_profile_key is not None:
             qry_payload['custom_profile_key']= custom_profile_key
