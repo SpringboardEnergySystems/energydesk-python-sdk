@@ -289,7 +289,7 @@ class AssetDataApi:
     def upload_timeseries(api_connection,timeseries_data):
         logger.info("Upload and merge timeseries")
 
-        json_res = api_connection.exec_get_url('/api/assetdata/upload-timeseries/', timeseries_data.get_dict(api_connection))
+        json_res = api_connection.exec_get_url('/api/assetdata/upload-timeseries/', timeseries_data.get_dict())
         if json_res is not None:
             return json_res
         return None
