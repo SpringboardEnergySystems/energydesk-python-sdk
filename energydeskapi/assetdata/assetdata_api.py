@@ -9,6 +9,8 @@ from json import JSONEncoder
 from dataclasses import dataclass
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from datetime import datetime, timedelta
+import pytz
+from energydeskapi.sdk.datetime_utils import c
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 from energydeskapi.assets.assets_api import AssetsApi
 logger = logging.getLogger(__name__)
@@ -18,8 +20,9 @@ class TimeSeriesEntry:
     def __init__(self, ts_datetime_utc, value):
         self.value=value
         self.timestamp=ts_datetime_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
-        gmttime_dt = ts_datetime_utc.tz_localize("Europe/Oslo")
-        self.localdate=gmttime_dt.strftime('%Y-%m-%d')
+        d_aware = ts_datetime_utc.localize(pytz.UTC)
+        d_loc = d_aware.astimezone(pytz.timezone("Europe/Oslo"))
+        self.localdate=d_loc.strftime('%Y-%m-%d')
     def get_dict(self):
         dict = {'timestamp': self.timestamp, 'date': self.localdate, 'value':self.value}
         return dict
