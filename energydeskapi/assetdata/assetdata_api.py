@@ -28,13 +28,13 @@ class TimeSeriesEntry:
 
 class TimeSeries:
     def __init__(self,asset_id, tseries_type=TimeSeriesTypesEnum.FORECASTS, unit="MWh"):
-        self.timeseries_type=tseries_type,
+        self.timeseries_type=tseries_type
         self.unit=unit
         self.asset_id=asset_id
         self.timeseries_list=[]
 
     def get_dict(self):
-        print(self.timeseries_type)
+
         dict = {'asset_id': self.asset_id, 'unit': self.unit, 'timeseries_type':self.timeseries_type.name}
         dictlist=[]
         for el in self.timeseries_list:
