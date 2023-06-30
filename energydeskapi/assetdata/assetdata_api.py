@@ -309,6 +309,25 @@ class AssetDataApi:
             return json_res
         return None
 
+
+    @staticmethod
+    def get_assetgroup_timeseries(api_connection,asset_id, timseries_types=TimeSeriesTypesEnum.FORECASTS):
+        """Fetches forecast for asset group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param assets: personal key of asset(s) in asset group
+        :type assets: str, required
+        """
+        parameters={
+            "asset_id":asset_id,
+            "timeseries_type":timseries_types.name
+        }
+        json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
+
     @staticmethod
     def get_assetgroup_forecast_df(api_connection, assets, reso=PeriodResolutionEnum.MONTHLY):
         """Fetches forecast for asset group and displays in a dataframe
