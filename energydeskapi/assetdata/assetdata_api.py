@@ -7,11 +7,39 @@ import json
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from json import JSONEncoder
 from dataclasses import dataclass
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from datetime import datetime, timedelta
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 from energydeskapi.assets.assets_api import AssetsApi
 logger = logging.getLogger(__name__)
 
+
+class TimeSeriesEntry:
+    def __init__(self, ts_datetime_utc, value):
+        self.value=value
+        self.timestamp=ts_datetime_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
+        gmttime_dt = ts_datetime_utc.tz_localize("Europe/Oslo")
+        self.localdate=gmttime_dt.strftime('%Y-%m-%d')
+    def get_dict(self):
+        dict = {'timestamp': self.timestamp, 'date': self.localdate, 'value':self.value}
+        return dict
+
+
+
+class TimeSeries:
+    def __init__(self,asset_id, tseries_type=TimeSeriesTypesEnum.FORECASTS, unit="MWh"):
+        self.timeseries_type=tseries_type,
+        self.unit=unit
+        self.asset_id=asset_id
+        self.timeseries_list=[]
+
+    def get_dict(self):
+        dict = {'asset_id': self.asset_id, 'unit': self.unit, 'timeseries_type':self.timeseries_type.name}
+        dictlist=[]
+        for el in self.timeseries_list:
+            dictlist.append(el.get_dict())
+        dict['timeseries']=dictlist
+        return dict
 
 class DateTimeEncoder(JSONEncoder):
     # Override the default method
@@ -247,6 +275,15 @@ class AssetDataApi:
         logger.info("Retrieve previously stored forecasts")
 
         json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/latest/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
+
+    @staticmethod
+    def upload_timeseries(api_connection,timeseries_data):
+        logger.info("Upload and merge timeseries")
+
+        json_res = api_connection.exec_get_url('/api/assetdata/upload-forecasts/', parameters)
         if json_res is not None:
             return json_res
         return None

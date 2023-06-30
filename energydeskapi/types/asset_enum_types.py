@@ -20,7 +20,7 @@ class AssetForecastAdjustEnum(Enum):
     MONTHLY_PERC = 4
 
 
-class TimeSeriesTypes(Enum):
+class TimeSeriesTypesEnum(Enum):
     METERREADINGS = 1
     BASELINES = 2
     FORECASTS = 3
