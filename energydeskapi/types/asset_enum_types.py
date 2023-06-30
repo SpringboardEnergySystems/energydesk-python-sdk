@@ -19,3 +19,24 @@ class AssetForecastAdjustEnum(Enum):
     ASIAN_OPTION = 3
     MONTHLY_PERC = 4
 
+
+class TimeSeriesTypes(Enum):
+    METERREADINGS = 1
+    BASELINES = 2
+    FORECASTS = 3
+
+    @staticmethod
+    def timeseries_description(x):
+        return {
+            1: 'MeterReadings',
+            2: 'Baselines',
+            3: 'Forecasts'
+        }.get(x.value, '')
+
+    @staticmethod
+    def timeseries__from_desc(x):
+        return {
+            'MeterReadings': TimeSeriesTypes.METERREADINGS,
+            'Baselines': TimeSeriesTypes.BASELINES,
+            'Forecasts': TimeSeriesTypes.FORECASTS,
+        }.get(x, 0)
