@@ -220,7 +220,7 @@ class BilateralApi:
 
     @staticmethod
     def calculate_contract_price_df(api_connection, periods, price_area, currency_code,curve_model,
-                                    wacc=0.06, inflation=0,
+                                    wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
                                     monthly_profile=get_baseload_months(),
                                     weekday_profile=get_baseload_weekdays(),
                                     hours=get_baseload_dailyhours()
@@ -229,7 +229,7 @@ class BilateralApi:
         print(periods, price_area, currency_code, curve_model)
         success, json_res, status_code, error_msg=BilateralApi.calculate_contract_price(api_connection, periods, price_area,
                                                                                         currency_code, curve_model,
-                                 wacc, inflation, monthly_profile, weekday_profile, hours)
+                                 wacc, inflation,profile_type, monthly_profile, weekday_profile, hours)
         if success and 'period_prices' in json_res:
             #print(json_res)
             period_prices = json_res['period_prices']
