@@ -4,13 +4,12 @@ import pandas as pd
 
 from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, AssetTechData
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.types.asset_enum_types import AssetTypeEnum
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.sdk.common_utils import init_api
-
-from dateutil import parser
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from datetime import datetime, timedelta
-from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum
-import json
+from energydeskapi.sdk.common_utils import key_from_url
+from energydeskapi.sdk.datetime_utils import convert_datetime_from_utc
 from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 logging.basicConfig(level=logging.INFO,
@@ -105,11 +104,11 @@ def demo_data(api_conn):
 
     print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
 
-from energydeskapi.sdk.common_utils import key_from_url
-from energydeskapi.sdk.datetime_utils import convert_datetime_from_utc
+
 def get_date_part(isostr):
     dt=convert_datetime_from_utc(isostr)
     return dt.strftime("%Y-%m-%d")
+
 def load_adjustments(api_conn, asset_id):
     res=AssetDataApi.get_timeseries_adjustments(api_conn, {'asset__id': asset_id})
     print("Adjustments for ", asset_id)
@@ -129,12 +128,18 @@ def load_adjustments(api_conn, asset_id):
             ut.append(ta    )
     print(ut)
 
+
+def load_assetdata(api_conn):
+    res = AssetDataApi.get_assetgroup_timeseries(api_conn,assets=[1],
+                                                 timseries_types=TimeSeriesTypesEnum.METERREADINGS,
+                                                 reso=PeriodResolutionEnum.HOURLY)
+
 if __name__ == '__main__':
 
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
-    query_asset_info(api_conn, [5])
+    load_assetdata(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
