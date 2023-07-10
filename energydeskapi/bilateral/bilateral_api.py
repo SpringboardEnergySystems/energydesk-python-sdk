@@ -174,6 +174,25 @@ class BilateralApi:
         return json_res
 
     @staticmethod
+    def get_contract_profile(api_connection, contract_id, resolution="Monthly"):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        params= {"id":contract_id, "resolution":resolution}
+        url = '/api/portfoliomanager/contractprofile/'
+        json_res = api_connection.exec_get_url(url, params)
+        df=pd.DataFrame(data=json.loads(json_res))
+        df.index=df.period_from
+        df=df[['netpos','buypos','sellpos','netvol','buyvol','sellvol', 'hours']]
+        df.index=pd.to_datetime(df.index)
+        df=df.tz_convert("Europe/Oslo")
+        return df
+
+    @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
                                  curve_model, wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
                                  monthly_profile=get_baseload_months(),

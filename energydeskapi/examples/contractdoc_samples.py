@@ -25,6 +25,11 @@ logging.basicConfig(level=logging.INFO,
 
 from energydeskapi.examples.tradingbook_samples import query_trading_books
 
+
+def get_contract_profile(api_conn):
+    js=BilateralApi.get_contract_profile(api_conn,4, "Yearly")
+    print(js)
+
 def get_fixedprice_contracts(api_conn):
     #query_trading_books(api_conn)
     df=ContractsApi.list_contracts_df(api_conn, {"trading_book":31, "page_size":100})
@@ -36,4 +41,4 @@ def get_fixedprice_contracts(api_conn):
     print(tex_file)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_fixedprice_contracts(api_conn)
+    get_contract_profile(api_conn)
