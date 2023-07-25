@@ -94,6 +94,12 @@ class DerivativesApi:
         df = pd.read_json(result.json()['dataframe'], orient='records')
         return df
 
+    @staticmethod
+    def get_prices(api_connection, parameters={}):
+        jsondata= api_connection.exec_get_url('/api/markets/productprices/flatlist/', parameters)
+        if jsondata is None:
+            return None
+        return jsondata
 
     @staticmethod
     def fetch_daily_prices(api_connection, market_place, market_name, area=None):

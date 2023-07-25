@@ -1,7 +1,7 @@
 
 import logging
 import pandas as pd
-from energydeskapi.bilateral.bilateral_api import BilateralApi, PricingConfiguration
+from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.profiles.profiles_api import ProfilesApi
 from energydeskapi.profiles.profiles import GenericProfile
 from energydeskapi.sdk.common_utils import init_api
@@ -9,6 +9,8 @@ from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.spotprices_api import SpotPricesApi
 from energydeskapi.marketdata.products_api import ProductsApi
+from datetime import datetime
+import pendulum
 from energydeskapi.types.market_enum_types import MarketEnum, CommodityTypeEnum, InstrumentTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -17,13 +19,20 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_market_prices(api_conn):
-    df=DerivativesApi.fetch_daily_prices(api_conn, "Nasdaq OMX", "Nordic Power", "ALL")
-
+    yesterday = pendulum.yesterday('Europe/Oslo')
+    today = pendulum.today('Europe/Oslo')
+    params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
+    params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
+    jd=DerivativesApi.get_prices(api_conn, params)
+    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
+    df=pd.DataFrame(data=eval(jd['results']))
     print(df)
+
 def query_historical_market_prices(api_conn):
-    df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
+    jd=DerivativesApi.get_prices(api_conn)
+    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
 
-    print(df)
+    print(jd)
 
 def query_market_types(api_conn):
 
@@ -75,13 +84,15 @@ if __name__ == '__main__':
     #   pd.set_option('display.max_rows', None)
     api_conn=init_api()
     context = {}
-    success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
 
-    context['price_area']=returned_data['area']
-    context['delivery_from'] = returned_data['delivery_from']
-    context['delivery_until'] = returned_data['delivery_until']
-    context['df_yearly'] = returned_data['df_yearly'].to_json(orient='records',date_format='iso')
-    context['df_monthly'] = returned_data['df_monthly'].to_json(orient='records',date_format='iso')
+    df=query_market_prices(api_conn)
+    print(df)
+    #success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
+    #context['price_area']=returned_data['area']
+    #context['delivery_from'] = returned_data['delivery_from']
+    #context['delivery_until'] = returned_data['delivery_until']
+    #context['df_yearly'] = returned_data['df_yearly'].to_json(orient='records',date_format='iso')
+    #context['df_monthly'] = returned_data['df_monthly'].to_json(orient='records',date_format='iso')
 
 
 

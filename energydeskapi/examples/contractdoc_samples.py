@@ -27,7 +27,7 @@ from energydeskapi.examples.tradingbook_samples import query_trading_books
 
 
 def get_contract_profile(api_conn):
-    js=BilateralApi.get_contract_profile(api_conn,4, "Yearly")
+    js=BilateralApi.get_contract_profile(api_conn,6153, "Yearly")
     print(js)
 
 def get_fixedprice_contracts(api_conn):
