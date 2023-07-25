@@ -95,8 +95,15 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def get_prices(api_connection, parameters={}):
+    def get_prices_flatlist(api_connection, parameters={}):
         jsondata= api_connection.exec_get_url('/api/markets/productprices/flatlist/', parameters)
+        if jsondata is None:
+            return None
+        return jsondata
+
+    @staticmethod
+    def get_prices_embedded_json(api_connection, parameters={}):
+        jsondata= api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if jsondata is None:
             return None
         return jsondata

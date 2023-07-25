@@ -23,15 +23,17 @@ def query_market_prices(api_conn):
     today = pendulum.today('Europe/Oslo')
     params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
     params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
-    jd=DerivativesApi.get_prices(api_conn, params)
+    jd=DerivativesApi.get_prices_flatlist(api_conn, params)
     #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
     df=pd.DataFrame(data=eval(jd['results']))
     print(df)
 
-def query_historical_market_prices(api_conn):
-    jd=DerivativesApi.get_prices(api_conn)
-    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
-
+def query_market_prices_embedded(api_conn):
+    yesterday = pendulum.yesterday('Europe/Oslo')
+    today = pendulum.today('Europe/Oslo')
+    params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
+    params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
+    jd=DerivativesApi.get_prices_embedded_json(api_conn, params)
     print(jd)
 
 def query_market_types(api_conn):
