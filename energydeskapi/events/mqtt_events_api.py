@@ -100,7 +100,9 @@ class MqttClient(EventClient):
         else:
             logger.warning(f"Failed to send message to topic {topic}" + str(result))
     def start_listener(self):
+        print("Looping")
         self.client.loop_start()  # start the loop
+        print("Started")
         #self.client.loop_forever()  # Blocking. Not ideal if you want to have main threead available
 
 def on_my_callback(topic, data):
