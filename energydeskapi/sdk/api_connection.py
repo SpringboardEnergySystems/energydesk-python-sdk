@@ -251,3 +251,16 @@ class ApiConnection(object):
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             return None
+
+
+class Borg:
+    _shared_state = {}
+    def __init__(self):
+        self.__dict__ = self._shared_state
+
+
+class ApiCache(Borg):
+    def __init__(self, api_conn=None):
+        Borg.__init__(self)
+        if api_conn is not None:
+            self.api_conn=api_conn
