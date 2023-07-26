@@ -79,32 +79,30 @@ def simulate_price_changes(api_conn, mqttcli):
     df=get_current_snapshot(api_conn)
     df['bid'] = df['last']
     df['ask'] = df['last']
-    counter=1
+
     while True:
-        counter=counter+1
-        if counter>100:
-            ticker_idx = randrange(len(df.index))
-            tickrow=df.loc[df['ticker'] == pick_test_product()]
-            ticker_idx=tickrow.index[0]
-            ticker = df.loc[ticker_idx, 'ticker']
-            v = random.uniform(-0.5, 0.5)
-            type_change = randrange(4)
-            if type_change==0:
-                colname="high"
-            elif type_change == 1:
-                colname = "low"
-            elif type_change == 2:
-                colname = "last"
-            else:
-                colname="close"
-            val = df.loc[ticker_idx, colname]
-            val+=v
-            dec_val = float("{:.2f}".format(val))
-            df.loc[ticker_idx, colname]=dec_val
-            print("Sending change for", ticker, colname, dec_val)
-            generate_send_marketdata(mqttcli, df,ticker_idx,ticker)
-            counter=1
-        time.sleep(.1)
+        ticker_idx = randrange(len(df.index))
+        tickrow=df.loc[df['ticker'] == pick_test_product()]
+        ticker_idx=tickrow.index[0]
+        ticker = df.loc[ticker_idx, 'ticker']
+        v = random.uniform(-0.5, 0.5)
+        type_change = randrange(4)
+        if type_change==0:
+            colname="high"
+        elif type_change == 1:
+            colname = "low"
+        elif type_change == 2:
+            colname = "last"
+        else:
+            colname="close"
+        val = df.loc[ticker_idx, colname]
+        val+=v
+        dec_val = float("{:.2f}".format(val))
+        df.loc[ticker_idx, colname]=dec_val
+        print("Sending change for", ticker, colname, dec_val)
+        generate_send_marketdata(mqttcli, df,ticker_idx,ticker)
+        counter=1
+        time.sleep(5)
         #mqttcli.manual_loop()
 
 if __name__ == '__main__':
@@ -112,13 +110,15 @@ if __name__ == '__main__':
     api_conn=init_api()
     env = environ.Env()
     mqtt_broker = env.str('MQTT_HOST')
-    mqtt_port= env.str('MQTT_PORT')
-    mqtt_usr=None if "MQTT_USERNAME" not in env else env.str("MQTT_USERNAME")
+    mqtt_port= env.str('MQTT_WEBSOCKET_PORT')
+    mqtt_usr=None if "MQTT_USER" not in env else env.str("MQTT_USER")
     mqtt_pwd = None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
     client_cert = None if "MQTT_CLIENT_CERT" not in env else env.str('MQTT_CLIENT_CERT')
     client_key = None if "MQTT_CLIENT_KEY" not in env else env.str('MQTT_CLIENT_KEY')
     certificates= {'client_certificate': client_cert, 'client_key': client_key}
-    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd)
+    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd, {})
     mqttcli.connect([], "Feed Sender")
-    #mqttcli.start_listener()
+
+    mqttcli.start_listener()
+
     simulate_price_changes(api_conn, mqttcli)

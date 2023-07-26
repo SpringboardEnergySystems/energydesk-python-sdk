@@ -29,7 +29,7 @@ def on_disconnect(client, userdata, rc):
     client.disconnect_flag=True
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates=None):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
@@ -67,6 +67,7 @@ class MqttClient(EventClient):
             self.client.on_connect = on_connect
             self.client.on_disconnect=on_disconnect
             if self.username is not None:
+                print("Setting userpass", self.username, self.password)
                 self.client.username_pw_set(self.username, self.password)
             self.client.user_data_set(self)
             logger.info("Connecting " + str(self.mqtt_host) + ":"  + str(self.mqtt_port))
@@ -80,8 +81,8 @@ class MqttClient(EventClient):
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 self.client.tls_insecure_set(True)
 
-            x=self.client.connect(self.mqtt_host, port=int(self.mqtt_port))  # connect to broker
-            self.client.loop_forever()
+            x=self.client.connect(host=self.mqtt_host, port=int(self.mqtt_port))
+
         except Exception as e:
             logger.error(str(e))
             return False
@@ -136,7 +137,7 @@ if __name__ == '__main__':
     client_cert = None if "MQTT_CLIENT_CERT" not in env else env.str('MQTT_CLIENT_CERT')
     client_key = None if "MQTT_CLIENT_KEY" not in env else env.str('MQTT_CLIENT_KEY')
     mqtt_certs = {'ca_certificate': ca_cert, 'client_certificate': client_cert, 'client_key': client_key}
-    mqttcli=MqttClient(mqtt_broker,mqtt_websocket_port,mqtt_usr,mqtt_pwd, mqtt_certs)
+    mqttcli=MqttClient(mqtt_broker,mqtt_websocket_port)#,mqtt_usr,mqtt_pwd, mqtt_certs)
     es=EventSubscriber("/marketdata/nordicpower/#",on_my_callback)
     mqttcli.connect( [es], "Feed Listener")
     mqttcli.start_listener()
