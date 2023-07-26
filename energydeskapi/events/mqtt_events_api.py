@@ -29,7 +29,7 @@ def on_disconnect(client, userdata, rc):
     client.disconnect_flag=True
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates=None):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
