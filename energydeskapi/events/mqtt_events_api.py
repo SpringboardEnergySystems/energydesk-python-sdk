@@ -26,6 +26,7 @@ def on_message_callback(client, userdata, message):
 class MqttClient(EventClient):
     def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
         super().__init__()
+        self.connected=False
         self.mqtt_host=mqtt_host
         self.mqtt_port=mqtt_port
         self.username=username
@@ -72,6 +73,7 @@ class MqttClient(EventClient):
         except Exception as e:
             logger.error(str(e))
             return False
+        self.connected = True
         return True
 
     def waiting_connect(self, subscriber_list, client_name="client" ):
