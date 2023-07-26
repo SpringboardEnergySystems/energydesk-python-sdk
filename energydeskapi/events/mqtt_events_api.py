@@ -47,7 +47,7 @@ class MqttClient(EventClient):
             print("INSIDE ON CONNECT")
             logger.info("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
             #client.subscribe( topics)  # Subscribe to the topic “digitest/test1”, receive any messages published on it
-            logger.info("So what?")
+
             paho_topics=[]
             for es in subscriberlist:
                 self.register_callback(es)
