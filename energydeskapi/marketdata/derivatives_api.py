@@ -102,6 +102,16 @@ class DerivativesApi:
         return jsondata
 
     @staticmethod
+    def upsert_prices_flatlist(api_connection, snapshot):
+        payload={"snapshot":snapshot}
+        logger.info("Saving product price snapshot")
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/productprices/flatlist/', payload)
+        if json_res is None:
+            return None
+        print(json_res)
+        return json_res
+
+    @staticmethod
     def get_prices_embedded_json(api_connection, parameters={}):
         jsondata= api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if jsondata is None:
