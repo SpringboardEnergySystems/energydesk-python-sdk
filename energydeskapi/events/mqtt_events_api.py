@@ -15,9 +15,10 @@ logger = logging.getLogger(__name__)
 
 def on_message_callback(client, userdata, message):
     try:
-        logger.info("Received MQTT message from client " + str(client))
+        logger.debug("Received MQTT message from client " + str(client))
         content_str = message.payload.decode("utf-8")
         content = json.loads(content_str)
+        # In parent class loops through subscriber handlers
         userdata.handle_callback(message.topic, content)
     except Exception as e:
         logger.error("Error occured "  + str(e))
