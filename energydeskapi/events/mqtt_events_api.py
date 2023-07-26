@@ -74,6 +74,21 @@ class MqttClient(EventClient):
             return False
         return True
 
+    def waiting_connect(self, subscriber_list, client_name="client" ):
+        attempts = 0
+        while self.connected == False:
+            logger.info("Connecting to MQTT (#" + str(attempts) + ")")
+            self.connected = self.connect(subscriber_list, client_name, False)
+            if self.connected == False:
+                time.sleep(2)
+                attempts = attempts + 1
+                if attempts > 100:
+                    logger.error("Failed 100 attempts to connect to MQTT")
+                    return False
+            else:
+                logger.info("Returning from connect MQTT with result code " + str(self.connected))
+        return self.connected
+
     def publish(self,topic, msg):
         result = self.client.publish(topic, msg, qos=0, retain=True)
         # result: [0, 1]
