@@ -297,12 +297,11 @@ class AssetDataApi:
         payload={
             'asset':AssetsApi.get_asset_url(api_connection, asset_pk),
             'time_series_type':AssetDataApi.get_timeseries_type_url(api_connection,timeseries_type),
-            #'data':timeseries_data,
+            'data':timeseries_data,
             'last_updated':str(pendulum.now('Europe/Oslo')),
             'update_from_timestamp': str(pendulum.now('Europe/Oslo')),
         }
-        print(payload)
-        return None,None,None,None
+
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/timeseriesdata/', payload)
         return success, json_res, status_code, error_msg
 
