@@ -242,6 +242,10 @@ class AssetDataApi:
         type_pk = adjustment_type if isinstance(adjustment_type, int) else adjustment_type.value
         return api_connection.get_base_url() + '/api/assetdata/timeseriesadjustmenttypes/' + str(type_pk) + "/"
 
+
+    @staticmethod
+    def get_timeseries_types(api_connection):
+        return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/'
     @staticmethod
     def get_timeseries_type_url(api_connection, timeseries_type):
         """
