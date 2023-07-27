@@ -244,8 +244,12 @@ class AssetDataApi:
 
 
     @staticmethod
-    def get_timeseries_types(api_connection):
-        return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/'
+    def get_timeseries_types(api_connection,parameters={}):
+        json_res = api_connection.exec_get_url('/api/assetdata/timeseriestypes/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
+
     @staticmethod
     def get_timeseries_type_url(api_connection, timeseries_type):
         """
@@ -254,18 +258,7 @@ class AssetDataApi:
         type_pk = timeseries_type if isinstance(timeseries_type, int) else timeseries_type.value
         return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/' + str(type_pk) + "/"
 
-    @staticmethod
-    def get_timeseries_type_url(api_connection, ts_type):
-        """Fetches url for company types from enum value
 
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        :param company_type_enum: type of company
-        :type company_type_enum: str, required
-        """
-        # Will accept both integers of the actual enum type
-        type_pk = ts_type if isinstance(ts_type, int) else ts_type.value
-        return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_forecast_adjustment(api_connection, assets):
