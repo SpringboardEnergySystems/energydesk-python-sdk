@@ -304,8 +304,8 @@ class AssetDataApi:
             'last_updated':str(pendulum.now('Europe/Oslo')),
             'update_from_timestamp': str(pendulum.now('Europe/Oslo')),
         }
-        print(payload)
-        success, json_res, status_code, error_msg = True,1,1,1#api_connection.exec_post_url('/api/assetdata/timeseriesdata/', payload)
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/timeseriesdata/', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
