@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from datetime import datetime, timedelta
 import pytz
-
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
+import pendulum
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 from energydeskapi.assets.assets_api import AssetsApi
 logger = logging.getLogger(__name__)
@@ -242,6 +243,14 @@ class AssetDataApi:
         return api_connection.get_base_url() + '/api/assetdata/timeseriesadjustmenttypes/' + str(type_pk) + "/"
 
     @staticmethod
+    def get_timeseries_type_url(api_connection, timeseries_type):
+        """
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = timeseries_type if isinstance(timeseries_type, int) else timeseries_type.value
+        return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/' + str(type_pk) + "/"
+
+    @staticmethod
     def get_timeseries_type_url(api_connection, ts_type):
         """Fetches url for company types from enum value
 
@@ -284,6 +293,20 @@ class AssetDataApi:
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def upsert_timeseries(api_connection, asset_pk, timeseries_data, timeseries_type=TimeSeriesTypesEnum.FORECASTS):
+        logger.info("Upload and merge timeseries")
+        payload={
+            'asset':AssetsApi.get_asset_url(api_connection, asset_pk),
+            'time_series_type':AssetDataApi.get_timeseries_type_url(api_connection,timeseries_type),
+            'data':timeseries_data,
+            'last_updated':str(pendulum.now('Europe/Oslo')),
+            'update_from_timestamp': str(pendulum.now('Europe/Oslo')),
+        }
+        print(payload)
+        success, json_res, status_code, error_msg = True,1,1,1#api_connection.exec_post_url('/api/assetdata/timeseriesdata/', payload)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def upload_timeseries(api_connection,timeseries_data):

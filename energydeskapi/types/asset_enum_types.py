@@ -36,7 +36,7 @@ class TimeSeriesTypesEnum(Enum):
     @staticmethod
     def timeseries__from_desc(x):
         return {
-            'MeterReadings': TimeSeriesTypes.METERREADINGS,
-            'Baselines': TimeSeriesTypes.BASELINES,
-            'Forecasts': TimeSeriesTypes.FORECASTS,
+            'MeterReadings': TimeSeriesTypesEnum.METERREADINGS,
+            'Baselines': TimeSeriesTypesEnum.BASELINES,
+            'Forecasts': TimeSeriesTypesEnum.FORECASTS,
         }.get(x, 0)
