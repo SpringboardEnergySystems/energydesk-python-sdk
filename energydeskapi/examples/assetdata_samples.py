@@ -137,7 +137,6 @@ def load_assetdata(api_conn):
         'resolution': PeriodResolutionEnum.HOURLY.value
     }
     res = AssetDataApi.get_asset_timeseries(api_conn,params)
-
     jsdata=json.loads(res) if type(res)==str else res
     df=pd.DataFrame(data=jsdata)
     print(df)
