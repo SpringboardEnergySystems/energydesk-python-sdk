@@ -349,7 +349,8 @@ class AssetDataApi:
 
     @staticmethod
     def get_asset_timeseries(api_connection, params={}):
-        json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/', params)
+        print(params)
+        json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/latest/', params)
         if json_res is not None:
             return json_res
         return None

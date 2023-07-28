@@ -128,16 +128,19 @@ def load_adjustments(api_conn, asset_id):
             ut.append(ta    )
     print(ut)
 
-
+import json
 def load_assetdata(api_conn):
     #asset=AssetsApi.get_asset_url(api_conn, 1)
     params={
-        'asset__id__in':[1],
+        'asset__id':2,
         'time_series_type__id':TimeSeriesTypesEnum.METERREADINGS.value,
-        'reso': PeriodResolutionEnum.HOURLY.value
+        'resolution': PeriodResolutionEnum.HOURLY.value
     }
-    res = AssetDataApi.get_aggregated_timeseries(api_conn,params)
-    print(res)
+    res = AssetDataApi.get_asset_timeseries(api_conn,params)
+
+    jsdata=json.loads(res) if type(res)==str else res
+    df=pd.DataFrame(data=jsdata)
+    print(df)
 
 if __name__ == '__main__':
 
