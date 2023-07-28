@@ -259,6 +259,22 @@ class AssetDataApi:
         return api_connection.get_base_url() + '/api/assetdata/timeseriestypes/' + str(type_pk) + "/"
 
 
+    @staticmethod
+    def get_timeseries_value_type_url(api_connection, timeseries_value_type):
+        """
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = timeseries_value_type if isinstance(timeseries_value_type, int) else timeseries_value_type.value
+        return api_connection.get_base_url() + '/api/assetdata/timeseriesvaluetypes/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_timeseries_value_unit_url(api_connection, timeseries_value_unit):
+        """
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = timeseries_value_unit if isinstance(timeseries_value_unit, int) else timeseries_value_unit.value
+        return api_connection.get_base_url() + '/api/assetdata/timeseriesvalueunits/' + str(type_pk) + "/"
+
 
     @staticmethod
     def get_forecast_adjustment(api_connection, assets):
@@ -292,15 +308,17 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def upsert_timeseries(api_connection, asset_pk, timeseries_data, timeseries_type=TimeSeriesTypesEnum.FORECASTS):
+    def upsert_timeseries(api_connection, payload={}):
         logger.info("Upload and merge timeseries")
-        payload={
-            'asset':AssetsApi.get_asset_url(api_connection, asset_pk),
-            'time_series_type':AssetDataApi.get_timeseries_type_url(api_connection,timeseries_type),
-            'data':timeseries_data,
-            'last_updated':str(pendulum.now('Europe/Oslo')),
-            'update_from_timestamp': str(pendulum.now('Europe/Oslo')),
-        }
+        #payload={
+        #    'asset':AssetsApi.get_asset_url(api_connection, asset_pk),
+        #    'time_series_type':AssetDataApi.get_timeseries_type_url(api_connection,timeseries_type),
+        #     'quantity_unit': AssetDataApi.get_timeseries_quantity_unit_url(api_connection, quantity_unit),
+        #     'quantity_type': AssetDataApi.get_timeseries_quantity_type_url(api_connection, quantity_type),
+        #    'data':timeseries_data,
+        #    'last_updated':str(pendulum.now('Europe/Oslo')),
+        #
+        #}
 
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/timeseriesdata/', payload)
         return success, json_res, status_code, error_msg
@@ -329,7 +347,19 @@ class AssetDataApi:
             return json_res
         return None
 
-
+    @staticmethod
+    def get_asset_timeseries(api_connection, params={}):
+        json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/', params)
+        if json_res is not None:
+            return json_res
+        return None
+    @staticmethod
+    def get_aggregated_timeseries(api_connection, params={}):
+        print(params)
+        json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', params)
+        if json_res is not None:
+            return json_res
+        return None
     @staticmethod
     def get_assetgroup_timeseries(api_connection,assets, timseries_types=TimeSeriesTypesEnum.FORECASTS, reso=PeriodResolutionEnum.MONTHLY):
         """Fetches forecast for asset group
@@ -340,9 +370,9 @@ class AssetDataApi:
         :type assets: str, required
         """
         parameters={
-            "asset_id_in":assets,
+            "asset__id__in":assets,
             "resolution": reso.value,
-            "timeseries_type":timseries_types.name
+            "time_series_type__id":timseries_types.value
         }
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', parameters)
         if json_res is not None:

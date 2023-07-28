@@ -130,9 +130,14 @@ def load_adjustments(api_conn, asset_id):
 
 
 def load_assetdata(api_conn):
-    res = AssetDataApi.get_assetgroup_timeseries(api_conn,assets=[1],
-                                                 timseries_types=TimeSeriesTypesEnum.METERREADINGS,
-                                                 reso=PeriodResolutionEnum.HOURLY)
+    #asset=AssetsApi.get_asset_url(api_conn, 1)
+    params={
+        'asset__id__in':[1],
+        'time_series_type__id':TimeSeriesTypesEnum.METERREADINGS.value,
+        'reso': PeriodResolutionEnum.HOURLY.value
+    }
+    res = AssetDataApi.get_aggregated_timeseries(api_conn,params)
+    print(res)
 
 if __name__ == '__main__':
 
