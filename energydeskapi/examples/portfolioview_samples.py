@@ -19,8 +19,9 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":'20',
+        "portfolio":'9',
         'contract_filter':'0',
+        'view_currency': 'EUR',
         "view_period_from__gte":'2023-01-01',
         "view_period_until__lt": '2029-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
