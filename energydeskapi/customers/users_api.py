@@ -92,7 +92,6 @@ class UsersApi:
         """
         logger.info("Fetching user profile")
         json_res=api_connection.exec_get_url('/api/energydesk/get-user-profile/')
-        print(json_res)
         if json_res is not None:
             return json_res
         return None
