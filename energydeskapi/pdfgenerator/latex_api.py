@@ -10,6 +10,8 @@ class LatexApi:
     def exec_post(server_url, payload):
         env = environ.Env()
         base_url = None if 'ENERGYDESK_LATEX_URL' not in env else env.str('ENERGYDESK_LATEX_URL')
+        if base_url is None:
+            return None
         server_url = base_url + server_url
         logger.info("Calling URL " + str(server_url))
         print(payload)
