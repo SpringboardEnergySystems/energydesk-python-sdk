@@ -43,4 +43,6 @@ def generate_default_gocontract(api_conn):
     c.market=MarketEnum.GOs_MARKET
     c.contract_price=FormattedMoney(0, EUR)
     c.contract_type=ContractTypeEnum.GOO
+    c.trading_fee = FormattedMoney(0, EUR)
+    c.clearing_fee = FormattedMoney(0, EUR)
     return c
