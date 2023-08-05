@@ -106,8 +106,8 @@ class Contract:
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
         c.delivery_type = d['commodity']['delivery_type']
-        c.commodity_delivery_from = d['commodity']['delivery_from']
-        c.commodity_delivery_until = d['commodity']['delivery_until']
+        c.commodity_delivery_from = check_fix_date2str(d['commodity']['delivery_from'])
+        c.commodity_delivery_until = check_fix_date2str(d['commodity']['delivery_until'])
         c.market = d['commodity']['market']
         c.area = d['commodity']['area']
         c.commodity_profile = d['commodity']['commodity_profile']
@@ -117,9 +117,9 @@ class Contract:
 
         c.external_contract_id = d['external_contract_id']
         c.trading_book = d['trading_book']
-        c.trade_date = d['trade_date']
-        c.trade_datetime = d['trade_time']
-        c.last_update_time = d['last_update_time']
+        c.trade_date = check_fix_date2str(d['trade_date'])
+        c.trade_datetime = check_fix_date2str(d['trade_time'])
+        c.last_update_time = check_fix_date2str(d['last_update_time'])
 
         c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']

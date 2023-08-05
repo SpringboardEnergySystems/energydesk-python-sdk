@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 #  Change
 
 from energydeskapi.gos.gos_api import GoContract
+
+asset_map={'Nedre Otta'}
+
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
     go.certificates=[]
