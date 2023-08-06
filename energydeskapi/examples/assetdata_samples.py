@@ -153,7 +153,9 @@ def load_assetdata2(api_conn):
         'resolution': PeriodResolutionEnum.MONTHLY.value
     }
 
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[3],PeriodResolutionEnum.MONTHLY)
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[24],PeriodResolutionEnum.MONTHLY)
+    print(df)
+    df = df.iloc[:, 4:]
     print(df)
 
 if __name__ == '__main__':
@@ -161,6 +163,7 @@ if __name__ == '__main__':
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
+    pd.set_option('display.max_rows', None)
     load_assetdata2(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
