@@ -152,12 +152,8 @@ def load_assetdata2(api_conn):
         'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
         'resolution': PeriodResolutionEnum.MONTHLY.value
     }
-    #res = AssetDataApi.get_asset_timeseries(api_conn,params)
-    #jsdata=json.loads(res) if type(res)==str else res
-    #df=pd.DataFrame(data=jsdata)
-    #print(df)
 
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[16])
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[3],PeriodResolutionEnum.MONTHLY)
     print(df)
 
 if __name__ == '__main__':
