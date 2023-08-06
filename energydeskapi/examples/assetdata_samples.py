@@ -157,7 +157,7 @@ def load_assetdata2(api_conn):
     #df=pd.DataFrame(data=jsdata)
     #print(df)
 
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[20])
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[16])
     print(df)
 
 if __name__ == '__main__':
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
-    load_assetdata(api_conn)
+    load_assetdata2(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
