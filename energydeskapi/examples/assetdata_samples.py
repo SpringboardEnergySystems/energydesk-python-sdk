@@ -143,6 +143,23 @@ def load_assetdata(api_conn):
     df=pd.DataFrame(data=jsdata)
     print(df)
 
+def load_assetdata2(api_conn):
+    #asset=AssetsApi.get_asset_url(api_conn, 1)
+    assets=AssetsApi.get_assets(api_conn, {"description":"B2C"})
+    print(assets)
+    params={
+        'asset__id':assets['results'][0]['pk'],
+        'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
+        'resolution': PeriodResolutionEnum.MONTHLY.value
+    }
+    #res = AssetDataApi.get_asset_timeseries(api_conn,params)
+    #jsdata=json.loads(res) if type(res)==str else res
+    #df=pd.DataFrame(data=jsdata)
+    #print(df)
+
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[20])
+    print(df)
+
 if __name__ == '__main__':
 
     api_conn = init_api()
