@@ -390,7 +390,7 @@ class AssetDataApi:
         :type assets: str, required
         """
 
-        params={"asset_id_in":assets, "resolution":reso.value}
+        params={"assetlist_id":assets, "resolution":reso.value}
         json_res=AssetDataApi.get_assetgroup_forecast(api_connection, params)
         if json_res is not None and len(json_res)>0:
             df = pd.DataFrame(data=json.loads(json_res))

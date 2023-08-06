@@ -131,10 +131,12 @@ def load_adjustments(api_conn, asset_id):
 import json
 def load_assetdata(api_conn):
     #asset=AssetsApi.get_asset_url(api_conn, 1)
+    assets=AssetsApi.get_assets(api_conn, {"description":"B2C"})
+    print(assets)
     params={
-        'asset__id':2,
-        'time_series_type__id':TimeSeriesTypesEnum.METERREADINGS.value,
-        'resolution': PeriodResolutionEnum.HOURLY.value
+        'asset__id':assets['results'][0]['pk'],
+        'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
+        'resolution': PeriodResolutionEnum.MONTHLY.value
     }
     res = AssetDataApi.get_asset_timeseries(api_conn,params)
     jsdata=json.loads(res) if type(res)==str else res
