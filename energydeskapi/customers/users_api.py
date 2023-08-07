@@ -288,7 +288,7 @@ class UsersApi:
                 logger.error("Problems registering user "  + user.username)
             else:
                 logger.info("User registered " + user.username)
-        success, json_res, status_code, error_msg
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_user_roles_df(api_connection):
