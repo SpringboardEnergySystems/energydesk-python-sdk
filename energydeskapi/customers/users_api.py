@@ -22,8 +22,12 @@ class User:
         dict = {}
         #role_pk =  self.user_role if isinstance( self.user_role, int) else  self.user_role.value
         dict['pk']=self.pk
-        if self.username is not None: dict['username'] = self.username
-        if self.email is not None: dict['email'] = self.email
+        if self.username is not None:
+            dict['username'] = self.username
+            dict['email'] = self.username
+        else:
+            dict['email'] = self.email
+            dict['username'] = self.username
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
         if self.user_role is not None: dict['user_role'] = self.user_role
