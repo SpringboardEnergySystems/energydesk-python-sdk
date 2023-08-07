@@ -153,10 +153,17 @@ def load_assetdata2(api_conn):
         'resolution': PeriodResolutionEnum.MONTHLY.value
     }
 
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[24],PeriodResolutionEnum.MONTHLY)
-    print(df)
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[assets['results'][0]['pk']],PeriodResolutionEnum.MONTHLY)
+    #print(df)
+    df1=df
+    df1.index = df.index.tz_convert(None)
+    #df1['timestamp']= df['timestamp'].tz_convert(None)
+    #df1['date'] = df['date'].tz_convert(None)
+    #df1['dates_shift'] = df['dates_shift'].tz_convert(None)
+    print(df1)
+    df1.iloc[:, 4:].to_excel("./output.xlsx")
     df = df.iloc[:, 4:]
-    print(df)
+    #print(df)
 
 if __name__ == '__main__':
 

@@ -19,7 +19,7 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":'1',
+        "portfolio":'29',
         'contract_filter':'0',
         'view_currency': 'EUR',
         'commodity__area': 'NO5',
