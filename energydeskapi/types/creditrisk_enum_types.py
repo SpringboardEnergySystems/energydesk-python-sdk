@@ -45,6 +45,6 @@ class CompetitivePosEnums(Enum):
     STRONG = 1
     ADEQUATE = 2
     WEAK = 3
-    POSITIVE = 1
-    VERY_POSITIVE = 2
+    POSITIVE = 4
+    VERY_POSITIVE = 5
 
