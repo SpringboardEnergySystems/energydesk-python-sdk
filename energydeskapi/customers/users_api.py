@@ -16,16 +16,22 @@ class User:
         self.is_super_user=False
         self.company=None
         self.company_registry_number=None
+        self.password=None
 
     def get_dict(self):
         dict = {}
         #role_pk =  self.user_role if isinstance( self.user_role, int) else  self.user_role.value
         dict['pk']=self.pk
-        if self.username is not None: dict['username'] = self.username
-        if self.email is not None: dict['email'] = self.email
+        if self.username is not None:
+            dict['username'] = self.username
+            dict['email'] = self.username
+        else:
+            dict['email'] = self.email
+            dict['username'] = self.username
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
         if self.user_role is not None: dict['user_role'] = self.user_role
+        if self.password is not None and self.password!="": dict['password'] = self.password
         if self.company is not None: dict['company'] = self.company
         if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
@@ -286,6 +292,7 @@ class UsersApi:
                 logger.error("Problems registering user "  + user.username)
             else:
                 logger.info("User registered " + user.username)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def get_user_roles_df(api_connection):

@@ -131,22 +131,47 @@ def load_adjustments(api_conn, asset_id):
 import json
 def load_assetdata(api_conn):
     #asset=AssetsApi.get_asset_url(api_conn, 1)
+    assets=AssetsApi.get_assets(api_conn, {"description":"B2C"})
+    print(assets)
     params={
-        'asset__id':2,
-        'time_series_type__id':TimeSeriesTypesEnum.METERREADINGS.value,
-        'resolution': PeriodResolutionEnum.HOURLY.value
+        'asset__id':assets['results'][0]['pk'],
+        'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
+        'resolution': PeriodResolutionEnum.MONTHLY.value
     }
     res = AssetDataApi.get_asset_timeseries(api_conn,params)
     jsdata=json.loads(res) if type(res)==str else res
     df=pd.DataFrame(data=jsdata)
     print(df)
 
+def load_assetdata2(api_conn):
+    #asset=AssetsApi.get_asset_url(api_conn, 1)
+    assets=AssetsApi.get_assets(api_conn, {"description":"B2C"})
+    print(assets)
+    params={
+        'asset__id':assets['results'][0]['pk'],
+        'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
+        'resolution': PeriodResolutionEnum.MONTHLY.value
+    }
+
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[assets['results'][0]['pk']],PeriodResolutionEnum.MONTHLY)
+    #print(df)
+    df1=df
+    df1.index = df.index.tz_convert(None)
+    #df1['timestamp']= df['timestamp'].tz_convert(None)
+    #df1['date'] = df['date'].tz_convert(None)
+    #df1['dates_shift'] = df['dates_shift'].tz_convert(None)
+    print(df1)
+    df1.iloc[:, 4:].to_excel("./output.xlsx")
+    df = df.iloc[:, 4:]
+    #print(df)
+
 if __name__ == '__main__':
 
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
-    load_assetdata(api_conn)
+    pd.set_option('display.max_rows', None)
+    load_assetdata2(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))

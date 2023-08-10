@@ -10,6 +10,8 @@ from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
 
 def check_fix_date2str(dt):
+    if dt is None:
+        return None
     if isinstance(dt, str):
         return dt
     return convert_loc_datetime_to_utcstr(dt)

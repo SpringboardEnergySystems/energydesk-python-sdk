@@ -23,7 +23,7 @@ def fetch_fxtenors(api_conn):
     print(df)
 
 def fetch_yieldcurves(api_conn):
-    param = {"currency_date":"2023-03-26"}
+    param = {"currency_date":"2023-09-26"}
     currency_date, df =  MoneyMarketsApi.get_fwd_curves(api_conn, param)
     print(df)
     #df2 = MoneyMarketsApi.get_fwdrates(api_conn, param)
@@ -35,4 +35,4 @@ if __name__ == '__main__':
     # get_moneymarket_data(api_conn)
     #fetch_fxspot(api_conn)
     fetch_yieldcurves(api_conn)
-    #fetch_fxtenors(api_conn)
+    #etch_fxtenors(api_conn)

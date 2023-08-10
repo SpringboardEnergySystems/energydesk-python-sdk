@@ -371,9 +371,9 @@ class AssetDataApi:
         :type assets: str, required
         """
         parameters={
-            "asset__id__in":assets,
+            "assets":assets,
             "resolution": reso.value,
-            "time_series_type__id":timseries_types.value
+            "timeseries_type_pk":timseries_types.value
         }
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', parameters)
         if json_res is not None:
@@ -390,8 +390,12 @@ class AssetDataApi:
         :type assets: str, required
         """
 
-        params={"asset_id_in":assets, "resolution":reso.value}
-        json_res=AssetDataApi.get_assetgroup_forecast(api_connection, params)
+        parameters={
+            "assets":assets,
+            "resolution": reso.value,
+            "timeseries_type_pk":TimeSeriesTypesEnum.FORECASTS.value
+        }
+        json_res=AssetDataApi.get_assetgroup_forecast(api_connection, parameters)
         if json_res is not None and len(json_res)>0:
             df = pd.DataFrame(data=json.loads(json_res))
             df.index = df['timestamp']

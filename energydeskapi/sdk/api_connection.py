@@ -42,6 +42,7 @@ class ApiConnection(object):
         #response = requests.get(self.get_base_url() + '/api/customers/profiles/',{"user__username": str(username)},
         #                        auth=HTTPBasicAuth(username, password))
         #print(response.json())
+        print("Validating", username, password)
         response = requests.get(self.get_base_url() + '/api/energydesk/get-api-token/',{"user__username": str(username)},
                                 auth=HTTPBasicAuth(username, password))
         if response is None:

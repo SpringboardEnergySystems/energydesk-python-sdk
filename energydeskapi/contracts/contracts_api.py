@@ -106,8 +106,8 @@ class Contract:
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
         c.delivery_type = d['commodity']['delivery_type']
-        c.commodity_delivery_from = d['commodity']['delivery_from']
-        c.commodity_delivery_until = d['commodity']['delivery_until']
+        c.commodity_delivery_from = check_fix_date2str(d['commodity']['delivery_from'])
+        c.commodity_delivery_until = check_fix_date2str(d['commodity']['delivery_until'])
         c.market = d['commodity']['market']
         c.area = d['commodity']['area']
         c.commodity_profile = d['commodity']['commodity_profile']
@@ -117,9 +117,9 @@ class Contract:
 
         c.external_contract_id = d['external_contract_id']
         c.trading_book = d['trading_book']
-        c.trade_date = d['trade_date']
-        c.trade_datetime = d['trade_time']
-        c.last_update_time = d['last_update_time']
+        c.trade_date = check_fix_date2str(d['trade_date'])
+        c.trade_datetime = check_fix_date2str(d['trade_time'])
+        c.last_update_time = check_fix_date2str(d['last_update_time'])
 
         c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']
@@ -219,9 +219,11 @@ class Contract:
         dict['commodity']=prod
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
-        if self.trade_date is not None: dict['trade_date'] = self.trade_date
-        dict['last_update_time']=self.trade_datetime#convert_datime_to_utcstr(datetime.now()),
-        if self.trade_datetime is not None: dict['trade_time'] = self.trade_datetime
+        s_trade_date=check_fix_date2str(self.trade_date)
+        if s_trade_date is not None:
+            dict['trade_date'] = s_trade_date[:10]
+        #dict['last_update_time']=self.trade_datetime#convert_datime_to_utcstr(datetime.now()),
+        if self.trade_datetime is not None: dict['trade_time'] = check_fix_date2str(self.trade_datetime)
         if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
         if self.quantity_unit is not None: dict['quantity_unit'] = ContractsApi.get_quantity_unit_url(api_conn,

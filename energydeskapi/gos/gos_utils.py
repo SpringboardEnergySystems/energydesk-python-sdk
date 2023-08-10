@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 #  Change
 
 from energydeskapi.gos.gos_api import GoContract
+
+asset_map={'Nedre Otta'}
+
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
     go.certificates=[]
@@ -39,4 +42,7 @@ def generate_default_gocontract(api_conn):
     c.commodity_type=CommodityTypeEnum.GOs
     c.market=MarketEnum.GOs_MARKET
     c.contract_price=FormattedMoney(0, EUR)
+    c.contract_type=ContractTypeEnum.GOO
+    c.trading_fee = FormattedMoney(0, EUR)
+    c.clearing_fee = FormattedMoney(0, EUR)
     return c
