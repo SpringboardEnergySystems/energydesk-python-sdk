@@ -19,18 +19,18 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":'20',
+        "portfolio":'9',
         'contract_filter':'0',
         "view_period_from__gte":'2023-01-01',
-        "view_period_until__lt": '2029-01-01',
+        "view_period_until__lt": '2024-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
-        "groupby":PeriodViewGroupingEnum.ASSET.value
+        "groupby":PeriodViewGroupingEnum.AREA.value
     }
     print(filter)
     v, df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
     df['GWh'] = df['netvol'] / 1000
     print(df)
-    print(df['asset'].unique().tolist())
+    #print(df['asset'].unique().tolist())
     #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
