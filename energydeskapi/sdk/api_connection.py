@@ -251,6 +251,8 @@ class ApiConnection(object):
             logger.error("Problens calling EnergyDesk API " + str(result) )
             if result.status_code==401:
                 raise TokenException("Token is invalid")
+            elif result.status_code==403:
+                raise AuthorizationFailedException("Not authorized to view page")
             return None
 
 
