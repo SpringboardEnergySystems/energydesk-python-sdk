@@ -169,6 +169,8 @@ class ApiConnection(object):
             logger.error("Problens calling EnergyDesk API " + str(result.status_code))
             if result.status_code==401:
                 raise TokenException("Token is invalid")
+            elif result.status_code==403:
+                raise AuthorizationFailedException("Not authorized")
             return False, None, result.status_code, result.text
 
     def exec_delete_url(self, trailing_url,extra_headers={}):
@@ -194,6 +196,8 @@ class ApiConnection(object):
             logger.error("Problens calling EnergyDesk API " + str(result.status_code))
             if result.status_code == 401:
                 raise TokenException("Token is invalid")
+            elif result.status_code==403:
+                raise AuthorizationFailedException("Not authorized")
             return False, None, result.status_code, result.text
 
 
@@ -221,6 +225,8 @@ class ApiConnection(object):
             logger.error("Problens calling EnergyDesk API- (patch) " + str(result) + " " )
             if result.status_code==401:
                 raise TokenException("Token is invalid")
+            elif result.status_code==403:
+                raise AuthorizationFailedException("Not authorized")
             return False, None, result.status_code, result.text
 
     def exec_get_url(self, trailing_url,  parameters={}, extra_headers={}):
@@ -252,7 +258,7 @@ class ApiConnection(object):
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
-                raise AuthorizationFailedException("Not authorized to view page")
+                raise AuthorizationFailedException("Not authorized")
             return None
 
 
