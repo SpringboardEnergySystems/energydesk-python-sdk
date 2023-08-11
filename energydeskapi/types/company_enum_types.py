@@ -24,6 +24,7 @@ class CompanyRoleEnum(Enum):
     CLEARING_HOUSE = 7
     PORTFOLIO_MANAGER = 8
     BANK = 9
+    UNDEFINED = 10
 
 class UserRoleEnum(Enum):
     ADMIN = 1
