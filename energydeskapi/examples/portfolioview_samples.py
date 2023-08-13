@@ -19,7 +19,7 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])
 
     filter={
-        "portfolio":'29',
+        "portfolio":'20',
         'contract_filter':'0',
         'view_currency': 'EUR',
         'commodity__area': 'NO5',
@@ -30,11 +30,10 @@ def get_period_view(api_conn):
     }
     print(filter)
     v, df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
-    if df is not None and len(df.index)>0:
-        df['GWh'] = df['netvol'] / 1000
-        print(df)
-        print(df['asset'].unique().tolist())
-        #print(df.to_json(orient='split'))
+    df['GWh'] = df['netvol'] / 1000
+    print(df)
+    print(df['asset'].unique().tolist())
+    #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
     filter={'portfolio': "20"}
