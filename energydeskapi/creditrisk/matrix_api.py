@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 #from energydeskapi.sdk.common_utils import parse_enum_type
 import json
+from datetime import datetime
 logger = logging.getLogger(__name__)
 
 class LoadStaticMatrices:
@@ -65,8 +66,26 @@ class MatrixApi:
     
     @staticmethod
     def post_matrix(api_connection, id, payload):
-        logger.info("Fetching matrix with id " + str(id))
+        logger.info("Posting matrix with id " + str(id))
         json_res=api_connection.exec_post_url('/api/creditrisk/staticmatrix/', payload)
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def post_matrix_from_excel(api_connection, name, file_path):
+        context = pd.read_excel(file_path)
+        json_data = json.loads(context.to_json(orient="records"))
+        data = {
+            'name': name,
+            'matrix': json_data,
+            'updated_by': "admin",
+            'last_updated': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/creditrisk/staticmatrix/', data)
+        if json_res is None:
+            logger.error("Problems sending matrix " + str(name))
+            return False
+        else:
+            logger.info("Posted matrix")
+            return True
