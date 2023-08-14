@@ -1,6 +1,6 @@
 import json
 import logging
-from energydeskapi.creditrisk.creditrisk_api import CreditRiskApi
+from energydeskapi.creditrisk.creditrisk_api import CreditRiskApi, CreditCalculation
 from energydeskapi.sdk.common_utils import init_api
 
 
@@ -29,8 +29,12 @@ def get_creditrisk_types(api_conn):
     print(CreditRiskApi.get_comparableratings(api_conn))
     print(CreditRiskApi.get_financialpos(api_conn))
     print(CreditRiskApi.get_govinfluence(api_conn))
+
+from energydeskapi.creditrisk.creditrisk_api import CreditRiskApi, CreditCalculation
 def calculate_rating(api_conn, company_regnumber):
-    CreditRiskApi.calculate_credit_rating(api_conn, company_regnumber)
+    calc=CreditCalculation()
+    calc.liquidity=0 # etc
+    CreditRiskApi.calculate_credit_rating(api_conn, company_regnumber, "NO", calc)
 if __name__ == '__main__':
 
     api_conn = init_api()

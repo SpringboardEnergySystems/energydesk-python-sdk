@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 import json
 import ast
+from energydeskapi.types.market_enum_types import MarketEnum
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 logger = logging.getLogger(__name__)
