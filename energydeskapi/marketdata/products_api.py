@@ -48,7 +48,7 @@ class Product:
         self.instrument_type = None
         self.commodity_type = None
         self.block_size_category = None
-        self.market = "Nordic Power"
+        self.market = MarketEnum.NORDIC_POWER.name
         self.market_place = None
         self.delivery_type="FINANCIAL"
         self.commodity_profile="BASELOAD"
