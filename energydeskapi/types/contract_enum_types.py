@@ -10,10 +10,9 @@ class ContractStatusEnum(Enum):
 class QuantityTypeEnum(Enum):
     EFFECT = 1
     VOLUME = 2
-    VOLUME_TOTAL = 3
-    VOLUME_YEARLY = 4
-    CASH_AMOUNT = 5
-    CERTIFICATE = 6
+    VOLUME_YEARLY = 3
+    CASH_AMOUNT = 4
+    CERTIFICATE = 5
 
 
 class QuantityUnitEnum(Enum):
