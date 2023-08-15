@@ -82,8 +82,11 @@ class Contract:
 
     def update_users_company(self, apiconn):
         prof=UsersApi.get_user_profile(apiconn)
-        print(prof)
-        return 1
+        if prof is None:
+            return False
+        comp=CustomersApi.get_company_from_registry_number(apiconn,prof['company_nbr'])
+        print(comp)
+        return True
 
     def add_contract_tag(self, tag):
         self.contract_tags.append(tag)
