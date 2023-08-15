@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 import json
 import ast
+from energydeskapi.types.market_enum_types import MarketEnum
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
 logger = logging.getLogger(__name__)
@@ -92,7 +93,7 @@ class CurveApi:
                                 currency_code, forward_curve_model,
                                 period_prices,
                                 period_resolution=PeriodResolutionEnum.HOURLY.value,
-                               market_name="Nordic Power"):
+                               market_name=MarketEnum.NORDIC_POWER.name):
 
         payload={
             'market_name': market_name,
@@ -134,7 +135,7 @@ class CurveApi:
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
-                               market_name="Nordic Power"):
+                               market_name=MarketEnum.NORDIC_POWER.name):
 
         payload={
             'market_name': market_name,
@@ -152,7 +153,7 @@ class CurveApi:
     def retrieve_latest_forward_curve_df(api_connection , price_area,
                                 currency_code, forward_curve_model,
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
-                               market_name="Nordic Power"):
+                               market_name=MarketEnum.NORDIC_POWER.name):
 
 
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,

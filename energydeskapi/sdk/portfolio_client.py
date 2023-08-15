@@ -17,6 +17,7 @@ from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_d
 from dotenv import load_dotenv
 from energydeskapi.sdk.money_utils import FormattedMoney
 from datetime import datetime, timedelta
+from energydeskapi.types.market_enum_types import MarketEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     prof=CustomersApi.get_user_profile(api_conn)
     my_user_keey=prof['pk']
 
-    all_prod_df=DerivativesApi.fetch_products(api_conn, "Nasdaq OMX", "Nordic Power", convert_datime_to_utcstr(datetime.today()))
+    all_prod_df=DerivativesApi.fetch_products(api_conn, "Nasdaq OMX", MarketEnum.NORDIC_POWER.name, convert_datime_to_utcstr(datetime.today()))
     qtr_products=all_prod_df[all_prod_df.ticker.str.contains("BLQ") &
                     ~all_prod_df.instrument.str.contains("EPAD")] #Filter away EPADs in this test
     import pandas as pd

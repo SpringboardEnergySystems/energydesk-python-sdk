@@ -5,6 +5,7 @@ from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.profiles.profiles_api import ProfilesApi
 from energydeskapi.profiles.profiles import GenericProfile
 from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.types.market_enum_types import MarketEnum
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.spotprices_api import SpotPricesApi
@@ -28,7 +29,7 @@ def query_market_prices(api_conn):
     print(params)
     #params={}
     jd=DerivativesApi.get_prices_flatlist(api_conn, params)
-    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name="Nordic Power", ticker=None, period_from="2022-12-15", period_until="2023-01-15")
+    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
     df=pd.DataFrame(data=eval(jd['results']))
     print(df)
 
