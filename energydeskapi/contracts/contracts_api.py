@@ -63,6 +63,7 @@ class Contract:
         self.contract_status=contract_status
         self.buy_or_sell=buy_or_sell
         self.counterpart=counterpart
+        self.contract_owner = None
         self.market=market
         self.trader=trader
         self.marketplace_product=marketplace_product
@@ -79,6 +80,10 @@ class Contract:
         self.delivery_type=delivery_type
         self.contract_type=contract_type
 
+    def update_users_company(self, apiconn):
+        prof=UsersApi.get_user_profile(apiconn)
+        print(prof)
+        return 1
 
     def add_contract_tag(self, tag):
         self.contract_tags.append(tag)
@@ -114,7 +119,7 @@ class Contract:
         c.spread = d['commodity']['spread']
         c.otc = d['commodity']['otc']
         c.product_code = d['commodity']['product_code']
-
+        c.contract_owner = None if 'contract_owner' not in d else d['contract_owner']
         c.external_contract_id = d['external_contract_id']
         c.trading_book = d['trading_book']
         c.trade_date = check_fix_date2str(d['trade_date'])
@@ -173,6 +178,7 @@ class Contract:
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = self.counterpart
+        if self.contract_owner is not None: dict['contract_owner'] = self.contract_owner
         if self.trader is not None: dict['trader'] = self.trader
         if self.marketplace_product is not None: dict[
             'marketplace_product'] = 0
@@ -237,6 +243,7 @@ class Contract:
                                                                                                             self.contract_status)
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
+        if self.contract_owner is not None: dict['contract_owner'] = CustomersApi.get_company_url(api_conn, self.contract_owner)
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.marketplace_product==0:
