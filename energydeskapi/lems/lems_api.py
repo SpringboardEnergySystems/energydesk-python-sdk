@@ -420,7 +420,22 @@ class LemsApi:
             '/api/lems/removeorder/', payload)
 
         return success
+    @staticmethod
+    def decline_order(api_connection, ticker, order_id):
+        """Fetches all counterparts and displays in a dataframe
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        payload = {
+            "ticker": ticker,
+            "order_id": order_id,
+        }
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            '/api/lems/declineorder/', payload)
+
+        return success
     @staticmethod
     def query_active_anonymous_orders(api_connection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
