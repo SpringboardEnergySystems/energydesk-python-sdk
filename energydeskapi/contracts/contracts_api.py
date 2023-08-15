@@ -85,7 +85,9 @@ class Contract:
         if prof is None:
             return False
         comp=CustomersApi.get_company_from_registry_number(apiconn,prof['company_nbr'])
-        print(comp)
+        if comp is None:
+            return False
+        self.contract_owner = comp['pk']  # Being set on contract from current user.
         return True
 
     def add_contract_tag(self, tag):
