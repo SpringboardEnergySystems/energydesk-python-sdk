@@ -46,8 +46,8 @@ def format_datetime_from_iso(dts, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.
 def format_pandas_decimalcol(row, colname, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True):
     return format_decimal(row[colname],country_pref_enum,decimal_places, truncate)
 
-def format_pandas_datetimecol_from_iso(row, colname, tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
-    return format_datetime_from_iso(row[colname],tzinfo, country_pref_enum)
+def format_pandas_datetimecol_from_iso(row, colname,format="yyyy.MM.dd  HH:mm:ss zzz", tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
+    return format_datetime_from_iso(row[colname],format=format, tzinfo=tzinfo, country_pref_enum=country_pref_enum)
 
 import pendulum
 if __name__ == '__main__':
