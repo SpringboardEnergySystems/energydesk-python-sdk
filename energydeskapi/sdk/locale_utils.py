@@ -20,6 +20,8 @@ def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places
     with babel_decimal.localcontext(babel_decimal.Context(rounding=babel_decimal.ROUND_HALF_UP)):
         return babel_format_decimal(dec, format='#,##0.' + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
 
+def format_pandas_decimalcol(row, colname, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True):
+    return format_decimal(row[colname],country_pref_enum,decimal_places, truncate)
 
 if __name__ == '__main__':
     print(format_decimal(1000000.23533))#, CountryPrefEnum.NORWAY,decimal_places=3, truncate=True))
