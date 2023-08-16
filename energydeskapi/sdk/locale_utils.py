@@ -26,11 +26,20 @@ def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places
 
 
 def format_datetime_from_dt(dt, tzinfo=pytz.timezone('Europe/Oslo'),country_pref_enum=CountryPrefEnum.NORWAY):
+    if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
+        dt=tzinfo.localize(dt)
+    else:
+        dt=dt.astimezone(tzinfo)
     return babel_format_datetime(dt, tzinfo=tzinfo, locale=get_country_code(country_pref_enum))
 
 def format_datetime_from_iso(dts, tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
     dt=parser.isoparse(dts)
-    dt=tzinfo.localize(dt)
+    if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
+        print("Localizing")
+        dt=tzinfo.localize(dt)
+    else:
+        print("Already localized")
+        dt=dt.astimezone(tzinfo)
     return babel_format_datetime(dt, tzinfo=tzinfo, locale=get_country_code(country_pref_enum))
 # Usage
 #     df_trades['quantity']=df_trades.apply(format_pandas_decimalcol,colname = "quantity", country_pref_enum=CountryPrefEnum.NORWAY, axis=1)
@@ -45,3 +54,4 @@ if __name__ == '__main__':
     print(format_decimal(1000000.23533))#, CountryPrefEnum.NORWAY,decimal_places=3, truncate=True))
     print(format_datetime_from_dt(datetime.now()))
     print(format_datetime_from_iso("2023-10-01"))
+    print(format_datetime_from_iso("2023-10-01T01:00:00+02"))
