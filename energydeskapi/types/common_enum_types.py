@@ -11,6 +11,12 @@ def get_month_list():
     start = datetime(2022,1,1)
     return [(start + relativedelta(months=i)).strftime('%B') for i in range(12)]
 
+class CountryPrefEnum(Enum):
+    NORWAY = 1
+    SWEDEN = 2
+    UK = 3
+    US = 4
+    GERMANY=5
 
 
 class PeriodResolutionEnum(Enum):

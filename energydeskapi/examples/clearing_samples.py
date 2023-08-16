@@ -108,6 +108,9 @@ def fetch_riskarray_info(api_conn):
     k=list(risk_clearingdate_map.keys())[0]
 
     print(k, risk_clearingdate_map[k])
+
+
+
 if __name__ == '__main__':
 
     api_conn=init_api()
