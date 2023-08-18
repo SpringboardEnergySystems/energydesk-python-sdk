@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 import logging
+import pendulum
 import pandas as pd
 from datetime import datetime, timedelta
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -464,6 +465,15 @@ class LemsApi:
         url = '/api/lems/marketstatus/'
         json_res = api_connection.exec_get_url(url)
         return json_res
+    @staticmethod
+    def get_market_status_parsed(api_connection, tz="Europe/Oslo"):
+        market_status=LemsApi.get_market_status(api_connection)
+        market_opens= pendulum.parse(market_status['market_opens'])
+        market_closes = pendulum.parse(market_status['market_closes'])
+        market_opens=market_opens.in_tz("Europe/Oslo")
+        market_closes = market_closes.in_tz("Europe/Oslo")
+        market_is_open=market_status['market_is_open']
+        return market_is_open,market_opens,market_closes
 
     @staticmethod
     def query_own_orders(api_connection, show_active_only=False, ticker=None):
