@@ -66,10 +66,11 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
     d_loc = utc_dt.astimezone(timezone)
     return d_loc
 
-def conv_from_pendulum(pendulum_dt):
+def conv_from_pendulum(pendulum_dt, tz="UTC"):
+    timezone = pytz.timezone(tz)
     datetime_string = pendulum_dt.to_datetime_string()
     unaware_dt= datetime.fromisoformat(datetime_string)
-    return safe_set_utc(unaware_dt)
+    return unaware_dt.astimezone(timezone)
 
 def safe_set_utc(indate):
     try:
