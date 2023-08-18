@@ -425,7 +425,7 @@ class BilateralApi:
 
             f2list = [pd.Grouper(level='datetime', freq="MS")]
             df_monthly = df.groupby(f2list).agg({'hourly_consumption': sum, 'count': sum})
-            df_yearly = df_yearly.rename(columns={"hourly_consumption": "monthly_consumption", "count": "hours"})
+            df_monthly = df_monthly.rename(columns={"hourly_consumption": "monthly_consumption", "count": "hours"})
 
 
             retval={
