@@ -4,7 +4,7 @@ import pytz
 from datetime import datetime
 from dateutil import parser
 import pendulum
-from babel.numbers import format_decimal as babel_format_decimal, decimal as babel_decimal
+from babel.numbers import parse_decimal as babel_parse_decimal,format_decimal as babel_format_decimal, decimal as babel_decimal
 from babel.dates import format_datetime as babel_format_datetime, format_date as babel_format_date
 def get_country_code(country_pref_enum=CountryPrefEnum.NORWAY):
     if country_pref_enum==CountryPrefEnum.NORWAY:
@@ -23,7 +23,8 @@ def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places
     dec_pattern="".join(["0" for l in range(decimal_places)])  #Number of minimum decials
     with babel_decimal.localcontext(babel_decimal.Context(rounding=babel_decimal.ROUND_HALF_UP)):
         return babel_format_decimal(dec, format='#,##0.' + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
-
+def parse_decimal(dec_str, country_pref_enum=CountryPrefEnum.NORWAY):
+    return babel_parse_decimal(dec_str,locale=get_country_code(country_pref_enum))
 
 def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'),country_pref_enum=CountryPrefEnum.NORWAY):
     if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
