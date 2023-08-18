@@ -1,5 +1,28 @@
 from enum import Enum
 
+# TO use codes without +/- Moodys is used for naming https://en.wikipedia.org/wiki/Credit_rating
+class CreditRatingEnums(Enum):
+    Aaa = "AAA"
+    Aa1 = "AA+"
+    Aa2 = "AA"
+    Aa3 = "AA-"
+    A1 = "A+"
+    A2 = "A"
+    A3 = "A-"
+    Baa1 = "BBB+"
+    Baa2 = "BBB"
+    Baa3 = "BBB-"
+    Ba1 = "BB+"
+    Ba2 = "BB"
+    Ba3 = "BB-"
+    B1 = "B+"
+    B2 = "B"
+    B3 = "B-"
+    Caa1 = "CCC+"
+    Caa2 = "CCC"
+    Caa3 = "CCC-"
+    Ca = "CC"
+    C = "C"
 
 class DiversificationEnums(Enum):
     NEUTRAL = 0
