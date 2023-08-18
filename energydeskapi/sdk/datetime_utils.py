@@ -68,7 +68,8 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
 
 def conv_from_pendulum(pendulum_dt):
     datetime_string = pendulum_dt.to_datetime_string()
-    return datetime.fromisoformat(datetime_string)
+    unaware_dt= datetime.fromisoformat(datetime_string)
+    return safe_set_utc(unaware_dt)
 
 def safe_set_utc(indate):
     try:
