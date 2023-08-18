@@ -450,8 +450,20 @@ class LemsApi:
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
-        print("GOT IT ", df)
         return df
+
+    @staticmethod
+    def get_market_status(api_connection):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query market  status")
+        url = '/api/lems/marketstatus/'
+        json_res = api_connection.exec_get_url(url)
+        return json_res
 
     @staticmethod
     def query_own_orders(api_connection, show_active_only=False, ticker=None):
