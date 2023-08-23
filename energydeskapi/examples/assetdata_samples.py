@@ -145,32 +145,33 @@ def load_assetdata(api_conn):
 
 def load_assetdata2(api_conn):
     #asset=AssetsApi.get_asset_url(api_conn, 1)
-    assets=AssetsApi.get_assets(api_conn, {"description":"B2C"})
+    assets=AssetsApi.get_assets(api_conn)
     print(assets)
     params={
-        'asset__id':assets['results'][0]['pk'],
-        'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
-        'resolution': PeriodResolutionEnum.MONTHLY.value
+        'assetlist_id__in':[assets['results'][0]['pk']],
+        'time_series_type__id':TimeSeriesTypesEnum.METERREADINGS.value,
+        'resolution': PeriodResolutionEnum.HOURLY.value
     }
 
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn,[assets['results'][0]['pk']],PeriodResolutionEnum.MONTHLY)
-    #print(df)
-    df1=df
-    df1.index = df.index.tz_convert(None)
-    #df1['timestamp']= df['timestamp'].tz_convert(None)
-    #df1['date'] = df['date'].tz_convert(None)
-    #df1['dates_shift'] = df['dates_shift'].tz_convert(None)
-    print(df1)
-    df1.iloc[:, 4:].to_excel("./output.xlsx")
-    df = df.iloc[:, 4:]
-    #print(df)
+    df=AssetDataApi.get_asset_timeseries(api_conn, params)
+    df=pd.DataFrame(data=eval(df))
+    # if df is not None and len(df)>0:
+    #     df1=df
+    #     df1.index = df.index.tz_convert(None)
+    #     #df1['timestamp']= df['timestamp'].tz_convert(None)
+    #     #df1['date'] = df['date'].tz_convert(None)
+    #     #df1['dates_shift'] = df['dates_shift'].tz_convert(None)
+    #     print(df1)
+    #     df1.iloc[:, 4:].to_excel("./output.xlsx")
+    #     df = df.iloc[:, 4:]
+    print(df)
 
 if __name__ == '__main__':
 
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
-    pd.set_option('display.max_rows', None)
+    #pd.set_option('display.max_rows', None)
     load_assetdata2(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))

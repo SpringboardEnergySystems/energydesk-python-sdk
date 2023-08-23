@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.marketdata.product_utils import convert_productjson_dataframe
 logger = logging.getLogger(__name__)
 
 class Singleton(object):
@@ -108,6 +109,18 @@ class ProductsApi:
         if json_res is None:
             return False
         return json_res
+
+    @staticmethod
+    def get_market_products_embedded(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
+        if json_res is None:
+            return False
+        return json_res
+
+    @staticmethod
+    def get_market_products_df(api_connection, parameters={}):
+        json_res=ProductsApi.get_market_products_embedded(api_connection, parameters)
+        return convert_productjson_dataframe(json_res)
 
     @staticmethod
     def generate_market_product_from_ticker(api_connection, market, market_ticker):

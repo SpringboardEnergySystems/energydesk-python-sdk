@@ -60,6 +60,10 @@ def manage_market_products(api_conn, ticker):
         res=ProductsApi.generate_market_product_from_ticker(api_conn,"Nasdaq OMX", ticker)
         print(res)
 
+
+
+
+
 def get_market_types(api_conn):
 
     res=MarketsApi.get_instrument_types(api_conn)
@@ -91,9 +95,9 @@ if __name__ == '__main__':
     #   pd.set_option('display.max_rows', None)
     api_conn=init_api()
     context = {}
-
-    df=query_market_prices(api_conn)
+    df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     print(df)
+
     #success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
     #context['delivery_from'] = returned_data['delivery_from']
