@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-
+import json
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -43,8 +43,9 @@ class PortfolioViewsApi:
             return None, None
         if len(json_res)==0:
             return None, None
-        df = pd.DataFrame(data=eval(json_res))
-
+        js=json.loads(json_res)
+        df = pd.DataFrame(data=js)
+        df=df.fillna(0)
         return id, df
 
     @staticmethod
