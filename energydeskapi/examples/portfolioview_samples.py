@@ -36,7 +36,7 @@ def get_period_view(api_conn):
     #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
-    filter={'portfolio': "10"}
+    filter={'portfolio': "8"}
     view_id,df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
 
