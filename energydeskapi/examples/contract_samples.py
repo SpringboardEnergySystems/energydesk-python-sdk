@@ -209,8 +209,8 @@ def get_fixedprice_contracts(api_conn):
     records=ContractsApi.list_contracts_compact(api_conn, {"trading_book":29, "page_size":100})
     print(records)
     for rec in json.loads(records['results']):
-        #if rec['external_id']=="HEV_FASTPRIS_142":
-        print(json.dumps(rec, indent=2))
+        if rec['external_id']=="HEV_FASTPRIS_117":
+            print(json.dumps(rec, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
