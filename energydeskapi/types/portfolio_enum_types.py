@@ -60,6 +60,6 @@ class ParametersEnum(Enum):
     delivery_until = {"internal": "delivery_until", "formatting":"date", "display": "DelivTo"}
     hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
-    price = {"internal": "price", "formatting": "float", "display": "Price"}
-    unreal = {"internal": "unreal", "formatting": "float", "display": "Unrealized"}
+    price = {"internal": "close", "formatting": "float", "display": "Close"}
+    unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
 
