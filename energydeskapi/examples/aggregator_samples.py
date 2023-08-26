@@ -4,6 +4,7 @@ from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, Asse
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
+from energydeskapi.assetdata.baselines_api import BaselinesApi
 import pandas as pd
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
@@ -109,16 +110,16 @@ def simulate_meter_data(api_conn):
         generate_timeseries(api_conn, a['pk'])
 
 def generate_baselines(api_conn):
-    assets = AssetsApi.get_assets_embedded(api_conn)
-    for a in assets['results']:
-        generate_timeseries(api_conn, a['pk'])
+    #assets = AssetsApi.get_assets_embedded(api_conn)
+    #for a in assets['results']:
+    BaselinesApi.generate_baselines(api_conn)
 
 if __name__ == '__main__':
     api_conn=init_api()
-    initialize_default_flexibility_assettypes(api_conn)
-    register_assets(api_conn)
-    view_assets(api_conn)
-    simulate_meter_data(api_conn)
+    #initialize_default_flexibility_assettypes(api_conn)
+    #register_assets(api_conn)
+    #view_assets(api_conn)
+    #simulate_meter_data(api_conn)
     generate_baselines(api_conn)
 
 
