@@ -26,7 +26,15 @@ def generate_hourly_samples(period_from, period_until, basis, volatility):
                                 "H", timezone="Europe/Oslo")
     df['value']=0
     def create_value(row):
-        v=basis+random.uniform(-volatility, volatility)
+        if row.name.hour<8:
+            adj_basis=basis*0.8
+        elif row.name.hour<18:
+            adj_basis=basis*1.10
+        else:
+            adj_basis=basis*0.9
+
+        v=adj_basis+random.uniform(-volatility, volatility)
+        print(v)
         return v
     df['value']=df.apply(create_value, axis=1 )
     df['timestamp']=pd.to_datetime(df.index)#.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
@@ -117,9 +125,9 @@ def generate_baselines(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #initialize_default_flexibility_assettypes(api_conn)
-    #register_assets(api_conn)
-    #view_assets(api_conn)
-    #simulate_meter_data(api_conn)
+    register_assets(api_conn)
+    view_assets(api_conn)
+    simulate_meter_data(api_conn)
     generate_baselines(api_conn)
 
 
