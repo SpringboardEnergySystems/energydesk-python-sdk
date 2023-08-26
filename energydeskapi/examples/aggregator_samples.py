@@ -4,6 +4,12 @@ from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, Asse
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
+import pandas as pd
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.assetdata.assetdata_api import AssetDataApi
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
+from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 import json
 from energydeskapi.customers.customers_api import CustomersApi
 logging.basicConfig(level=logging.INFO,
@@ -11,6 +17,24 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 logger = logging.getLogger(__name__)
+
+import random
+def generate_hourly_samples(period_from, period_until, basis, volatility):
+    df=make_empty_timeseries_df(conv_from_pendulum(period_from),
+                                conv_from_pendulum(period_until),
+                                "H", timezone="Europe/Oslo")
+    df['value']=0
+    def create_value(row):
+        v=basis+random.uniform(-volatility, volatility)
+        return v
+    df['value']=df.apply(create_value, axis=1 )
+    df['timestamp']=pd.to_datetime(df.index)#.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+    df['date'] = pd.to_datetime(df.index)#.strftime('%Y-%m-%d'),
+    df['timestamp']=df['timestamp'].dt.strftime('%Y-%m-%dT%H:%M:%S+00:00')
+    df['date'] = df['date'].dt.strftime('%Y-%m-%d')
+    return df
+
+
 
 def lookup_assettype_from_description(api_conn, description):
     df = AssetsApi.get_asset_types(api_conn, {'description': description})
@@ -65,8 +89,37 @@ def view_assets(api_conn):
     assets=AssetsApi.get_assets_embedded(api_conn)
     print(json.dumps(assets, indent=2))
 
+def generate_timeseries(api_conn, asset_pk):
+    df=generate_hourly_samples(pendulum.today().add(days=-200),
+                            pendulum.today(), 100, 12)
+    payload = {
+        'asset': AssetsApi.get_asset_url(api_conn, int(asset_pk)),
+        'time_series_type': AssetDataApi.get_timeseries_type_url(api_conn, TimeSeriesTypesEnum.METERREADINGS),
+        'quantity_unit': AssetDataApi.get_timeseries_value_unit_url(api_conn, QuantityUnitEnum.KW),
+        'quantity_type': AssetDataApi.get_timeseries_value_type_url(api_conn, QuantityTypeEnum.EFFECT),
+        'data': df.to_json(orient='records'),
+        'last_updated': str(pendulum.now('Europe/Oslo')),
+    }
+    res, x, y, z = AssetDataApi.upsert_timeseries(api_conn, payload)
+    print(res)
+
+def simulate_meter_data(api_conn):
+    assets = AssetsApi.get_assets_embedded(api_conn)
+    for a in assets['results']:
+        generate_timeseries(api_conn, a['pk'])
+
+def generate_baselines(api_conn):
+    assets = AssetsApi.get_assets_embedded(api_conn)
+    for a in assets['results']:
+        generate_timeseries(api_conn, a['pk'])
+
 if __name__ == '__main__':
     api_conn=init_api()
     initialize_default_flexibility_assettypes(api_conn)
     register_assets(api_conn)
     view_assets(api_conn)
+    simulate_meter_data(api_conn)
+    generate_baselines(api_conn)
+
+
+
