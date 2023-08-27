@@ -11,3 +11,9 @@ class BaselinesApi:
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/baselines/generatebaselines/', payload)
         return json_res
+
+
+    @staticmethod
+    def get_baseline_models(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/baselines/baselinemodeltypes', parameters)
+        return json_res

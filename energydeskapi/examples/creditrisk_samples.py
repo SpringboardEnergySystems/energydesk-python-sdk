@@ -40,4 +40,4 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #get_creditrisk_types(api_conn)
-    calculate_rating(api_conn,"998753562")
+    calculate_rating(api_conn,"819449392")#"998753562")

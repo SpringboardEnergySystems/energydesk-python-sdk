@@ -28,6 +28,11 @@ class PeriodResolutionEnum(Enum):
     QUARTERLY = "Quarterly"
     YEARLY = "Yearly"
 
+
+# Numeric to represent resolution
+def period_resolution_key(instance):
+    return list(PeriodResolutionEnum).index(instance) + 1
+
 PERIOD_CHOICES=[el.value for el in PeriodResolutionEnum]
 
 def period_addition_relativedelta(resolution_enum):

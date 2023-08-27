@@ -6,6 +6,7 @@ from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
 from energydeskapi.assetdata.baselines_api import BaselinesApi
 import pandas as pd
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum, resolution_index
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
 from energydeskapi.assetdata.assetdata_api import AssetDataApi
@@ -122,13 +123,21 @@ def generate_baselines(api_conn):
     #for a in assets['results']:
     BaselinesApi.generate_baselines(api_conn)
 
+def basline_models(api_conn):
+
+    res=BaselinesApi.get_baseline_models(api_conn)
+    print(res)
+
 if __name__ == '__main__':
     api_conn=init_api()
     #initialize_default_flexibility_assettypes(api_conn)
-    register_assets(api_conn)
-    view_assets(api_conn)
-    simulate_meter_data(api_conn)
-    generate_baselines(api_conn)
+    #register_assets(api_conn)
+    #view_assets(api_conn)
+    #simulate_meter_data(api_conn)
+    #generate_baselines(api_conn)
+    #basline_models(api_conn)
+    idx=resolution_index(PeriodResolutionEnum.MONTHLY)
+    print(idx)
 
 
 
