@@ -5,10 +5,12 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
 from energydeskapi.assetdata.baselines_api import BaselinesApi
-import pandas as pd
-from energydeskapi.types.common_enum_types import PeriodResolutionEnum, resolution_index
-from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.assetdata.baselines_utils import initialize_standard_algorithms, create_default_algo_parameters
+import pandas as pd
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
+from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
 from energydeskapi.assetdata.assetdata_api import AssetDataApi
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
@@ -26,16 +28,14 @@ def generate_hourly_samples(period_from, period_until, basis, volatility):
                                 conv_from_pendulum(period_until),
                                 "H", timezone="Europe/Oslo")
     df['value']=0
-    def create_value(row):
+    def create_value(row):  #Higher consumption in middle of day
         if row.name.hour<8:
             adj_basis=basis*0.8
         elif row.name.hour<18:
             adj_basis=basis*1.10
         else:
             adj_basis=basis*0.9
-
         v=adj_basis+random.uniform(-volatility, volatility)
-        print(v)
         return v
     df['value']=df.apply(create_value, axis=1 )
     df['timestamp']=pd.to_datetime(df.index)#.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
@@ -118,26 +118,42 @@ def simulate_meter_data(api_conn):
     for a in assets['results']:
         generate_timeseries(api_conn, a['pk'])
 
-def generate_baselines(api_conn):
-    #assets = AssetsApi.get_assets_embedded(api_conn)
-    #for a in assets['results']:
-    BaselinesApi.generate_baselines(api_conn)
+def generate_baselines_for_asset(api_conn, asset_id):
+    params=create_default_algo_parameters(BaselinesModelsEnums.BUSINESSDAY_PROFILE)
+    params.periods_predicted=5
+    payload={
+        'asset_id' : asset_id,
+        'algorithm_code' : BaselinesModelsEnums.BUSINESSDAY_PROFILE.name,
+        'algorithm_parameters': params.json
+    }
+    BaselinesApi.generate_baselines(api_conn, payload)
 
+def generate_baselines(api_conn):
+    assets = AssetsApi.get_assets_embedded(api_conn)
+    for a in assets['results']:
+        generate_baselines_for_asset(api_conn, a['pk'])
 def basline_models(api_conn):
 
-    res=BaselinesApi.get_baseline_models(api_conn)
+    res=BaselinesApi.get_baseline_algorithms(api_conn)
     print(res)
+    res=BaselinesApi.get_baseline_resolutions(api_conn)
+    print(res)
+    initialize_standard_algorithms(api_conn)
+    res=BaselinesApi.get_baseline_algorithminstances(api_conn)
+    print(res)
+
+
 
 if __name__ == '__main__':
     api_conn=init_api()
-    #initialize_default_flexibility_assettypes(api_conn)
-    #register_assets(api_conn)
-    #view_assets(api_conn)
-    #simulate_meter_data(api_conn)
-    #generate_baselines(api_conn)
-    #basline_models(api_conn)
-    idx=resolution_index(PeriodResolutionEnum.MONTHLY)
-    print(idx)
+    initialize_default_flexibility_assettypes(api_conn)
+    register_assets(api_conn)
+    view_assets(api_conn)
+    simulate_meter_data(api_conn)
+    basline_models(api_conn)
+    generate_baselines(api_conn)
+    #
+
 
 
 
