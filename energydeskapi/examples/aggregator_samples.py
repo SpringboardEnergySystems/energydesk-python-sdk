@@ -132,7 +132,7 @@ def generate_baselines(api_conn):
     assets = AssetsApi.get_assets_embedded(api_conn)
     for a in assets['results']:
         generate_baselines_for_asset(api_conn, a['pk'])
-def basline_models(api_conn):
+def display_basline_models(api_conn):
 
     res=BaselinesApi.get_baseline_algorithms(api_conn)
     print(res)
@@ -142,7 +142,20 @@ def basline_models(api_conn):
     res=BaselinesApi.get_baseline_algorithminstances(api_conn)
     print(res)
 
+def get_baselines_for_asset(api_conn, asset_pk): # Read back baselines from API
+    params={
+        'assetlist_id__in':[asset_pk],
+        'time_series_type__id':TimeSeriesTypesEnum.BASELINES.value,
+        'resolution': PeriodResolutionEnum.HOURLY.value
+    }
+    res = AssetDataApi.get_asset_timeseries(api_conn, params)
+    df=pd.DataFrame(data=json.loads(res))
+    print(df)
 
+def get_baselines(api_conn): # Read back baselines from API
+    assets = AssetsApi.get_assets_embedded(api_conn)
+    for a in assets['results']:
+        get_baselines_for_asset(api_conn, a['pk'])
 
 if __name__ == '__main__':
     api_conn=init_api()
@@ -150,9 +163,10 @@ if __name__ == '__main__':
     register_assets(api_conn)
     view_assets(api_conn)
     simulate_meter_data(api_conn)
-    basline_models(api_conn)
+    display_basline_models(api_conn)
+    # Ask server to generate Baseline. Alternative is to do locally and send to server as time series
     generate_baselines(api_conn)
-    #
+    get_baselines(api_conn)
 
 
 
