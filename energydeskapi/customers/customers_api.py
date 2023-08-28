@@ -168,6 +168,7 @@ class CustomersApi:
         """
         logger.info("Fetching companylist")
         parameters['page_size']=1000
+        print(parameters)
         json_res=CustomersApi.get_companies(api_connection, parameters)
         if json_res is None:
             return None
