@@ -41,6 +41,14 @@ def init_api(current_dir=None):
     api_conn.set_token(tok, "Token")
     return api_conn
 
+def init_api_from_environment():
+    env = environ.Env()
+    tok=None if not 'ENERGYDESK_TOKEN' in env else env.str('ENERGYDESK_TOKEN')
+    url=None if not 'ENERGYDESK_URL' in env else env.str('ENERGYDESK_URL')
+    api_conn=ApiConnection(url)
+    api_conn.set_token(tok, "Token")
+    return api_conn
+
 #For input from apps using eithe enum, int or str representing the same enumeration
 def parse_enum_type(etype):
     if isinstance(etype, int) :
