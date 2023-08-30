@@ -24,6 +24,18 @@ class CreditRatingEnums(Enum):
     Ca = "CC"
     C = "C"
 
+class FinancialStatementsEnum(Enum):
+    ffo = "FFO"
+    debt_adj = "Debt (adjusted)"
+    debt_ebitda = "Debt/EBITDA"
+    ffo_debt = "FFO/Debt"
+    weighting = "Weighting"
+    weighted_ebitda = "Weighted EBITDA"
+    weighted_ffo = "Weighted FFO"
+    weighted_debt = "Weighted Debt"
+    weighted_debt_ebitda = "Weighted Debt/EBITDA"
+    weighted_ffo_debt = "Weighted FFO/Debt"
+
 class DiversificationEnums(Enum):
     NEUTRAL = 0
     MODERATE = 1

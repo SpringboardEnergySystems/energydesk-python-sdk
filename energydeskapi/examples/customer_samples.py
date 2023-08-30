@@ -1,5 +1,8 @@
 
 import logging
+
+import pandas as pd
+
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.customers_api import CustomersApi, Company
 from energydeskapi.types.company_enum_types import CompanyTypeEnum, CompanyRoleEnum
@@ -11,10 +14,11 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_companies(api_conn):
-    param = {"id": 711,
-             "page_size": 1}
+    param = {'name': 'Lyse Strøm AS',
+             "page_size": 1000}
     json_companies = CustomersApi.get_companies(api_conn, param)
-    print(json_companies)
+    df=pd.DataFrame(data=json_companies['results'])
+    print(df)
 
 
 def query_company_types(api_conn):
