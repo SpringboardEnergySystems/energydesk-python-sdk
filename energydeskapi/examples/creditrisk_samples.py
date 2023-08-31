@@ -31,6 +31,12 @@ def get_creditrisk_types(api_conn):
     print(CreditRiskApi.get_govinfluence(api_conn))
 
 from energydeskapi.creditrisk.creditrisk_api import CreditRiskApi, CreditCalculation
+
+def get_rated_companies(api_conn):
+
+    res=CreditRiskApi.get_ratings(api_conn)
+    print(res)
+
 def calculate_rating(api_conn, company_regnumber):
     calc=CreditCalculation()
     calc.liquidity=0 # etc
@@ -40,5 +46,5 @@ def calculate_rating(api_conn, company_regnumber):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    #get_creditrisk_types(api_conn)
-    calculate_rating(api_conn,"819449392")#"998753562")
+    get_rated_companies(api_conn)
+    #calculate_rating(api_conn,"819449392")#"998753562")
