@@ -50,6 +50,15 @@ class CreditRiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
+    def save_credit_rating(api_connection, company_regnumber, country="NO", credit_calc_parans=CreditCalculation()):
+        qry_payload = credit_calc_parans.get_dict()
+        qry_payload['country']=country
+        qry_payload['company_regnumber'] = company_regnumber
+        print(qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/creditrisk/saverating/', qry_payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
     def get_capstructure_url(api_connection, pk):
         return api_connection.get_base_url() + '/api/creditrisk/ratings/capstructure/' + str(pk) + "/"
     @staticmethod

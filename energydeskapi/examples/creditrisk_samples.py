@@ -35,7 +35,8 @@ def calculate_rating(api_conn, company_regnumber):
     calc=CreditCalculation()
     calc.liquidity=0 # etc
     res=CreditRiskApi.calculate_credit_rating(api_conn, company_regnumber, "NO", calc)
-    print(res)
+    CreditRiskApi.save_credit_rating(api_conn, company_regnumber, "NO", calc)
+
 if __name__ == '__main__':
 
     api_conn = init_api()

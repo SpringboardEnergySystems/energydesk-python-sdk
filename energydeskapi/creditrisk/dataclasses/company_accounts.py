@@ -22,6 +22,9 @@ class CompanyAccounts:
         get the json formated string
         """
         return json.dumps(self.__dict__, cls=DataclassEncoder)
+    @property
+    def json_dict(self):
+        return json.loads(json.dumps(self.__dict__,cls=DataclassEncoder))
     @staticmethod
     def from_json(elem):
         """
