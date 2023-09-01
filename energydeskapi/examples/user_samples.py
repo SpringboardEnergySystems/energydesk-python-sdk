@@ -99,6 +99,10 @@ def create_user_feature_access(api_conn):
     result = UsersApi.upsert_user_feature_access(api_conn, uf)
     print(result)
 
+def get_traders(api_conn):
+    traders=UsersApi.get_users_df(api_conn, {'page_size':200})
+    print(traders)
+
 def del_user_feature_access(api_conn):
     pk = 7
     result = UsersApi.delete_user_feature_access(api_conn, pk)
@@ -185,5 +189,5 @@ if __name__ == '__main__':
     #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
     #create_user_feature_access(api_conn)
-    list_user_feature_access_to_group(api_conn)
+    get_traders(api_conn)
     #del_user_feature_access(api_conn)

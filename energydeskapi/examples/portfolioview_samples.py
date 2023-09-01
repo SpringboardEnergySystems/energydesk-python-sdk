@@ -1,4 +1,4 @@
-
+import pendulum
 import logging
 from energydeskapi.portfolios.portfolioviews_api import PortfolioViewsApi
 from energydeskapi.types.portfolio_enum_types import PeriodViewGroupingEnum
@@ -36,7 +36,9 @@ def get_period_view(api_conn):
     #print(df.to_json(orient='split'))
 
 def get_product_view(api_conn):
-    filter={'portfolio': "10", "view_currency":"EUR"}
+
+    filter={'portfolio': "10", "view_currency":"EUR",'commodity__delivery_until__gte':str(pendulum.today())}
+    print(filter)
     view_id,df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
 
