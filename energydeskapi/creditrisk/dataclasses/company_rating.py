@@ -3,6 +3,7 @@ import json
 from energydeskapi.creditrisk.dataclasses.company_accounts import CompanyAccounts
 from datetime import datetime
 from energydeskapi.creditrisk.dataclasses.dataclasses_utils import DataclassEncoder, date_hook
+import pandas as pd
 @dataclass
 class FinancialStatement:
     ebitda: float
@@ -33,10 +34,10 @@ class FinancialStatement:
 
 @dataclass
 class Competitiveness:
-    comp_pos_weight:object
-    weighted_sum: object
-    ebitdamargin: object
-    vop: object
+    comp_pos_weight:object #Not sure we need this one
+    weighted_sum: float
+    ebitdamargin_avg: object
+    volatility_of_prob: int
     competitive_position: int
     @property
     def json(self):
