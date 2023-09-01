@@ -34,9 +34,7 @@ class FinancialStatement:
 
 @dataclass
 class Competitiveness:
-    comp_pos_weight:object #Not sure we need this one
-    weighted_sum: float
-    ebitdamargin_avg: object
+    ebitdamargin_avg: float
     volatility_of_prob: int
     competitive_position: int
     @property
@@ -58,7 +56,7 @@ class CompanyRating:
     competitiveness: Competitiveness
     cicra:float
     business_risk_profile:float
-    financial_risk_profile: float
+    financial_risk_profile: int
     anchor_rating: str
     standalone_cp: str
     final_rating: list
