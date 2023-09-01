@@ -138,10 +138,11 @@ def load_assetdata(api_conn):
         'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
         'resolution': PeriodResolutionEnum.MONTHLY.value
     }
-    res = AssetDataApi.get_asset_timeseries(api_conn,params)
-    jsdata=json.loads(res) if type(res)==str else res
-    df=pd.DataFrame(data=jsdata)
-    print(df)
+    res = AssetDataApi.get_aggregated_timeseries(api_conn,params)
+    df=AssetDataApi.get_assetgroup_forecast_df(api_conn, [assets['results'][0]['pk']], PeriodResolutionEnum.MONTHLY)
+    #jsdata=json.loads(res) if type(res)==str else res
+    #df=pd.DataFrame(data=jsdata)
+    print(df.plot())
 
 def load_assetdata2(api_conn):
     #asset=AssetsApi.get_asset_url(api_conn, 1)
@@ -172,7 +173,7 @@ if __name__ == '__main__':
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
     #pd.set_option('display.max_rows', None)
-    load_assetdata2(api_conn)
+    load_assetdata(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
