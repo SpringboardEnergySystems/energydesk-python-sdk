@@ -71,6 +71,20 @@ class CreditRiskApi:
             return json_res
         return None
 
+    # Only latest per company is retudned
+    @staticmethod
+    def get_distinct_ratings(api_connection, params={}):
+        """Fetching list of companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching rated companies")
+        json_res=api_connection.exec_get_url('/api/creditrisk/ratings/distinct/', params)
+        if json_res is not None:
+            return json_res
+        return None
+
     @staticmethod
     def get_accounts(api_connection, params={}):
         """Fetching list of companies

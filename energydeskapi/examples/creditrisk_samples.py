@@ -60,4 +60,5 @@ if __name__ == '__main__':
     api_conn = init_api()
     #get_annual_accounts(api_conn, "819449392")
     #save_rating(api_conn,"819449392")#"998753562")
-    get_rated_companies(api_conn)
+    calculate_rating(api_conn,"964976430")
+    #get_rated_companies(api_conn)
