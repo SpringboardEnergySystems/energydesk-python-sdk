@@ -59,14 +59,14 @@ class CreditRiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_ratings(api_connection):
+    def get_ratings(api_connection, params={}):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Fetching rated companies")
-        json_res=api_connection.exec_get_url('/api/creditrisk/ratings/embedded/')
+        json_res=api_connection.exec_get_url('/api/creditrisk/ratings/embedded/', params)
         if json_res is not None:
             return json_res
         return None
