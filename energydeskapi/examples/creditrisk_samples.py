@@ -35,7 +35,11 @@ from energydeskapi.creditrisk.creditrisk_api import CreditRiskApi, CreditCalcula
 def get_rated_companies(api_conn):
 
     res=CreditRiskApi.get_ratings(api_conn)
-    print(res)
+    for rec in res['results']:
+        print(rec.keys())
+        jrec=json.loads(rec['rating_data'])
+        print(jrec.keys())
+
 
 def calculate_rating(api_conn, company_regnumber):
     calc=CreditCalculation()
@@ -54,5 +58,6 @@ def get_annual_accounts(api_conn, company_regnumber):
 if __name__ == '__main__':
 
     api_conn = init_api()
-    get_annual_accounts(api_conn, "819449392")
-    calculate_rating(api_conn,"819449392")#"998753562")
+    #get_annual_accounts(api_conn, "819449392")
+    #save_rating(api_conn,"819449392")#"998753562")
+    get_rated_companies(api_conn)

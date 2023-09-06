@@ -66,7 +66,7 @@ class CreditRiskApi:
         :type api_connection: str, required
         """
         logger.info("Fetching rated companies")
-        json_res=api_connection.exec_get_url('/api/creditrisk/ratings/')
+        json_res=api_connection.exec_get_url('/api/creditrisk/ratings/embedded/')
         if json_res is not None:
             return json_res
         return None
