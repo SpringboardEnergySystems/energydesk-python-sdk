@@ -39,12 +39,20 @@ def get_rated_companies(api_conn):
 
 def calculate_rating(api_conn, company_regnumber):
     calc=CreditCalculation()
-    calc.liquidity=0 # etc
+    res=CreditRiskApi.calculate_credit_rating(api_conn, company_regnumber, "NO", calc)
+    print(res)
+def save_rating(api_conn, company_regnumber):
+    calc=CreditCalculation()
     res=CreditRiskApi.calculate_credit_rating(api_conn, company_regnumber, "NO", calc)
     CreditRiskApi.save_credit_rating(api_conn, company_regnumber, "NO", calc)
+
+def get_annual_accounts(api_conn, company_regnumber):
+    params={'company__registry_number':company_regnumber}
+    res=CreditRiskApi.get_accounts(api_conn, params)
+    print(res)
 
 if __name__ == '__main__':
 
     api_conn = init_api()
-    get_rated_companies(api_conn)
-    #calculate_rating(api_conn,"819449392")#"998753562")
+    get_annual_accounts(api_conn, "819449392")
+    calculate_rating(api_conn,"819449392")#"998753562")
