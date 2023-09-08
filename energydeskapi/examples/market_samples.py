@@ -24,14 +24,11 @@ def query_market_prices(api_conn):
     pastday = today.add(days=-20)
     yesterday = today.add(days=-1)
     #yesterday = pendulum.timezone("Europe/Paris").convert(yesterday)
-    params={"price_date__gte": str(pastday),"price_date__lt": str(today), 'page_size':1000,
-            'product__commodity_definition__delivery_until__gte':str(today)}
-    #params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
-    print(params)
-    #params={}
+    params={"price_date__gte": str(pastday),"price_date__lt": str(yesterday), 'page_size':1000}
+
     jd=DerivativesApi.get_prices_flatlist(api_conn, params)
     #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
-    df=pd.DataFrame(data=json.loads(jd['results']))
+    df=pd.DataFrame(data=json.loads(jd))
     print(df)
 
 def query_market_prices_embedded(api_conn):
