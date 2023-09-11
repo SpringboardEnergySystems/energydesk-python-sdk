@@ -24,7 +24,7 @@ def convert_timezone(dt,  loczone="UTC"):
     converted = dt.astimezone(timezone)
     return converted
 
-def localize_strtime(strtime, loczone="UTC"):
+def localize_strtime(strtime, loczone="Europe/Oslo"):
     unaware_dt = parser.isoparse(strtime)
     return localize_datetime(unaware_dt, loczone)
 
