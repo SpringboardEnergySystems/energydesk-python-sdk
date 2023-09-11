@@ -13,7 +13,10 @@ def localize_datetime_safe(dt, tz=pytz.timezone("UTC")):
 
 def localize_datetime(dt,  loczone="UTC"):
     timezone = pytz.timezone(loczone)
-    d_aware = timezone.localize(dt)
+    try:
+        d_aware = timezone.localize(dt)
+    except:
+        return convert_timezone(dt, loczone)
     return d_aware
 
 def convert_timezone(dt,  loczone="UTC"):
