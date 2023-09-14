@@ -38,8 +38,6 @@ def generate_hourly_samples(period_from, period_until, basis, volatility):
         v=adj_basis+random.uniform(-volatility, volatility)
         return v
     df['value']=df.apply(create_value, axis=1 )
-    df['timestamp']=pd.to_datetime(df.index)#.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
-    df['date'] = pd.to_datetime(df.index)#.strftime('%Y-%m-%d'),
     df['timestamp']=df['timestamp'].dt.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     df['date'] = df['date'].dt.strftime('%Y-%m-%d')
     return df
@@ -149,6 +147,7 @@ def get_baselines_for_asset(api_conn, asset_pk): # Read back baselines from API
         'resolution': PeriodResolutionEnum.HOURLY.value
     }
     res = AssetDataApi.get_asset_timeseries(api_conn, params)
+    print(res)
     df=pd.DataFrame(data=json.loads(res))
     print(df)
 
