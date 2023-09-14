@@ -164,19 +164,22 @@ def get_baselines(api_conn): # Read back baselines from API
 
 
 def battery_map(val):
-    color = 'darkgreen'# if val=="PRODUCING" else 'darkgreen'
+    color = 'darkgreen'
     if val == "PRODUCING":
         color="navy"
     if val == "CONSUMING":
         color="darkred"
     return 'color:white; background-color: %s' % color
 def dispatch_scheulder(api_conn): # Read back baselines from API
+
     jres=FlexibilityApi.get_empty_dispatch_schedule(api_conn)
     df=pd.DataFrame(data=json.loads(jres))
     print(df)
     sd =df[['state', 'date', 'time']].set_index(['date', 'time']).unstack().swaplevel(0, 1,axis=1).T.style.background_gradient(cmap='ocean_r').applymap(battery_map)
     print(df[['state', 'date', 'time']].set_index(['date', 'time']).unstack().swaplevel(0, 1,axis=1).T)
     print(sd.to_html())
+    context['schedule']=sd.to_html()  # Just the HTML portion of the page
+
 
 if __name__ == '__main__':
     api_conn=init_api()
