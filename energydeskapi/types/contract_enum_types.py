@@ -13,6 +13,7 @@ class QuantityTypeEnum(Enum):
     VOLUME_YEARLY = 3
     CASH_AMOUNT = 4
     CERTIFICATE = 5
+    PERCENTAGE = 6
 
 
 class QuantityUnitEnum(Enum):
@@ -21,6 +22,8 @@ class QuantityUnitEnum(Enum):
     GW = 3
     EUR = 4
     LOTS = 5
+    DECIMALS = 6
+
 
 
 
