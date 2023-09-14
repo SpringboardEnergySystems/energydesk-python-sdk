@@ -4,10 +4,12 @@ from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, Asse
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
+from energydeskapi.flexibility.flexibility_api import FlexibilityApi
 from energydeskapi.assetdata.baselines_api import BaselinesApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
 from energydeskapi.assetdata.baselines_utils import initialize_standard_algorithms, create_default_algo_parameters
 import pandas as pd
+import sys
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
@@ -38,6 +40,10 @@ def generate_hourly_samples(period_from, period_until, basis, volatility):
         v=adj_basis+random.uniform(-volatility, volatility)
         return v
     df['value']=df.apply(create_value, axis=1 )
+
+    # First setting equal to index, then reformatting
+    df['timestamp']=pd.to_datetime(df.index)
+    df['date'] = pd.to_datetime(df.index)
     df['timestamp']=df['timestamp'].dt.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     df['date'] = df['date'].dt.strftime('%Y-%m-%d')
     return df
@@ -156,8 +162,26 @@ def get_baselines(api_conn): # Read back baselines from API
     for a in assets['results']:
         get_baselines_for_asset(api_conn, a['pk'])
 
+
+def battery_map(val):
+    color = 'darkgreen'# if val=="PRODUCING" else 'darkgreen'
+    if val == "PRODUCING":
+        color="navy"
+    if val == "CONSUMING":
+        color="darkred"
+    return 'color:white; background-color: %s' % color
+def dispatch_scheulder(api_conn): # Read back baselines from API
+    jres=FlexibilityApi.get_empty_dispatch_schedule(api_conn)
+    df=pd.DataFrame(data=json.loads(jres))
+    print(df)
+    sd =df[['state', 'date', 'time']].set_index(['date', 'time']).unstack().swaplevel(0, 1,axis=1).T.style.background_gradient(cmap='ocean_r').applymap(battery_map)
+    print(df[['state', 'date', 'time']].set_index(['date', 'time']).unstack().swaplevel(0, 1,axis=1).T)
+    print(sd.to_html())
+
 if __name__ == '__main__':
     api_conn=init_api()
+    dispatch_scheulder(api_conn)
+    sys.exit(0)
     initialize_default_flexibility_assettypes(api_conn)
     register_assets(api_conn)
     view_assets(api_conn)
