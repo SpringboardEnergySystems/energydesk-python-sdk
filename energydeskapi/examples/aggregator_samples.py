@@ -183,8 +183,8 @@ def dispatch_scheulder(api_conn): # Read back baselines from API
 
 if __name__ == '__main__':
     api_conn=init_api()
-    dispatch_scheulder(api_conn)
-    sys.exit(0)
+    #dispatch_scheulder(api_conn)
+    #sys.exit(0)
     initialize_default_flexibility_assettypes(api_conn)
     register_assets(api_conn)
     view_assets(api_conn)

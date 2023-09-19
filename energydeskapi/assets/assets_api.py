@@ -49,6 +49,7 @@ class Asset:
         self.asset_manager=None
         self.vendor = None
         self.meter_id=""
+        self.production_device_id = None
         self.sub_meter_id=""
         self.is_main_meter=True
         self.address = None
@@ -72,6 +73,7 @@ class Asset:
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
         if self.meter_id is not None: dict['meter_id'] = self.meter_id
+        if self.production_device_id is not None: dict['production_device_id']=self.production_device_id
         if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
         if self.vendor is not None: dict['vendor'] = self.vendor
         if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
