@@ -20,6 +20,7 @@ def generate_default_gofields( asset_pk, delivery_date, production_from, product
     go.certificates=[]
     go.extra_info=None
     go.asset=None
+
     go.delivery_date=delivery_date
     go.production_from=production_from
     go.production_until=production_until
@@ -32,11 +33,11 @@ def generate_default_gocontract(api_conn):
     c.contract_status=ContractStatusEnum.CONFIRMED
     c.certificates=[]
     c.area="NO1"
-    c.quantity_unit=QuantityUnitEnum.LOTS
-    c.quantity_type=QuantityTypeEnum.CERTIFICATE
+    c.quantity_unit=QuantityUnitEnum.MW
+    c.quantity_type=QuantityTypeEnum.VOLUME
     c.profile_category=ProfileTypeEnum.BASELOAD
     c.quantity=0
-    c.delivery_type=DeliveryTypeEnum.FINANCIAL
+    c.delivery_type=DeliveryTypeEnum.PHYSICAL
     c.buy_or_sell="SELL"
     c.instrument_type=InstrumentTypeEnum.FWD
     c.commodity_type=CommodityTypeEnum.GOs

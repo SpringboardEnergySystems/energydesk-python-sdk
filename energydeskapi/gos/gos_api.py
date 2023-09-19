@@ -15,10 +15,12 @@ class GoContract:
         self.extra_info = None
         self.asset=None
         self.production_from = None
+        self.support=True
         self.production_until= None
         self.delivery_date = None
         self.invoice_date = None
         self.invoice_with_mva = None
+        self.technology="Hydro"
         self.certificates=[]
 
     def add_certificates(self, certificate):
@@ -33,6 +35,8 @@ class GoContract:
         if self.extra_info is not None: dict['extra_info'] = self.extra_info
         if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
         if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date
+        if self.support is not None: dict['support'] = self.support
+        if self.technology is not None: dict['technology'] = self.technology
         if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
         if len(self.certificates)>0:
             dict['certificates']=self.certificates
