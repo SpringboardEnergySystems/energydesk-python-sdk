@@ -4,7 +4,7 @@ class AuditLogTypeEnums(Enum):
     CONTRACTS = 1
 
 
-def baseline_description(x):
+def auditlogtypes_description(x):
     return {
         AuditLogTypeEnums.CONTRACTS: "Contract Audit Trail",
     }[x]
