@@ -13,8 +13,10 @@ logger = logging.getLogger(__name__)
 
 from energydeskapi.gos.gos_api import GoContract
 
-asset_map={'Nedre Otta'}
-
+def generate_product_code(api_conn, contract, gofields):
+    asset_json=AssetsApi.get_asset_by_key(api_conn, gofields.asset)
+    print(asset_json)
+    return "GoO_" + asset_json['description'] + "_" + str(gofields.delivery_date)
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
     go.certificates=[]
@@ -37,6 +39,7 @@ def generate_default_gocontract(api_conn):
     c.quantity_type=QuantityTypeEnum.VOLUME
     c.profile_category=ProfileTypeEnum.BASELOAD
     c.quantity=0
+    c.otc=True
     c.delivery_type=DeliveryTypeEnum.PHYSICAL
     c.buy_or_sell="SELL"
     c.instrument_type=InstrumentTypeEnum.FWD
