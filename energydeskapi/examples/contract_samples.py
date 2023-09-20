@@ -179,10 +179,8 @@ def register_sample_contract(api_conn):
     GosApi.upsert_contract(api_conn, go_contract)
 import pandas as pd
 def load_contracts(api_conn):
-    res=ContractsApi.list_contracts_compact(api_conn, {'tradingbook':11})
-    print(res)
-    df=pd.DataFrame(data=eval(res['results']))
-    print(df)
+    res=ContractsApi.list_contracts_embedded(api_conn)
+    print(json.dumps(res, indent=2))
 def test_gos(api_conn):
     #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
     #print(res)
@@ -214,7 +212,7 @@ def get_fixedprice_contracts(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
-    get_fixedprice_contracts(api_conn)
+    load_contracts(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
