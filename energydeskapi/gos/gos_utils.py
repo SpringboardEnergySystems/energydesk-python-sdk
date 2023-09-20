@@ -16,7 +16,7 @@ from energydeskapi.gos.gos_api import GoContract
 def generate_product_code(api_conn, contract, gofields):
     asset_json=AssetsApi.get_asset_by_key(api_conn, gofields.asset)
     print(asset_json)
-    return "GoO_" + asset_json['description'] + "_" + str(gofields.delivery_date)
+    return "GoO_" + asset_json['description'] + "_" + str(gofields.delivery_date)[:10]
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
     go.certificates=[]
