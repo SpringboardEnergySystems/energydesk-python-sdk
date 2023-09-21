@@ -16,8 +16,7 @@ def get_audit_log_types(api_conn):
     print(json.dumps(jsondata, indent=2))
 
 def get_audit_log(api_conn):
-    jsondata = AuditLogApi.get_audit_log(
-        api_conn, {})
+    jsondata = AuditLogApi.get_audit_log( api_conn, {})
     print(json.dumps(jsondata, indent=2))
 
 if __name__ == '__main__':

@@ -53,7 +53,18 @@ class LocationApi:
         if json_res is not None:
             return json_res
         return None
+    @staticmethod
+    def get_dso_area(api_connection, dso_name):
+        """Fetches main area of company
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching DSO area")
+        json_res=api_connection.exec_get_url('/api/locations/dsomap/?dso_name=' + dso_name)
+        if json_res is not None:
+            return json_res
+        return None
 
     @staticmethod
     def generate_default_map(api_connection, map_type, include_assets, zones=[], country="NOR"):

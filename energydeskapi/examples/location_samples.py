@@ -18,10 +18,11 @@ def get_areas(api_conn):
     return
     geomdata=LocationApi.generate_default_map(api_conn,map_type="COUNTRY",include_assets=True, zones=['NO4'], country="DNK")
     print(geomdata)
-def test_gos(api_conn):
-    res=GosApi.get_source_data(api_conn)
+
+def load_dso(api_conn, name="elvia"):
+    res=LocationApi.get_dso_area(api_conn, name)
     print(res)
 
 if __name__ == '__main__':
     api_conn=init_api()
-    get_areas(api_conn)
+    load_dso(api_conn)
