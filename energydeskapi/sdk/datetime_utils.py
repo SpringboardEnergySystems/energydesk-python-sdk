@@ -39,9 +39,7 @@ def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
         d_aware = local_tz.localize(naive_local_dt)
     else:
         d_aware=naive_local_dt  # It was tz aware
-    print("d_aware", d_aware)
     d_utc = d_aware.astimezone(pytz.UTC)
-    print("d_utc", d_utc)
     s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     return s_dt_utc
 
