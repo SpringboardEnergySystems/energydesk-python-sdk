@@ -28,9 +28,17 @@ def localize_strtime(strtime, loczone="Europe/Oslo"):
     unaware_dt = parser.isoparse(strtime) if type(strtime)==str else strtime
     return localize_datetime(unaware_dt, loczone)
 
+
+
+def tz_aware(dt):
+    return dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None
+
 def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
     local_tz = pytz.timezone(loczone)
-    d_aware = local_tz.localize(naive_local_dt)
+    if not tz_aware(naive_local_dt):
+        d_aware = local_tz.localize(naive_local_dt)
+    else:
+        d_aware=naive_local_dt  # It was tz aware
     d_utc = d_aware.astimezone(pytz.UTC)
     s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     return s_dt_utc
