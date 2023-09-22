@@ -60,6 +60,7 @@ class CompanyRating:
     anchor_rating: str
     standalone_cp: str
     final_rating: list
+    rating_cat: int
     rating_datetime: datetime
     @property
     def json(self):
