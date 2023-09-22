@@ -22,7 +22,6 @@ def generate_default_gofields( asset_pk, delivery_date, production_from, product
     go.certificates=[]
     go.extra_info=None
     go.asset=None
-
     go.delivery_date=delivery_date
     go.production_from=production_from
     go.production_until=production_until

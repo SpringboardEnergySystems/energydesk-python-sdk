@@ -133,7 +133,7 @@ class Contract:
 
         c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']
-
+        c.contract_type=1 if not 'contract_type' in d else d['contract_type']
         c.trading_fee = gen_money_from_json(d['trading_fee'])
         c.clearing_fee = gen_money_from_json(d['clearing_fee'])
         c.contract_status = d['contract_status']
@@ -178,7 +178,7 @@ class Contract:
         if self.quantity is not None: dict['quantity'] = self.quantity
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
-        # if self.contract_type is not None: dict['contract_type'] = self.contract_type
+        if self.contract_type is not None: dict['contract_type'] = self.contract_type
         if self.contract_status is not None: dict['contract_status'] = self.contract_status.value
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
@@ -243,7 +243,7 @@ class Contract:
                                                                                                             self.quantity_type)
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
-        #if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
+        if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
         if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn,
                                                                                                             self.contract_status)
 
