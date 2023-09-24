@@ -74,6 +74,7 @@ class CustomersApi:
         logger.info("Registering " + str(len(companies) )+ " companies")
         for company in companies:
             payload=company.get_dict()
+
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/customers/companies/', payload)
             if json_res is None:
                 logger.error("Problems registering company "  + company.name)
