@@ -59,15 +59,6 @@ class CustomersApi:
 
     """
 
-    @staticmethod
-    def update_company(api_connection,pk, dict):
-        success, json_res, status_code, error_msg = api_connection.exec_patch_url(
-            '/api/customers/companies/' + str(pk) + "/", dict)
-        if json_res is None:
-            logger.error("Problems creating/updating company " + company.name)
-        else:
-            logger.info("Company created/updated " + company.name)
-        return success, json_res, status_code, error_msg
 
     @staticmethod
     def upsert_company(api_connection, company):
