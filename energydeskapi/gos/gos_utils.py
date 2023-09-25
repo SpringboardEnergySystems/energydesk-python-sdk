@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 from energydeskapi.gos.gos_api import GoContract
 
-def generate_product_code_std(api_conn, contract):
+def generate_product_code_fromgocontract(api_conn, contract):
     if contracts.certificates is None or len(contracts.certificates)==0:
         return "GoO Contract without Certificate info"
     cert_contract=contracts.certificates[0]
