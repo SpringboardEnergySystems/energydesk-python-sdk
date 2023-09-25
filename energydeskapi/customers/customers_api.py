@@ -36,7 +36,8 @@ class Company:
         dict['is_active'] = self.is_active
         return dict
 
-    def from_dict(self, dict):
+    @staticmethod
+    def from_dict( dict):
 
         c=Company()
         c.name=dict['name']
