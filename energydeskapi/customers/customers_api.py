@@ -36,6 +36,23 @@ class Company:
         dict['is_active'] = self.is_active
         return dict
 
+    def from_dict(self, dict):
+
+        c=Company()
+        c.name=dict['name']
+        c.alias = dict['alias']
+        c.lei_code = None if 'lei_code' not in dict else dict['lei_code']
+        c.registry_number = None if 'registry_number' not in dict else dict['registry_number']
+        c.company_type = None if 'company_type' not in dict else dict['company_type']
+        c.company_roles = None if 'company_roles' not in dict else dict['company_roles']
+        c.address = None if 'address' not in dict else dict['address']
+        c.postal_code = None if 'postal_code' not in dict else dict['postal_code']
+        c.city = None if 'city' not in dict else dict['city']
+        c.country = None if 'country' not in dict else dict['country']
+        c.location = None if 'location' not in dict else dict['location']
+        c.is_active = False if 'is_active' not in dict else dict['is_active']
+        return c
+
 class CustomersApi:
     """Class for user profiles and companies
 
