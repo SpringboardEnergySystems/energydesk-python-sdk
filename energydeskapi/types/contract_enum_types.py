@@ -47,7 +47,7 @@ def quantity_type_description(x):
         QuantityTypeEnum.VOLUME: "Volume",
         QuantityTypeEnum.VOLUME_YEARLY: "Volume per year",
         QuantityTypeEnum.CASH_AMOUNT: "Cash Amount",
-        QuantityTypeEnum.CERTIFICATE: "Certificates",
+        QuantityTypeEnum.CERTIFICATE: "Certificates"
     }[x]
 
 def quantity_unit_description(x):
@@ -56,7 +56,7 @@ def quantity_unit_description(x):
         QuantityUnitEnum.MW: "Megawatt",
         QuantityUnitEnum.GW: "Gigawatt",
         QuantityUnitEnum.EUR: "EUR amount",
-        QuantityUnitEnum.LOTS: "Lots",
+        QuantityUnitEnum.LOTS: "Lots"
     }[x]
 
 def contract_type_description(x):
@@ -66,5 +66,5 @@ def contract_type_description(x):
         ContractTypeEnum.BILAT_FIXPRICE: "Bilateral Fixed Price",
         ContractTypeEnum.GOO: "Guarantee of Origin",
         ContractTypeEnum.PROFILE: "Varying Periodic Profile",
-        ContractTypeEnum.CAPACITY: "Capacity Contract",
+        ContractTypeEnum.CAPACITY: "Capacity Contract"
     }[x]
