@@ -47,7 +47,8 @@ def quantity_type_description(x):
         QuantityTypeEnum.VOLUME: "Volume",
         QuantityTypeEnum.VOLUME_YEARLY: "Volume per year",
         QuantityTypeEnum.CASH_AMOUNT: "Cash Amount",
-        QuantityTypeEnum.CERTIFICATE: "Certificates"
+        QuantityTypeEnum.CERTIFICATE: "Certificates",
+        QuantityTypeEnum.PERCENTAGE: "Percentage"
     }[x]
 
 def quantity_unit_description(x):
