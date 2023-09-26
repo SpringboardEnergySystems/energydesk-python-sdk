@@ -57,7 +57,8 @@ def quantity_unit_description(x):
         QuantityUnitEnum.MW: "Megawatt",
         QuantityUnitEnum.GW: "Gigawatt",
         QuantityUnitEnum.EUR: "EUR amount",
-        QuantityUnitEnum.LOTS: "Lots"
+        QuantityUnitEnum.LOTS: "Lots",
+        QuantityUnitEnum.DECIMALS: "Decimals"
     }[x]
 
 def contract_type_description(x):
