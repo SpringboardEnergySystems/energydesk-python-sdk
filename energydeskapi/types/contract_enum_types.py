@@ -36,4 +36,5 @@ class ContractTypeEnum(Enum):
     EEX = 2
     BILAT_FIXPRICE = 3
     GOO = 4
-    FLEXIBLE = 5
+    PROFILE = 5
+    CAPACITY = 6
