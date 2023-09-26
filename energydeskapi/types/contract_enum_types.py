@@ -36,4 +36,37 @@ class ContractTypeEnum(Enum):
     EEX = 2
     BILAT_FIXPRICE = 3
     GOO = 4
-    FLEXIBLE = 5
+    PROFILE = 5
+    CAPACITY = 6
+
+
+
+def quantity_type_description(x):
+    return {
+        QuantityTypeEnum.EFFECT: "Effect",
+        QuantityTypeEnum.VOLUME: "Volume",
+        QuantityTypeEnum.VOLUME_YEARLY: "Volume per year",
+        QuantityTypeEnum.CASH_AMOUNT: "Cash Amount",
+        QuantityTypeEnum.CERTIFICATE: "Certificates",
+        QuantityTypeEnum.PERCENTAGE: "Percentage"
+    }[x]
+
+def quantity_unit_description(x):
+    return {
+        QuantityUnitEnum.KW: "Kilowatt",
+        QuantityUnitEnum.MW: "Megawatt",
+        QuantityUnitEnum.GW: "Gigawatt",
+        QuantityUnitEnum.EUR: "EUR amount",
+        QuantityUnitEnum.LOTS: "Lots",
+        QuantityUnitEnum.DECIMALS: "Decimals"
+    }[x]
+
+def contract_type_description(x):
+    return {
+        ContractTypeEnum.NASDAQ: "Nasdaq OMX",
+        ContractTypeEnum.EEX: "EEX",
+        ContractTypeEnum.BILAT_FIXPRICE: "Bilateral Fixed Price",
+        ContractTypeEnum.GOO: "Guarantee of Origin",
+        ContractTypeEnum.PROFILE: "Varying Periodic Profile",
+        ContractTypeEnum.CAPACITY: "Capacity Contract"
+    }[x]

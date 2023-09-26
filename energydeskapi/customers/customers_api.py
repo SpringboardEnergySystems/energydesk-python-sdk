@@ -36,6 +36,24 @@ class Company:
         dict['is_active'] = self.is_active
         return dict
 
+    @staticmethod
+    def from_dict( dict):
+
+        c=Company()
+        c.name=dict['name']
+        c.alias = dict['alias']
+        c.lei_code = None if 'lei_code' not in dict else dict['lei_code']
+        c.registry_number = None if 'registry_number' not in dict else dict['registry_number']
+        c.company_type = None if 'company_type' not in dict else dict['company_type']
+        c.company_roles = None if 'company_roles' not in dict else dict['company_roles']
+        c.address = None if 'address' not in dict else dict['address']
+        c.postal_code = None if 'postal_code' not in dict else dict['postal_code']
+        c.city = None if 'city' not in dict else dict['city']
+        c.country = None if 'country' not in dict else dict['country']
+        c.location = None if 'location' not in dict else dict['location']
+        c.is_active = False if 'is_active' not in dict else dict['is_active']
+        return c
+
 class CustomersApi:
     """Class for user profiles and companies
 
@@ -121,6 +139,18 @@ class CustomersApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+    @staticmethod
+    def get_company(api_connection, key):
+        """Fetches all companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=api_connection.exec_get_url('/api/customers/companies/' + str(key) + "/")
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_companies(api_connection, parameters={}):

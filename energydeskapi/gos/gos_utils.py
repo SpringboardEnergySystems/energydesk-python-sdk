@@ -13,10 +13,19 @@ logger = logging.getLogger(__name__)
 
 from energydeskapi.gos.gos_api import GoContract
 
+def generate_product_code_fromgocontract(api_conn, contract):
+    if contract.certificates is None or len(contract.certificates)==0:
+        return "GoO Contract without Certificate info"
+    cert_contract=contract.certificates[0]
+    print(cert_contract)
+    asset_json=AssetsApi.get_asset_by_key(api_conn, cert_contract.asset)
+    return "GoO_" + asset_json['description'] + "_" + str(cert_contract.delivery_date)[:10]
+
 def generate_product_code(api_conn, contract, gofields):
     asset_json=AssetsApi.get_asset_by_key(api_conn, gofields.asset)
     print(asset_json)
     return "GoO_" + asset_json['description'] + "_" + str(gofields.delivery_date)[:10]
+
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
     go.certificates=[]
