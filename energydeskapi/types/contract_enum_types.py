@@ -38,3 +38,13 @@ class ContractTypeEnum(Enum):
     GOO = 4
     PROFILE = 5
     CAPACITY = 6
+
+def contract_type_description(x):
+    return {
+        ContractTypeEnum.NASDAQ: "Nasdaq OMX",
+        ContractTypeEnum.EEX: "EEX",
+        ContractTypeEnum.BILAT_FIXPRICE: "Bilateral Fixed Price",
+        ContractTypeEnum.GOO: "Guarantee of Origin",
+        ContractTypeEnum.PROFILE: "Varying Periodic Profile",
+        ContractTypeEnum.CAPACITY: "Capacity Contract",
+    }[x]
