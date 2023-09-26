@@ -39,6 +39,27 @@ class ContractTypeEnum(Enum):
     PROFILE = 5
     CAPACITY = 6
 
+
+
+def quantity_type_description(x):
+    return {
+        QuantityTypeEnum.EFFECT: "Effect",
+        QuantityTypeEnum.VOLUME: "Volume",
+        QuantityTypeEnum.VOLUME_YEARLY: "Volume per year",
+        QuantityTypeEnum.CASH_AMOUNT: "Cash Amount",
+        QuantityTypeEnum.CERTIFICATE: "Certificates",
+    }[x]
+
+def quantity_unit_description(x):
+    return {
+        QuantityUnitEnum.KW: "Kilowatt",
+        QuantityUnitEnum.MW: "Megawatt",
+        QuantityUnitEnum.GW: "Gigawatt",
+        QuantityUnitEnum.EUR: "EUR amount",
+        QuantityUnitEnum.LOTS: "Lots",
+
+    }[x]
+
 def contract_type_description(x):
     return {
         ContractTypeEnum.NASDAQ: "Nasdaq OMX",
