@@ -149,7 +149,7 @@ class CurveApi:
 
 
     @staticmethod
-    def get_spot_forward_curve(api_connection , price_area,
+    def get_spotforward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model="PRICEIT",
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
                                 market_name=MarketEnum.NORDIC_POWER.name):
@@ -181,10 +181,34 @@ class CurveApi:
         if success:
             print(json_res)
             df = pd.DataFrame(data=eval(json_res))
-
             df.index = df['period_from']
             df=convert_dataframe_to_localtime(df)
             return success, df, status_code, error_msg
         else:
-            success, None, status_code, error_msg
+            return success, None, status_code, error_msg
+
+    @staticmethod
+    def get_spotforward_curve_df(api_connection , price_area,
+                                currency_code, forward_curve_model,
+                                period_resolution=PeriodResolutionEnum.DAILY.value,
+                               market_name=MarketEnum.NORDIC_POWER.name):
+
+
+        success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
+                                currency_code, forward_curve_model,period_resolution,market_name)
+        if success:
+            print(json_res)
+            df = pd.DataFrame(data=eval(json_res))
+            df = pd.DataFrame(data=eval(json_res))
+            df.index = df['period_from']
+            df.index = pd.to_datetime(df.index)
+            df['period_from'] = pd.to_datetime(df['period_from'])
+            df['period_until'] = pd.to_datetime(df['period_until'])
+            df_prices = df.tz_convert("Europe/Oslo")
+            df_prices['date'] = df_prices['period_from'].dt.date
+
+            #df=convert_dataframe_to_localtime(df)
+            return success, df, status_code, error_msg
+        else:
+            return success, None, status_code, error_msg
 

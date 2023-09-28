@@ -67,20 +67,8 @@ def query_forward_curves(api_conn):
         print(df)
 
 def query_spot_forward_curves(api_conn):
-    success, json_res, status_code, error_msg =CurveApi.get_spot_forward_curve(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
-    if len(json_res)==0:
-        print("No curves returned")
-    else:
-        #curve_data=res[0]
-        #print(curve_data['currency_date'])
-        #print(curve_data['price_date'])
-        df = pd.DataFrame(data=eval(json_res))#safe_prepare_json(curve_data['data']))
-        print(df)
-        df.index=df['period_from']
-        df.index = pd.to_datetime(df.index)
-        df.index = df.index.tz_convert("Europe/Oslo")
-        df = df.drop(columns=['period_from', 'period_until'])
-        print(df)
+    success, df, status_code, error_msg =CurveApi.get_spotforward_curve_df(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
+    print(df)
 
 def get_rolling(api_conn):
     df_res=CurveApi.retrieve_rolling_products(api_conn, "NO2")
