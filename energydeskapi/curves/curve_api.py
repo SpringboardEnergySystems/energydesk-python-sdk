@@ -205,7 +205,7 @@ class CurveApi:
             df['period_from'] = pd.to_datetime(df['period_from'])
             df['period_until'] = pd.to_datetime(df['period_until'])
             df = df.tz_convert("Europe/Oslo")
-            df['date'] = df_prices['period_from'].dt.date
+            df['date'] = df['period_from'].dt.date
 
             #df=convert_dataframe_to_localtime(df)
             return success, df, status_code, error_msg
