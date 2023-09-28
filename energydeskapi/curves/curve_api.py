@@ -189,9 +189,9 @@ class CurveApi:
 
     @staticmethod
     def get_spotforward_curve_df(api_connection , price_area,
-                                currency_code, forward_curve_model,
+                                currency_code, forward_curve_model="PRICEIT",
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
-                               market_name=MarketEnum.NORDIC_POWER.name):
+                                market_name=MarketEnum.NORDIC_POWER.name):
 
 
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
