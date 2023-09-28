@@ -67,14 +67,15 @@ def query_forward_curves(api_conn):
         print(df)
 
 def query_spot_forward_curves(api_conn):
-    res=CurveApi.get_spot_forward_curve(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
-    if len(res)==0:
+    success, json_res, status_code, error_msg =CurveApi.get_spot_forward_curve(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
+    if len(json_res)==0:
         print("No curves returned")
     else:
-        curve_data=res[0]
-        print(curve_data['currency_date'])
-        print(curve_data['price_date'])
-        df = pd.DataFrame(data=safe_prepare_json(curve_data['data']))
+        #curve_data=res[0]
+        #print(curve_data['currency_date'])
+        #print(curve_data['price_date'])
+        df = pd.DataFrame(data=eval(json_res))#safe_prepare_json(curve_data['data']))
+        print(df)
         df.index=df['period_from']
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_convert("Europe/Oslo")
