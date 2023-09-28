@@ -66,6 +66,21 @@ def query_forward_curves(api_conn):
         df = df.drop(columns=['period_from', 'period_until'])
         print(df)
 
+def query_spot_forward_curves(api_conn):
+    res=CurveApi.get_spot_forward_curve(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
+    if len(res)==0:
+        print("No curves returned")
+    else:
+        curve_data=res[0]
+        print(curve_data['currency_date'])
+        print(curve_data['price_date'])
+        df = pd.DataFrame(data=safe_prepare_json(curve_data['data']))
+        df.index=df['period_from']
+        df.index = pd.to_datetime(df.index)
+        df.index = df.index.tz_convert("Europe/Oslo")
+        df = df.drop(columns=['period_from', 'period_until'])
+        print(df)
+
 def get_rolling(api_conn):
     df_res=CurveApi.retrieve_rolling_products(api_conn, "NO2")
     print(list(df_res["product"].unique()))
@@ -90,6 +105,5 @@ def apply_julia_smoothcurve():
 
 if __name__ == '__main__':
     api_conn=init_api()
-    #apply_julia_smoothcurve()
-    get_rolling(api_conn)
-    #retrieve_stored_curve(api_conn)
+
+    query_spot_forward_curves(api_conn)

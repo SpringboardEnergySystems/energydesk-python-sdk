@@ -148,6 +148,26 @@ class CurveApi:
         return success, json_res, status_code, error_msg
 
 
+    @staticmethod
+    def get_spot_forward_curve(api_connection , price_area,
+                                currency_code, forward_curve_model="PRICEIT",
+                                period_resolution=PeriodResolutionEnum.DAILY.value,
+                                market_name=MarketEnum.NORDIC_POWER.name):
+        payload={}
+        if market_name is not None:
+            payload['market_name']=market_name
+        if price_area is not None:
+            payload['price_area']=price_area
+        if period_resolution is not None:
+            payload['period_resolution']=period_resolution
+        if forward_curve_model is not None:
+            payload['forward_curve_model']=forward_curve_model
+        if currency_code is not None:
+            payload['currency_code']=currency_code
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/spotforwardcurve/', payload)
+        return success, json_res, status_code, error_msg
+
 
     @staticmethod
     def retrieve_latest_forward_curve_df(api_connection , price_area,
@@ -161,7 +181,7 @@ class CurveApi:
         if success:
             print(json_res)
             df = pd.DataFrame(data=eval(json_res))
-            print(df)
+
             df.index = df['period_from']
             df=convert_dataframe_to_localtime(df)
             return success, df, status_code, error_msg
