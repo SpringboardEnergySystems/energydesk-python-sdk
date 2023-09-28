@@ -197,8 +197,6 @@ class CurveApi:
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
                                 currency_code, forward_curve_model,period_resolution,market_name)
         if success:
-            print(json_res)
-            df = pd.DataFrame(data=eval(json_res))
             df = pd.DataFrame(data=eval(json_res))
             df.index = df['period_from']
             df.index = pd.to_datetime(df.index)
