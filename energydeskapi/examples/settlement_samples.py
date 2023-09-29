@@ -24,22 +24,19 @@ def get_settlement_view(api_conn):
         "view_period_from__gte":'2023-08-14',
         "view_period_until__lt": '2023-09-04',
         "resolution":PeriodResolutionEnum.HOURLY.value,
-        #"groupby": PeriodViewGroupingEnum.TRADEID.value,
         "groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value,PeriodViewGroupingEnum.TRADEID.value]
     }
-    print(filter)
+
     v, df=SettlementApi.get_settlement_view_df(api_conn, filter)
     subset = ['counterpart', 'trade_id', 'period_from', 'period_until', 'avgcost', 'avgcostsell', 'sellpos', 'sellvol']
     print(df[subset])
 
-
     contracts=df['trade_id'].unique()
-    print(list(contracts))
     clist=[int(x) for x in list(contracts)]
-    print({'page_size':100, 'id__in':clist})
-    print(len(clist))
-    reso=ContractsApi.list_contracts_compact(api_conn, {'page_size':100, 'id__in':clist})
-    print(reso)
+    print({'page_size':1000, 'id__in':clist})
+    reso=ContractsApi.list_contracts_compact(api_conn, {'page_size':1000, 'id__in':clist})
+
+    # Gets a list of contracts pivoted in the period view in order to show more information on them
 
 
 if __name__ == '__main__':
