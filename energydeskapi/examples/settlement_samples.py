@@ -58,7 +58,7 @@ def get_settlement_view(api_conn):
 
         return row
     df_inv=df_inv.apply(fill_in_contract_info, axis=1)
-    #print(df_inv)
+    print(df_inv)
     # Gets a list of contracts pivoted in the period view in order to show more information on them
 
 
