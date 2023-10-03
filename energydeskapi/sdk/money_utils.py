@@ -16,7 +16,10 @@ class CurrencyCode(Enum):
 class Money:
     def __init__(self, amount, currency_code=CurrencyCode.EUR):
         self.amount = Decimal(amount)
-        self.currency_code=currency_code
+        if type(currency_code)==str:
+            self.currency_code = CurrencyCode._value2member_map_[currency_code]
+        else:
+            self.currency_code=currency_code
     def formatted_value(self, max_digits=5):
         fmt='{:,.'+ str(max_digits)+ 'f}'
         tmp=fmt.format(self.amount)
