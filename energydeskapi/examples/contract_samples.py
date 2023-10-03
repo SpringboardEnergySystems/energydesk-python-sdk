@@ -212,7 +212,7 @@ def get_fixedprice_contracts(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
-    load_contracts(api_conn)
+    get_contracts(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)

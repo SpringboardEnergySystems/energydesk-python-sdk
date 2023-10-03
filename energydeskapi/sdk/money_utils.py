@@ -14,12 +14,12 @@ class CurrencyCode(Enum):
     GBP = "GBP"
 
 class Money:
-    def __init__(self, amount, currency_code=CurrencyCode.EUR):
+    def __init__(self, amount, currency=CurrencyCode.EUR):
         self.amount = Decimal(amount)
-        if type(currency_code)==str:
-            self.currency_code = CurrencyCode._value2member_map_[currency_code]
+        if type(currency)==str:
+            self.currency = CurrencyCode._value2member_map_[currency]
         else:
-            self.currency_code=currency_code
+            self.currency=currency
     def formatted_value(self, max_digits=5):
         fmt='{:,.'+ str(max_digits)+ 'f}'
         tmp=fmt.format(self.amount)
@@ -27,7 +27,7 @@ class Money:
         tmp= tmp if tmp[-1:]!="." else tmp + "0"  # If last 0 is removed, add
         return tmp
     def __repr__(self):   # Max digits, but strip trailing zeros
-        return  self.formatted_value() + " " + self.currency_code.value
+        return  self.formatted_value() + " " + self.currency.value
     def __str__(self):
         return self.__repr__()
     def __add__(self, other):
@@ -43,19 +43,19 @@ class Money:
 
 class FormattedMoney(Money):
     def __str__(self):
-        if self.currency_code==CurrencyCode.EUR:
+        if self.currency==CurrencyCode.EUR:
             return "€ " + self.formatted_value()
-        elif self.currency_code==CurrencyCode.USD:
+        elif self.currency==CurrencyCode.USD:
             return "$ " + self.formatted_value()
-        elif self.currency_code==CurrencyCode.GBP:
+        elif self.currency==CurrencyCode.GBP:
             return "£ " + self.formatted_value()
-        return  self.formatted_value() + " " + self.currency_code.value
+        return  self.formatted_value() + " " + self.currency.value
 
 def gen_json_money(mon):
 
     json =  {
             "amount": mon.formatted_value(),  #Sent in Cents, Pence etc
-            "currency": str(mon.currency_code.value)
+            "currency": str(mon.currency.value)
     }
     return json
 
