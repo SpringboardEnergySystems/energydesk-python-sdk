@@ -48,14 +48,10 @@ class FormattedMoney(Money):
             return "$ " + self.formatted_value()
         elif self.currency_code==CurrencyCode.GBP:
             return "£ " + self.formatted_value()
-        print(self.currency_code)
-        print(type(self.currency_code))
         return  self.formatted_value() + " " + self.currency_code.value
 
 def gen_json_money(mon):
-    print(mon)
-    print(mon.formatted_value())
-    print(mon.currency_code)
+
     json =  {
             "amount": mon.formatted_value(),  #Sent in Cents, Pence etc
             "currency": str(mon.currency_code.value)
@@ -63,6 +59,5 @@ def gen_json_money(mon):
     return json
 
 def gen_money_from_json(mon_json):
-    print(mon_json)
     mny=Money(Decimal(mon_json['amount']), CurrencyCode._value2member_map_[mon_json['currency']])
     return mny
