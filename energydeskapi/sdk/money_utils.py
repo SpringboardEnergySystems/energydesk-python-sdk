@@ -24,6 +24,7 @@ class Money:
         fmt='{:,.'+ str(max_digits)+ 'f}'
         tmp=fmt.format(self.amount)
         tmp = tmp.rstrip('0')
+        tmp= tmp if tmp[-1:]!="." else tmp + "0"  # If last 0 is removed, add
         return tmp
     def __repr__(self):   # Max digits, but strip trailing zeros
         return  self.formatted_value() + " " + self.currency_code.value

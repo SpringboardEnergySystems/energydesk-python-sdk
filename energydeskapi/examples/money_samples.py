@@ -2,7 +2,7 @@ from decimal import *
 from energydeskapi.sdk.money_utils import FormattedMoney, Money, CurrencyCode, gen_json_money, gen_money_from_json
 
 def test_decimals():
-    m=FormattedMoney(Decimal(3.7875), CurrencyCode.EUR)
+    m=FormattedMoney(Decimal(3.00), CurrencyCode.EUR)
     m3 = FormattedMoney("3.782500", CurrencyCode.EUR)
     print(m)
     print(m3)
