@@ -51,6 +51,9 @@ class FormattedMoney(Money):
         return  self.formatted_value() + " " + self.currency_code.value
 
 def gen_json_money(mon):
+    print(mon)
+    print(mon.formatted_value())
+    print(mon.currency_code)
     json =  {
             "amount": mon.formatted_value(),  #Sent in Cents, Pence etc
             "currency": str(mon.currency_code.value)
