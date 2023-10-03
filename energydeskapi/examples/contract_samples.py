@@ -6,7 +6,7 @@ from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, Mast
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.users_api import UsersApi
-from moneyed import EUR
+from energydeskapi.sdk.money_utils import FormattedMoney, Money, CurrencyCode, gen_json_money, gen_money_from_json
 import pandas as pd
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.contracts.masteragreement_api import MasterContractAgreement
@@ -125,9 +125,9 @@ def get_sample_contract(api_conn, commodity):
     trader=2
     c=Contract("EXT ID SAMPLE 137312381263",
                trading_book,
-               FormattedMoney(232.30, EUR),5,
-               FormattedMoney(2.1, EUR),
-               FormattedMoney(2.0, EUR),
+               FormattedMoney(232.30, CurrencyCode.EUR),5,
+               FormattedMoney(2.1, CurrencyCode.EUR),
+               FormattedMoney(2.0, CurrencyCode.EUR),
                dtstr2[0:10],dtstr1,
                commodity_type,
                instrument_type,

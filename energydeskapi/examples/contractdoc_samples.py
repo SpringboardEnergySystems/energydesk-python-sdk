@@ -5,18 +5,7 @@ from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, Mast
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.bilateral_api import BilateralApi
-from energydeskapi.customers.users_api import UsersApi
-from moneyed import EUR
-import pandas as pd
-from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.lems.lems_api import LemsApi
-from energydeskapi.geolocation.location_api import LocationApi
-from energydeskapi.types.location_enum_types import LocationTypeEnum
-from datetime import datetime, timedelta
-from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
-from energydeskapi.types.contract_enum_types import ContractStatusEnum, GosEnergySources
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
-from energydeskapi.sdk.money_utils import FormattedMoney
+
 import json
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',

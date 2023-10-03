@@ -1,18 +1,7 @@
 import logging
 import logging
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract, ContractFilter, ContractTag
-from energydeskapi.contracts.dealcapture import bilateral_dealcapture
-from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, MasterContractAgreement
-from energydeskapi.gos.gos_api import GosApi, GoContract
-from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.customers.users_api import UsersApi
-from moneyed import EUR
-import pandas as pd
-from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.contracts.masteragreement_api import MasterContractAgreement
-from energydeskapi.geolocation.location_api import LocationApi
-from energydeskapi.types.location_enum_types import LocationTypeEnum
-from datetime import datetime, timedelta
+from energydeskapi.sdk.money_utils import FormattedMoney, Money, CurrencyCode, gen_json_money, gen_money_from_json
 from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 from energydeskapi.types.contract_enum_types import ContractStatusEnum, GosEnergySources
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
@@ -54,9 +43,9 @@ def get_sample_contract(api_conn, commodity):
     trader=2
     c=Contract("EXT ID SAMPLE GO1234",
                trading_book,
-               FormattedMoney(232.30, EUR),5,
-               FormattedMoney(2.1, EUR),
-               FormattedMoney(2.0, EUR),
+               FormattedMoney(232.30, CurrencyCode.EUR),5,
+               FormattedMoney(2.1, CurrencyCode.EUR),
+               FormattedMoney(2.0, CurrencyCode.EUR),
                dtstr2[0:10],dtstr1,
                commodity_type,
                instrument_type,
