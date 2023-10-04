@@ -33,7 +33,7 @@ def get_product_settlement_view(api_conn):
     v, df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df.columns)
     subset = ['ticker', 'trade_id','close', 'unreal', 'avgcost', 'avgcostsell', 'netvol', 'sellvol']
-    print(df[subset])
+    print(df[subset].sort_values(by=['ticker', 'trade_id']))
 
 
 def get_settlement_view(api_conn):
