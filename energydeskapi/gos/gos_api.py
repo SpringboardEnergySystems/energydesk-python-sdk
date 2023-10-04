@@ -40,7 +40,7 @@ class GoContract:
         if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
         if len(self.certificates)>0:
             dict['certificates']=self.certificates
-
+        print(dict)
         return dict
 class GosApi:
     """Class for contracts in api
