@@ -18,6 +18,23 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+def get_product_settlement_view(api_conn):
+
+    filter={
+        #"portfolio":'6',
+        #'contract_filter':'0',
+        #'commodity__area': 'NO1',
+        "commodity__delivery_from__gte":'2023-08-01',
+        "commodity__delivery_until__lt": '2024-09-01',
+        #"resolution":PeriodResolutionEnum.HOURLY.value,
+        "groupby__in":[PeriodViewGroupingEnum.TRADEID.value]
+    }
+
+    v, df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
+    print(df.columns)
+    subset = ['ticker', 'trade_id','close', 'unreal', 'avgcost', 'avgcostsell', 'netvol', 'sellvol']
+    print(df[subset])
+
 
 def get_settlement_view(api_conn):
 
@@ -65,4 +82,4 @@ def get_settlement_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_settlement_view(api_conn)
+    get_product_settlement_view(api_conn)

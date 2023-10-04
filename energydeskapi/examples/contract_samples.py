@@ -43,11 +43,11 @@ def get_contract_filter_pk(api_conn):
 
 def get_contracts(api_conn, trading_book=None):
     filter={'page_size':200}
-    json_data = ContractsApi.list_contracts_compact(api_conn,filter)
+    json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
     records=json_data['results']  # 200 at a time
     print(json.dumps(records, indent=2))
-    df=pd.DataFrame(data=eval(records))
-    print(df)
+    #df=pd.DataFrame(data=eval(records))
+    #print(df)
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)

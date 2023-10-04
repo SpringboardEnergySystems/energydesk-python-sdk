@@ -22,7 +22,7 @@ class PortfolioViewsApi:
         import uuid
         result = uuid.uuid4()
         id=str(result.hex)
-        logger.info("Fetching product view")
+        logger.info("Fetching product view" +  str(parameters))
         json_res = api_connection.exec_get_url('/api/portfoliomanager/productview/', parameters)
         if json_res is None:
             return None, None
