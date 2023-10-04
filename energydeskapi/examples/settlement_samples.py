@@ -39,8 +39,6 @@ def get_product_settlement_view(api_conn):
 def get_settlement_view(api_conn):
 
     filter={
-        #"portfolio":'6',
-        #'contract_filter':'0',
         'view_currency': 'NOK',
         #'commodity__area': 'NO1',
         "view_period_from__gte":'2023-08-01',
