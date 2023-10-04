@@ -87,14 +87,12 @@ class ElvizLinksApi:
         client_id = env.str('ELVIZ_CLIENT_ID')
         client_secret = env.str('ELVIZ_CLIENT_SECRET')
         scope = env.str('ELVIZ_SCOPE')
+        tenantid=env.str('AZURE_TENANT')
         service = OAuth2Service(client_id=client_id,
                                 client_secret=client_secret,
-                                access_token_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/token",
-                                authorize_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/authorize",
+                                access_token_url="https://login.microsoftonline.com/" + tenantid + "/oauth2/v2.0/token",
+                                authorize_url="https://login.microsoftonline.com/" +  tenantid  + "/oauth2/v2.0/authorize",
                                 base_url="https://graph.microsoft.com/oidc/userinfo")
-        # params = {'redirect_uri': 'https://login.microsoftonline.com/',
-        #           'response_type': 'code'}
-        # url = service.get_authorize_url(**params)
         data = {'grant_type': 'client_credentials',
                 'scope': scope,
                 }
