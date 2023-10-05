@@ -11,13 +11,13 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
-def rauth_sample(client_id, client_secret, scope, token_endpoint):
+def rauth_sample(client_id, client_secret, scope, token_endpoint, energydesk_base_url):
     service = OAuth2Service(client_id=client_id,client_secret = client_secret,access_token_url=token_endpoint)
     session = service.get_auth_session(data={'grant_type': 'client_credentials', "scope": scope}, decoder=json.loads)
-    bearertoken = ApiConnection.validate_jwt_token("http://127.0.0.1:8001", str(session.access_token), "azuread-oauth2")
-    api_conn=ApiConnection("http://127.0.0.1:8001",bearer_token=bearertoken)
-    ass=AssetsApi.get_assets_embedded(api_conn)
-    print(ass)
+    bearertoken = ApiConnection.validate_jwt_token(energydesk_base_url, str(session.access_token), "azuread-oauth2")
+    api_conn=ApiConnection(energydesk_base_url,bearer_token=bearertoken)
+    assets=AssetsApi.get_assets_embedded(api_conn)   # Test reading assets
+    print(assets)
 
 
 
@@ -29,5 +29,5 @@ if __name__ == '__main__':
     client_secret = env.str('OAUTH_CLIENT_SECRET')
     scope = env.str('OAUTH_SCOPE')
     token_endpoint = env.str('OAUTHCHECK_ACCESS_TOKEN_OBTAIN_URL')
-    #auth_endpoint = env.str('OAUTH_SERVER_AUTH_ENDPOINT')
-    rauth_sample(client_id, client_secret, scope, token_endpoint)
+    edesk_base_url = env.str('ENERGYDESK_URL')
+    rauth_sample(client_id, client_secret, scope, token_endpoint, edesk_base_url)
