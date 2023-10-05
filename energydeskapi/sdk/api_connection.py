@@ -6,6 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import http.client
 import logging
+import environ
 logger = logging.getLogger(__name__)
 
 class AuthorizationFailedException(Exception):
@@ -60,47 +61,38 @@ class ApiConnection(object):
         print("We are OK for basic auth, return token", tok)
         return True, tok
 
-    #Example
     @staticmethod
-    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+    def get_internal_auth():
+        env = environ.Env()
+        auth_id = None if not 'ENERGYDESK_AUTH_ID' in env else env.str('ENERGYDESK_AUTH_ID')
+        auth_secret = None if not 'ENERGYDESK_AUTH_SECRET' in env else env.str('ENERGYDESK_AUTH_SECRET')
+        return auth_id, auth_secret
+    #Example
+
+    @staticmethod
+    def __exec_impl_jwt_conversion(base_url, token, backend="google-oauth2"):
+        auth_id, auth_secret=ApiConnection.get_internal_auth()
         http.client._MAXHEADERS = 1000
         server_url = base_url + "/auth/convert-token"
         payload = {
             "grant_type": "convert_token",
-            "client_id": "client_id",
-            "client_secret": "client_secret",
+            "client_id": auth_id,
+            "client_secret": auth_secret,
             "backend": backend,
             "token": token}
-        print("VALIDATING TOKEN", payload)
         result = requests.post(server_url, json=payload)
         if result.status_code != 200:
             print("Could not validate user with backend")
             print(result.text)
             return None
         access_token = result.json()['access_token']
-        return access_token
+
+    @staticmethod
+    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+        return ApiConnection.__exec_impl_jwt_conversion( base_url, token, backend)
 
     def validate_token(self, token, backend="google-oauth2"):
-        """Validates a token
-
-        :param token: API token
-        :type token: str, required
-        """
-        print("Validation....", self.base_url)
-        http.client._MAXHEADERS = 1000
-        server_url = self.get_base_url() + "/auth/convert-token"
-        payload = {
-            "grant_type": "convert_token",
-            "client_id": "client_id",
-            "client_secret": "client_secret",
-            "backend":backend,
-            "token": token}
-        print("VALIDATING TOKEN", payload)
-        result = requests.post(server_url, json=payload)
-        if result.status_code != 200:
-            print("Could not validate user with backend")
-            return False
-        access_token = result.json()['access_token']
+        access_token=ApiConnection.__exec_impl_jwt_conversion(self.get_base_url(), token, backend)
         self.set_token(access_token, "Bearer")
         return True
 
