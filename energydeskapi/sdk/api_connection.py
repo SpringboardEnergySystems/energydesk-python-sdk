@@ -64,7 +64,7 @@ class ApiConnection(object):
     @staticmethod
     def validate_jwt_token( base_url, token, backend="google-oauth2"):
         http.client._MAXHEADERS = 1000
-        server_url = base_url + "/auth2/convert-token"
+        server_url = base_url + "/auth/convert-token"
         payload = {
             "grant_type": "convert_token",
             "client_id": "client_id",
