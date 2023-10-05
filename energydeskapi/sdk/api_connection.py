@@ -80,12 +80,16 @@ class ApiConnection(object):
             "client_secret": auth_secret,
             "backend": backend,
             "token": token}
+        print(payload)
         result = requests.post(server_url, json=payload)
+        print(result)
+        print(result.text)
         if result.status_code != 200:
             print("Could not validate user with backend")
             print(result.text)
             return None
         access_token = result.json()['access_token']
+        return access_token
 
     @staticmethod
     def validate_jwt_token( base_url, token, backend="google-oauth2"):

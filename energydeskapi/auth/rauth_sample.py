@@ -15,6 +15,7 @@ def rauth_sample(client_id, client_secret, scope, token_endpoint, energydesk_bas
     service = OAuth2Service(client_id=client_id,client_secret = client_secret,access_token_url=token_endpoint)
     session = service.get_auth_session(data={'grant_type': 'client_credentials', "scope": scope}, decoder=json.loads)
     bearertoken = ApiConnection.validate_jwt_token(energydesk_base_url, str(session.access_token), "azuread-oauth2")
+    print(bearertoken)
     api_conn=ApiConnection(energydesk_base_url,bearer_token=bearertoken)
     assets=AssetsApi.get_assets_embedded(api_conn)   # Test reading assets
     print(assets)
