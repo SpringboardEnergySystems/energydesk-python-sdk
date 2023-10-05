@@ -21,9 +21,6 @@ logging.basicConfig(level=logging.INFO,
 def get_product_settlement_view(api_conn):
 
     filter={
-        #"portfolio":'6',
-        #'contract_filter':'0',
-        #'commodity__area': 'NO1',
         "commodity__delivery_from__gte":'2023-08-01',
         "commodity__delivery_until__lt": '2024-09-01',
         #"resolution":PeriodResolutionEnum.HOURLY.value,
@@ -43,10 +40,12 @@ def get_settlement_view(api_conn):
         #'commodity__area': 'NO1',
         "view_period_from__gte":'2023-08-01',
         "view_period_until__lt": '2023-09-01',
-        #"resolution":PeriodResolutionEnum.HOURLY.value,
+        "commodity__delivery_from__gte": '2023-08-01',
+        "commodity__delivery_until__lt": '2023-09-01',
+        "resolution":PeriodResolutionEnum.HOURLY.value,
         "groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value,PeriodViewGroupingEnum.TRADEID.value]
     }
-
+    print(filter)
     v, df=SettlementApi.get_settlement_view_df(api_conn, filter)
 
     subset = ['trade_id', 'counterpart',  'period_from', 'period_until','price', 'value', 'avgcost', 'avgcostsell', 'netvol', 'sellvol']
@@ -80,4 +79,4 @@ def get_settlement_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_product_settlement_view(api_conn)
+    get_settlement_view(api_conn)
