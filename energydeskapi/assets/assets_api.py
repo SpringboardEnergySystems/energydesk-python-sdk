@@ -169,6 +169,7 @@ class AssetsApi:
         logger.info("Registering " + str(len(asset_list) )+ " assets")
         for asset in asset_list:
             payload=asset.get_dict()
+            print(payload)
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/assets/assets/', payload)
             if json_res is None:
                 logger.error("Problems registering asset "  + asset.description)
