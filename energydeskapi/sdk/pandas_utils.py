@@ -31,16 +31,12 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None, 
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
-    print("1")
     ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
-    print("2")
     df_new = df.reindex(ix, fill_value='NaN')
-    print("3")
     df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
     if len(df_new.index)>0:
         df_new=df_new.head(-1)
-    print("4")
     return df_new
 
 def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
