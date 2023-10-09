@@ -24,10 +24,13 @@ def check_convert_datetime(d, timezone=None):
         d = d.astimezone(pytz.UTC)
         return d
 
-def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None):
+def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None, predefined_columns=[]):
     period_from=check_convert_datetime(period_from, timezone)
     period_to = check_convert_datetime(period_to, timezone)
-    df=pd.DataFrame()
+    if len(predefined_columns)==0:
+        df=pd.DataFrame()
+    else:
+        df = pd.DataFrame(columns=predefined_columns)
     ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     df_new=df_new.tz_localize(pytz.UTC)
