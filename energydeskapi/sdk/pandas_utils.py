@@ -35,8 +35,8 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None, 
     df_new = df.reindex(ix, fill_value='NaN')
     df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
-    if len(df_new.index)>0:
-        df_new=df_new.head(-1)
+    #if len(df_new.index)>0:
+    #    df_new=df_new.head(-1)
     return df_new
 
 def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
