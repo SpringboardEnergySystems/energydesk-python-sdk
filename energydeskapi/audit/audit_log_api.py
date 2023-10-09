@@ -44,6 +44,21 @@ class AuditLogApi:
         return json_res
 
     @staticmethod
+    def get_audit_log_by_key(api_connection, pk):
+        """Fetches audit log with embedded structure for user and contracts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk:  key of audit object
+        :type pk: str, required
+        """
+        logger.info("Fetching audit log object with key " + str(pk))
+        json_res=api_connection.exec_get_url('/api/audit/auditlog/' + str(pk) + "/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_audit_log_types(api_connection, parameters={}):
         """Fetches all audit log types
 
