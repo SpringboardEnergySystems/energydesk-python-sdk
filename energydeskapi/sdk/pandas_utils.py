@@ -32,7 +32,6 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None, 
     else:
         df = pd.DataFrame(columns=predefined_columns)
     ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
-    ix.set_names("period")
     df_new = df.reindex(ix, fill_value='NaN')
     df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
