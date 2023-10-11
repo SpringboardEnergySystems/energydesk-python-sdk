@@ -19,6 +19,7 @@ def generate_product_code_fromgocontract(api_conn, contract):
     cert_contract=contract.certificates[0]
     print(cert_contract)
     asset_json=AssetsApi.get_asset_by_key(api_conn, cert_contract.asset)
+    print("Asset on GO", asset_json)
     return "GoO_" + asset_json['description'] + "_" + str(cert_contract.delivery_date)[:10]
 
 def generate_product_code(api_conn, contract, gofields):
