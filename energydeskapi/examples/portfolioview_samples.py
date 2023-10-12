@@ -27,7 +27,7 @@ def get_period_view(api_conn):
         "commodity__delivery_from": '2023-01-01',
         "commodity__delivery_until": '2025-01-01',
         #"trade_date__gte": '2024-01-01',
-        "trade_date__lt": '2024-01-01',
+        #"trade_date__lt": '2024-01-01',
         "resolution":PeriodResolutionEnum.HOURLY.value,
         "groupby":PeriodViewGroupingEnum.AREA.value
     }
