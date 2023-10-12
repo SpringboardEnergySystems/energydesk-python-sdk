@@ -70,3 +70,12 @@ def contract_type_description(x):
         ContractTypeEnum.PROFILE: "Varying Periodic Profile",
         ContractTypeEnum.CAPACITY: "Capacity Contract"
     }[x]
+
+
+def contract_status_description(x):
+    return {
+        ContractStatusEnum.REGISTERED: "Registered",
+        ContractStatusEnum.CONFIRMED: "Confirmed",
+        ContractStatusEnum.APPROVED: "Approved",
+        ContractStatusEnum.CANCELLED: "Cancelled",
+    }[x]
