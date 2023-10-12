@@ -7,6 +7,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.portfolios.portfolio_api import PortfoliosApi
 import pandas as pd
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
+from energydeskapi.types.contract_enum_types import ContractTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -19,20 +20,20 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])   # Just to see ID of portfolios available for next query
 
     filter={
-        "portfolio":'10',
-        'contract_filter':'0',
-        'view_currency': 'EUR',
-        'commodity__area': 'NO5',
+        "contract_type":ContractTypeEnum.BILAT_FIXPRICE.value,
+        'view_currency': 'NOK',
         "view_period_from__gte":'2023-01-01',
-        "view_period_until__lt": '2023-03-01',
-        "resolution":PeriodResolutionEnum.MONTHLY.value,
+        "view_period_until__lt": '2023-05-01',
+        "commodity__delivery_from": '2023-01-01',
+        "commodity__delivery_until": '2025-01-01',
+        "resolution":PeriodResolutionEnum.HOURLY.value,
         "groupby":PeriodViewGroupingEnum.AREA.value
     }
     print(filter)
     v, df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
-    df['GWh'] = df['netvol'] / 1000
+    #df['GWh'] = df['netvol'] / 1000
     print(df)
-    print(df['asset'].unique().tolist())
+    #print(df['asset'].unique().tolist())
 
 
 def get_product_view(api_conn):
