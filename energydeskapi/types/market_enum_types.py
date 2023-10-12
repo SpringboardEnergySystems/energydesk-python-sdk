@@ -12,12 +12,6 @@ class MarketEnum(Enum):
     CURRENCY_MARKET = 4
     GOs_MARKET = 5
 
-class MarketPlaceTypeEnum(Enum):
-    SPOT_COMMODITIES = 1   # Key for the most commonly used markets
-    FUTURES_COMMODITIES = 2
-    BILATERAL_FORWARD_COMMODITIES = 3
-
-
 class DeliveryTypeEnum(Enum):
     FINANCIAL = 1
     PHYSICAL = 2
@@ -91,11 +85,18 @@ def instrument_type_description(x):
         InstrumentTypeEnum.ASIOPT: "Asian Option",
     }[x]
 
-
-def marketplace_type_description(x):
+def profile_type_description(x):
     return {
-        MarketPlaceTypeEnum.SPOT_COMMODITIES: "Spot Commodity Markets",
-        MarketPlaceTypeEnum.FUTURES_COMMODITIES: "Futures Commodity Markets",
-        MarketPlaceTypeEnum.BILATERAL_FORWARD_COMMODITIES: "Bilateral Commodity Markets",
+        ProfileTypeEnum.BASELOAD: "Baseload",
+        ProfileTypeEnum.PROFILE: "Profile",
+        ProfileTypeEnum.ABSOLUTEPROFILE: "Varying Volume",
+    }[x]
 
+def market_description(x):
+    return {
+        MarketEnum.NORDIC_POWER: "Nordic Power",
+        MarketEnum.GERMAN_POWER: "German Power",
+        MarketEnum.CARBON_EMISSIONS: "European Carbon Market",
+        MarketEnum.CURRENCY_MARKET: "Currency Market",
+        MarketEnum.GOs_MARKET: "European GoO Market",
     }[x]
