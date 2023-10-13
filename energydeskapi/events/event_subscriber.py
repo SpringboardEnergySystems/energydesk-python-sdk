@@ -17,6 +17,7 @@ class EventClient:
         print("looking up in map", self.handler_map)
         subscr=[]
         for v in self.handler_map.values():
+            print("Comparing ",topic, v.prestrtopic)
             if topic.find(v.prestrtopic)>=0:
                 subscr.append(v)
         return subscr
