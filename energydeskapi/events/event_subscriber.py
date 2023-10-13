@@ -14,6 +14,7 @@ class EventClient:
         self.handler_map[event_subscriber.topic]=event_subscriber
 
     def lookup_subscribers(self, topic):
+        print("looking up in map", self.handler_map)
         subscr=[]
         for v in self.handler_map.values():
             if topic.find(v.prestrtopic)>=0:
