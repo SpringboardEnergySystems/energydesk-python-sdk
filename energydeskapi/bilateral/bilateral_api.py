@@ -109,8 +109,11 @@ class BilateralApi:
             return True, None, None, status_code, error_msg
         df_deliveries = pd.DataFrame(data=eval(deliveries))
         df_deliveries.index = df_deliveries['period_from']
-        trades = json_res['bilateral_trades']
-        df_trades = pd.DataFrame(data=eval(trades))
+        if 'bilateral_trades' in json_res and len(json_res['bilateral_trades'])>0:
+            trades = json_res['bilateral_trades']
+            df_trades = pd.DataFrame(data=eval(trades))
+        else:
+            df_trades=None
 
         return True, df_deliveries,df_trades, status_code, error_msg
 
