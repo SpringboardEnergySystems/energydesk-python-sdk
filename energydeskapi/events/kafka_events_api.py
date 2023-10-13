@@ -87,7 +87,7 @@ class KafkaClient(EventClient):
                         #     content = pd.read_json(payload)
                         # else:
                         content=str(message.value.decode('utf-8'))
-                        logger.debug("Received content on " + message.topic)
+                        logger.info("Received content on " + message.topic)
                         self.handle_callback(message.topic, content)
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
