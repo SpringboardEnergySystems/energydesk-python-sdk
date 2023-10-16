@@ -13,16 +13,16 @@ logger = logging.getLogger(__name__)
 
 def current_date_pendulum(days_back=0, loczone="Europe/Oslo"):
     pendate=pendulum.today(tz=loczone)
-    print(pendate)
+    #print(pendate)
     pendate - pendate.subtract(days=days_back)
-    print(pendate)
+    #print(pendate)
     #pendate=pendate + timedelta(days=-days_back)
     return pendate
 
 def current_date_localtime_dt(days_back=0, loczone="Europe/Oslo"):
     pd=current_date_pendulum(days_back, loczone)
-    print(conv_from_pendulum(pd, loczone))
-    return conv_from_pendulum(pd)
+    #print(conv_from_pendulum(pd, loczone))
+    return conv_from_pendulum(pd, loczone)
 
 def current_date_localtime(days_back=0, loczone="Europe/Oslo"):
     pd=current_date_pendulum(days_back, loczone)
