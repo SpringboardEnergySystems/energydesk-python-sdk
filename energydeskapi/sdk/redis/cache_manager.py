@@ -18,6 +18,7 @@ def current_date_pendulum(days_back=0, loczone="Europe/Oslo"):
 
 def current_date_localtime_dt(days_back=0, loczone="Europe/Oslo"):
     pd=current_date_pendulum(days_back, loczone)
+    print(conv_from_pendulum(pd))
     return conv_from_pendulum(pd)
 
 def current_date_localtime(days_back=0, loczone="Europe/Oslo"):
