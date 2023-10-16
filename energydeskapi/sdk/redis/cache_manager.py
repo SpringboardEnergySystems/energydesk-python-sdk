@@ -94,7 +94,12 @@ def loadfrom_historical_datecache(cache_name, days_back=1):
     return uncompreessed
 
 def loadfrom_datecache(cache_name, date_resolution="%Y/W%V"):
-    datekey = current_date_localtime_dt().strftime(date_resolution)
+    dt=current_date_localtime_dt()
+    print(dt)
+    dts=dt.strftime(date_resolution)
+    print(dts)
+
+    datekey =dts# current_date_localtime_dt().strftime(date_resolution)
     if is_redis_disabled():
         return get_memcache_value(cache_name, datekey)
 
