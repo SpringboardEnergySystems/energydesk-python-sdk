@@ -12,7 +12,7 @@ from energydeskapi.sdk.redis.redis_connection import connect_to_redis
 logger = logging.getLogger(__name__)
 
 def current_date_pendulum(days_back=0, loczone="Europe/Oslo"):
-    pendate=pendulum.today()
+    pendate=pendulum.today(tz=loczone)
     pendate=pendate + timedelta(days=-days_back)
     return pendate
 
