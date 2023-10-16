@@ -95,6 +95,7 @@ def loadfrom_datecache(cache_name, date_resolution="%Y/W%V"):
         return get_memcache_value(cache_name, datekey)
 
     try:
+        print("LOADING DATE CACHE", cache_name, datekey)
         compressed_data=get_cache_value(cache_name, datekey)
         if compressed_data is None:
             return None
@@ -112,6 +113,7 @@ def saveto_datecache(cache_name,  v, date_resolution="%Y/W%V"):
         return True
     try:
         compressed_data = pickle.dumps(v, protocol=4)
+        print("SAVING DATE CACHE", cache_name, datekey)
         set_cache_value(cache_name, datekey, compressed_data)
         return True
     except:
