@@ -95,18 +95,14 @@ def loadfrom_historical_datecache(cache_name, days_back=1):
 
 def loadfrom_datecache(cache_name, date_resolution="%Y/W%V"):
     dt=current_date_localtime_dt()
-    print(dt)
     dts=dt.strftime(date_resolution)
-    print(dts)
 
     datekey =dts# current_date_localtime_dt().strftime(date_resolution)
     if is_redis_disabled():
         return get_memcache_value(cache_name, datekey)
 
     try:
-        print("LOADING DATE CACHE", cache_name, datekey)
         compressed_data=get_cache_value(cache_name, datekey)
-        print("VAL", compressed_data)
         if compressed_data is None:
             return None
         uncompreessed = pickle.loads(compressed_data)
