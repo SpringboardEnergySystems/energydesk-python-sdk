@@ -4,6 +4,8 @@ import redis
 import pendulum
 from datetime import timedelta
 from datetime import datetime
+import traceback
+import sys
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.sdk.redis.memory_cache import MemCache
 from energydeskapi.sdk.redis.redis_connection import connect_to_redis
@@ -99,6 +101,8 @@ def loadfrom_datecache(cache_name, date_resolution="%Y/W%V"):
         uncompreessed = pickle.loads(compressed_data)
         return uncompreessed
     except:
+        execstr = traceback.format_exc()
+        logger.error("Exception loading from REDIS " + str(execstr))
         return None
 
 def saveto_datecache(cache_name,  v, date_resolution="%Y/W%V"):
@@ -111,6 +115,8 @@ def saveto_datecache(cache_name,  v, date_resolution="%Y/W%V"):
         set_cache_value(cache_name, datekey, compressed_data)
         return True
     except:
+        execstr = traceback.format_exc()
+        logger.error("Exception saving to REDIS " + str(execstr))
         return False
 def loadfrom_staticcache(cache_name):
     if is_redis_disabled():
