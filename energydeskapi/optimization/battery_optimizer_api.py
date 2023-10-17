@@ -50,3 +50,4 @@ class BatteryOptimizationApi:
             logger.error("Problems optimizing battery " + str(error_msg))
         else:
             logger.info("Battery optimized")
+        return success, json_res, status_code, error_msg

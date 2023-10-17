@@ -3,6 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.optimization.battery_optimizer_api import BatteryOptimizationApi, OptimizerInput
 import pendulum
+import json
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -27,7 +28,11 @@ def optimize_battery(api_conn):
     indata.charging_power_kw=5
     indata.dis_charging_power_kw=5
 
-    BatteryOptimizationApi.optimize_battery(api_conn, indata)
+    success, json_res, status_code, error_msg=BatteryOptimizationApi.optimize_battery(api_conn, indata)
+
+    d=json.loads(json_res)
+
+    print(json.dumps(d, indent=2))
 
 
 
