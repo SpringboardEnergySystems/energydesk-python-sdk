@@ -119,7 +119,6 @@ def saveto_datecache(cache_name,  v, date_resolution="%Y/W%V"):
         return True
     try:
         compressed_data = pickle.dumps(v, protocol=4)
-        print("SAVING DATE CACHE", cache_name, datekey)
         set_cache_value(cache_name, datekey, compressed_data)
         return True
     except:
