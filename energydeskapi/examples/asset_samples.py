@@ -1,5 +1,8 @@
 import json
 import logging
+
+import pandas as pd
+
 from energydeskapi.system.default_asset_types import initialize_default_etrm_assettypes
 from energydeskapi.assets.assets_api import AssetsApi, AssetSubType, Asset, AssetTechData
 from energydeskapi.sdk.common_utils import init_api
@@ -9,6 +12,19 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
+
+
+def load_go_assets(api_conn):
+
+
+    df_assets = AssetsApi.get_assets_df(api_conn,
+                                            {'page_size': 1000, 'asset_category':AssetCategoryEnum.GROUPED_ASSET.value})
+    print(df_assets)
+    df_assets2 = AssetsApi.get_assets_df(api_conn,
+                                            {'page_size': 1000, 'asset_category':AssetCategoryEnum.PRODUCTION.value,'asset_type__icontains':"Hydro"})
+    print(df_assets2)
+    df=pd.concat([df_assets,df_assets2])
+    print(df)
 
 
 def get_clearing_accounts(api_conn):
@@ -81,6 +97,6 @@ if __name__ == '__main__':
     #initialize_default_etrm_assettypes(api_conn)
     #fetch_asset_categories(api_conn)
     #fetch_asset_types(api_conn)
-    register_asset_subtype(api_conn)
+    load_go_assets(api_conn)
     #register_asset_subtype(api_conn)
     #query_asset_info(api_conn)
