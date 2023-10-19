@@ -60,6 +60,13 @@ class AnnualAccountsApi:
         if json_res is not None:
             return json_res
         return None
+    
+    def post_manual_annual_accounts(api_connection, payload):
+        logger.info("Fetching company with id " + str(id))
+        json_res=api_connection.exec_post_url('/api/creditrisk/manualinput/', payload)
+        if json_res is not None:
+            return json_res
+        return None
 
 class RatingApi:
     """Class for rating API wrapper
