@@ -22,8 +22,8 @@ def optimize_battery(api_conn):
     #battery_capacity_kwh = serializers.FloatField(help_text=("Battery Capacity KWh"))
     ##battery_charging_power_kw = serializers.FloatField(help_text=("Discharging Power KW"))
     #battery_dicharging_power_kw = serializers.FloatField(help_text=("Discharging Power KW"))
-    indata.optimize_fromdate=pendulum.today().subtract(months=3)
-    indata.optimize_untildate=pendulum.today().subtract(months=1)
+    indata.optimize_fromdate=pendulum.today(tz="Europe/Oslo").subtract(days=40)
+    indata.optimize_untildate=pendulum.today(tz="Europe/Oslo").subtract(days=33)
     indata.capacity_kwh=100
     indata.charging_power_kw=5
     indata.dis_charging_power_kw=5
