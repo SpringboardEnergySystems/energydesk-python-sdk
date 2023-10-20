@@ -6,7 +6,7 @@ def test_decimals():
     m3 = FormattedMoney("3.782500", CurrencyCode.EUR)
     print(m)
     print(m3)
-    x=gen_json_money(m)
+    x=gen_json_money(m3)
     print(x)
     m2=gen_money_from_json(x)
     m = Money(Decimal(1), CurrencyCode.EUR)
