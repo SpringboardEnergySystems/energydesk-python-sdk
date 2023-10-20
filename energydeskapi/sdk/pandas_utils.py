@@ -26,7 +26,7 @@ def check_convert_datetime(d, timezone=None):
         d = d.astimezone(pytz.UTC)
         return d
 
-def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone(pytz.UTC), predefined_columns=[]):
+def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
 
     period_from=period_from if period_from!= str else pendulum.parse(period_from, tz=timezone)
     period_to =period_to if period_to!= str else  pendulum.parse(period_to,tz= timezone)
