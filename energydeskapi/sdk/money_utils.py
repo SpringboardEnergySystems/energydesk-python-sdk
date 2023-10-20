@@ -13,6 +13,8 @@ class CurrencyCode(Enum):
     USD = "USD"
     GBP = "GBP"
 
+
+
 class Money:
     def __init__(self, amount, currency=CurrencyCode.EUR):
         self.amount = parse_decimal(str(amount))
@@ -21,12 +23,18 @@ class Money:
         else:
             self.currency=currency
     def formatted_value(self, max_digits=9):
-        tmp=format_decimal(self.amount, decimal_places=max_digits, truncate=True)
-        #fmt='{:,.'+ str(max_digits)+ 'f}'
-        #tmp=fmt.format(self.amount)
-        tmp = tmp.rstrip('0')
-        tmp= tmp if (tmp[-1:]!="." and tmp[-1:]!=",") else tmp + "0"  # If last 0 is removed, add
-        return tmp
+        strval=format_decimal(self.amount, decimal_places=max_digits, truncate=True)
+        dec = max(strval.find("."), strval.find(","))
+        if dec>=0:  # Do not strip 0 if no decimal
+            strval = strval.rstrip('0')
+            missing=2-(len(strval)-dec)
+            if missing == 1: strval=strval+"0"
+            if missing == 2: strval = strval + "00"
+            return strval
+        else:
+            return strval + ",00"
+
+
     def __repr__(self):   # Max digits, but strip trailing zeros
         return  self.formatted_value() + " " + self.currency.value
     def __str__(self):
