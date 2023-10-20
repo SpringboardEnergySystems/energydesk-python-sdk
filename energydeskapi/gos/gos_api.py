@@ -26,7 +26,7 @@ class GoContract:
     self.delivery_date = None
     self.invoice_date = None
     self.invoice_with_mva = None
-    self.technology = GosTechnologyEnum.HYDRO
+    self.technology = GosTechnologyEnum.HYDRO.value
     self.quality = None
     self.certificates = []
 
@@ -45,7 +45,7 @@ class GoContract:
     if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date
     if self.support is not None: dict['support'] = self.support
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
-    if self.technology is not None: dict['technology'] = self.technology
+    if self.technology is not None: dict['technology'] = GosApi.get_go_technology_url(api_conn, self.technology)
     if self.quality is not None: dict['quality'] = self.quality
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
     if len(self.certificates) > 0:
@@ -62,7 +62,7 @@ class GoContract:
     c.production_until = None if not 'production_until' in d else d['production_until']
     c.support=False if not 'support' in d else key_from_url(d['support'])
     c.flexible_delivery = False if not 'flexible_delivery' in d else d['flexible_delivery']
-    c.technology = None if not 'technology' in d else d['technology']
+    c.technology = None if not 'technology' in d else key_from_url(d['technology'])
     c.quality = None if not 'quality' in d else d['quality']
     c.delivery_date = None if not 'delivery_date' in d else d['delivery_date']
     return c
