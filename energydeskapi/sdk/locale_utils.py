@@ -22,7 +22,10 @@ def get_country_code(country_pref_enum=CountryPrefEnum.NORWAY):
 def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True):
     dec_pattern="".join(["0" for l in range(decimal_places)])  #Number of minimum decials
     with babel_decimal.localcontext(babel_decimal.Context(rounding=babel_decimal.ROUND_HALF_UP)):
-        return babel_format_decimal(dec, format='#,##0.' + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
+        strdec= babel_format_decimal(dec, format='#,##0.' + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
+        strdec = strdec.rstrip('0')
+        strdec= strdec if (strdec[-1:]!="." and strdec[-1:]!=",") else strdec  # If last 0 is removed, add
+        return strdec
 def parse_decimal(dec_str, country_pref_enum=CountryPrefEnum.NORWAY):
     if type(dec_str) != str:
         return dec_str
