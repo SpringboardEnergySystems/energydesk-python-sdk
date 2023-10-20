@@ -63,7 +63,7 @@ class FormattedMoney(Money):
 def gen_json_money(mon):
 
     json =  {
-            "amount": mon.formatted_value(),  #Sent in Cents, Pence etc
+            "amount": parse_decimal(mon.formatted_value()),  #Sent in Cents, Pence etc
             "currency": str(mon.currency.value)
     }
     return json
