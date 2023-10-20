@@ -28,9 +28,8 @@ def check_convert_datetime(d, timezone=None):
 
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None, predefined_columns=[]):
 
-    print(period_from, period_to)
-    period_from=pendulum.parse(period_from, tz=timezone)
-    period_to = pendulum.parse(period_to,tz= timezone)
+    period_from=period_from if period_from!= str else pendulum.parse(period_from, tz=timezone)
+    period_to =period_to if period_to!= str else  pendulum.parse(period_to,tz= timezone)
     if len(predefined_columns)==0:
         df=pd.DataFrame()
     else:
