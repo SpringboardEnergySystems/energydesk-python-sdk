@@ -7,7 +7,7 @@ from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum,DeliveryTypeEnum,ProfileTypeEnum, BlockSizeEnum, MarketEnum
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
-from energydeskapi.types.contract_enum_types import  QuantityTypeEnum,QuantityUnitEnum, ContractTypeEnum, ContractStatusEnum
+from energydeskapi.types.contract_enum_types import  QuantityTypeEnum,QuantityUnitEnum, GosTechnologyEnum, ContractTypeEnum, ContractStatusEnum
 logger = logging.getLogger(__name__)
 #  Change
 
@@ -33,7 +33,7 @@ def generate_default_gofields( asset_pk, delivery_date, production_from, product
     go.extra_info=None
     go.asset=None
     go.support=True
-    go.technology="Hydro"
+    go.technology=GosTechnologyEnum.HYDRO.value
     go.quality=None
     go.flexible_delivery=False
     go.delivery_date=delivery_date
