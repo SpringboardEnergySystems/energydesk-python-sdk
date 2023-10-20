@@ -22,7 +22,7 @@ class Money:
             self.currency = CurrencyCode._value2member_map_[currency]
         else:
             self.currency=currency
-    def formatted_value(self, max_digits=9):
+    def formatted_value(self, max_digits=5):
         strval=format_decimal(self.amount, decimal_places=max_digits, truncate=True)
         dec = max(strval.find("."), strval.find(","))
         if dec>=0:  # Do not strip 0 if no decimal
