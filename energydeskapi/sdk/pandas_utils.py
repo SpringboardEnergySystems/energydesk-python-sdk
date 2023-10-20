@@ -9,6 +9,7 @@ import pytz
 from dateutil.relativedelta import relativedelta
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from decimal import Decimal
+import pendulum
 def make_none_tz( utc_dt):
     tmp =str(utc_dt)[:19]
     return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S')
@@ -25,13 +26,13 @@ def check_convert_datetime(d, timezone=None):
         return d
 
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None, predefined_columns=[]):
-    period_from=check_convert_datetime(period_from, timezone)
-    period_to = check_convert_datetime(period_to, timezone)
+    period_from=pendulum.parse(period_from, tz=timezone)
+    period_to = pendulum.parse(period_to,tz= timezone)
     if len(predefined_columns)==0:
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
-    ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
+    ix = pd.date_range(start=period_from, end=period_to, freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
