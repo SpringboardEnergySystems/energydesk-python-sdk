@@ -24,8 +24,10 @@ class QuantityUnitEnum(Enum):
     LOTS = 5
     DECIMALS = 6
 
-
-
+class GosTechnologyEnum(Enum):
+    HYDRO = 1
+    WIND = 2
+    SOLAR = 3
 
 class GosEnergySources(Enum):
     HYDRO = 1
@@ -59,6 +61,13 @@ def quantity_unit_description(x):
         QuantityUnitEnum.EUR: "EUR amount",
         QuantityUnitEnum.LOTS: "Lots",
         QuantityUnitEnum.DECIMALS: "Decimals"
+    }[x]
+
+def go_technology_description(x):
+    return {
+        GosTechnologyEnum.HYDRO: "Hydro power",
+        GosTechnologyEnum.WIND: "Wind power",
+        GosTechnologyEnum.SOLAR: "Solar power",
     }[x]
 
 def contract_type_description(x):
