@@ -4,7 +4,7 @@
 from numbers import Number
 from enum import Enum
 from decimal import Decimal
-
+from energydeskapi.sdk.locale_utils import format_decimal
 class CurrencyCode(Enum):
     NOK = "NOK"
     SEK = "SEK"
@@ -21,11 +21,12 @@ class Money:
         else:
             self.currency=currency
     def formatted_value(self, max_digits=5):
-        fmt='{:,.'+ str(max_digits)+ 'f}'
-        tmp=fmt.format(self.amount)
-        tmp = tmp.rstrip('0')
-        tmp= tmp if tmp[-1:]!="." else tmp + "0"  # If last 0 is removed, add
-        return tmp
+        return format_decimal(self.amount, decimal_places=max_digits, truncate=True)
+        #fmt='{:,.'+ str(max_digits)+ 'f}'
+        #tmp=fmt.format(self.amount)
+        #tmp = tmp.rstrip('0')
+        #tmp= tmp if tmp[-1:]!="." else tmp + "0"  # If last 0 is removed, add
+        #return tmp
     def __repr__(self):   # Max digits, but strip trailing zeros
         return  self.formatted_value() + " " + self.currency.value
     def __str__(self):
