@@ -24,6 +24,8 @@ def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places
     with babel_decimal.localcontext(babel_decimal.Context(rounding=babel_decimal.ROUND_HALF_UP)):
         return babel_format_decimal(dec, format='#,##0.' + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
 def parse_decimal(dec_str, country_pref_enum=CountryPrefEnum.NORWAY):
+    if type(dec_str) != str:
+        return dec_str
     return babel_parse_decimal(dec_str,locale=get_country_code(country_pref_enum))
 
 def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'),country_pref_enum=CountryPrefEnum.NORWAY):
