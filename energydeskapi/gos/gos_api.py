@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from energydeskapi.geolocation.location_api import LocationApi
+from energydeskapi.types.contract_enum_types import GosTechnologyEnum
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
@@ -25,7 +26,7 @@ class GoContract:
     self.delivery_date = None
     self.invoice_date = None
     self.invoice_with_mva = None
-    self.technology = "Hydro"
+    self.technology = GosTechnologyEnum.HYDRO
     self.quality = None
     self.certificates = []
 
@@ -37,6 +38,7 @@ class GoContract:
     dict['pk'] = self.pk
     if self.production_from is not None: dict['production_from'] = check_fix_date2str(self.production_from)
     if self.production_until is not None: dict['production_until'] = check_fix_date2str(self.production_until)
+    if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn, self.asset)
     if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn, self.asset)
     if self.extra_info is not None: dict['extra_info'] = self.extra_info
     if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
@@ -225,6 +227,18 @@ class GosApi:
     return json_res
 
   @staticmethod
+  def get_go_technology_url(api_connection, tech):
+    """Fetches url for certificates
+
+    :param api_connection: class with API token for use with API
+    :type api_connection: str, required
+    :param certificate_pk: type of contract
+    :type certificate_pk: integer, required
+    """
+    type_pk = tech if isinstance(tech, int) else tech.value
+    return api_connection.get_base_url() + '/api/portfoliomanager/gotechnology/' + str(type_pk) + "/"
+
+  @staticmethod
   def get_source_collection_url(api_connection, source_collection_pk):
     """Fetches url for certificates
 
@@ -276,6 +290,14 @@ class GosApi:
   @staticmethod
   def get_source_data(api_connection, parameters={}):
     json_res = api_connection.exec_get_url('/api/gos/sourcedata/', parameters)
+    if json_res is not None:
+      return json_res
+    return None
+
+
+  @staticmethod
+  def get_go_technologies(api_connection, parameters={}):
+    json_res = api_connection.exec_get_url('/api/portfoliomanager/gotechnology/', parameters)
     if json_res is not None:
       return json_res
     return None
