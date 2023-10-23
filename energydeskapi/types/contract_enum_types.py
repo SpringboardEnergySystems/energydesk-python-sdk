@@ -29,9 +29,6 @@ class GosTechnologyEnum(Enum):
     WIND = 2
     SOLAR = 3
 
-class GosEnergySources(Enum):
-    HYDRO = 1
-    NORWEGIAN_HYDRO = 2
 
 class ContractTypeEnum(Enum):
     NASDAQ = 1

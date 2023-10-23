@@ -27,14 +27,21 @@ def generate_product_code(api_conn, contract, gofields):
     print(asset_json)
     return "GoO_" + asset_json['description'] + "_" + str(gofields.delivery_date)[:10]
 
+def default_quality_codes():
+    codes=[]
+    codes.append("NORWEGIAN_HYDRO", "Norwegian Hydro")
+    codes.append("HYDRO", "Hydro")
+    codes.append("BVM", "Bra Miljøvalg")
+
+
+
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
-    go.certificates=[]
     go.extra_info=None
     go.asset=None
     go.support=True
     go.technology=GosTechnologyEnum.HYDRO.value
-    go.quality=None
+    go.quality=[]
     go.flexible_delivery=False
     go.delivery_date=delivery_date
     go.production_from=production_from

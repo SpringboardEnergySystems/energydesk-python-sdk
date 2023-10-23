@@ -27,8 +27,8 @@ class GoContract:
     self.invoice_date = None
     self.invoice_with_mva = None
     self.technology = GosTechnologyEnum.HYDRO.value
-    self.quality = None
-    self.certificates = []
+    self.quality = []
+
 
   def add_certificates(self, certificate):
     self.certificates.append(certificate)
@@ -46,10 +46,9 @@ class GoContract:
     if self.support is not None: dict['support'] = self.support
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
     if self.technology is not None: dict['technology'] = GosApi.get_go_technology_url(api_conn, self.technology)
-    if self.quality is not None: dict['quality'] = self.quality
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
     if len(self.certificates) > 0:
-      dict['certificates'] = self.certificates
+      dict['quality'] = self.quality
     print(dict)
     return dict
 
