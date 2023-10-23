@@ -69,45 +69,10 @@ class GoContract:
 
 class GosApi:
   """Class for contracts in api
+  These are now stored as normal contracts with an added object for the certificate part
 
   """
 
-  @staticmethod
-  def lookup_go_contract_pk(api_connection,
-                            contract_pk):
-    """Fetches GoO contracts from pk
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param contract_pk: personal key of contract
-    :type contract_pk: str, required
-    """
-    json_res = api_connection.exec_get_url('/api/gos/contractlookup?contract_pk=' + str(contract_pk))
-    if json_res is not None:
-      logger.info("Looking up main contract " + str(contract_pk) + " resulting in GO " + str(json_res[0]['pk']))
-      return json_res[0]['pk']
-    logger.warning("Looking up main contract " + str(contract_pk) + " failed")
-    return 0
-
-  @staticmethod
-  def upsert_contract(api_connection,
-                      go_contract):
-    """Registers GoO contracts
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param contracts: contracts to be registered
-    :type contracts: str, required
-    """
-
-    if go_contract.pk > 0:
-      success, json_res, status_code, error_msg = api_connection.exec_patch_url(
-        '/api/gos/gocontracts/' + str(go_contract.pk) + "/", go_contract.get_dict(api_connection))
-    else:
-      # print(json.dumps(go_contract.get_dict(api_connection), indent=2))
-      success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/gocontracts/',
-                                                                               go_contract.get_dict(api_connection))
-    return success, json_res, status_code, error_msg
 
   @staticmethod
   def get_quality_url(api_connection, quality_pk):
@@ -120,41 +85,6 @@ class GosApi:
     """
     return api_connection.get_base_url() + '/api/portfoliomanager/go/quality/' + str(quality_pk) + "/"
 
-  @staticmethod
-  def get_contracts_embedded(api_connection, parameters={}):
-    """Fetches certificates from server
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param contract_status_enum: status of contract
-    :type contract_status_enum: str, required
-    """
-    json_res = api_connection.exec_get_url('/api/gos/gocontracts/embedded/', parameters)
-    return json_res
-
-  @staticmethod
-  def get_contracts(api_connection, parameters={}):
-    """Fetches certificates from server
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param contract_status_enum: status of contract
-    :type contract_status_enum: str, required
-    """
-    json_res = api_connection.exec_get_url('/api/gos/gocontracts/', parameters)
-    return json_res
-
-  @staticmethod
-  def get_contract(api_connection, go_contract_pk):
-    """Fetches certificates from server
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param contract_status_enum: status of contract
-    :type contract_status_enum: str, required
-    """
-    json_res = api_connection.exec_get_url('/api/gos/gocontracts/' + str(go_contract_pk) + "/")
-    return json_res
 
   @staticmethod
   def get_qualities(api_connection, parameters={}):
@@ -214,7 +144,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_go_technology_url(api_connection, tech):
+  def get_technology_url(api_connection, tech):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API
@@ -228,7 +158,7 @@ class GosApi:
 
 
   @staticmethod
-  def get_go_technologies(api_connection, parameters={}):
+  def get_technologies(api_connection, parameters={}):
     json_res = api_connection.exec_get_url('/api/portfoliomanager/go/technology/', parameters)
     if json_res is not None:
       return json_res
