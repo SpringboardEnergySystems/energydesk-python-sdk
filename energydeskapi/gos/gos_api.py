@@ -110,7 +110,7 @@ class GosApi:
     return success, json_res, status_code, error_msg
 
   @staticmethod
-  def get_certificate_url(api_connection, certificate_pk):
+  def get_quality_url(api_connection, quality_pk):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API
@@ -118,7 +118,7 @@ class GosApi:
     :param certificate_pk: type of contract
     :type certificate_pk: integer, required
     """
-    return api_connection.get_base_url() + '/api/portfoliomanager/certificates/' + str(certificate_pk) + "/"
+    return api_connection.get_base_url() + '/api/portfoliomanager/go/quality/' + str(quality_pk) + "/"
 
   @staticmethod
   def get_contracts_embedded(api_connection, parameters={}):
@@ -157,7 +157,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_certificates(api_connection, parameters={}):
+  def get_qualities(api_connection, parameters={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -165,26 +165,26 @@ class GosApi:
     :param contract_status_enum: status of contract
     :type contract_status_enum: str, required
     """
-    json_res = api_connection.exec_get_url('/api/portfoliomanager/certificates/', parameters)
+    json_res = api_connection.exec_get_url('/api/portfoliomanager/go/quality/', parameters)
     return json_res
 
   @staticmethod
-  def get_certificates_df(api_connection, parameters={}):
+  def get_qualities_df(api_connection, parameters={}):
     """Fetches all companies in system with basic key+ name infmation
 
     :param api_connection: class with API token for use with API
     :type api_connection: str, required
     """
-    logger.info("Fetching companylist")
+    logger.info("Fetching quality list")
     parameters['page_size'] = 1000
-    json_res = GosApi.get_certificates(api_connection, parameters)
+    json_res = GosApi.get_qualities(api_connection, parameters)
     if json_res is None:
       return None
     df = pd.DataFrame(data=json_res)
     return df
 
   @staticmethod
-  def get_certificate_by_key(api_connection, key):
+  def get_quality_by_key(api_connection, key):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -192,24 +192,12 @@ class GosApi:
     :param contract_status_enum: status of contract
     :type contract_status_enum: str, required
     """
-    json_res = api_connection.exec_get_url('/api/gos/certificates/' + str(key) + "/")
+    json_res = api_connection.exec_get_url('/api/portfoliomanager/go/quality/' + str(key) + "/")
     return json_res
 
-  @staticmethod
-  def get_energysource_by_key(api_connection, energy_source_enum):
-    """Fetches certificates from server
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param contract_status_enum: status of contract
-    :type contract_status_enum: str, required
-    """
-    esource_key = energy_source_enum if isinstance(energy_source_enum, int) else energy_source_enum.value
-    json_res = api_connection.exec_get_url('/api/gos/energysources/' + str(esource_key) + "/")
-    return json_res
 
   @staticmethod
-  def register_certificate(api_connection, certificate, description):
+  def register_quality(api_connection, shortname, description):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -218,10 +206,10 @@ class GosApi:
     :type contract_status_enum: str, required
     """
     payload = {
-      "shortname": certificate,
+      "code": shortname,
       "description": description
     }
-    success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/certificates/',
+    success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/go/quality/',
                                                                              payload)
     return json_res
 
@@ -235,68 +223,13 @@ class GosApi:
     :type certificate_pk: integer, required
     """
     type_pk = tech if isinstance(tech, int) else tech.value
-    return api_connection.get_base_url() + '/api/portfoliomanager/gotechnology/' + str(type_pk) + "/"
+    return api_connection.get_base_url() + '/api/portfoliomanager/go/technology/' + str(type_pk) + "/"
 
-  @staticmethod
-  def get_source_collection_url(api_connection, source_collection_pk):
-    """Fetches url for certificates
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param certificate_pk: type of contract
-    :type certificate_pk: integer, required
-    """
-    return api_connection.get_base_url() + '/api/gos/sourcecollection/' + str(source_collection_pk) + "/"
-
-  @staticmethod
-  def get_source_collections(api_connection, parameters={}):
-    json_res = api_connection.exec_get_url('/api/gos/sourcecollection/', parameters)
-    return json_res
-
-  @staticmethod
-  def get_source_collections_embedded(api_connection, parameters={}):
-    logger.info("Fetching source collection")
-    # parameters['page_size']=1000
-    json_res = api_connection.exec_get_url('/api/gos/sourcecollection/embedded/', parameters)
-    # json_res=GosApi.get_source_collections(api_connection, parameters)
-    return json_res
-
-  @staticmethod
-  def register_source_collection(api_connection, local_area_pk, go_manager_pk, asset_list):
-    """Registers a souce collection
-
-    :param api_connection: class with API token for use with API
-    :type api_connection: str, required
-    :param local_area_pk: Key for local aeea
-    :type local_area_pk: integer, required
-    :param asset_list: list of asset primary keys
-    :type asset_list: lst, required
-    """
-    asset_url_list = []
-    for a in asset_list:
-      asset_url_list.append(AssetsApi.get_asset_url(api_connection, a))
-
-    payload = {
-      "local_area": LocationApi.get_local_area_url(api_connection, local_area_pk),
-      'go_manager': CustomersApi.get_company_url(api_connection, go_manager_pk),
-      "assets_in_area": asset_url_list
-    }
-    print(payload)
-    success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/gos/sourcecollection/', payload)
-    print(success, json_res, status_code, error_msg)
-    return json_res
-
-  @staticmethod
-  def get_source_data(api_connection, parameters={}):
-    json_res = api_connection.exec_get_url('/api/gos/sourcedata/', parameters)
-    if json_res is not None:
-      return json_res
-    return None
 
 
   @staticmethod
   def get_go_technologies(api_connection, parameters={}):
-    json_res = api_connection.exec_get_url('/api/portfoliomanager/gotechnology/', parameters)
+    json_res = api_connection.exec_get_url('/api/portfoliomanager/go/technology/', parameters)
     if json_res is not None:
       return json_res
     return None
