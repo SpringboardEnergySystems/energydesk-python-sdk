@@ -22,7 +22,9 @@ class Money:
             self.currency = CurrencyCode._value2member_map_[currency]
         else:
             self.currency=currency
-    def formatted_value(self, max_digits=5):
+    def formatted_value(self, max_digits=5, nodisplay=True):
+        if nodisplay:
+            return str(self.amount)
         strval=format_decimal(self.amount, decimal_places=max_digits, truncate=True)
         dec = max(strval.find("."), strval.find(","))
         if dec>=0:  # Do not strip 0 if no decimal
@@ -51,7 +53,7 @@ class Money:
 
 
 class FormattedMoney(Money):
-    def __str__(self):
+    def __str__(self, nodisplay=True):
         if self.currency==CurrencyCode.EUR:
             return "€ " + self.formatted_value()
         elif self.currency==CurrencyCode.USD:
