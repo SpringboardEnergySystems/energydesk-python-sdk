@@ -212,7 +212,6 @@ class BilateralApi:
                 "activation_price":activation_price
         }
 
-        print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)
         return success, json_res, status_code, error_msg
     @staticmethod
