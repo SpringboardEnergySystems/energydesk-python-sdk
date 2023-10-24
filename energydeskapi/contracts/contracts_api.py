@@ -196,6 +196,7 @@ class Contract:
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
         if len(self.certificates) > 0:
+            print("Dicstionaries ", self.certificates)
             dict["certificates"] = self.certificates
         return dict
 
@@ -272,6 +273,7 @@ class Contract:
         cert_dicts=[]
         for c in self.certificates:
             cert_dicts.append(c.get_dict(api_conn))
+            print("eh... one ", c.get_dict(api_conn))
         dict["certificates"] = cert_dicts
         return dict
 
