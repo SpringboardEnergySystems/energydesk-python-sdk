@@ -31,7 +31,6 @@ class GoContract:
 
 
   def add_quality(self, certificate):
-    print("ADDING QUA")
     self.quality.append(certificate)
 
   def get_dict(self, api_conn):
@@ -48,9 +47,8 @@ class GoContract:
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
     if self.technology is not None: dict['technology'] = GosApi.get_technology_url(api_conn, self.technology)
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
-    if len(self.quality) > 0:
-      print("Adding quality", self.quality)
-      dict['quality'] = self.quality
+
+    dict['quality'] = self.quality
     print(dict)
     return dict
 

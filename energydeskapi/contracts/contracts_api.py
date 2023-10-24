@@ -273,7 +273,6 @@ class Contract:
         cert_dicts=[]
         for c in self.certificates:
             cert_dicts.append(c.get_dict(api_conn))
-            print("eh... one ", c.get_dict(api_conn))
         dict["certificates"] = cert_dicts
         return dict
 
