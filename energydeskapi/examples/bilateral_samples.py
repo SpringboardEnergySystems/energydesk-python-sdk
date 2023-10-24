@@ -64,6 +64,42 @@ def calculate_price(api_conn):
     print(cprices)
 
 
+def calculate_capacity_price(api_conn):
+    fromd=str(pendulum.parse("2024-02-01", tz="Europe/Oslo"))
+    untild = str(pendulum.parse("2024-03-01", tz="Europe/Oslo"))
+    periods=[["Holmlia", fromd, untild]]
+
+    months=get_baseload_months()
+    for m in months.keys():
+        months[m]=0
+    months['January'] = 1
+    months['February'] = 0.2
+    months['March'] = 1
+    months['October'] = 0
+    months['November'] = 0
+    months['December'] = 0
+    print(months)
+    weekdays=get_baseload_weekdays()
+    for m in weekdays.keys():
+        weekdays[m]=0
+    weekdays['Thursday'] = 1
+    weekdays['Friday'] = 1
+    weekdays['Sunday'] = 1
+    hours=get_baseload_dailyhours()
+    for m in hours.keys():
+        hours[m]=0
+    hours[21] = 0.6
+    hours[22]=0.4
+    subst={
+        "monthly_profile":months,
+        "weekday_profile":weekdays,
+        "daily_profile":hours
+    }
+    print(periods)
+    success, returned_data, status_code, error_msg=BilateralApi.calculate_capacity_price(api_conn,periods, subst, 1000, 2000)
+    print(returned_data)
+
+
 
 def generate_sell_prices(api_conn):
     mw=500
@@ -115,6 +151,6 @@ if __name__ == '__main__':
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    get_bilateral_trades(api_conn)
+    calculate_capacity_price(api_conn)
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)

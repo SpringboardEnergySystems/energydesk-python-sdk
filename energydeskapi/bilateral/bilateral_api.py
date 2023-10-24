@@ -196,6 +196,26 @@ class BilateralApi:
         return df
 
     @staticmethod
+    def calculate_capacity_price(api_connection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
+            })
+        qry_payload = {
+                "currency_code": currency_code,
+                "substation_profile":substation_profile,
+                "periods":dict_periods,
+                "current_price": current_price,
+                "activation_price":activation_price
+        }
+
+        print(qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)
+        return success, json_res, status_code, error_msg
+    @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
                                  curve_model, wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
                                  monthly_profile=get_baseload_months(),
