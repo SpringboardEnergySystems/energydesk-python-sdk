@@ -31,6 +31,7 @@ class GoContract:
 
 
   def add_quality(self, certificate):
+    print("ADDING QUA")
     self.quality.append(certificate)
 
   def get_dict(self, api_conn):
