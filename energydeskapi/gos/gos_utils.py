@@ -40,7 +40,6 @@ def generate_default_gofields( asset_pk, delivery_date, production_from, product
     go.asset=None
     go.support=True
     go.technology=GosTechnologyEnum.HYDRO.value
-    go.quality=[]
     go.flexible_delivery=False
     go.delivery_date=delivery_date
     go.production_from=production_from
