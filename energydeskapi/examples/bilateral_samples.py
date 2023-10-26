@@ -9,11 +9,27 @@ from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
 import pendulum
+from energydeskapi.bilateral.capacity_api import CapacityApi
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+
+def get_capacity_allocations(api_conn):
+    jsond=CapacityApi.get_capacity_allocation(api_conn)
+    df=pd.DataFrame(data=eval(jsond))
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df.index=df['datetime']
+    df['month']=df['weekday']=df['hour']=""
+    def specify_rel_periods(row):
+        row['month']=row['datetime'].strftime("%B")
+        row['weekday'] = row['datetime'].strftime("%A")
+        row['hour'] = row['datetime'].hour
+
+        return row
+    df=df.apply(specify_rel_periods, axis=1)
+    print(df)
 
 def get_deliveries(api_conn):
     fromd="2023-01-01"
@@ -147,10 +163,11 @@ def generate_adjusted_curve(api_conn):
     print(df_curve)
 
 if __name__ == '__main__':
+    #pd.set_option('display.max_rows', None)
     api_conn=init_api()
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    calculate_capacity_price(api_conn)
+    get_capacity_allocations(api_conn)
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)

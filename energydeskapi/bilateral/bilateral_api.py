@@ -195,6 +195,39 @@ class BilateralApi:
         df=df.tz_convert("Europe/Oslo")
         return df
 
+
+    @staticmethod
+    def get_capacity_allocation(api_connection, periods, substation_profile):
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
+            })
+        qry_payload = {
+                "substation_profile":substation_profile,
+                "periods":dict_periods,
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/capacity/allocation/', qry_payload)
+        return success, json_res, status_code, error_msg
+    @staticmethod
+    def upsert_capacity_allocation(api_connection, periods, substation_profile, capacity_map):
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
+            })
+        qry_payload = {
+                "capacity_map": capacity_map,
+                "substation_profile":substation_profile,
+                "periods":dict_periods,
+        }
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/capacity/allocation/', qry_payload)
+        return success, json_res, status_code, error_msg
     @staticmethod
     def calculate_capacity_price(api_connection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
         dict_periods=[]
