@@ -30,6 +30,7 @@ def get_capacity_allocations(api_conn):
         return row
     df=df.apply(specify_rel_periods, axis=1)
     print(df)
+    return df
 
 def get_deliveries(api_conn):
     fromd="2023-01-01"
