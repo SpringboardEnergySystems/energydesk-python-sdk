@@ -83,6 +83,8 @@ def conv_from_pendulum(pendulum_dt, tz="UTC"):
     timezone = pytz.timezone(tz) if type(tz)==str else tz
     datetime_string = pendulum_dt.to_datetime_string()
     unaware_dt= datetime.fromisoformat(datetime_string)
+    print("unaware_dt",unaware_dt)
+    print("aware",unaware_dt.astimezone(timezone))
     return unaware_dt.astimezone(timezone)
 
 def safe_set_utc(indate):
