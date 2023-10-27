@@ -118,8 +118,8 @@ class PortfolioViewsApi:
 
         if json_res is None:
             return None, None
-
-        df = pd.read_json(json_res, orient="table")
-        #df = pd.DataFrame(data=eval(json_res), orient)
+        print(json_res)
+        df = pd.read_json(json.dumps(json_res), orient="table")
+        #df = pd.DataFrame(data=json_res)
 
         return id, df
