@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.product_utils import convert_productjson_dataframe
+from energydeskapi.types.market_enum_types import MarketEnum
 logger = logging.getLogger(__name__)
 
 class Singleton(object):
