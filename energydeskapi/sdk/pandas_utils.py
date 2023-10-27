@@ -34,9 +34,11 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
+    print(period_from,conv_from_pendulum(period_from),period_to, conv_from_pendulum(period_to) )
     ix = pd.date_range(start=conv_from_pendulum(period_from), end=conv_from_pendulum(period_to), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     #df_new=df_new.tz_localize(pytz.UTC)
+    print(df_new)
     df_new = df_new.tz_convert(timezone)
     if len(df_new.index)>0:
         df_new=df_new.head(-1)

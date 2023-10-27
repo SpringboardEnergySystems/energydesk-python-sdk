@@ -15,21 +15,53 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
-
+import seaborn as sns
+from energydeskapi.sdk.locale_utils import format_decimal, parse_decimal
 def get_capacity_allocations(api_conn):
     jsond=CapacityApi.get_capacity_allocation(api_conn)
     df=pd.DataFrame(data=eval(jsond))
     df['datetime'] = pd.to_datetime(df['datetime'])
     df.index=df['datetime']
-    df['month']=df['weekday']=df['hour']=""
+    df['month']=df['day']=df['hour']=""
     def specify_rel_periods(row):
-        row['month']=row['datetime'].strftime("%B")
-        row['weekday'] = row['datetime'].strftime("%A")
+        row['month_num']=row['datetime'].month
+        row['month'] = row['datetime'].strftime("%B")
+        row['day'] = row['datetime'].day
         row['hour'] = row['datetime'].hour
-
+        #row['total_weight'] = float(parse_decimal(format_decimal(float(row['total_weight']))))
         return row
     df=df.apply(specify_rel_periods, axis=1)
+    df=df.sort_values(["month_num", "day", "hour"])
     print(df)
+    import matplotlib.pyplot as plt
+    # add a column hours and days
+    df["hours"] = df.index.hour
+    df["days"] = df.index.map(lambda x: x.strftime('%m : %b-%d'))
+    # create pivot table, days will be columns, hours will be rows
+    piv = pd.pivot_table(df, values="total_weight", index=["days"], columns=["hours"], fill_value=0)
+    ax = sns.heatmap(piv, linewidths=.3, cmap='coolwarm',annot=True)
+    #plt.figure(figsize=(10, 6))
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=90)
+    #plt.tight_layout()
+    plt.show()
+    return
+    print(df)
+    weekdayhour = df.groupby(["month", "day", "hour"]).max()
+    heat_weekdayhour = weekdayhour.reset_index()
+    print(heat_weekdayhour)
+    heat_weekdayhour = heat_weekdayhour.pivot(index=[ "month", "day"], columns=[ "hour"], values="total_weight")
+    heat_weekdayhour=heat_weekdayhour.fillna(0)
+    print(heat_weekdayhour)
+    ht=sns.heatmap(heat_weekdayhour)
+
+    ht=sns.heatmap(heat_weekdayhour, annot=True, cmap='coolwarm')
+    df = heat_weekdayhour.style.background_gradient(cmap='coolwarm')
+    #print(df.to_html())
+    fig = ht.get_figure()
+    fig.savefig("out.png")
+    text_file = open("index.html", "w")
+    text_file.write(df.to_html())
+    text_file.close()
     return df
 
 def get_deliveries(api_conn):
