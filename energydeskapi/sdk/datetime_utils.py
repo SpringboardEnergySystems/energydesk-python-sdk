@@ -80,7 +80,7 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
 def conv_from_pendulum(pendulum_dt, tz="UTC"):
     if type(pendulum_dt)== datetime or type(pendulum_dt)==Timestamp:
         return pendulum_dt
-    timezone = pytz.timezone(tz)
+    timezone = pytz.timezone(tz) if type(tz)==str else tz
     datetime_string = pendulum_dt.to_datetime_string()
     unaware_dt= datetime.fromisoformat(datetime_string)
     return unaware_dt.astimezone(timezone)
