@@ -240,6 +240,7 @@ class ApiConnection(object):
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
+            print(result.url)
         else:
             result = requests.get(server_url, headers=headers)
         if result.status_code<202:

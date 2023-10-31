@@ -37,19 +37,19 @@ def get_settlement_view(api_conn):
 
     filter={
         'view_currency': 'NOK',
-        'portfolio':10,
+        'portfolio':44,
         #'commodity__area': 'NO1',
         "view_period_from__gte":'2023-08-01',
         "view_period_until__lt": '2023-09-01',
         "commodity__delivery_from": '2023-08-01',
         "commodity__delivery_until": '2023-09-01',
         "resolution":PeriodResolutionEnum.HOURLY.value,
-        "groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value,PeriodViewGroupingEnum.TRADEID.value]
+        "groupby__in":[PeriodViewGroupingEnum.AREA.value,PeriodViewGroupingEnum.TRADEID.value]
     }
     print(filter)
     v, df=SettlementApi.get_settlement_view_df(api_conn, filter)
 
-    subset = ['trade_id', 'counterpart',  'period_from', 'period_until','price', 'value', 'avgcost', 'avgcostsell', 'netvol', 'sellvol']
+    subset = ['trade_id', 'area',  'period_from', 'period_until','price', 'value', 'avgcost', 'avgcostsell', 'netvol', 'sellvol']
     print(df[subset])
     df_inv=df[subset]
     df_inv=df_inv.rename(columns={'period_from':'invoice_period_from','period_until':'invoice_period_until',
