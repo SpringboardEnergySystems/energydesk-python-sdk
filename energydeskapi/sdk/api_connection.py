@@ -239,7 +239,9 @@ class ApiConnection(object):
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
+            print(parameters, headers)
             result = requests.get(server_url,  headers=headers, params=parameters)
+            print(result.request.url)
         else:
             result = requests.get(server_url, headers=headers)
         if result.status_code<202:
