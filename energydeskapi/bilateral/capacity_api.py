@@ -41,6 +41,7 @@ class CapacityApi:
     if json_res is not None:
       return json_res
     return None
+
   @staticmethod
   def upsert_capacity_request(api_connection, capacity_profile):
       if capacity_profile.pk > 0:
