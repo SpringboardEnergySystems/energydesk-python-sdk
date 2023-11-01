@@ -111,10 +111,9 @@ class ManualCreditCalculation:
         return self.__dict__
 
 class ManualCreditRiskApi:
-     """Class for credit risk
+    """Class for credit risk
 
     """
-
     @staticmethod
     def save_manual_credit_rating(api_connection, payload):
         manual_credit_params = ManualCreditCalculation(payload)
