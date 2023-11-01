@@ -6,10 +6,13 @@ from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
-from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
+from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
 import pendulum
-from energydeskapi.bilateral.capacity_api import CapacityApi
+
+from energydeskapi.bilateral.capacity_api import CapacityApi, CapacityProfile
+from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -18,10 +21,39 @@ logging.basicConfig(level=logging.INFO,
 
 def test_capacity_config(api_conn):
     params={"grid_asset_id": 1,
-            "period_from": str(pendulum.Date(2024,1,1)),
-            "period_until": str(pendulum.Date(2024,1,12))}
+            "period_from": str(pendulum.datetime(2024,1,1, tz="Europe/Oslo")),
+            "period_until": str(pendulum.datetime(2024,1,12, tz="Europe/Oslo"))}
     jsond=CapacityApi.get_capacity_profile(api_conn, params)
     print(jsond)
+
+def register_test_capacity_requests(api_conn):
+    params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
+    assets=AssetsApi.get_assets_embedded(api_conn, params)
+    for ass in assets['results']:
+        cap=CapacityProfile()
+        cap.grid_component=ass['pk']
+        cap.period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
+        cap.period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
+        prof=get_zero_profile()
+
+        prof["monthly_profile"]['January']=1
+        prof["monthly_profile"]['February'] = 1
+        prof["monthly_profile"]['March'] = 0.5
+        prof["weekday_profile"]['Monday'] = 1.0
+        prof["weekday_profile"]['Tuesday'] = 1.0
+        prof["weekday_profile"]['Wednesday'] = 1.0
+        prof["weekday_profile"]['Thursday'] = 1.0
+        prof["weekday_profile"]['Friday'] = 0.9
+        prof["weekday_profile"]['Saturday'] = 0.4
+        prof["weekday_profile"]['Sunday'] = 0.4
+        for i in range(15,19):
+            prof["daily_profile"][i] = 1.0
+        for i in range(7,10):
+            prof["daily_profile"][i] = 1.0
+        cap.requested_profile = prof
+        #print(cap.get_dict(api_conn))
+        CapacityApi.upsert_capacity_request(api_conn,cap)
+
 
 import seaborn as sns
 from energydeskapi.sdk.locale_utils import format_decimal, parse_decimal
@@ -209,6 +241,8 @@ if __name__ == '__main__':
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
+    register_test_capacity_requests(api_conn)
     test_capacity_config(api_conn)
+
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)
