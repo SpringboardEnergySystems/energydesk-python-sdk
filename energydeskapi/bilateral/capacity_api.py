@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class CapacityApi:
 
   @staticmethod
-  def get_capacity_allocation(api_connection, parameters={}):
+  def get_capacity_profile(api_connection, parameters={}):
     json_res = api_connection.exec_get_url('/api/bilateral/capacity/request/calculated/', parameters)
     if json_res is not None:
       return json_res
