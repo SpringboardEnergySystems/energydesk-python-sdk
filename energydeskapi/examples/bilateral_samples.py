@@ -15,6 +15,14 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+
+def test_capacity_config(api_conn):
+    params={"grid_asset_id": 1,
+            "period_from": str(pendulum.Date(2024,1,1)),
+            "period_until": str(pendulum.Date(2024,1,12))}
+    jsond=CapacityApi.get_capacity_profile(api_conn, params)
+    print(jsond)
+
 import seaborn as sns
 from energydeskapi.sdk.locale_utils import format_decimal, parse_decimal
 def get_capacity_allocations(api_conn):
@@ -201,6 +209,6 @@ if __name__ == '__main__':
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    get_capacity_allocations(api_conn)
+    test_capacity_config(api_conn)
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)
