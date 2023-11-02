@@ -97,3 +97,27 @@ class CreditRiskApi:
         if json_res is not None:
             return json_res
         return None
+
+class ManualCreditCalculation:
+    def __init__(self, **payload):
+        """
+        company: ForeignKey to company object
+        rating_datetime: datetime object
+        rating_data: final_rating
+        """
+        self.__dict__ = dict(payload)
+
+    def get_dict(self):
+        return self.__dict__
+
+class ManualCreditRiskApi:
+    """Class for credit risk
+
+    """
+    @staticmethod
+    def save_manual_credit_rating(api_connection, payload):
+        manual_credit_params = ManualCreditCalculation(payload)
+        qry_payload = manual_credit_params.get_dict()
+        print(qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/creditrisk/manualrating/', qry_payload)
+        return success, json_res, status_code, error_msg

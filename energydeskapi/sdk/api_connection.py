@@ -111,13 +111,12 @@ class ApiConnection(object):
         if token!="" and token_type=="Bearer":
             self.token_type=token_type
             self.token=token
-            print("Bearer setting token ",token, token_type)
+
         elif token!="" and token_type=="Token":
             self.token_type=token_type
             self.token=token
-            print("Token setting token ", token, token_type)
+
         else:
-            print("Not setting token ",token, token_type)
             logger.info("Token is Null")
             self.token_type=None
             self.token=token
@@ -238,9 +237,10 @@ class ApiConnection(object):
             headers[key]=extra_headers[key]
         server_url= self.get_base_url() + trailing_url
         logger.info("Calling URL " + str(server_url))
-        logger.info("...with payload " + " and headers " + str(headers))
+        logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
+            print(result.url)
         else:
             result = requests.get(server_url, headers=headers)
         if result.status_code<202:

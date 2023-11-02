@@ -27,16 +27,14 @@ def check_convert_datetime(d, timezone=None):
         return d
 
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
-
     period_from=period_from if period_from!= str else pendulum.parse(period_from, tz=timezone)
     period_to =period_to if period_to!= str else  pendulum.parse(period_to,tz= timezone)
     if len(predefined_columns)==0:
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
-    ix = pd.date_range(start=conv_from_pendulum(period_from), end=conv_from_pendulum(period_to), freq=pandas_res)
+    ix = pd.date_range(start=conv_from_pendulum(period_from, tz=timezone), end=conv_from_pendulum(period_to,tz=timezone), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
-    #df_new=df_new.tz_localize(pytz.UTC)
     df_new = df_new.tz_convert(timezone)
     if len(df_new.index)>0:
         df_new=df_new.head(-1)

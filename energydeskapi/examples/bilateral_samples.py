@@ -6,14 +6,53 @@ from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
-from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
+from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
 import pendulum
+
+from energydeskapi.bilateral.capacity_api import CapacityApi, CapacityProfile
+from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+
+def test_capacity_config(api_conn):
+    params={"grid_asset_id": 1,
+            "period_from": str(pendulum.datetime(2024,1,1, tz="Europe/Oslo")),
+            "period_until": str(pendulum.datetime(2024,1,12, tz="Europe/Oslo"))}
+    jsond=CapacityApi.get_capacity_profile(api_conn, params)
+    print(jsond)
+
+def register_test_capacity_requests(api_conn):
+    params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
+    assets=AssetsApi.get_assets_embedded(api_conn, params)
+    for ass in assets['results']:
+        cap=CapacityProfile()
+        cap.grid_component=ass['pk']
+        cap.period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
+        cap.period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
+        prof=get_zero_profile()
+
+        prof["monthly_profile"]['January']=1
+        prof["monthly_profile"]['February'] = 1
+        prof["monthly_profile"]['March'] = 0.5
+        prof["weekday_profile"]['Monday'] = 1.0
+        prof["weekday_profile"]['Tuesday'] = 1.0
+        prof["weekday_profile"]['Wednesday'] = 1.0
+        prof["weekday_profile"]['Thursday'] = 1.0
+        prof["weekday_profile"]['Friday'] = 0.9
+        prof["weekday_profile"]['Saturday'] = 0.4
+        prof["weekday_profile"]['Sunday'] = 0.4
+        for i in range(15,19):
+            prof["daily_profile"][i] = 1.0
+        for i in range(7,10):
+            prof["daily_profile"][i] = 1.0
+        cap.requested_profile = prof
+        #print(cap.get_dict(api_conn))
+        CapacityApi.upsert_capacity_request(api_conn,cap)
 
 def get_deliveries(api_conn):
     fromd="2023-01-01"
@@ -64,6 +103,42 @@ def calculate_price(api_conn):
     print(cprices)
 
 
+def calculate_capacity_price(api_conn):
+    fromd=str(pendulum.parse("2024-02-01", tz="Europe/Oslo"))
+    untild = str(pendulum.parse("2024-03-01", tz="Europe/Oslo"))
+    periods=[["Holmlia", fromd, untild]]
+
+    months=get_baseload_months()
+    for m in months.keys():
+        months[m]=0
+    months['January'] = 1
+    months['February'] = 0.2
+    months['March'] = 1
+    months['October'] = 0
+    months['November'] = 0
+    months['December'] = 0
+    print(months)
+    weekdays=get_baseload_weekdays()
+    for m in weekdays.keys():
+        weekdays[m]=0
+    weekdays['Thursday'] = 1
+    weekdays['Friday'] = 1
+    weekdays['Sunday'] = 1
+    hours=get_baseload_dailyhours()
+    for m in hours.keys():
+        hours[m]=0
+    hours[21] = 0.6
+    hours[22]=0.4
+    subst={
+        "monthly_profile":months,
+        "weekday_profile":weekdays,
+        "daily_profile":hours
+    }
+    print(periods)
+    success, returned_data, status_code, error_msg=BilateralApi.calculate_capacity_price(api_conn,periods, subst, 1000, 2000)
+    print(returned_data)
+
+
 
 def generate_sell_prices(api_conn):
     mw=500
@@ -111,10 +186,13 @@ def generate_adjusted_curve(api_conn):
     print(df_curve)
 
 if __name__ == '__main__':
+    #pd.set_option('display.max_rows', None)
     api_conn=init_api()
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    get_bilateral_trades(api_conn)
+    register_test_capacity_requests(api_conn)
+    test_capacity_config(api_conn)
+
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)

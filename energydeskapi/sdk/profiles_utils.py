@@ -15,23 +15,23 @@ def is_baseload(profile):
     b3 = check_flat_profile(profile['daily_profile'])
     return b1 and b2 and b3
 
-def get_baseload_weekdays():
+def get_baseload_weekdays(entry_value=1.0):
     week=get_weekdays_list()
-    return {k: 1.0 for k in week}
+    return {k: entry_value for k in week}
 
-def get_baseload_dailyhours():
+def get_baseload_dailyhours(entry_value=1.0):
     hours=list(range(24))
-    return {k: 1.0 for k in hours}
+    return {k: entry_value for k in hours}
 
 # This function may be misguiding for users since identical months weights is not
 # the same as basloed on a fixed volume.   Specify BASELOAD as profile category in addition
-def get_baseload_months():
+def get_baseload_months(entry_value=1.0):
     months=get_month_list()
-    return {k: 1.0 for k in months}
+    return {k: entry_value for k in months}
 
-def get_flat_months():
+def get_flat_months(entry_value=1.0):
     months=get_month_list()
-    return {k: 1.0 for k in months}
+    return {k: entry_value for k in months}
 
 
 # Used to get a default profile that factorize months based on hours. Using 2022 as sample year
@@ -51,6 +51,13 @@ def get_baseload_profile():
         'monthly_profile': get_baseload_months(),
         'weekday_profile': get_baseload_weekdays(),
         'daily_profile': get_baseload_dailyhours()
+    }
+
+def get_zero_profile():
+    return {
+        'monthly_profile': get_baseload_months(0.0),
+        'weekday_profile': get_baseload_weekdays(0.0),
+        'daily_profile': get_baseload_dailyhours(0.0)
     }
 def normalize_elements(elements):
     sum=0

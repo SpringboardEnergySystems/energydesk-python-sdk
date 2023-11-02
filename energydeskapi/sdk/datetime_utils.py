@@ -2,7 +2,7 @@ import pytz
 from dateutil import parser
 from datetime import date, datetime, timedelta
 import pendulum
-
+from pandas import Timestamp
 # WIll convert both naive and datetimes that were previously localized
 def localize_datetime_safe(dt, tz=pytz.timezone("UTC")):
     try:
@@ -78,12 +78,13 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
     return d_loc
 
 def conv_from_pendulum(pendulum_dt, tz="UTC"):
-    if type(pendulum_dt)== datetime:
+    if type(pendulum_dt)== datetime or type(pendulum_dt)==Timestamp:
         return pendulum_dt
-    timezone = pytz.timezone(tz)
-    datetime_string = pendulum_dt.to_datetime_string()
-    unaware_dt= datetime.fromisoformat(datetime_string)
-    return unaware_dt.astimezone(timezone)
+    timezone = pytz.timezone(tz) if type(tz)==str else tz
+    parsed_dt= datetime.fromisoformat(str(pendulum_dt))
+    if tz_aware(parsed_dt):
+        return parsed_dt
+    return parsed_dt.astimezone(timezone)
 
 def safe_set_utc(indate):
     try:

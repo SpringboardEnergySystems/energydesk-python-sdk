@@ -29,11 +29,10 @@ def generate_product_code(api_conn, contract, gofields):
 
 def default_quality_codes():
     codes=[]
-    codes.append("NORWEGIAN_HYDRO", "Norwegian Hydro")
-    codes.append("HYDRO", "Hydro")
-    codes.append("BVM", "Bra Miljøvalg")
-
-
+    codes.append(("NORWEGIAN_HYDRO", "Norwegian Hydro"))
+    codes.append(("HYDRO", "Hydro"))
+    codes.append(("BVM", "Bra Miljøvalg"))
+    return codes
 
 def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
     go=GoContract()
@@ -41,7 +40,6 @@ def generate_default_gofields( asset_pk, delivery_date, production_from, product
     go.asset=None
     go.support=True
     go.technology=GosTechnologyEnum.HYDRO.value
-    go.quality=[]
     go.flexible_delivery=False
     go.delivery_date=delivery_date
     go.production_from=production_from

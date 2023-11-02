@@ -37,6 +37,7 @@ class ContractTypeEnum(Enum):
     GOO = 4
     PROFILE = 5
     CAPACITY = 6
+    FX = 7
 
 
 
@@ -74,7 +75,8 @@ def contract_type_description(x):
         ContractTypeEnum.BILAT_FIXPRICE: "Bilateral Fixed Price",
         ContractTypeEnum.GOO: "Guarantee of Origin",
         ContractTypeEnum.PROFILE: "Varying Periodic Profile",
-        ContractTypeEnum.CAPACITY: "Capacity Contract"
+        ContractTypeEnum.CAPACITY: "Capacity Contract",
+        ContractTypeEnum.FX: "Currency Contract"
     }[x]
 
 
