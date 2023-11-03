@@ -46,8 +46,16 @@ class GoContract:
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
     if self.technology is not None: dict['technology'] = GosApi.get_technology_url(api_conn, self.technology)
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
-    if self.quality is not None and len(self.quality)>0:
-      dict['quality'] = self.quality
+
+    if self.quality is not None:
+      lst=[]
+      for q in self.quality:
+        key=key_from_url(q)
+        rec=GosApi.get_qualities(api_conn, {'id':key})
+        print(rec)
+        #lst.append()
+    if len(lst)>0:
+      dict['quality'] = lst
     print(dict)
     return dict
 
