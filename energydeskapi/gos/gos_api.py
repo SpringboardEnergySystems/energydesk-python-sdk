@@ -51,9 +51,9 @@ class GoContract:
       lst=[]
       for q in self.quality:
         key=key_from_url(q)
-        rec=GosApi.get_qualities(api_conn, {'id':key})
-        print(rec)
-        #lst.append()
+        results=GosApi.get_qualities(api_conn, {'id':key})
+        if len(results)>0:
+          lst.extend(results)
     if len(lst)>0:
       dict['quality'] = lst
     print(dict)
