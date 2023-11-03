@@ -56,7 +56,7 @@ class CapacityApi:
     def list_active_capacity_offers(api_connection, parameters={}):
 
         logger.info("Retrieve previously given pricees")
-        json_res = api_connection.exec_get_url('/api/bilateral/capacity/offers/', parameters)
+        json_res = api_connection.exec_get_url('/api/bilateral/capacity/offers/embedded/', parameters)
         if json_res is not None:
             return json_res
         return None
