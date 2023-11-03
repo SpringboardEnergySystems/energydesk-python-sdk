@@ -48,14 +48,15 @@ class GoContract:
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
 
     if self.quality is not None:
-      lst=[]
-      for q in self.quality:
-        key=key_from_url(q)
-        results=GosApi.get_qualities(api_conn, {'id':key})
-        if len(results)>0:
-          lst.extend(results)
-    if len(lst)>0:
-      dict['quality'] = lst
+      dict['quality']=self.quality
+    #   lst=[]
+    #   for q in self.quality:
+    #     key=key_from_url(q)
+    #     results=GosApi.get_qualities(api_conn, {'id':key})
+    #     if len(results)>0:
+    #       lst.extend(results)
+    # if len(lst)>0:
+    #   dict['quality'] = lst
     print(dict)
     return dict
 
