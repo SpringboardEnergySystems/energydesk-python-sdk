@@ -22,8 +22,8 @@ class ProductHelper(Singleton):
             return self.product_map[ticker]
         res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
         if len(res['results']) == 0:
+            print( {'market_ticker': ticker})
             res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
-            print(ticker)
             if res[0]==False:
                 print("What is wrong here", res)
             k = res[1][0]['pk']

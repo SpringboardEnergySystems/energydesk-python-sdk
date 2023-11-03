@@ -1,4 +1,4 @@
-
+import pandas as pd
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.marketdata.products_api import ProductsApi
@@ -19,6 +19,7 @@ def get_market_products(api_conn):
 
 if __name__ == '__main__':
     logging.info("Loading environment")
+    pd.set_option('display.max_rows', None)
     #dotenv_path = join(dirname(__file__), '.env')
     api_conn=init_api()
     get_market_products(api_conn)

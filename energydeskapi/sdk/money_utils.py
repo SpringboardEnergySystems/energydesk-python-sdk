@@ -71,7 +71,6 @@ def gen_json_money(mon):
     return json
 
 def gen_money_from_json(mon_json):
-    print(parse_decimal(mon_json['amount']))
     nval=parse_decimal(mon_json['amount'])
     c=CurrencyCode._value2member_map_[mon_json['currency']]
     mny=Money(nval, c)

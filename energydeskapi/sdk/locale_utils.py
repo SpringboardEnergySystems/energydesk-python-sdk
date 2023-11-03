@@ -45,10 +45,8 @@ def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.ti
 def format_datetime_from_iso(dts, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
     dt=parser.isoparse(dts)
     if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
-        print("Localizing")
         dt=tzinfo.localize(dt)
     else:
-        print("Already localized")
         dt=dt.astimezone(tzinfo)
     return babel_format_datetime(dt, format=format,tzinfo=tzinfo, locale=get_country_code(country_pref_enum))
 # Usage
