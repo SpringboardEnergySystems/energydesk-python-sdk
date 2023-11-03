@@ -54,6 +54,7 @@ class GoContract:
         key=key_from_url(q)
         results=GosApi.get_qualities(api_conn, {'id':key})
         for r in results:
+          print("Sending ",json.loads(json.dumps(r)))
           lst.append(json.loads(json.dumps(r)))
     if len(lst)>0:
       dict['quality'] = lst
