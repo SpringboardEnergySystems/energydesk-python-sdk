@@ -47,7 +47,7 @@ class GoContract:
     if self.technology is not None: dict['technology'] = GosApi.get_technology_url(api_conn, self.technology)
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
     import json
-    if self.quality is not None:
+    if self.quality is not None and len(self.quality)>0:
       dict['quality'] = self.quality
     print(dict)
     return dict
