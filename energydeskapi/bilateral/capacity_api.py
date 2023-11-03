@@ -33,7 +33,7 @@ class CapacityProfile():
     if self.grid_component is not None: dict['grid_component'] = AssetsApi.get_asset_url(api_conn, self.grid_component)
     if self.requested_profile is not None: dict['requested_profile'] = self.requested_profile
     if self.period_from is not None: dict['period_from'] = self.period_from
-    if self.period_until is not None: dict['licenced_until'] = self.period_until
+    if self.period_until is not None: dict['period_until'] = self.period_until
     return dict
 
 class CapacityApi:
@@ -52,6 +52,14 @@ class CapacityApi:
           return json_res
         return None
 
+    @staticmethod
+    def list_active_capacity_offers(api_connection, parameters={}):
+
+        logger.info("Retrieve previously given pricees")
+        json_res = api_connection.exec_get_url('/api/bilateral/capacity/offers/', parameters)
+        if json_res is not None:
+            return json_res
+        return None
 
     @staticmethod
     def upsert_capacity_request(api_connection, capacity_profile):
@@ -81,6 +89,19 @@ class CapacityApi:
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def calculate_capacity_price_externals(api_connection,grid_component_id, period_offered, max_hours_activation, activation_price, currency_code="NOK"):
+
+        payload = {
+                "grid_component_id":grid_component_id,
+                "currency_code": currency_code,
+                "max_hours":max_hours_activation,
+                "period_offered": period_offered,
+                "activation_price":activation_price
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/externals/', payload)
+        return success, json_res, status_code, error_msg
     @staticmethod
     def add_order_from_priceoffer_id(api_connection ,priceoffer_id, buy_or_sell, quantity,
                                      quantity_type=QuantityTypeEnum.VOLUME_YEARLY.name,
@@ -99,4 +120,33 @@ class CapacityApi:
 
         logger.info(str(qry_payload))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbypriceoffer/', qry_payload)
+        return success, json_res, status_code, error_msg
+
+
+    @staticmethod
+    def add_order_from_capacityoffer_id(api_connection ,priceoffer_id, buy_or_sell, quantity,quantity_type=QuantityTypeEnum.EFFECT.name,
+                                     quantity_unit=QuantityUnitEnum.KW.name):
+        """Add order with reference to a price quote
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param buy_or_sell: period from
+        :type buy_or_sell: str, required
+        :param priceoffer_id: GUID repr price offer
+        :type priceoffer_id: str, GUID as str
+        :param quantity: quantity
+        :type quantity: float, quantity requested
+        """
+        logger.info("Adding order")
+
+        qry_payload = {
+                "buy_or_sell": buy_or_sell,
+                "priceoffer_id": priceoffer_id,
+                "quantity":quantity,
+            "quantity_type": quantity_type,
+            "quantity_unit": quantity_unit
+        }
+
+        logger.info(str(qry_payload))
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbycapacityoffer/', qry_payload)
         return success, json_res, status_code, error_msg

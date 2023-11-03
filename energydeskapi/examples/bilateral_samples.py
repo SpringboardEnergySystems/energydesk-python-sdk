@@ -192,7 +192,7 @@ if __name__ == '__main__':
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
     register_test_capacity_requests(api_conn)
-    test_capacity_config(api_conn)
+    #test_capacity_config(api_conn)
 
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)
