@@ -58,7 +58,6 @@ class GoContract:
           lst.append(json.loads(json.dumps(r)))
     if len(lst)>0:
       dict['quality'] = lst
-    print(dict)
     return dict
 
   @staticmethod

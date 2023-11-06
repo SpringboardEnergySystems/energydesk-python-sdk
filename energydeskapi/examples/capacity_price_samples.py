@@ -104,11 +104,15 @@ def enter_order_from_priceoffer(api_conn, priceoffer_id, yearly_kwh):
     return True, json_res['order_id'], json_res['ticker']
 
 def get_orders(api_conn):
-    df = LemsApi.query_active_anonymous_orders(api_conn)
-    print(df)
+    #df = LemsApi.query_active_anonymous_orders(api_conn)
+    #print(df)
     off=CapacityApi.list_active_capacity_offers(api_conn)
-    print(off)
-    return df
+    for o in off:
+        print(o['priceoffer_data'].keys())
+        print(o.keys())
+        print(o['is_still_valid'])
+        print(o['company_offered']['name'])
+    return None
 
 def remove_last_entered_order(api_conn, series):
     print("Removing", series['order_id'], series['ticker'])
@@ -135,9 +139,11 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     #requested_profile=get_capacity_config(api_conn)
+    own_orders = LemsApi.query_own_orders(api_conn, False)
+    print(own_orders)
     #priceoffer_id, price=calculate_price(api_conn, requested_profile)
 
-    get_orders(api_conn)
+    #get_orders(api_conn)
     sys.exit(0)
 
     success, order_id, ticker=enter_order_from_priceoffer(api_conn,priceoffer_id,125000)  #Yearly KWh at the current moment
