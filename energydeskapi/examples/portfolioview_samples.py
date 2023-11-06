@@ -38,7 +38,7 @@ def get_period_view(api_conn):
 
 def get_product_view(api_conn):
 
-    filter={'portfolio': "16", "view_currency":"EUR",'commodity__delivery_until__gte':str(pendulum.today())}
+    filter={'portfolio': "10", "view_currency":"EUR",'commodity__delivery_until__gte':str(pendulum.today())}
     print(filter)
     view_id,df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)

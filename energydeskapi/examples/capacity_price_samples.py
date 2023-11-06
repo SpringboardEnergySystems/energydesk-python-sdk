@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, date
 import pandas as pd
+import json
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from energydeskapi.sdk.common_utils import init_api
@@ -8,6 +9,7 @@ from energydeskapi.bilateral.capacity_api import CapacityApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.lems.lems_api import LemsApi
 from energydeskapi.profiles.profiles_api import ProfilesApi, StoredProfile
+from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 import sys
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_flat_months,\
 get_default_profile_months
@@ -69,22 +71,25 @@ def calculate_price(api_conn, requested_profile):
     thismonth = date.today().replace(day=1)
     dt_from = thismonth + relativedelta(months=3)
     print(dt_from, thismonth)
-    dt_until = (dt_from + relativedelta(years=6)).strftime("%Y-%m-%d")
+
+    dt_until = (dt_from + relativedelta(months=5)).strftime("%Y-%m-%d")
     dt_from = dt_from.strftime("%Y-%m-%d")
-    print("Calculate price for ", dt_from, dt_until)
-
-    periods=[[2, dt_from, dt_until]]
-    price_offer_id=None
-    current_price=3500
+    df_offer=make_empty_timeseries_df(dt_from,dt_until, "H","Europe/Oslo" )
+    df_offer['offered_hour']=1
+    df_offer['timestamp']=df_offer.index
+    print(df_offer)
+    grid_component_id=1
     activation_price=4000
-    print(periods)
-
-    success, json_res, status_code, error_msg =CapacityApi.calculate_capacity_price(api_conn,
-                                     periods, requested_profile, current_price, activation_price, "NOK")
+    offer=json.loads(df_offer.to_json(orient='records',date_format='iso'))
+    success, json_res, status_code, error_msg =CapacityApi.calculate_capacity_price_externals(api_conn,
+                                     grid_component_id, offer, 100, activation_price, "NOK")
     if success:
         print(json_res)
         price_offer_id=json_res['priceoffer_id']
-        price = json_res['price']
+        price = json_res['availability_price']
+
+        CapacityApi.add_order_from_capacityoffer_id(api_conn, price_offer_id, "SELL", 5000)
+
     else:
         print("Error occured when calculating price")
         print(error_msg)
@@ -98,9 +103,16 @@ def enter_order_from_priceoffer(api_conn, priceoffer_id, yearly_kwh):
         return False, error_msg, None
     return True, json_res['order_id'], json_res['ticker']
 
-def get_available_periods(api_conn):
-    periods=FixedPriceApi.get_avaiable_fixprice_periods(api_conn)
-    return periods
+def get_orders(api_conn):
+    #df = LemsApi.query_active_anonymous_orders(api_conn)
+    #print(df)
+    off=CapacityApi.list_active_capacity_offers(api_conn)
+    for o in off:
+        print(o['priceoffer_data'].keys())
+        print(o.keys())
+        print(o['is_still_valid'])
+        print(o['company_offered']['name'])
+    return None
 
 def remove_last_entered_order(api_conn, series):
     print("Removing", series['order_id'], series['ticker'])
@@ -117,6 +129,8 @@ def get_current_own_orders(api_conn):
 def get_current_own_trades(api_conn):
     df=LemsApi.get_own_trades_df(api_conn)  #Returned as Pandas dataframe
     print(df)
+    off=CapacityApi.list_active_capacity_offers(api_conn)
+    print(off)
     return df
 
 
@@ -124,8 +138,12 @@ def get_current_own_trades(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    requested_profile=get_capacity_config(api_conn)
-    priceoffer_id, price=calculate_price(api_conn, requested_profile)
+    #requested_profile=get_capacity_config(api_conn)
+    own_orders = LemsApi.query_own_orders(api_conn, False)
+    print(own_orders)
+    #priceoffer_id, price=calculate_price(api_conn, requested_profile)
+
+    #get_orders(api_conn)
     sys.exit(0)
 
     success, order_id, ticker=enter_order_from_priceoffer(api_conn,priceoffer_id,125000)  #Yearly KWh at the current moment

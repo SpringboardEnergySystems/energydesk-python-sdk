@@ -39,7 +39,6 @@ class GoContract:
     if self.production_from is not None: dict['production_from'] = check_fix_date2str(self.production_from)
     if self.production_until is not None: dict['production_until'] = check_fix_date2str(self.production_until)
     if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn, self.asset)
-    if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn, self.asset)
     if self.extra_info is not None: dict['extra_info'] = self.extra_info
     if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
     if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date
@@ -47,9 +46,18 @@ class GoContract:
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
     if self.technology is not None: dict['technology'] = GosApi.get_technology_url(api_conn, self.technology)
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
-
-    dict['quality'] = self.quality
-    print(dict)
+    import json
+    if self.quality is not None:
+      #dict['quality']=self.quality
+      lst=[]
+      for q in self.quality:
+        key=key_from_url(q)
+        results=GosApi.get_qualities(api_conn, {'id':key})
+        for r in results:
+          print("Sending ",json.loads(json.dumps(r)))
+          lst.append(json.loads(json.dumps(r)))
+    if len(lst)>0:
+      dict['quality'] = lst
     return dict
 
   @staticmethod

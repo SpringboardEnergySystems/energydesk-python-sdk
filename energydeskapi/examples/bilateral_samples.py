@@ -27,7 +27,7 @@ def test_capacity_config(api_conn):
     print(jsond)
 
 def register_test_capacity_requests(api_conn):
-    params={"asset_category":AssetCategoryEnum.PRODUCTION.value,"page_size":100}
+    params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
     assets=AssetsApi.get_assets_embedded(api_conn, params)
     for ass in assets['results']:
         cap=CapacityProfile()
@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    #register_test_capacity_requests(api_conn)
+    register_test_capacity_requests(api_conn)
     test_capacity_config(api_conn)
 
     #register_pricing_configuration(api_conn)
