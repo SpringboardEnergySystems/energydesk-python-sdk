@@ -65,11 +65,11 @@ def localized_datetimestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
     """ Converts datetime from UTC
     """
     if type(datetime_val) == str:
-        pendulum.parse(datetime_val, loczone).to_datetime_string()
+        d_loc=pendulum.parse(datetime_val, loczone).to_datetime_string()
     else:
-        pendulum.from_timestamp(datetime_val, loczone).to_datetime_string()
+        d_loc=pendulum.from_timestamp(datetime_val, loczone).to_datetime_string()
 
-    return d_loc
+    return str(d_loc)
 
 # Make sure we are in normal time when getting date part
 # I.e. 2024-12-31T23:00:00+00:00  becomes 2025-01-01 in Europe/Oslo
