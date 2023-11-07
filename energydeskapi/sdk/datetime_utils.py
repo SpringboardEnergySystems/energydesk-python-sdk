@@ -66,10 +66,12 @@ def localized_datetimestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
     """
     print("Asked to convert", datetime_val)
     if type(datetime_val) == str:
-        d_loc=pendulum.parse(datetime_val, tz=loczone)#, loczone).to_datetime_string()
+        d_loc=pendulum.parse(datetime_val)#, loczone).to_datetime_string()
 
     else:
-        d_loc=pendulum.from_timestamp(datetime_val, tz=loczone)
+        d_loc=pendulum.from_timestamp(datetime_val)
+    print(d_loc)
+    d_loc=d_loc.in_tz(loczone)
     print(d_loc)
     return str(d_loc)
 
