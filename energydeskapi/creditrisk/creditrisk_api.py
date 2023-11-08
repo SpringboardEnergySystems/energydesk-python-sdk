@@ -116,7 +116,17 @@ class ManualCreditRiskApi:
     """
     @staticmethod
     def save_manual_credit_rating(api_connection, payload):
-        manual_credit_params = ManualCreditCalculation(payload)
+        try:
+            company = payload['company']
+            rating_datetime = payload['rating_datetime']
+            rating_data = payload['rating_data']
+        except:
+            raise ValueError("Inappropriate values")
+        manual_credit_params = ManualCreditCalculation(payload={
+            'company': company,
+            'rating_datetime': rating_datetime,
+            'rating_data': rating_data
+        })
         qry_payload = manual_credit_params.get_dict()
         print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/creditrisk/manualrating/', qry_payload)
