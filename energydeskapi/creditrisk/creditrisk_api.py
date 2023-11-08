@@ -117,13 +117,13 @@ class ManualCreditRiskApi:
     @staticmethod
     def save_manual_credit_rating(api_connection, payload):
         try:
-            company = payload['company']
+            company_pk = payload['company_pk']
             rating_datetime = payload['rating_datetime']
             rating_data = payload['rating_data']
         except:
             raise ValueError("Inappropriate values")
         manual_credit_params = ManualCreditCalculation(payload={
-            'company': company,
+            'company': company_pk,
             'rating_datetime': rating_datetime,
             'rating_data': rating_data
         })
