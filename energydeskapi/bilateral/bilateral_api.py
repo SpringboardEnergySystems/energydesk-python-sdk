@@ -131,11 +131,12 @@ class BilateralApi:
             return success, None, status_code, error_msg
         if len(json_res['bilateral_trades']) == 0:
             return success, None, status_code, error_msg
-        print(type(json_res))
-        internjson=json.loads(json_res['bilateral_trades'])
-        print(internjson)
-        df_trades = pd.DataFrame(data=internjson)
-        return success, df_trades, status_code, error_msg
+        try:
+            internjson=json.loads(json_res['bilateral_trades'])
+            df_trades = pd.DataFrame(data=internjson)
+            return success, df_trades, status_code, error_msg
+        except:
+            return False, None, status_code, "Problems reading the list of trades from server"
 
     @staticmethod
     def get_bilateral_trades_for_externals(api_connection, period_from, period_until):
