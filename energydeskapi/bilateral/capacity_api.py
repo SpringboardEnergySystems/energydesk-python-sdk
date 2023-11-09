@@ -1,23 +1,9 @@
 import logging
-import pandas as pd
-from energydeskapi.types.common_enum_types import PeriodResolutionEnum
-from datetime import datetime, timedelta, timezone, date
-from dateutil import parser
-from energydeskapi.bilateral.rates_config import RatesConfig
-import pytz
-from energydeskapi.types.common_enum_types import PeriodResolutionEnum
-from energydeskapi.types.market_enum_types import ProfileTypeEnum
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
-from energydeskapi.types.market_enum_types import ProfileTypeEnum
-from energydeskapi.profiles.profiles_api import ProfilesApi
-from energydeskapi.profiles.profiles import GenericProfile
-import json
-from energydeskapi.sdk.datetime_utils import convert_datime_to_locstr
-from energydeskapi.marketdata.products_api import ProductsApi
-from dateutil import relativedelta
-from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
-from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
+
 from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum
+from energydeskapi.types.contract_enum_types import QuantityUnitEnum
+
 logger = logging.getLogger(__name__)
 class CapacityProfile():
   def __init__(self):
@@ -35,6 +21,26 @@ class CapacityProfile():
     if self.period_from is not None: dict['period_from'] = self.period_from
     if self.period_until is not None: dict['period_until'] = self.period_until
     return dict
+
+
+
+class RatesConfiguration:
+    def __init__(self):
+        self.pk = 0
+        self.standby_addon_kwh=2
+        self.volatility_rate = 0.4
+        self.riskfree_rate = 0.03
+
+
+
+    def get_dict(self,api_conn):
+        dict = {}
+        dict['pk']=self.pk
+        dict['standby_addon_kwh'] = self.standby_addon_kwh
+        dict['volatility_rate'] = self.volatility_rate
+        dict['riskfree_rate'] = self.riskfree_rate
+        return dict
+
 
 class CapacityApi:
 
@@ -150,3 +156,33 @@ class CapacityApi:
         logger.info(str(qry_payload))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbycapacityoffer/', qry_payload)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_rates_configurations(api_connection):
+        """Fetches pricing configurations
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching capacity rates configurations")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/capacity/ratesconfigurations/')
+        return json_res
+
+    @staticmethod
+    def upsert_rates_configuration(api_connection, pricing_conf):
+        logger.info("Registering capacity rates configuration")
+        if type(pricing_conf) is dict:
+            pk = pricing_conf['pk']
+            pricing_dict = pricing_conf
+        else:
+            pk = pricing_conf.pk
+            pricing_dict = pricing_conf.get_dict(api_connection)
+        print(pricing_dict)
+        if pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/bilateral/capacity/ratesconfigurations/' + str(pk) + "/", pricing_dict)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/bilateral/capacity/ratesconfigurations/', pricing_dict)
+        return success, returned_data, status_code, error_msg
