@@ -186,3 +186,16 @@ class CapacityApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/bilateral/capacity/ratesconfigurations/', pricing_dict)
         return success, returned_data, status_code, error_msg
+
+
+    @staticmethod
+    def get_rates_configuration_by_pk(api_connection, pk):
+        """Fetches pricing configuration from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching capacity configuration")
+        json_res = api_connection.exec_get_url(
+            '/api/bilateral/capacity/ratesconfigurations/' + str(pk) + '/')
+        return json_res
