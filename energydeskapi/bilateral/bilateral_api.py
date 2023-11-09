@@ -131,6 +131,7 @@ class BilateralApi:
             return success, None, status_code, error_msg
         if len(json_res['bilateral_trades']) == 0:
             return success, None, status_code, error_msg
+        print(json_res, error_msg)
         df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
         return success, df_trades, status_code, error_msg
 

@@ -67,7 +67,7 @@ def enter_order_on_priceoffer(api_conn, price_offer_id,yearly_kwh=100000):
                                                                                           "BUY", yearly_kwh)
     print(json_res)
 
-def calculate_price(api_conn, requested_profile):
+def calculate_price(api_conn):
     thismonth = date.today().replace(day=1)
     dt_from = thismonth + relativedelta(months=3)
     print(dt_from, thismonth)
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     #requested_profile=get_capacity_config(api_conn)
     own_orders = LemsApi.query_own_orders(api_conn, False)
     print(own_orders)
-    #priceoffer_id, price=calculate_price(api_conn, requested_profile)
+    #priceoffer_id, price=calculate_price(api_conn)
 
     #get_orders(api_conn)
     sys.exit(0)
