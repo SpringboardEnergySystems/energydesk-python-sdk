@@ -190,6 +190,8 @@ class BilateralApi:
         url = '/api/portfoliomanager/contractprofile/'
         json_res = api_connection.exec_get_url(url, params)
         df=pd.DataFrame(data=json.loads(json_res))
+        if len(df)==0:
+            return None
         df.index=df.period_from
         df=df[['netpos','buypos','sellpos','netvol','buyvol','sellvol', 'hours']]
         df.index=pd.to_datetime(df.index)

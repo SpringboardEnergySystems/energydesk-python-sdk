@@ -114,6 +114,20 @@ class CustomersApi:
             return False
         print(json_res)
         return json_res["Registration"]
+    
+    def register_manual_company(api_connection, company):
+        """Registers company
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company: company
+        :type company: str, required
+        """
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/register-manual-company', company)
+        if json_res is None:
+            return False
+        print(json_res)
+        return json_res
 
     @staticmethod
     def get_company_types(api_connection):

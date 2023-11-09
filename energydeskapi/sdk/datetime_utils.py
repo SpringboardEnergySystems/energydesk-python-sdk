@@ -61,16 +61,33 @@ def convert_datime_to_locstr(dt, loczone="Europe/Oslo"):
     )
     return timestamp_string
 
+def localized_datetimestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
+    """ Converts datetime from UTC
+    """
+    print("Asked to convert", datetime_val)
+    if type(datetime_val) == str:
+        d_loc=pendulum.parse(datetime_val)#, loczone).to_datetime_string()
+
+    else:
+        d_loc=pendulum.from_timestamp(datetime_val)
+    print(d_loc)
+    d_loc=d_loc.in_tz(loczone)
+    print(d_loc)
+    return str(d_loc)
+
+# Make sure we are in normal time when getting date part
+# I.e. 2024-12-31T23:00:00+00:00  becomes 2025-01-01 in Europe/Oslo
+def localized_datestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
+    tmp=localized_datetimestr_from_datetime(datetime_val, loczone)
+    return tmp[:10]
+
+
+
 
 # Data retrieved from server are in UTC time ("GMT without daylight savings time")
 # This function converts to local time
 def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
     """ Converts datetime from UTC
-
-    :param utc_str: string of UTC
-    :type utc_str: str, required
-    :param loczone: specified location
-    :type loczone: str, required
     """
     timezone = pytz.timezone(loczone)
     utc_dt=parser.isoparse(str(utc_str))
