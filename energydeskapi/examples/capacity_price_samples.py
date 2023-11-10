@@ -4,6 +4,9 @@ import pandas as pd
 import json
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
+from energydeskapi.sdk.common_utils import key_from_url
+from energydeskapi.customers.customers_api import CustomersApi, Company
+from energydeskapi.customers.users_api import UsersApi, User, UserGroup, UserFeatureAccess
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.capacity_api import CapacityApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
@@ -13,11 +16,90 @@ from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 import sys
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_flat_months,\
 get_default_profile_months
+from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
+import pandas as pd
+from energydeskapi.bilateral.capacity_api import CapacityApi, CapacityRequest, AvaulabilityProfile
+from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.asset_enum_types import AssetCategoryEnum
+import pendulum
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
+
+def test_capacity_config(api_conn):
+    params={"grid_asset_id": 1,
+            "period_from": str(pendulum.datetime(2024,1,1, tz="Europe/Oslo")),
+            "period_until": str(pendulum.datetime(2024,1,12, tz="Europe/Oslo"))}
+    jsond=CapacityApi.get_capacity_profile(api_conn, params)
+    print(jsond)
+
+
+def load_capacity_requests(api_conn):
+    jsondata=CapacityApi.get_capacity_request_embedded(api_conn)
+    cap_info=[]
+    for j in jsondata:
+        if j['description'] is None:
+            continue
+        rec={'pk':j['pk'],'description':j['description'],'asset':j['grid_component']['description'],
+             'request': str(j['grid_component']['description']) + " (" + str(j['description']) + ")"}
+        cap_info.append(rec)
+    df=pd.DataFrame(data=cap_info)
+    print(df)
+    #print(json.dumps(jsondata, indent=2))
+    return jsondata
+def save_availability_hours(api_conn):
+    usrprofile = UsersApi.get_user_profile(api_conn)
+    comp=CustomersApi.get_company_from_registry_number(api_conn, usrprofile['company_nbr'])
+    my_comp=comp['pk']
+    for req in load_capacity_requests(api_conn):
+        #grid=key_from_url(req['grid_component'])
+        period_from = req['period_from']
+        period_until = req['period_until']
+        t1=pendulum.parse(period_from, tz="Europe/Oslo")
+        t2=t1.add(months=1)
+        print(t1, t2)
+        df_availability_hours = make_empty_timeseries_df(t1, t2, "H", "Europe/Oslo")
+        df_availability_hours['offered_hour'] = 1
+        df_availability_hours['timestamp'] = df_availability_hours.index
+        print(df_availability_hours)
+        ga=AvaulabilityProfile()
+        ga.period_from=str(t1)
+        ga.period_until = str(t2)
+        ga.availability=df_availability_hours.to_json(orient='records')
+        ga.request_response_pk=req['pk']
+        ga.company_pk=my_comp
+        #print(ga.get_dict(api_conn))
+        CapacityApi.upsert_availability_hours(api_conn, ga)
+
+def register_capacity_requests(api_conn):
+    params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
+    assets=AssetsApi.get_assets_embedded(api_conn, params)
+    for ass in assets['results']:
+        cap=CapacityRequest()
+        cap.description="Euroflex Q1-24"
+        cap.grid_component=ass['pk']
+        cap.period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
+        cap.period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
+        prof=get_zero_profile()
+        prof["monthly_profile"]['January']=1
+        prof["monthly_profile"]['February'] = 1
+        prof["monthly_profile"]['March'] = 0.5
+        prof["weekday_profile"]['Monday'] = 1.0
+        prof["weekday_profile"]['Tuesday'] = 1.0
+        prof["weekday_profile"]['Wednesday'] = 1.0
+        prof["weekday_profile"]['Thursday'] = 1.0
+        prof["weekday_profile"]['Friday'] = 0.9
+        prof["weekday_profile"]['Saturday'] = 0.4
+        prof["weekday_profile"]['Sunday'] = 0.4
+        for i in range(15,19):
+            prof["daily_profile"][i] = 1.0
+        for i in range(7,10):
+            prof["daily_profile"][i] = 1.0
+        cap.requested_profile = prof
+        CapacityApi.upsert_capacity_request(api_conn,cap)
+
 
 def load_current_offers(api_conn):
     current_active_priceoffers = CapacityApi.list_active_price_offers(api_conn)
@@ -138,25 +220,13 @@ def get_current_own_trades(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
+    load_capacity_requests(api_conn)
+    register_capacity_requests(api_conn)
+    #save_availability_hours(api_conn)
     #requested_profile=get_capacity_config(api_conn)
-    own_orders = LemsApi.query_own_orders(api_conn, False)
-    print(own_orders)
+    #own_orders = LemsApi.query_own_orders(api_conn, False)
+    #print(own_orders)
     #priceoffer_id, price=calculate_price(api_conn)
 
     #get_orders(api_conn)
-    sys.exit(0)
-
-    success, order_id, ticker=enter_order_from_priceoffer(api_conn,priceoffer_id,125000)  #Yearly KWh at the current moment
-    if success:
-        print("Order entered successfully:",order_id, ticker)
-
-    df_trades= get_current_own_trades(api_conn)  #Orders that have been accepted / matched by producer
-
-    df_orders=get_current_own_orders(api_conn)
-    if df_orders is not None:
-        print(df_orders)  # All recent orders, cancelled or active
-        df_active_orders=df_orders.loc[df_orders['order_status']=="ACTIVE"]
-        #Example of deleting the last order that is active
-        #if df_active_orders is not None:
-        #    remove_last_entered_order(api_conn,df_active_orders.iloc[-1])
-
+    #sys.exit(0)

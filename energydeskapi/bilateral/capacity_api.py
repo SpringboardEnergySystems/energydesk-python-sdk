@@ -1,13 +1,15 @@
 import logging
 
 from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum
 from energydeskapi.types.contract_enum_types import QuantityUnitEnum
 
 logger = logging.getLogger(__name__)
-class CapacityProfile():
+class CapacityRequest():
   def __init__(self):
     self.pk = 0
+    self.description=None
     self.grid_component = None
     self.requested_profile = None
     self.period_from = None
@@ -16,6 +18,7 @@ class CapacityProfile():
   def get_dict(self, api_conn):
     dict = {}
     dict['pk'] = self.pk
+    if self.description is not None: dict['description'] = self.description
     if self.grid_component is not None: dict['grid_component'] = AssetsApi.get_asset_url(api_conn, self.grid_component)
     if self.requested_profile is not None: dict['requested_profile'] = self.requested_profile
     if self.period_from is not None: dict['period_from'] = self.period_from
@@ -23,6 +26,25 @@ class CapacityProfile():
     return dict
 
 
+class AvaulabilityProfile():
+  def __init__(self):
+    self.pk = 0
+    self.company_pk = 0
+    self.request_response_pk=0
+    self.availability = None
+    self.period_from = None
+    self.period_until = None
+
+  def get_dict(self, api_conn):
+    dict = {}
+    dict['pk'] = self.pk
+    if self.company_pk is not None: dict['company'] = CustomersApi.get_company_url(api_conn, self.company_pk)
+    if self.request_response_pk is not None: dict['request_response'] = CapacityApi.get_capacity_request_url(api_conn, self.request_response_pk)
+    if self.availability is not None: dict['availability'] = self.availability
+    if self.period_from is not None: dict['period_from'] = self.period_from
+    if self.period_until is not None: dict['period_until'] = self.period_until
+
+    return dict
 
 class RatesConfiguration:
     def __init__(self):
@@ -57,6 +79,15 @@ class CapacityApi:
         if json_res is not None:
           return json_res
         return None
+    @staticmethod
+    def get_capacity_request_embedded(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/bilateral/capacity/request/embedded/', parameters)
+        if json_res is not None:
+          return json_res
+        return None
+    @staticmethod
+    def get_capacity_request_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/bilateral/capacity/request/' + str(key) + "/"
 
     @staticmethod
     def list_active_capacity_offers(api_connection, parameters={}):
@@ -65,6 +96,12 @@ class CapacityApi:
         json_res = api_connection.exec_get_url('/api/bilateral/capacity/offers/embedded/', parameters)
         if json_res is not None:
             return json_res
+        return None
+    @staticmethod
+    def get_availability_hours(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/bilateral/capacity/availablehours/', parameters)
+        if json_res is not None:
+          return json_res
         return None
 
     @staticmethod
@@ -76,7 +113,15 @@ class CapacityApi:
           success, returned_data, status_code, error_msg = api_connection.exec_post_url(
               '/api/bilateral/capacity/request/', capacity_profile.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
-
+    @staticmethod
+    def upsert_availability_hours(api_connection, availability_hours):
+      if availability_hours.pk > 0:
+          success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+              '/api/bilateral/capacity/availablehours/' + str(availability_hours.pk) + "/", availability_hours.get_dict(api_connection))
+      else:
+          success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+              '/api/bilateral/capacity/availablehours/', availability_hours.get_dict(api_connection))
+      return success, returned_data, status_code, error_msg
     @staticmethod
     def calculate_capacity_price(api_connection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
         dict_periods=[]
