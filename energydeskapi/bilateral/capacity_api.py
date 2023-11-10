@@ -82,7 +82,7 @@ class CapacityApi:
     @staticmethod
     def get_capacity_request_by_key(api_connection, pk):
         logger.info("Fetching tenders with key " + str(pk))
-        json_res=api_connection.exec_get_url('/api/bilateral/capacity/request//' + str(pk) + "/")
+        json_res=api_connection.exec_get_url('/api/bilateral/capacity/request/' + str(pk) + "/")
         if json_res is None:
             return None
         return json_res
