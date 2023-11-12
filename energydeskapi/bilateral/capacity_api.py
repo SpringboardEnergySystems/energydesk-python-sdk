@@ -150,13 +150,13 @@ class CapacityApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calculate_capacity_price_externals(api_connection,grid_component_id, period_offered, max_hours_activation, activation_price, currency_code="NOK"):
+    def calculate_capacity_price_externals(api_connection,tender_id, availability_hours, max_hours_activation, activation_price, currency_code="NOK"):
 
         payload = {
-                "grid_component_id":grid_component_id,
+                "tender_id":tender_id,
                 "currency_code": currency_code,
                 "max_hours":max_hours_activation,
-                "period_offered": period_offered,
+                "availability_hours": availability_hours,
                 "activation_price":activation_price
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/externals/', payload)
