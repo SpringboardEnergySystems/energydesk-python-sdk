@@ -35,8 +35,6 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
-    print(period_from, period_to)
-    print(conv_from_pendulum(period_from, tz=timezone), conv_from_pendulum(period_to, tz=timezone))
     ix = pd.date_range(start=conv_from_pendulum(period_from, tz=timezone), end=conv_from_pendulum(period_to,tz=timezone), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     df_new = df_new.tz_convert(timezone)
