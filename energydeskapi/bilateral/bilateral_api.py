@@ -99,7 +99,7 @@ class BilateralApi:
 
     @staticmethod
     def calculate_deliveries_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value,  area_filter=None, counterpart_filter=None):
-
+        print("Calculating deliveries with resolution ", resolution)
         success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution, area_filter, counterpart_filter)
         if success==False:
             return success, None, None, status_code, error_msg

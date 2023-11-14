@@ -43,7 +43,7 @@ def get_settlement_view(api_conn):
         "view_period_until__lt": '2023-04-01',
         #"commodity__delivery_from": '2023-08-01',
         #"commodity__delivery_until": '2023-09-01',
-        "resolution":PeriodResolutionEnum.MONTHLY.value,
+        "resolution":PeriodResolutionEnum.HOURLY.value,
         "groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value,PeriodViewGroupingEnum.TRADEID.value]
     }
     print(filter)
