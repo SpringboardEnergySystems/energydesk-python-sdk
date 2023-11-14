@@ -10,6 +10,7 @@ class CapacityRequest():
   def __init__(self):
     self.pk = 0
     self.description=None
+    self.price_addon=0
     self.grid_component = None
     self.requested_profile = None
     self.period_from = None
@@ -19,6 +20,7 @@ class CapacityRequest():
     dict = {}
     dict['pk'] = self.pk
     if self.description is not None: dict['description'] = self.description
+    if self.price_addon is not None: dict['price_addon'] = self.price_addon
     if self.grid_component is not None: dict['grid_component'] = AssetsApi.get_asset_url(api_conn, self.grid_component)
     if self.requested_profile is not None: dict['requested_profile'] = self.requested_profile
     if self.period_from is not None: dict['period_from'] = self.period_from
@@ -131,19 +133,11 @@ class CapacityApi:
               '/api/bilateral/capacity/availablehours/', availability_hours.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
     @staticmethod
-    def calculate_capacity_price(api_connection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
-        dict_periods=[]
-        for p in periods:
-            dict_periods.append({
-            "period_tag": p[0],
-            "contract_date_from":p[1],
-            "contract_date_until": p[2],
-            })
+    def calculate_capacity_price(api_connection, tender_id, price_addon, activation_price, currency_code="NOK"):
         qry_payload = {
                 "currency_code": currency_code,
-                "substation_profile":substation_profile,
-                "periods":dict_periods,
-                "current_price": current_price,
+                "tender_id":tender_id,
+                "price_addon": price_addon,
                 "activation_price":activation_price
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)

@@ -37,7 +37,7 @@ def get_settlement_view(api_conn):
 
     filter={
         'view_currency': 'NOK',
-        'portfolio':44,
+        'contract_type_id':3,
         #'commodity__area': 'NO1',
         #"view_period_from__gte":'2023-08-01',
         #"view_period_until__lt": '2023-09-01',

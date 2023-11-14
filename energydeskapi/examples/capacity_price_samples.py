@@ -36,6 +36,12 @@ def test_capacity_config(api_conn):
     print(jsond)
 
 
+def load_tender(api_conn, idx):
+    jsondata=CapacityApi.get_capacity_request_embedded(api_conn)
+    cap_info=[]
+    return jsondata[idx]
+
+
 def load_capacity_requests(api_conn):
     jsondata=CapacityApi.get_capacity_request_embedded(api_conn)
     cap_info=[]
@@ -79,6 +85,7 @@ def register_capacity_requests(api_conn):
     for ass in assets['results']:
         cap=CapacityRequest()
         cap.description="Euroflex Q1-24"
+        cap.price_addon=3.0
         cap.grid_component=ass['pk']
         cap.period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
         cap.period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
@@ -149,7 +156,27 @@ def enter_order_on_priceoffer(api_conn, price_offer_id,yearly_kwh=100000):
                                                                                           "BUY", yearly_kwh)
     print(json_res)
 
-def calculate_price(api_conn):
+
+
+def calculate_capacity_price(api_conn):
+    tender=load_tender(api_conn,1)
+    tender_id=tender['pk']
+    price_addon=3.5
+    activation_price=4
+
+    success, json_res, status_code, error_msg =CapacityApi.calculate_capacity_price(api_conn,
+                                     tender_id,price_addon,activation_price, "NOK")
+    if success:
+        #print(json_res)
+        df=pd.DataFrame(data=json_res['calculation_result']['pricing_details'])
+        print(df)
+    else:
+        print("Error occured when calculating price")
+        print(error_msg)
+        price=0
+
+
+def calculate_price_as_customer(api_conn):
     thismonth = date.today().replace(day=1)
     dt_from = thismonth + relativedelta(months=3)
     print(dt_from, thismonth)
@@ -221,7 +248,8 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     load_capacity_requests(api_conn)
-    register_capacity_requests(api_conn)
+    #register_capacity_requests(api_conn)
+    calculate_capacity_price(api_conn)
     #save_availability_hours(api_conn)
     #requested_profile=get_capacity_config(api_conn)
     #own_orders = LemsApi.query_own_orders(api_conn, False)
