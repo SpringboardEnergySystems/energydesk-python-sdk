@@ -61,12 +61,28 @@ class Asset:
         self.polygon=None
 
     def from_dict(self, dict):
-        print(dict)
         if 'pk' in dict: self.pk=dict['pk']
         if 'asset_id' in dict: self.asset_id = dict['asset_id']
         if 'extern_asset_id' in dict: self.extern_asset_id = dict['extern_asset_id']
         if 'description' in dict: self.description = dict['description']
         if 'asset_type' in dict: self.asset_type = dict['asset_type']
+        if 'asset_technical_data' in dict:
+            at=AssetTechData()
+            if "max_effect_mw" in dict['asset_technical_data']:
+                print("Found it")
+                print(dict['asset_technical_data']["max_effect_mw"])
+                at.max_effect_mw = dict['asset_technical_data']["max_effect_mw"]
+            if "yearly_volume_mwh" in dict['asset_technical_data']: at.yearly_volume_mwh = dict['asset_technical_data'][
+                "yearly_volume_mwh"]
+            if "pk" in dict['asset_technical_data']: at.pk = dict['asset_technical_data'][
+                "pk"]
+            if "elcert_support_percentage" in dict['asset_technical_data']: at.elcert_support_percentage = dict['asset_technical_data'][
+                "elcert_support_percentage"]
+            if "licenced_until" in dict['asset_technical_data']: at.licenced_until = dict['asset_technical_data'][
+                "licenced_until"]
+            if "startup_date" in dict['asset_technical_data']: at.startup_date = dict['asset_technical_data'][
+                "startup_date"]
+            self.asset_technical_data = at
         if 'grid_connection' in dict: self.grid_connection = dict['grid_connection']
         if 'power_supplier' in dict: self.power_supplier = dict['power_supplier']
         if 'asset_owner' in dict: self.asset_owner = dict['asset_owner']
