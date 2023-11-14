@@ -59,6 +59,11 @@ class Asset:
         self.is_active=True
         self.asset_category = None
 
+    def from_dict(self, dict):
+        if 'pk' in dict: self.pk=dict['pk']
+        if 'asset_id' in dict: self.asset_id = dict['asset_id']
+        if 'extern_asset_id' in dict: self.extern_asset_id = dict['extern_asset_id']
+        if 'description' in dict: self.description = dict['description']
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
