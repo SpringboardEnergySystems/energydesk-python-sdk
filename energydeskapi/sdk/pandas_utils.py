@@ -29,8 +29,8 @@ def check_convert_datetime(d, timezone=None):
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
     period_from=pendulum.parse(str(period_from)) if period_from!= str else pendulum.parse(period_from)
     period_to =pendulum.parse(str(period_to)) if period_to!= str else  pendulum.parse(period_to)
-    period_from=period_from.in_timezone("UTC")
-    period_to = period_to.in_timezone("UTC")
+    period_from=period_from.in_timezone(timezone)
+    period_to = period_to.in_timezone(timezone)
     if len(predefined_columns)==0:
         df=pd.DataFrame()
     else:
@@ -38,8 +38,8 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
     ix = pd.date_range(start=conv_from_pendulum(period_from, tz=timezone), end=conv_from_pendulum(period_to,tz=timezone), freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     df_new = df_new.tz_convert(timezone)
-    #if len(df_new.index)>0:
-    #    df_new=df_new.head(-1)
+    if len(df_new.index)>1:  #Will generate the last entry
+        df_new=df_new.head(-1)
     return df_new
 
 def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
