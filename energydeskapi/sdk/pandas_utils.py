@@ -29,15 +29,23 @@ def check_convert_datetime(d, timezone=None):
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
     period_from=pendulum.parse(str(period_from)) if period_from!= str else pendulum.parse(period_from)
     period_to =pendulum.parse(str(period_to)) if period_to!= str else  pendulum.parse(period_to)
-    period_from=period_from.in_timezone(timezone)
-    period_to = period_to.in_timezone(timezone)
+
+    generation_timezone=timezone if pandas_res is not "H" else pytz.timezone("UTC")
+    period_from=period_from.in_timezone(generation_timezone)
+    period_to = period_to.in_timezone(generation_timezone)
+    dtfrom=conv_from_pendulum(period_from, tz=generation_timezone)
+    dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
+    dtfrom = dtfrom.replace(tzinfo=None)
+    dtuntil = dtuntil.replace(tzinfo=None)
     if len(predefined_columns)==0:
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
-    ix = pd.date_range(start=conv_from_pendulum(period_from, tz=timezone), end=conv_from_pendulum(period_to,tz=timezone), freq=pandas_res)
+    ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
-    df_new = df_new.tz_convert(timezone)
+    df_new = df_new.tz_localize(generation_timezone)
+    if pandas_res == "H":
+        df_new = df_new.tz_convert(timezone)
     if len(df_new.index)>1:  #Will generate the last entry
         df_new=df_new.head(-1)
     return df_new

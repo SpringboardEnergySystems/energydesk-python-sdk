@@ -14,8 +14,8 @@ logging.basicConfig(level=logging.INFO,
 
 def test_pandas(api_conn):
     active_tz = pytz.timezone("Europe/Oslo")
-    t1="2023-06-30 22:00:00+00:00"
-    t2="2023-07-31 22:00:00+00:00"
+    t2="2023-12-31 23:00:00+00:00"
+    t1="2023-07-31 22:00:00+00:00"
 
     df=make_empty_timeseries_df(t1, t2, "H", active_tz, predefined_columns=['ticker'])
     print(df)
