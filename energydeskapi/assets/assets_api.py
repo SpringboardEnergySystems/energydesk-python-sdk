@@ -82,7 +82,7 @@ class Asset:
         if 'is_active' in dict: self.is_active = dict['is_active']
         if 'asset_category' in dict: self.asset_category = dict['asset_category']
         if 'polygon' in dict: self.polygon = dict['polygon']
-    def get_dict(self):
+    def get_dict(self, api_conn):
         dict = {}
         dict['pk']=self.pk
         if self.asset_id is not None: dict['asset_id'] = self.asset_id
