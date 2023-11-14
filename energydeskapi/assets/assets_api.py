@@ -61,6 +61,7 @@ class Asset:
         self.polygon=None
 
     def from_dict(self, dict):
+        print(dict)
         if 'pk' in dict: self.pk=dict['pk']
         if 'asset_id' in dict: self.asset_id = dict['asset_id']
         if 'extern_asset_id' in dict: self.extern_asset_id = dict['extern_asset_id']
@@ -82,7 +83,7 @@ class Asset:
         if 'is_active' in dict: self.is_active = dict['is_active']
         if 'asset_category' in dict: self.asset_category = dict['asset_category']
         if 'polygon' in dict: self.polygon = dict['polygon']
-    def get_dict(self, api_conn):
+    def get_dict(self):
         dict = {}
         dict['pk']=self.pk
         if self.asset_id is not None: dict['asset_id'] = self.asset_id
