@@ -58,12 +58,30 @@ class Asset:
         self.price_area = None
         self.is_active=True
         self.asset_category = None
+        self.polygon=None
 
     def from_dict(self, dict):
         if 'pk' in dict: self.pk=dict['pk']
         if 'asset_id' in dict: self.asset_id = dict['asset_id']
         if 'extern_asset_id' in dict: self.extern_asset_id = dict['extern_asset_id']
         if 'description' in dict: self.description = dict['description']
+        if 'asset_type' in dict: self.asset_type = dict['asset_type']
+        if 'grid_connection' in dict: self.grid_connection = dict['grid_connection']
+        if 'power_supplier' in dict: self.power_supplier = dict['power_supplier']
+        if 'asset_owner' in dict: self.asset_owner = dict['asset_owner']
+        if 'asset_manager' in dict: self.asset_manager = dict['asset_manager']
+        if 'vendor' in dict: self.vendor = dict['vendor']
+        if 'meter_id' in dict: self.meter_id = dict['meter_id']
+        if 'production_device_id' in dict: self.production_device_id = dict['production_device_id']
+        if 'sub_meter_id' in dict: self.sub_meter_id = dict['sub_meter_id']
+        if 'is_main_meter' in dict: self.is_main_meter = dict['is_main_meter']
+        if 'address' in dict: self.address = dict['address']
+        if 'city' in dict: self.city = dict['city']
+        if 'location' in dict: self.location = dict['location']
+        if 'price_area' in dict: self.price_area = dict['price_area']
+        if 'is_active' in dict: self.is_active = dict['is_active']
+        if 'asset_category' in dict: self.asset_category = dict['asset_category']
+        if 'polygon' in dict: self.polygon = dict['polygon']
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
@@ -87,6 +105,7 @@ class Asset:
         if self.is_active is not True: dict['is_active'] = self.is_active
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
+        if self.polygon is not None: dict['polygon']=self.polygon
         return dict
 
 
