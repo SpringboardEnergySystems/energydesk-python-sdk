@@ -127,7 +127,7 @@ class CustomersApi:
         if json_res is None:
             return False
         print(json_res)
-        return json_res
+        return json_res, success
 
     @staticmethod
     def get_company_types(api_connection):
