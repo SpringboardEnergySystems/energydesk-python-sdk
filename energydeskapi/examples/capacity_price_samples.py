@@ -18,7 +18,7 @@ from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload
 get_default_profile_months
 from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
-from energydeskapi.bilateral.capacity_api import CapacityApi, CapacityRequest, AvaulabilityProfile
+from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTender, AvailableHours
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
@@ -38,7 +38,8 @@ def test_capacity_config(api_conn):
 
 def load_tender(api_conn, idx):
     jsondata=CapacityApi.get_capacity_request_embedded(api_conn)
-    cap_info=[]
+    if len(jsondata)==0:
+        return None
     return jsondata[idx]
 
 
@@ -50,6 +51,7 @@ def load_capacity_requests(api_conn):
             continue
         rec={'pk':j['pk'],'description':j['description'],'asset':j['grid_component']['description'],
              'request': str(j['grid_component']['description']) + " (" + str(j['description']) + ")"}
+        print(j)
         cap_info.append(rec)
     df=pd.DataFrame(data=cap_info)
     print(df)
@@ -70,7 +72,7 @@ def save_availability_hours(api_conn):
         df_availability_hours['offered_hour'] = 1
         df_availability_hours['timestamp'] = df_availability_hours.index
         print(df_availability_hours)
-        ga=AvaulabilityProfile()
+        ga=AvailableHours()
         ga.period_from=str(t1)
         ga.period_until = str(t2)
         ga.availability=df_availability_hours.to_json(orient='records')
@@ -83,30 +85,32 @@ def register_capacity_requests(api_conn):
     params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
     assets=AssetsApi.get_assets_embedded(api_conn, params)
     for ass in assets['results']:
-        cap=CapacityRequest()
+        cap=AvailabilityTender()
         cap.description="Euroflex Q1-24"
-        cap.price_addon=3.0
+        cap.activation_addon=3000
         cap.grid_component=ass['pk']
-        cap.period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
-        cap.period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
+        cap.availability_period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
+        cap.availability_period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
         prof=get_zero_profile()
         prof["monthly_profile"]['January']=1
         prof["monthly_profile"]['February'] = 1
         prof["monthly_profile"]['March'] = 0.5
-        prof["weekday_profile"]['Monday'] = 1.0
-        prof["weekday_profile"]['Tuesday'] = 1.0
+        prof["weekday_profile"]['Monday'] = 0.3
+        prof["weekday_profile"]['Tuesday'] = 0.3
         prof["weekday_profile"]['Wednesday'] = 1.0
         prof["weekday_profile"]['Thursday'] = 1.0
         prof["weekday_profile"]['Friday'] = 0.9
-        prof["weekday_profile"]['Saturday'] = 0.4
-        prof["weekday_profile"]['Sunday'] = 0.4
+        prof["weekday_profile"]['Saturday'] = 0.5
+        prof["weekday_profile"]['Sunday'] = 0.5
         for i in range(15,19):
             prof["daily_profile"][i] = 1.0
         for i in range(7,10):
             prof["daily_profile"][i] = 1.0
-        cap.requested_profile = prof
+        cap.requested_hours = prof
+        print(cap.requested_hours)
         CapacityApi.upsert_capacity_request(api_conn,cap)
 
+    return dict
 
 def load_current_offers(api_conn):
     current_active_priceoffers = CapacityApi.list_active_price_offers(api_conn)
@@ -160,15 +164,18 @@ def enter_order_on_priceoffer(api_conn, price_offer_id,yearly_kwh=100000):
 
 def calculate_capacity_price(api_conn):
     tender=load_tender(api_conn,1)
+    if tender is None:
+        return
     tender_id=tender['pk']
-    price_addon=3.5
-    activation_price=4
+    price_addon=3000
+    activation_price=4700
 
     success, json_res, status_code, error_msg =CapacityApi.calculate_capacity_price(api_conn,
                                      tender_id,price_addon,activation_price, "NOK")
     if success:
         #print(json_res)
         df=pd.DataFrame(data=json_res['calculation_result']['pricing_details'])
+        print(df[df['option_premium']!=0])
         print(df)
     else:
         print("Error occured when calculating price")
@@ -247,9 +254,11 @@ def get_current_own_trades(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    load_capacity_requests(api_conn)
     #register_capacity_requests(api_conn)
-    calculate_capacity_price(api_conn)
+    #load_capacity_requests(api_conn)
+    #register_capacity_requests(api_conn)
+    #calculate_capacity_price(api_conn)
+    calculate_price_as_customer(api_conn)
     #save_availability_hours(api_conn)
     #requested_profile=get_capacity_config(api_conn)
     #own_orders = LemsApi.query_own_orders(api_conn, False)
