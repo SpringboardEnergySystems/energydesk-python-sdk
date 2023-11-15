@@ -3,7 +3,7 @@ import pandas as pd
 from energydeskapi.types.creditrisk_enum_types import DiversificationEnums,FinancialPolicyEnums,\
 LiquidityEnums, ComparableRatingsEnums,ManagmentGovernanceEnums,CapStructEnums,GovernmentInfluenceEnums, \
 CompetitivePosEnums
-
+from energydeskapi.customers.customers_api import CustomersApi
 
 logger = logging.getLogger(__name__)
 
@@ -123,11 +123,12 @@ class ManualCreditRiskApi:
         except:
             raise ValueError("Inappropriate values")
         manual_credit_params = ManualCreditCalculation(payload={
-            'company': company_pk,
+            'company': CustomersApi.get_company_url(api_connection, company_pk),
             'rating_datetime': rating_datetime,
             'rating_data': rating_data
         })
         qry_payload = manual_credit_params.get_dict()
-        print(qry_payload)
+        print("QRYPAYLOAD: ")
+        print(qry_payload) 
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/creditrisk/manualrating/', qry_payload)
         return success, json_res, status_code, error_msg

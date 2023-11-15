@@ -12,3 +12,4 @@ pandas-excel
 babel
 rauth
 py-moneyed
+flask
