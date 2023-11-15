@@ -2,27 +2,52 @@ from enum import Enum
 
 # TO use codes without +/- Moodys is used for naming https://en.wikipedia.org/wiki/Credit_rating
 class CreditRatingEnums(Enum):
-    Aaa = "AAA"
-    Aa1 = "AA+"
-    Aa2 = "AA"
-    Aa3 = "AA-"
-    A1 = "A+"
-    A2 = "A"
-    A3 = "A-"
-    Baa1 = "BBB+"
-    Baa2 = "BBB"
-    Baa3 = "BBB-"
-    Ba1 = "BB+"
-    Ba2 = "BB"
-    Ba3 = "BB-"
-    B1 = "B+"
-    B2 = "B"
-    B3 = "B-"
-    Caa1 = "CCC+"
-    Caa2 = "CCC"
-    Caa3 = "CCC-"
-    Ca = "CC"
-    C = "C"
+    Aaa = 1
+    Aa1 = 2
+    Aa2 = 3
+    Aa3 = 4
+    A1 = 5
+    A2 = 6
+    A3 = 7
+    Baa1 = 8
+    Baa2 = 9
+    Baa3 = 10
+    Ba1 = 11
+    Ba2 = 12
+    Ba3 =13
+    B1 = 14
+    B2 = 15
+    B3 = 16
+    Caa1 = 17
+    Caa2 = 18
+    Caa3 = 19
+    Ca = 20
+    C = 21
+
+def get_credit_rating_text(credit_rating_enum):
+    return {
+        1: 'AAA',
+        2: 'AA+',
+        3: 'AA',
+        4: 'AA-',
+        5: 'A+',
+        6: 'A',
+        7: 'A-',
+        8: 'BBB+',
+        9: 'BBB',
+        10: 'BBB-',
+        11: 'BB+',
+        12: 'BB',
+        13: 'BB-',
+        14: 'B+',
+        15: 'B',
+        16: 'B-',
+        17: 'CCC+',
+        18: 'CCC',
+        19: 'CCC-',
+        20: 'CC',
+        21: 'C',
+    }.get(credit_rating_enum.value, '')
 
 class FinancialStatementsEnum(Enum):
     ffo = "FFO"
