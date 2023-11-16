@@ -159,6 +159,7 @@ class CapacityApi:
                 "availability_hours": availability_hours,
                 "activation_price":activation_price
         }
+
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/externals/', payload)
         return success, json_res, status_code, error_msg
     @staticmethod
