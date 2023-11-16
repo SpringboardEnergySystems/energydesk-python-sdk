@@ -18,8 +18,8 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 class KafkaClientAuthenticated(EventClient):
-    SECURITY_PROTOCOL = "SASL_PLAINTEXT",
-    SASL_MECHANISM = "PLAIN",
+    SECURITY_PROTOCOL = "SASL_PLAINTEXT"
+    SASL_MECHANISM = "PLAIN"
     API_VERSION = (3, 6, 0)
 
     def __init__(self, kafka_host, kafka_port, kafka_user, kafka_password):
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     env = environ.Env()
     mqtt_broker = env.str('KAFKA_HOST')
     mqtt_port= env.str('KAFKA_PORT')
-    mqttcli=KafkaClientAuthenticated(mqtt_broker,mqtt_port)
+    mqttcli=KafkaClientLocal(mqtt_broker,mqtt_port)
     es=EventSubscriber("marketdata.nordicpower.nasdaqomx",on_test_callback)
     mqttcli.connect( [es], "Feed Consumer")
     mqttcli.start_listener()
