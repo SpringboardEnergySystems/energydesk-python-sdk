@@ -127,7 +127,7 @@ if __name__ == '__main__':
     env = environ.Env()
     mqtt_broker = env.str('KAFKA_HOST')
     mqtt_port= env.str('KAFKA_PORT')
-    mqttcli=KafkaClientLocal(mqtt_broker,mqtt_port)
+    mqttcli=KafkaClientAuthenticated(mqtt_broker,mqtt_port)
     es=EventSubscriber("marketdata.nordicpower.nasdaqomx",on_test_callback)
     mqttcli.connect( [es], "Feed Consumer")
     mqttcli.start_listener()
