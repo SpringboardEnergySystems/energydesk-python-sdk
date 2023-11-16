@@ -179,7 +179,7 @@ class CapacityApi:
         }
 
         logger.info(str(qry_payload))
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbypriceoffer/', qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbycapacityoffer/', qry_payload)
         return success, json_res, status_code, error_msg
 
 
