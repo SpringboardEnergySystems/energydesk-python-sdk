@@ -112,13 +112,13 @@ class CapacityApi:
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tenderoffers/embedded/', parameters)
         if json_res is not None:
             return json_res
-        return None
+        return []
     @staticmethod
     def get_availability_hours(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/availablehours/', parameters)
         if json_res is not None:
           return json_res
-        return None
+        return []
 
     @staticmethod
     def upsert_capacity_request(api_connection, capacity_profile):
