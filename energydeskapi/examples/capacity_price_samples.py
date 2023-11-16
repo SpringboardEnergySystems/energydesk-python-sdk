@@ -81,6 +81,8 @@ def save_availability_hours(api_conn):
         #print(ga.get_dict(api_conn))
         CapacityApi.upsert_availability_hours(api_conn, ga)
 
+
+
 def register_capacity_requests(api_conn):
     params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
     assets=AssetsApi.get_assets_embedded(api_conn, params)
