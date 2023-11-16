@@ -18,8 +18,8 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 class KafkaClientAuthenticated(EventClient):
-    SECURITY_PROTOCOL = "SASL_PLAINTEXT",
-    SASL_MECHANISM = "PLAIN",
+    SECURITY_PROTOCOL = "SASL_PLAINTEXT"
+    SASL_MECHANISM = "PLAIN"
     API_VERSION = (3, 6, 0)
 
     def __init__(self, kafka_host, kafka_port, kafka_user, kafka_password):
