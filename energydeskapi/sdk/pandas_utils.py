@@ -41,11 +41,16 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
         df=pd.DataFrame()
     else:
         df = pd.DataFrame(columns=predefined_columns)
-    ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
+    if pandas_res is None:
+        ix = pd.date_range(start=dtfrom, end=dtuntil)
+    else:
+        ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
     df_new = df_new.tz_localize(generation_timezone)
     if pandas_res == "H":
         df_new = df_new.tz_convert(timezone)
+    if pandas_res is None:  #No resolution, so only return first line defininig the full period
+        return df_new.head(1)
     if len(df_new.index)>1:  #Will generate the last entry
         df_new=df_new.head(-1)
     return df_new

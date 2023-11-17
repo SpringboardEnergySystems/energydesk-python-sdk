@@ -4,31 +4,37 @@ from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum
 from energydeskapi.types.contract_enum_types import QuantityUnitEnum
-
+import pendulum
 logger = logging.getLogger(__name__)
-class CapacityRequest():
+class AvailabilityTender():
   def __init__(self):
     self.pk = 0
     self.description=None
-    self.price_addon=0
+    self.activation_addon=0
     self.grid_component = None
-    self.requested_profile = None
-    self.period_from = None
-    self.period_until = None
-
+    self.requested_hours = None
+    self.tender_open_from = str(pendulum.today("Europe/Oslo"))
+    self.tender_open_until = None
+    self.availability_period_from = None
+    self.availability_period_until = None
   def get_dict(self, api_conn):
     dict = {}
     dict['pk'] = self.pk
     if self.description is not None: dict['description'] = self.description
-    if self.price_addon is not None: dict['price_addon'] = self.price_addon
+    if self.activation_addon is not None: dict['activation_addon'] = self.activation_addon
     if self.grid_component is not None: dict['grid_component'] = AssetsApi.get_asset_url(api_conn, self.grid_component)
-    if self.requested_profile is not None: dict['requested_profile'] = self.requested_profile
-    if self.period_from is not None: dict['period_from'] = self.period_from
-    if self.period_until is not None: dict['period_until'] = self.period_until
+    if self.requested_hours is not None: dict['requested_hours'] = self.requested_hours
+    if self.tender_open_from is not None: dict['tender_open_from'] = self.tender_open_from
+    if self.tender_open_until is not None:
+        dict['tender_open_until'] = self.tender_open_until
+    elif self.availability_period_until is not None:
+        dict['tender_open_until'] = self.availability_period_until
+    if self.availability_period_from is not None: dict['availability_period_from'] = self.availability_period_from
+    if self.availability_period_until is not None: dict['availability_period_until'] = self.availability_period_until
     return dict
 
 
-class AvaulabilityProfile():
+class AvailableHours():
   def __init__(self):
     self.pk = 0
     self.company_pk = 0
@@ -70,67 +76,67 @@ class CapacityApi:
 
     @staticmethod
     def get_capacity_profile(api_connection, parameters={}):
-        json_res = api_connection.exec_get_url('/api/bilateral/capacity/request/calculated/', parameters)
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/calculated/', parameters)
         if json_res is not None:
           return json_res
         return None
 
     @staticmethod
     def get_capacity_request(api_connection, parameters={}):
-        json_res = api_connection.exec_get_url('/api/bilateral/capacity/request/', parameters)
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/', parameters)
         if json_res is not None:
           return json_res
         return None
     @staticmethod
     def get_capacity_request_by_key(api_connection, pk):
         logger.info("Fetching tenders with key " + str(pk))
-        json_res=api_connection.exec_get_url('/api/bilateral/capacity/request/' + str(pk) + "/")
+        json_res=api_connection.exec_get_url('/api/bilateral/availability/tender/' + str(pk) + "/")
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
     def get_capacity_request_embedded(api_connection, parameters={}):
-        json_res = api_connection.exec_get_url('/api/bilateral/capacity/request/embedded/', parameters)
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/embedded/', parameters)
         if json_res is not None:
           return json_res
         return None
     @staticmethod
     def get_capacity_request_url(api_connection, key):
-        return api_connection.get_base_url() + '/api/bilateral/capacity/request/' + str(key) + "/"
+        return api_connection.get_base_url() + '/api/bilateral/availability/tender/' + str(key) + "/"
 
     @staticmethod
     def list_active_capacity_offers(api_connection, parameters={}):
 
         logger.info("Retrieve previously given pricees")
-        json_res = api_connection.exec_get_url('/api/bilateral/capacity/offers/embedded/', parameters)
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/tenderoffers/embedded/', parameters)
         if json_res is not None:
             return json_res
-        return None
+        return []
     @staticmethod
     def get_availability_hours(api_connection, parameters={}):
-        json_res = api_connection.exec_get_url('/api/bilateral/capacity/availablehours/', parameters)
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/availablehours/', parameters)
         if json_res is not None:
           return json_res
-        return None
+        return []
 
     @staticmethod
     def upsert_capacity_request(api_connection, capacity_profile):
       if capacity_profile.pk > 0:
           success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-              '/api/bilateral/capacity/request/' + str(capacity_profile.pk) + "/", capacity_profile.get_dict(api_connection))
+              '/api/bilateral/availability/tender/' + str(capacity_profile.pk) + "/", capacity_profile.get_dict(api_connection))
       else:
           success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-              '/api/bilateral/capacity/request/', capacity_profile.get_dict(api_connection))
+              '/api/bilateral/availability/tender/', capacity_profile.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
     @staticmethod
     def upsert_availability_hours(api_connection, availability_hours):
       if availability_hours.pk > 0:
           success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-              '/api/bilateral/capacity/availablehours/' + str(availability_hours.pk) + "/", availability_hours.get_dict(api_connection))
+              '/api/bilateral/availability/flexiblehours/' + str(availability_hours.pk) + "/", availability_hours.get_dict(api_connection))
       else:
           success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-              '/api/bilateral/capacity/availablehours/', availability_hours.get_dict(api_connection))
+              '/api/bilateral/availability/flexiblehours/', availability_hours.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
     @staticmethod
     def calculate_capacity_price(api_connection, tender_id, price_addon, activation_price, currency_code="NOK"):
@@ -153,6 +159,7 @@ class CapacityApi:
                 "availability_hours": availability_hours,
                 "activation_price":activation_price
         }
+
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/externals/', payload)
         return success, json_res, status_code, error_msg
     @staticmethod
@@ -172,7 +179,7 @@ class CapacityApi:
         }
 
         logger.info(str(qry_payload))
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbypriceoffer/', qry_payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbycapacityoffer/', qry_payload)
         return success, json_res, status_code, error_msg
 
 

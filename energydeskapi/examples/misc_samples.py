@@ -29,6 +29,9 @@ def test_pandas(api_conn):
     df=make_empty_timeseries_df(t1, t2, "MS", active_tz, predefined_columns=['ticker'])
     print(df)
 
+    df=make_empty_timeseries_df(t1, t2, None, active_tz, predefined_columns=['ticker'])
+    print(df)
+
 if __name__ == '__main__':
     api_conn = init_api()
 
