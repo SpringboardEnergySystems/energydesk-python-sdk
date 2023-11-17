@@ -125,10 +125,10 @@ class ManualCreditRiskApi:
         except:
             raise ValueError("Inappropriate values")
         manual_credit_params = ManualCreditCalculation(payload={
-            'company_rating_company_fk': CustomersApi.get_company_url(api_connection, company_pk),
+            'company': CustomersApi.get_company_url(api_connection, company_pk),
             'rating_datetime': rating_datetime,
             'rating_data': rating_data,
-            'rated_by_user_id': UsersApi.get_user_url(api_connection, rated_by_user_id)
+            'credit_rating_performed_by': UsersApi.get_user_url(api_connection, rated_by_user_id)
             
         })
         qry_payload = manual_credit_params.get_dict()
