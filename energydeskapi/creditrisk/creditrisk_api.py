@@ -128,7 +128,7 @@ class ManualCreditRiskApi:
             'company': CustomersApi.get_company_url(api_connection, company_pk),
             'rating_datetime': rating_datetime,
             'rating_data': rating_data,
-            'credit_rating_performed_by': UsersApi.get_user_url(api_connection, rated_by_user_id)
+            'rated_by_user': UsersApi.get_user_url(api_connection, rated_by_user_id)
             
         })
         qry_payload = manual_credit_params.get_dict()
