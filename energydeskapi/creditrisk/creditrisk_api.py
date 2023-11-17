@@ -4,6 +4,7 @@ from energydeskapi.types.creditrisk_enum_types import DiversificationEnums,Finan
 LiquidityEnums, ComparableRatingsEnums,ManagmentGovernanceEnums,CapStructEnums,GovernmentInfluenceEnums, \
 CompetitivePosEnums
 from energydeskapi.customers.customers_api import CustomersApi
+from energydeskapi.customers.users_api import UsersApi
 
 logger = logging.getLogger(__name__)
 
@@ -120,12 +121,15 @@ class ManualCreditRiskApi:
             company_pk = payload['company_pk']
             rating_datetime = payload['rating_datetime']
             rating_data = payload['rating_data']
+            rated_by_user_id = payload['rated_by_user_id']
         except:
             raise ValueError("Inappropriate values")
         manual_credit_params = ManualCreditCalculation(payload={
-            'company': CustomersApi.get_company_url(api_connection, company_pk),
+            'company_rating_company_fk': CustomersApi.get_company_url(api_connection, company_pk),
             'rating_datetime': rating_datetime,
-            'rating_data': rating_data
+            'rating_data': rating_data,
+            'rated_by_user_id': UsersApi.get_user_url(api_connection, rated_by_user_id)
+            
         })
         qry_payload = manual_credit_params.get_dict()
         print("QRYPAYLOAD: ")
