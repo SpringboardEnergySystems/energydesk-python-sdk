@@ -29,6 +29,13 @@ def get_fixedprice_contracts(api_conn):
     #tex=LemsApi.get_contract_doc(api_conn,str(contract_id))
     tex_file = BilateralApi.get_contract_doc(api_conn,str(contract_id))
     print(tex_file)
+
+def get_flexibility_contracts(api_conn):
+
+    contract_id="ELVIA_TILGJENGELIGHET_001"
+    #tex=LemsApi.get_contract_doc(api_conn,str(contract_id))
+    tex_file = BilateralApi.get_contract_doc(api_conn,str(contract_id))
+    print(tex_file)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_fixedprice_contracts(api_conn)
+    get_flexibility_contracts(api_conn)

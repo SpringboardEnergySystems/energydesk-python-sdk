@@ -178,7 +178,6 @@ class CapacityApi:
                 "quantity_unit": quantity_unit
         }
 
-        logger.info(str(qry_payload))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/lems/addorderbycapacityoffer/', qry_payload)
         return success, json_res, status_code, error_msg
 
@@ -232,7 +231,6 @@ class CapacityApi:
         else:
             pk = pricing_conf.pk
             pricing_dict = pricing_conf.get_dict(api_connection)
-        print(pricing_dict)
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/bilateral/capacity/ratesconfigurations/' + str(pk) + "/", pricing_dict)
