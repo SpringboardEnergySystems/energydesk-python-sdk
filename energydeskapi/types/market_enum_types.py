@@ -4,7 +4,7 @@ class ProfileTypeEnum(Enum):
     BASELOAD = 1
     PROFILE = 2
     ABSOLUTEPROFILE = 3  #Not relative month,weekday, hours, but a list of concrete periods
-    CAPACITYPROFILE = 4
+    CONTRACTPROFILE = 4
 
 class MarketEnum(Enum):
     NORDIC_POWER = 1   # Key for the most commonly used markets
@@ -91,7 +91,7 @@ def profile_type_description(x):
         ProfileTypeEnum.BASELOAD: "Baseload",
         ProfileTypeEnum.PROFILE: "Profile",
         ProfileTypeEnum.ABSOLUTEPROFILE: "Varying Volume",
-        ProfileTypeEnum.CAPACITYPROFILE: "Capacity Profile",
+        ProfileTypeEnum.CONTRACTPROFILE: "Contract Profile",
     }[x]
 
 def market_description(x):
