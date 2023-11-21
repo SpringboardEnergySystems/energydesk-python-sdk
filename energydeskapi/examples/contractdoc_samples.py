@@ -21,10 +21,10 @@ def get_contract_profile(api_conn):
 
 def get_fixedprice_contracts(api_conn):
     #query_trading_books(api_conn)
-    df=ContractsApi.list_contracts_df(api_conn, {"trading_book":29, "page_size":100})
-    print(df)
-    contract_id=df['external_contract_id'].iloc[0]
-    print(contract_id)
+    #df=ContractsApi.list_contracts_df(api_conn, {"trading_book":29, "page_size":100})
+    #print(df)
+    #contract_id=df['external_contract_id'].iloc[0]
+    #print(contract_id)
     contract_id="HEV_FASTPRIS_117"
     #tex=LemsApi.get_contract_doc(api_conn,str(contract_id))
     tex_file = BilateralApi.get_contract_doc(api_conn,str(contract_id))
@@ -38,4 +38,4 @@ def get_flexibility_contracts(api_conn):
     print(tex_file)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_flexibility_contracts(api_conn)
+    get_fixedprice_contracts(api_conn)
