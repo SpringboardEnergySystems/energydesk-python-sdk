@@ -96,7 +96,7 @@ def convert_volume_profile(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    mnts=get_default_profile_months()
-    print(mnts)
-    #create_profiles(api_conn)
+    #mnts=get_default_profile_months()
+    #print(mnts)
+    create_profiles(api_conn)
     #load_profiles(api_conn)

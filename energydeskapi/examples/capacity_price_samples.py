@@ -256,9 +256,9 @@ def get_current_own_trades(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #register_capacity_requests(api_conn)
-    #load_capacity_requests(api_conn)
     register_capacity_requests(api_conn)
+    get_current_own_orders(api_conn)
+    #register_capacity_requests(api_conn)
     #calculate_capacity_price(api_conn)
     #calculate_price_as_customer(api_conn)
     #save_availability_hours(api_conn)
