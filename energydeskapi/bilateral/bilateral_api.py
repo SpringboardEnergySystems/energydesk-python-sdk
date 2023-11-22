@@ -196,7 +196,10 @@ class BilateralApi:
         params= {"id":contract_id, "resolution":resolution}
         url = '/api/portfoliomanager/contractprofile/'
         json_res = api_connection.exec_get_url(url, params)
-        df=pd.DataFrame(data=json.loads(json_res))
+        if type(json_res)==str:
+            df=pd.DataFrame(data=json.loads(json_res))
+        else:
+            df = pd.DataFrame(data=json_res)
         if len(df)==0:
             return None
         df.index=df.period_from
