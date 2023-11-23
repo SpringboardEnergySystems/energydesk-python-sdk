@@ -327,6 +327,15 @@ class AssetsApi:
         """
         json_res = api_connection.exec_get_url('/api/assets/assets/embedded', parameters)
         return json_res
+    @staticmethod
+    def get_assets_compact(api_connection, parameters={}):   # Method allowed for anonymous users, only showing simple info
+        """Fetches all assets with extended information
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/assets/assets/compact', parameters)
+        return json_res
 
     @staticmethod
     def get_assets_df(api_connection, parameters={}):
