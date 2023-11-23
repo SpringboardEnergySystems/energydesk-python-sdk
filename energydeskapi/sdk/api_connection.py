@@ -127,6 +127,8 @@ class ApiConnection(object):
     def get_authorization_header(self):
         """Returns the authorization header
         """
+        if self.token is None or self.token=="":
+            return {}
         return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
     def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):

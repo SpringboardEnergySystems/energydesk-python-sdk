@@ -92,21 +92,21 @@ def register_capacity_requests(api_conn):
         cap.activation_addon=3000
         cap.grid_component=ass['pk']
         cap.availability_period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
-        cap.availability_period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
+        cap.availability_period_until = str(pendulum.datetime(2024, 4, 1, tz="Europe/Oslo"))
         prof=get_zero_profile()
         prof["monthly_profile"]['January']=1
         prof["monthly_profile"]['February'] = 1
-        prof["monthly_profile"]['March'] = 0.5
-        prof["weekday_profile"]['Monday'] = 0.3
-        prof["weekday_profile"]['Tuesday'] = 0.3
+        prof["monthly_profile"]['March'] = 1
+        prof["weekday_profile"]['Monday'] = 1
+        prof["weekday_profile"]['Tuesday'] = 1
         prof["weekday_profile"]['Wednesday'] = 1.0
         prof["weekday_profile"]['Thursday'] = 1.0
-        prof["weekday_profile"]['Friday'] = 0.9
+        prof["weekday_profile"]['Friday'] = 1
         prof["weekday_profile"]['Saturday'] = 0.5
         prof["weekday_profile"]['Sunday'] = 0.5
-        for i in range(15,19):
+        for i in range(15,20):
             prof["daily_profile"][i] = 1.0
-        for i in range(7,10):
+        for i in range(7,11):
             prof["daily_profile"][i] = 1.0
         cap.requested_hours = prof
         print(cap.requested_hours)
@@ -257,7 +257,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     register_capacity_requests(api_conn)
-    get_current_own_orders(api_conn)
+    #get_current_own_orders(api_conn)
     #register_capacity_requests(api_conn)
     #calculate_capacity_price(api_conn)
     #calculate_price_as_customer(api_conn)
