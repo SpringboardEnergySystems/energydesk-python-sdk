@@ -128,7 +128,12 @@ class CapacityApi:
         if json_res is not None:
           return json_res
         return None
-
+    @staticmethod
+    def get_tender_instance_by_key(api_connection, pk):
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/instance/' + str(pk) + "/")
+        if json_res is not None:
+          return json_res
+        return None
     @staticmethod
     def get_capacity_request_url(api_connection, key):
         return api_connection.get_base_url() + '/api/bilateral/availability/tender/' + str(key) + "/"
