@@ -33,6 +33,18 @@ def get_product_settlement_view(api_conn):
     print(df[subset].sort_values(by=['ticker', 'trade_id']))
 
 
+def get_settlement_view_data(api_conn):
+    payload={
+        'view_currency': 'NOK',
+        'contract_type':3,
+        "settle_from_time":'2023-07-01',
+        "settle_to_time": '2023-08-01',
+        "resolution":PeriodResolutionEnum.MONTHLY.value,
+        #"groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value,PeriodViewGroupingEnum.TRADEID.value]
+    }
+    print("Calling")
+    result= SettlementApi.get_settlement_data(api_conn, payload)
+    print(result)
 def get_settlement_view(api_conn):
 
     filter={
@@ -81,4 +93,4 @@ def get_settlement_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_settlement_view(api_conn)
+    get_settlement_view_data(api_conn)
