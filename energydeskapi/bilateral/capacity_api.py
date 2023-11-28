@@ -6,6 +6,22 @@ from energydeskapi.types.contract_enum_types import QuantityTypeEnum
 from energydeskapi.types.contract_enum_types import QuantityUnitEnum
 import pendulum
 logger = logging.getLogger(__name__)
+
+
+class AvailabilityTenderInstance():
+    def __init__(self,description, period_from, period_until):
+        self.pk = 0
+        self.description=description
+        self.period_from = period_from
+        self.period_until = period_until
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.description is not None: dict['description'] = self.description
+        if self.period_from is not None: dict['period_from'] = self.period_from
+        if self.period_until is not None: dict['period_until'] = self.period_until
+        return dict
+
 class AvailabilityTender():
   def __init__(self):
     self.pk = 0
@@ -17,11 +33,12 @@ class AvailabilityTender():
     self.tender_open_until = None
     self.availability_period_from = None
     self.availability_period_until = None
+    self.instances=[]
   def get_dict(self, api_conn):
     dict = {}
     dict['pk'] = self.pk
     if self.description is not None: dict['description'] = self.description
-    if self.activation_addon is not None: dict['activation_addon'] = self.activation_addon
+    #if self.activation_addon is not None: dict['activation_addon'] = self.activation_addon
     if self.grid_component is not None: dict['grid_component'] = AssetsApi.get_asset_url(api_conn, self.grid_component)
     if self.requested_hours is not None: dict['requested_hours'] = self.requested_hours
     if self.tender_open_from is not None: dict['tender_open_from'] = self.tender_open_from
@@ -31,6 +48,10 @@ class AvailabilityTender():
         dict['tender_open_until'] = self.availability_period_until
     if self.availability_period_from is not None: dict['availability_period_from'] = self.availability_period_from
     if self.availability_period_until is not None: dict['availability_period_until'] = self.availability_period_until
+    lst=[]
+    for l in self.instances:
+        lst.append(l.get_dict(api_conn))
+    dict['instances']=lst
     return dict
 
 
@@ -101,6 +122,13 @@ class CapacityApi:
         if json_res is not None:
           return json_res
         return None
+    @staticmethod
+    def get_tender_instance_embedded(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/instance/', parameters)
+        if json_res is not None:
+          return json_res
+        return None
+
     @staticmethod
     def get_capacity_request_url(api_connection, key):
         return api_connection.get_base_url() + '/api/bilateral/availability/tender/' + str(key) + "/"

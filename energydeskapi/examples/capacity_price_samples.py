@@ -18,7 +18,7 @@ from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload
 get_default_profile_months
 from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
-from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTender, AvailableHours
+from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTenderInstance,AvailabilityTender, AvailableHours
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
@@ -109,7 +109,11 @@ def register_capacity_requests(api_conn):
         for i in range(7,11):
             prof["daily_profile"][i] = 1.0
         cap.requested_hours = prof
-        print(cap.requested_hours)
+        inst=AvailabilityTenderInstance("Q1-2024",
+                                        str(pendulum.datetime(2024,1,1, tz="Europe/Oslo")),
+                                        str(pendulum.datetime(2024, 4, 1, tz="Europe/Oslo")))
+        cap.instances.append(inst)
+        print(cap.get_dict(api_conn))
         CapacityApi.upsert_capacity_request(api_conn,cap)
 
     return dict
