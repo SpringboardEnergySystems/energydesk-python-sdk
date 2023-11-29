@@ -174,11 +174,10 @@ class CapacityApi:
               '/api/bilateral/availability/flexiblehours/', availability_hours.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
     @staticmethod
-    def calculate_capacity_price(api_connection, tender_id, price_addon, activation_price, currency_code="NOK"):
+    def calculate_capacity_price(api_connection, tender_id, activation_price, currency_code="NOK"):
         qry_payload = {
                 "currency_code": currency_code,
                 "tender_id":tender_id,
-                "price_addon": price_addon,
                 "activation_price":activation_price
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)
