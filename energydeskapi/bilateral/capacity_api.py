@@ -78,7 +78,8 @@ class AvailableHours():
 class RatesConfiguration:
     def __init__(self):
         self.pk = 0
-        self.standby_addon_kwh=2
+        self.alternative_unit_cost=160
+        self.max_activation_price=16000
         self.volatility_rate = 0.4
         self.riskfree_rate = 0.03
 
@@ -87,7 +88,8 @@ class RatesConfiguration:
     def get_dict(self,api_conn):
         dict = {}
         dict['pk']=self.pk
-        dict['standby_addon_kwh'] = self.standby_addon_kwh
+        dict['max_activation_price'] = self.max_activation_price
+        dict['alternative_unit_cost'] = self.alternative_unit_cost
         dict['volatility_rate'] = self.volatility_rate
         dict['riskfree_rate'] = self.riskfree_rate
         return dict
