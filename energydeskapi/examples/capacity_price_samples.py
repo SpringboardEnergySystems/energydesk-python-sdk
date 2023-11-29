@@ -84,11 +84,11 @@ def save_availability_hours(api_conn):
 
 
 def register_capacity_requests(api_conn):
-    params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
+    params={"asset_category":AssetCategoryEnum.GROUPED_ASSET.value,"page_size":100}
     assets=AssetsApi.get_assets_embedded(api_conn, params)
     for ass in assets['results']:
         cap=AvailabilityTender()
-        cap.description="Euroflex Q1-24"
+        cap.description="Euroflex"
         cap.activation_addon=3000
         cap.grid_component=ass['pk']
         cap.availability_period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))

@@ -160,6 +160,8 @@ class ApiConnection(object):
         if result.status_code<210:
             if result.status_code>200 and result.text.strip()=="":
                 return True, [], result.status_code, None
+            if result.headers.get('content-type') != 'application/json':# Text data , e.g. CSV
+                return  True, result.text, result.status_code, None
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
