@@ -185,6 +185,32 @@ class BilateralApi:
         return json_res
 
     @staticmethod
+    def get_capacity_contract_doc(api_connection, external_id):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/bilateral/capacity/contractdoc/?external_id=' + external_id
+        json_res = api_connection.exec_get_url(url)
+        return json_res
+
+    @staticmethod
+    def preview_capacity_contract_doc(api_connection, payload):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/bilateral/capacity/previewcontractdoc/'
+        json_res = api_connection.exec_post_url(url, payload)
+        return json_res
+
+    @staticmethod
     def get_contract_profile(api_connection, contract_id, resolution="Monthly"):
         """Fetches all counterparts and displays in a dataframe
 

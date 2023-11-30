@@ -256,12 +256,17 @@ def get_current_own_trades(api_conn):
     return df
 
 
-
+def lookup_tenders(api_conn):
+    jsondata = CapacityApi.get_capacity_request_embedded(api_conn)
+    for j in jsondata:
+        if j['description'] is None or 'instances' not in j:
+            continue
+        print(j)
 if __name__ == '__main__':
 
     api_conn=init_api()
-    register_capacity_requests(api_conn)
-    #get_current_own_orders(api_conn)
+    #register_capacity_requests(api_conn)
+    lookup_tenders(api_conn)
     #register_capacity_requests(api_conn)
     #calculate_capacity_price(api_conn)
     #calculate_price_as_customer(api_conn)
