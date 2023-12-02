@@ -13,7 +13,7 @@ class DsoApi:
                            max_dsr_mva=2,
                            invest_dsr_cost_low=2, invest_dsr_cost_med=5, invest_dsr_cost_high=10,
                            yearly_dsr_cost_low=2, yearly_dsr_cost_med=5, yearly_dsr_cost_high=10,
-                           simulation_count=10
+                           discount_rate=0.04,simulation_count=10
                            ):
         """Fetches empty schedule
         """
@@ -33,7 +33,7 @@ class DsoApi:
             "yearly_dsr_cost_high":yearly_dsr_cost_high,
             "simulation_count":simulation_count
         }
-        json_res = api_connection.exec_post_url('/api/riskmanager/grid/simulatedsr/', payload)
-        if json_res is None:
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/grid/simulatedsr/', payload)
+        if success is False:
             return None
         return json_res

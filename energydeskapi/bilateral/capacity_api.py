@@ -164,6 +164,8 @@ class CapacityApi:
           success, returned_data, status_code, error_msg = api_connection.exec_post_url(
               '/api/bilateral/availability/tender/', capacity_profile.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
+
+
     @staticmethod
     def upsert_availability_hours(api_connection, availability_hours):
       if availability_hours.pk > 0:

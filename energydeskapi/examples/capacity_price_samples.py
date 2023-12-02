@@ -102,11 +102,11 @@ def register_capacity_requests(api_conn):
         prof["weekday_profile"]['Wednesday'] = 1.0
         prof["weekday_profile"]['Thursday'] = 1.0
         prof["weekday_profile"]['Friday'] = 1
-        prof["weekday_profile"]['Saturday'] = 0.5
-        prof["weekday_profile"]['Sunday'] = 0.5
-        for i in range(15,20):
+        prof["weekday_profile"]['Saturday'] = 1
+        prof["weekday_profile"]['Sunday'] = 1
+        for i in range(15,19):
             prof["daily_profile"][i] = 1.0
-        for i in range(7,11):
+        for i in range(7,10):
             prof["daily_profile"][i] = 1.0
         cap.requested_hours = prof
         inst=AvailabilityTenderInstance("Q1-2024",
@@ -265,8 +265,8 @@ def lookup_tenders(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #register_capacity_requests(api_conn)
-    lookup_tenders(api_conn)
+    register_capacity_requests(api_conn)
+    #lookup_tenders(api_conn)
     #register_capacity_requests(api_conn)
     #calculate_capacity_price(api_conn)
     #calculate_price_as_customer(api_conn)
