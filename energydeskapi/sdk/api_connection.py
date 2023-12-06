@@ -127,6 +127,8 @@ class ApiConnection(object):
     def get_authorization_header(self):
         """Returns the authorization header
         """
+        if self.token is None or self.token=="":
+            return {}
         return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
     def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
@@ -158,6 +160,8 @@ class ApiConnection(object):
         if result.status_code<210:
             if result.status_code>200 and result.text.strip()=="":
                 return True, [], result.status_code, None
+            if result.headers.get('content-type') != 'application/json':# Text data , e.g. CSV
+                return  True, result.text, result.status_code, None
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:

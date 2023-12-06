@@ -18,7 +18,7 @@ from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload
 get_default_profile_months
 from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
-from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTender, AvailableHours
+from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTenderInstance,AvailabilityTender, AvailableHours
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
@@ -84,32 +84,36 @@ def save_availability_hours(api_conn):
 
 
 def register_capacity_requests(api_conn):
-    params={"asset_category":AssetCategoryEnum.GRID_COMPONENT.value,"page_size":100}
+    params={"asset_category":AssetCategoryEnum.GROUPED_ASSET.value,"page_size":100}
     assets=AssetsApi.get_assets_embedded(api_conn, params)
     for ass in assets['results']:
         cap=AvailabilityTender()
-        cap.description="Euroflex Q1-24"
+        cap.description="Euroflex"
         cap.activation_addon=3000
         cap.grid_component=ass['pk']
         cap.availability_period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
-        cap.availability_period_until = str(pendulum.datetime(2024, 3, 1, tz="Europe/Oslo"))
+        cap.availability_period_until = str(pendulum.datetime(2024, 4, 1, tz="Europe/Oslo"))
         prof=get_zero_profile()
         prof["monthly_profile"]['January']=1
         prof["monthly_profile"]['February'] = 1
-        prof["monthly_profile"]['March'] = 0.5
-        prof["weekday_profile"]['Monday'] = 0.3
-        prof["weekday_profile"]['Tuesday'] = 0.3
+        prof["monthly_profile"]['March'] = 1
+        prof["weekday_profile"]['Monday'] = 1
+        prof["weekday_profile"]['Tuesday'] = 1
         prof["weekday_profile"]['Wednesday'] = 1.0
         prof["weekday_profile"]['Thursday'] = 1.0
-        prof["weekday_profile"]['Friday'] = 0.9
-        prof["weekday_profile"]['Saturday'] = 0.5
-        prof["weekday_profile"]['Sunday'] = 0.5
+        prof["weekday_profile"]['Friday'] = 1
+        prof["weekday_profile"]['Saturday'] = 1
+        prof["weekday_profile"]['Sunday'] = 1
         for i in range(15,19):
             prof["daily_profile"][i] = 1.0
         for i in range(7,10):
             prof["daily_profile"][i] = 1.0
         cap.requested_hours = prof
-        print(cap.requested_hours)
+        inst=AvailabilityTenderInstance("Q1-2024",
+                                        str(pendulum.datetime(2024,1,1, tz="Europe/Oslo")),
+                                        str(pendulum.datetime(2024, 4, 1, tz="Europe/Oslo")))
+        cap.instances.append(inst)
+        print(cap.get_dict(api_conn))
         CapacityApi.upsert_capacity_request(api_conn,cap)
 
     return dict
@@ -252,13 +256,18 @@ def get_current_own_trades(api_conn):
     return df
 
 
-
+def lookup_tenders(api_conn):
+    jsondata = CapacityApi.get_capacity_request_embedded(api_conn)
+    for j in jsondata:
+        if j['description'] is None or 'instances' not in j:
+            continue
+        print(j)
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #register_capacity_requests(api_conn)
-    #load_capacity_requests(api_conn)
     register_capacity_requests(api_conn)
+    #lookup_tenders(api_conn)
+    #register_capacity_requests(api_conn)
     #calculate_capacity_price(api_conn)
     #calculate_price_as_customer(api_conn)
     #save_availability_hours(api_conn)

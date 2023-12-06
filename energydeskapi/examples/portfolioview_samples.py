@@ -20,12 +20,12 @@ def get_period_view(api_conn):
         print(u['pk'],u['description'])   # Just to see ID of portfolios available for next query
 
     filter={
-        "portfolio":16,#  3=Fastpris, 4=GO, ContractTypeEnum.GOO.value,
+        "portfolio":9,#  3=Fastpris, 4=GO, ContractTypeEnum.GOO.value,
         'view_currency': 'NOK',
         "view_period_from__gte":'2023-01-01',
-        "view_period_until__lt": '2025-05-01',
-        "commodity__delivery_from": '2023-01-01',
-        "commodity__delivery_until": '2025-01-01',
+        "view_period_until__lt": '2029-05-01',
+        #"commodity__delivery_from": '2023-01-01',
+        #"commodity__delivery_until": '2025-01-01',
         "resolution":"Monthly",
         #"groupby":['trade_id', 'area']
     }
