@@ -24,6 +24,50 @@ class CreditRatingEnums(Enum):
     Ca = 20
     C = 21
 
+class RatingCategoryEnums(Enum):
+    TIER1 = (7,1)
+    TIER2 = (10, 8)
+    TIER3 = (13,11)
+    TIER4 = (16, 14)
+    TIER5 = (21, 17)
+
+def get_tier_range(rating_category_enum):
+    return {
+        'TIER1': (7,1),
+        'TIER2': (10, 8),
+        'TIER3': (13,11),
+        'TIER4': (16, 14),
+        'TIER5': (21, 17)
+    }.get(rating_category_enum.name)
+
+def get_tier_range_text(rating_category_enum):
+    limit = get_tier_range(rating_category_enum)
+    print("LIMIT", limit)
+    vals = {
+        1: 'AAA',
+        2: 'AA+',
+        3: 'AA',
+        4: 'AA-',
+        5: 'A+',
+        6: 'A',
+        7: 'A-',
+        8: 'BBB+',
+        9: 'BBB',
+        10: 'BBB-',
+        11: 'BB+',
+        12: 'BB',
+        13: 'BB-',
+        14: 'B+',
+        15: 'B',
+        16: 'B-',
+        17: 'CCC+',
+        18: 'CCC',
+        19: 'CCC-',
+        20: 'CC',
+        21: 'C',
+    }
+    return vals.get(limit[1]), vals.get(limit[0])
+
 def get_credit_rating_text(credit_rating_enum):
     return {
         1: 'AAA',
