@@ -16,7 +16,7 @@ def generate_default_flexible_contract(api_conn):
     c=Contract()
     c.contract_status=ContractStatusEnum.CONFIRMED
     c.certificates=[]
-    c.contract_profile0={'periods':[]}
+    c.contract_profile={'periods':[]}
     c.area="NO1"
     c.quantity_unit=QuantityUnitEnum.MW
     c.quantity_type=QuantityTypeEnum.VOLUME

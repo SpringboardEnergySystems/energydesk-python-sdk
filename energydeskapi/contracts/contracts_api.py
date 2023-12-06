@@ -16,6 +16,25 @@ from energydeskapi.sdk.common_utils import check_fix_date2str
 logger = logging.getLogger(__name__)
 #  Change
 
+class ContractPeriod:
+    def __init__(self,
+                 pk=0,
+                 period_from=None,
+                 period_until=None,
+                 period_price=None,
+                 period_volume=None):
+        self.period_from=period_from
+        self.period_until = period_until
+        self.period_price = period_price
+        self.period_volume = period_volume
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        dict['period_from']=str(self.period_from)
+        dict['period_until'] = str(self.period_until)
+        dict['period_price'] =self.period_price
+        dict['period_volume'] = self.period_volume
+        return dict
 class Contract:
     """ Class for contracts
 
@@ -75,7 +94,7 @@ class Contract:
         self.contract_tags=[]
         self.area="SYS"
         self.commodity_profile = {}
-        self.contract_profile = {}
+        self.contract_profile_periods=[]
 
         self.spread = False
         self.otc = False
@@ -145,6 +164,7 @@ class Contract:
         c.marketplace_product = d['marketplace_product']
         for t in d['contract_tags']:
             c.contract_tags.append(ContractTag.from_dict(t))
+
         return c
 
     def get_simple_dict(self):
@@ -202,6 +222,10 @@ class Contract:
         if len(self.certificates) > 0:
             print("Dicstionaries ", self.certificates)
             dict["certificates"] = self.certificates
+        if len(self.contract_profile_periods)>0:
+            dict["contract_profile"]={'profile_periods':[]}
+            for cpp in self.contract_profile_periods:
+                dict["contract_profile"]['profile_periods'].append(cpp.get_dict(None))
         return dict
 
 
@@ -279,6 +303,11 @@ class Contract:
         for c in self.certificates:
             cert_dicts.append(c.get_dict(api_conn))
         dict["certificates"] = cert_dicts
+        if len(self.contract_profile_periods)>0:
+            dict["contract_profile"]={'profile_periods':[]}
+            for cpp in self.contract_profile_periods:
+                dict["contract_profile"]['profile_periods'].append(cpp.get_dict(api_conn))
+
         return dict
 
 
