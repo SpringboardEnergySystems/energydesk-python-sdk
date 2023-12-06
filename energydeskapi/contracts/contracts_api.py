@@ -75,6 +75,7 @@ class Contract:
         self.contract_tags=[]
         self.area="SYS"
         self.commodity_profile = {}
+        self.contract_profile = {}
         self.spread = False
         self.otc = False
         self.delivery_type=delivery_type
@@ -169,6 +170,8 @@ class Contract:
         else:
             prod['otc'] = True
         dict['commodity'] = prod
+        dict['trade_time'] = self.trade_datetime
+        dict['contract_profile']= {} if  self.contract_profile is None else self.contract_profile
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = self.trading_book
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
@@ -221,6 +224,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
+        dict['contract_profile'] ={} if  self.contract_profile is None else self.contract_profile
         prod['commodity_profile'] = {} if self.commodity_profile is None else self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
