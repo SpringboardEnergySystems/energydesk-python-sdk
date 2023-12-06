@@ -113,6 +113,8 @@ class Contract:
 
     def add_contract_tag(self, tag):
         self.contract_tags.append(tag)
+    def add_contract_period(self, period):
+        self.contract_profile_periods.append(period)
 
     def add_otc_delivery_period(self, delivery_from, delivery_until):
         if isinstance(delivery_from, str):
