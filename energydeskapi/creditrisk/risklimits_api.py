@@ -33,3 +33,33 @@ class RiskLimitsApi:
         if json_res is not None:
             return json_res
         return None
+    
+class RatingCategoryApi:
+    """Class for risk limits
+
+    """
+    @staticmethod
+    def get_rating_categories(api_connection, params={}):
+        """Fetching list of risk categories
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching risk categories")
+        json_res=api_connection.exec_get_url('/api/creditrisk/rating/risklimits/', params)
+        if json_res is not None:
+            return json_res
+        return None
+    
+    @staticmethod
+    def post_rating_category(api_connection, payload):
+        """Fetching list of risk categories
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("PostinSg risk limits")
+        json_res=api_connection.exec_post_url('/api/creditrisk/rating/risklimits/', payload)
+        if json_res is not None:
+            return json_res
+        return None
