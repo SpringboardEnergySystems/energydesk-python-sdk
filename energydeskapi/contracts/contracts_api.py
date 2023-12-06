@@ -23,6 +23,7 @@ class ContractPeriod:
                  period_until=None,
                  period_price=None,
                  period_volume=None):
+        self.pk=pk
         self.period_from=period_from
         self.period_until = period_until
         self.period_price = period_price
