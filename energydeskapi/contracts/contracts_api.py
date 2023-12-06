@@ -76,6 +76,7 @@ class Contract:
         self.area="SYS"
         self.commodity_profile = {}
         self.contract_profile = {}
+
         self.spread = False
         self.otc = False
         self.delivery_type=delivery_type
