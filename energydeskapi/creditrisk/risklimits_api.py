@@ -5,7 +5,7 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 class RiskLimitsApi:
-    """Class for credit risk
+    """Class for risk limits
 
     """
     @staticmethod
@@ -15,8 +15,21 @@ class RiskLimitsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching rated companies")
-        json_res=api_connection.exec_get_url('/api/creditrisk/rating/risklimits/', params)
+        logger.info("Fetching risk categories")
+        json_res=api_connection.exec_get_url('/api/creditrisk/rating/categoryrisklimits/', params)
+        if json_res is not None:
+            return json_res
+        return None
+    
+    @staticmethod
+    def post_risk_categories(api_connection, payload):
+        """Fetching list of risk categories
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Posting risk limits")
+        json_res=api_connection.exec_post_url('/api/creditrisk/rating/categoryrisklimits/', payload)
         if json_res is not None:
             return json_res
         return None
