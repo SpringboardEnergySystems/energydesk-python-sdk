@@ -18,22 +18,19 @@ logger = logging.getLogger(__name__)
 
 class ContractPeriod:
     def __init__(self,
-                 pk=0,
                  period_from=None,
                  period_until=None,
                  period_price=None,
                  period_volume=None):
-        self.pk=pk
         self.period_from=period_from
         self.period_until = period_until
         self.period_price = period_price
         self.period_volume = period_volume
     def get_dict(self, api_conn):
         dict = {}
-        dict['pk'] = self.pk
         dict['period_from']=str(self.period_from)
         dict['period_until'] = str(self.period_until)
-        dict['period_price'] =self.period_price
+        if self.period_price is not None: dict['period_price'] = gen_json_money(self.period_price)
         dict['period_volume'] = self.period_volume
         return dict
 class Contract:
