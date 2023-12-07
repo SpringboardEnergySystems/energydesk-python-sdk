@@ -192,7 +192,7 @@ class Contract:
             prod['otc'] = True
         dict['commodity'] = prod
         dict['trade_time'] = self.trade_datetime
-        dict['contract_profile']= {} if  self.contract_profile is None else self.contract_profile
+        #dict['contract_profile']= {} if  self.contract_profile is None else self.contract_profile
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = self.trading_book
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
