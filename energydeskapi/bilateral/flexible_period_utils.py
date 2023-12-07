@@ -15,6 +15,7 @@ def generate_default_flexible_contract(api_conn):
 
     c=Contract()
     c.contract_status=ContractStatusEnum.CONFIRMED
+
     c.certificates=[]
     c.contract_profile={'periods':[]}
     c.area="NO1"
@@ -29,7 +30,7 @@ def generate_default_flexible_contract(api_conn):
     c.commodity_type=CommodityTypeEnum.POWER
     c.market=MarketEnum.NORDIC_POWER
     c.contract_price=FormattedMoney(0, CurrencyCode.EUR)
-    c.contract_type=ContractTypeEnum.GOO
+    c.contract_type=ContractTypeEnum.PROFILE
     c.trading_fee = FormattedMoney(0, CurrencyCode.EUR)
     c.clearing_fee = FormattedMoney(0, CurrencyCode.EUR)
     return c
