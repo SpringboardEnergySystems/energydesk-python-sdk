@@ -249,7 +249,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
-        dict['contract_profile'] ={} if  self.contract_profile is None else self.contract_profile
+        #dict['contract_profile'] ={} if  self.contract_profile is None else self.contract_profile
         prod['commodity_profile'] = {} if self.commodity_profile is None else self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
