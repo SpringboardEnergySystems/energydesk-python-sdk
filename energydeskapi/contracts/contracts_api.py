@@ -11,28 +11,28 @@ from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUni
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
 
-
+from energydeskapi.contracts.profile_contract import ContractProfile, ContractProfilePeriod
 
 logger = logging.getLogger(__name__)
 #  Change
 
-class ContractPeriod:
-    def __init__(self,
-                 period_from=None,
-                 period_until=None,
-                 period_price=None,
-                 period_volume=None):
-        self.period_from=period_from
-        self.period_until = period_until
-        self.period_price = period_price
-        self.period_volume = period_volume
-    def get_dict(self, api_conn):
-        dict = {}
-        dict['period_from']=str(self.period_from)
-        dict['period_until'] = str(self.period_until)
-        if self.period_price is not None: dict['period_price'] = gen_json_money(self.period_price)
-        dict['period_volume'] = self.period_volume
-        return dict
+# class ContractPeriod:
+#     def __init__(self,
+#                  period_from=None,
+#                  period_until=None,
+#                  period_price=None,
+#                  period_volume=None):
+#         self.period_from=period_from
+#         self.period_until = period_until
+#         self.period_price = period_price
+#         self.period_volume = period_volume
+#     def get_dict(self, api_conn):
+#         dict = {}
+#         dict['period_from']=str(self.period_from)
+#         dict['period_until'] = str(self.period_until)
+#         if self.period_price is not None: dict['period_price'] = gen_json_money(self.period_price)
+#         dict['period_volume'] = self.period_volume
+#         return dict
 class Contract:
     """ Class for contracts
 
@@ -92,7 +92,7 @@ class Contract:
         self.contract_tags=[]
         self.area="SYS"
         self.commodity_profile = {}
-        self.contract_profile_periods=[]
+        self.contract_profile=None
 
         self.spread = False
         self.otc = False
@@ -111,8 +111,7 @@ class Contract:
 
     def add_contract_tag(self, tag):
         self.contract_tags.append(tag)
-    def add_contract_period(self, period):
-        self.contract_profile_periods.append(period)
+
 
     def add_otc_delivery_period(self, delivery_from, delivery_until):
         if isinstance(delivery_from, str):
@@ -222,10 +221,11 @@ class Contract:
         if len(self.certificates) > 0:
             print("Dicstionaries ", self.certificates)
             dict["certificates"] = self.certificates
-        if len(self.contract_profile_periods)>0:
+        if self.contract_profile is not None:
+            dict["contract_profile"] = self.contract_profile.json
+        else:
             dict["contract_profile"]={'profile_periods':[]}
-            for cpp in self.contract_profile_periods:
-                dict["contract_profile"]['profile_periods'].append(cpp.get_dict(None))
+
         return dict
 
 
@@ -303,11 +303,10 @@ class Contract:
         for c in self.certificates:
             cert_dicts.append(c.get_dict(api_conn))
         dict["certificates"] = cert_dicts
-        if len(self.contract_profile_periods)>0:
+        if self.contract_profile is not None:
+            dict["contract_profile"] = self.contract_profile.json
+        else:
             dict["contract_profile"]={'profile_periods':[]}
-            for cpp in self.contract_profile_periods:
-                dict["contract_profile"]['profile_periods'].append(cpp.get_dict(api_conn))
-
         return dict
 
 

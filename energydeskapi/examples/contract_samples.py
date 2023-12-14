@@ -14,7 +14,7 @@ from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
 from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
-from energydeskapi.types.contract_enum_types import ContractStatusEnum, GosEnergySources
+from energydeskapi.types.contract_enum_types import ContractStatusEnum
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
 import json
@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_contract_types(api_conn):
-    df=ContractsApi.get_contract_types(api_conn)
+    df=ContractsApi.get_contract_types(api_conn, {"no_pagination": True})
     print(df)
 
 def get_contract_filters(api_conn):
@@ -42,10 +42,10 @@ def get_contract_filter_pk(api_conn):
     print(json_contractfilter)
 
 def get_contracts(api_conn, trading_book=None):
-    filter={'page_size':200}
+    filter={"no_pagination": True}
     json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
-    records=json_data['results']  # 200 at a time
-    print(json.dumps(records, indent=2))
+    #records=json_data['results']  # 200 at a time
+    print(json.dumps(json_data, indent=2))
     #df=pd.DataFrame(data=eval(records))
     #print(df)
 

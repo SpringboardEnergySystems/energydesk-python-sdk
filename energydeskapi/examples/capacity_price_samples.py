@@ -1,10 +1,14 @@
 import logging
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import pandas as pd
-import json
+import json, pytz
 from dateutil import parser
+import random, time
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
+from energydeskapi.sdk.profiles_utils import relative_profile_to_dataframe
 from dateutil.relativedelta import relativedelta
 from energydeskapi.sdk.common_utils import key_from_url
+from energydeskapi.flexibility.capacity_contract_utils import generate_default_capacity_contract
 from energydeskapi.customers.customers_api import CustomersApi, Company
 from energydeskapi.customers.users_api import UsersApi, User, UserGroup, UserFeatureAccess
 from energydeskapi.sdk.common_utils import init_api
@@ -57,6 +61,9 @@ def load_capacity_requests(api_conn):
     print(df)
     #print(json.dumps(jsondata, indent=2))
     return jsondata
+
+
+
 def save_availability_hours(api_conn):
     usrprofile = UsersApi.get_user_profile(api_conn)
     comp=CustomersApi.get_company_from_registry_number(api_conn, usrprofile['company_nbr'])
@@ -119,7 +126,7 @@ def register_capacity_requests(api_conn):
     return dict
 
 def load_current_offers(api_conn):
-    current_active_priceoffers = CapacityApi.list_active_price_offers(api_conn)
+    current_active_priceoffers = CapacityApi.list_active_capacity_offers(api_conn)
     print(current_active_priceoffers)
     if len(current_active_priceoffers)>0:
         return current_active_priceoffers[0]
@@ -161,10 +168,56 @@ def create_save_profile(api_conn):
     res=ProfilesApi.upsert_volume_profile(api_conn, v)
     print(res)
 
-def enter_order_on_priceoffer(api_conn, price_offer_id,yearly_kwh=100000):
-    success, json_res, status_code, error_msg =FixedPriceApi.add_order_from_priceoffer_id(api_conn, price_offer_id,
-                                                                                          "BUY", yearly_kwh)
-    print(json_res)
+
+def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
+    current_active_priceoffers = CapacityApi.get_capacity_request_embedded(api_conn)
+    for c in current_active_priceoffers:
+        pk=c["pk"]
+        area=c["grid_component"]["description"]
+        period_from = c["availability_period_from"]
+        period_until = c["availability_period_until"]
+        requested_hours = c["requested_hours"]
+        if area!=tender:
+            continue
+
+        random.seed(time.time())
+        df= relative_profile_to_dataframe(period_from, period_until, requested_hours,
+                                          active_tz=pytz.timezone("Europe/Oslo"))
+        dt1=pendulum.parse(period_from).astimezone(pytz.timezone("Europe/Oslo"))
+        dt2 = pendulum.parse(period_until).astimezone(pytz.timezone("Europe/Oslo"))
+        quantity=2.1
+        price = 100
+        # Create number of contracts
+        for idx in range(count):
+            df_contract_profile=df.copy(deep=True)
+            while dt1<dt2:
+                next = dt1.add(days=1)
+                x1=conv_from_pendulum(dt1)
+                x2 = conv_from_pendulum(next)
+                mask=((df_contract_profile.index>=x1) & (df_contract_profile.index<x2))
+                r=random.randint(1, 10)
+                if r>6:
+                    df_contract_profile.loc[mask, "hourly_weight"]=0
+                dt1=next
+            from energydeskapi.contracts.profile_contract import ContractProfile, ContractProfilePeriod
+            contract=generate_default_capacity_contract(api_conn)
+            periods=[]
+            for index,row in df_contract_profile.iterrows():
+                p1=index
+                p2=index + timedelta(hours=1)
+                cpp=ContractProfilePeriod(p1, p2,None,None, None, quantity )
+                periods.append(cpp)
+            cp=ContractProfile(periods)
+            contract.contract_profile=cp
+            print(contract.get_dict(api_conn))
+            #mjson=cp.json
+
+            #cpp2=ContractProfile.from_json(mjson)
+            #print(cpp2.json)
+            #print(cp.json)
+            #print(df_contract_profile[df_contract_profile['hourly_weight']==1])
+
+
 
 
 
@@ -265,7 +318,8 @@ def lookup_tenders(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    register_capacity_requests(api_conn)
+    register_caopacity_contracts(api_conn, tender="Nedre Glomma", count=1)
+   # register_capacity_requests(api_conn)
     #lookup_tenders(api_conn)
     #register_capacity_requests(api_conn)
     #calculate_capacity_price(api_conn)

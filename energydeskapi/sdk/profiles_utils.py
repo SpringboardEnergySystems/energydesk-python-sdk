@@ -3,6 +3,8 @@ from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_li
 import numpy as np
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import pytz
+from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 def check_flat_profile(vmap):
     df=pd.DataFrame.from_dict(vmap, orient='index')
     print(df)
@@ -75,6 +77,53 @@ def generate_normalized_profile(profile):
     profile['weekday_profile'] = normalize_elements(profile['weekday_profile'])
     profile['daily_profile'] = normalize_elements(profile['daily_profile'])
     return profile
+
+
+def __stringify_dictionary(d):
+    newdict={}
+    for key in d.keys():
+        newdict[str(key)]=d[key]
+    return newdict
+def __convert_from_named_profiles(profile):
+    months=profile['monthly_profile']
+
+    monthkeys={(index+1): months[month] for index, month in enumerate(get_month_list()) if month}
+    profile['monthly_profile']=monthkeys
+    weekdays=profile['weekday_profile']
+    weekdayskeys={(index): weekdays[month] for index, month in enumerate(get_weekdays_list()) if month}
+    profile['weekday_profile']=weekdayskeys
+    dayshours=profile['daily_profile']
+    dayshours=__stringify_dictionary(dayshours)  # Otherwise the lookup below fails
+    hourlykeys={(index): dayshours[str(index)] for index in list(range(24))}
+    profile['daily_profile']=hourlykeys
+    return profile
+
+
+def relative_profile_to_dataframe(period_from, period_until,relative_profile, active_tz=pytz.timezone("Europe/Oslo")):
+
+    try:
+        calender_profile=__convert_from_named_profiles(relative_profile)
+    except Exception as e:
+        #traceback.print_exc()
+        calender_profile=relative_profile
+
+    monthly_weights=calender_profile['monthly_profile']
+    weekly_weights = calender_profile['weekday_profile']
+    daily_weights = calender_profile['daily_profile']
+
+    df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
+
+
+    df['timestamp'] = df.index
+
+
+    df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month], axis=1)
+    df['weekday_weight'] = df.apply(lambda x: weekly_weights[x['timestamp'].dayofweek], axis=1)
+    df['hour_weight'] = df.apply(lambda x: daily_weights[x['timestamp'].hour], axis=1)
+    df['hourly_weight'] =df['monthly_weight']*df['weekday_weight']*df['hour_weight']
+
+    return df[['timestamp','hourly_weight']]
+
 
 if __name__ == '__main__':
     months=get_baseload_months()
