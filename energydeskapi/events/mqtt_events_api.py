@@ -75,6 +75,7 @@ class MqttClient(EventClient):
             #print(self.client_certificate)
             if self.client_certificate is not None:
                 if self.mqtt_port == "8080":
+                    print("Setting not tls")
                     self.client.tls_set(certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 else:

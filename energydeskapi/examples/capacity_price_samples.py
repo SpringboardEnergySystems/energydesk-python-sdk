@@ -8,6 +8,7 @@ from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.sdk.profiles_utils import relative_profile_to_dataframe
 from dateutil.relativedelta import relativedelta
 from energydeskapi.sdk.common_utils import key_from_url
+from energydeskapi.sdk.money_utils import FormattedMoney, CurrencyCode
 from energydeskapi.flexibility.capacity_contract_utils import generate_default_capacity_contract
 from energydeskapi.customers.customers_api import CustomersApi, Company
 from energydeskapi.customers.users_api import UsersApi, User, UserGroup, UserFeatureAccess
@@ -15,6 +16,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.bilateral.capacity_api import CapacityApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.lems.lems_api import LemsApi
+from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.profiles.profiles_api import ProfilesApi, StoredProfile
 from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 import sys
@@ -24,9 +26,10 @@ from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekd
 import pandas as pd
 from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTenderInstance,AvailabilityTender, AvailableHours
 from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.contracts.contracts_api import ContractsApi
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 import pendulum
-
+logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -170,6 +173,26 @@ def create_save_profile(api_conn):
 
 
 def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
+    trading_books = TradingBooksApi.get_tradingbooks(api_conn, {"description": 'Avaiability Contracts'})
+    print(trading_books)
+    if len(trading_books['results']) == 0:
+        logger.error("No trading books to save on")
+        return
+    jres = UsersApi.get_profile_by_username(api_conn, "steinar.eriksen@hafslundeco.no")
+    if jres['results'] == 0:
+        print("Cannot load user for contracts")
+        return
+
+    power_company_reg="819449392"
+    counterpart = CustomersApi.get_company_from_registry_number(api_conn, power_company_reg)
+    if counterpart is None:
+        print("Could not find company", power_company_reg)
+        return
+
+    user_pk = jres['results'][0]['pk']
+    tradingbook_pk = trading_books['results'][0]['pk']
+    counterpart_pk=counterpart['pk']
+
     current_active_priceoffers = CapacityApi.get_capacity_request_embedded(api_conn)
     for c in current_active_priceoffers:
         pk=c["pk"]
@@ -185,11 +208,14 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
                                           active_tz=pytz.timezone("Europe/Oslo"))
         dt1=pendulum.parse(period_from).astimezone(pytz.timezone("Europe/Oslo"))
         dt2 = pendulum.parse(period_until).astimezone(pytz.timezone("Europe/Oslo"))
-        quantity=2.1
-        price = 100
+        today=pendulum.today("Europe/Oslo")
+        orig_deliv_from=dt1
+
         # Create number of contracts
         for idx in range(count):
             df_contract_profile=df.copy(deep=True)
+            quantity = round(random.uniform(0, 1.3),2)
+            price = int(random.uniform(145, 160))
             while dt1<dt2:
                 next = dt1.add(days=1)
                 x1=conv_from_pendulum(dt1)
@@ -209,13 +235,19 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
                 periods.append(cpp)
             cp=ContractProfile(periods)
             contract.contract_profile=cp
-            print(contract.get_dict(api_conn))
-            #mjson=cp.json
+            contract.counterpart=counterpart_pk
+            contract.commodity_delivery_from = orig_deliv_from
+            contract.commodity_delivery_until = dt2
+            contract.trader = user_pk
+            contract.quantity=quantity
+            contract.contract_price=FormattedMoney(price, CurrencyCode.NOK)
+            contract.trade_datetime=today
+            contract.trade_date=today
+            contract.trading_book = tradingbook_pk
+            success, returned_data, status_code, error_msg = ContractsApi.upsert_contract(api_conn, contract)
+            if success == False:
+                print(error_msg)
 
-            #cpp2=ContractProfile.from_json(mjson)
-            #print(cpp2.json)
-            #print(cp.json)
-            #print(df_contract_profile[df_contract_profile['hourly_weight']==1])
 
 
 

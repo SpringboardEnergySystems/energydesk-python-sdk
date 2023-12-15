@@ -21,7 +21,7 @@ def generate_default_capacity_contract(api_conn):
     c.area="NO1"
     c.quantity_unit=QuantityUnitEnum.MW
     c.quantity_type=QuantityTypeEnum.EFFECT
-    c.profile_category=ProfileTypeEnum.CONTRACTPROFILE
+    c.profile_category=ProfileTypeEnum.PROFILE
     c.quantity=0
     c.otc=True
     c.delivery_type=DeliveryTypeEnum.PHYSICAL
