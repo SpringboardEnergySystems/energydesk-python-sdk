@@ -38,6 +38,7 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
     dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
     dtfrom = dtfrom.replace(tzinfo=None)
     dtuntil = dtuntil.replace(tzinfo=None)
+    print("pandas_res",pandas_res)
     if len(predefined_columns)==0:
         df=pd.DataFrame()
     else:
