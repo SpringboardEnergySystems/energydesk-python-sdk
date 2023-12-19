@@ -33,7 +33,6 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
     generation_timezone=timezone if pandas_res is not "H" else pytz.timezone("UTC")
     period_from=period_from.in_timezone(generation_timezone)
     period_to = period_to.in_timezone(generation_timezone)
-    print("Making empty timeseries ", period_from, period_to)
     dtfrom=conv_from_pendulum(period_from, tz=generation_timezone)
     dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
     dtfrom = dtfrom.replace(tzinfo=None)
@@ -51,7 +50,7 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
         ix = pd.date_range(start=dtfrom, end=dtuntil)
     else:
         ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
-    print(ix)
+
     df_new = df.reindex(ix, fill_value='NaN')
     df_new = df_new.tz_localize(generation_timezone)
     if pandas_res == "H":
