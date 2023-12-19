@@ -182,9 +182,12 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
     if jres['results'] == 0:
         print("Cannot load user for contracts")
         return
-
+    power_company_reg2="979139268"
     power_company_reg="819449392"
+    power_company_reg3="876944642"
     counterpart = CustomersApi.get_company_from_registry_number(api_conn, power_company_reg)
+    counterpart2 = CustomersApi.get_company_from_registry_number(api_conn, power_company_reg2)
+    counterpart3 = CustomersApi.get_company_from_registry_number(api_conn, power_company_reg3)
     if counterpart is None:
         print("Could not find company", power_company_reg)
         return
@@ -192,6 +195,8 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
     user_pk = jres['results'][0]['pk']
     tradingbook_pk = trading_books['results'][0]['pk']
     counterpart_pk=counterpart['pk']
+    counterpart2_pk = counterpart2['pk']
+    counterpart3_pk = counterpart3['pk']
 
     current_active_priceoffers = CapacityApi.get_capacity_request_embedded(api_conn)
     for c in current_active_priceoffers:
@@ -216,6 +221,8 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
             df_contract_profile=df.copy(deep=True)
             quantity = round(random.uniform(0, 1.3),2)
             price = int(random.uniform(145, 160))
+
+
             while dt1<dt2:
                 next = dt1.add(days=1)
                 x1=conv_from_pendulum(dt1)
@@ -225,17 +232,27 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
                 if r>6:
                     df_contract_profile.loc[mask, "hourly_weight"]=0
                 dt1=next
+
+            print(df_contract_profile)
+
             from energydeskapi.contracts.profile_contract import ContractProfile, ContractProfilePeriod
             contract=generate_default_capacity_contract(api_conn)
+
             periods=[]
             for index,row in df_contract_profile.iterrows():
                 p1=index
                 p2=index + timedelta(hours=1)
-                cpp=ContractProfilePeriod(p1, p2,None,None, None, quantity )
+                cpp=ContractProfilePeriod(p1, p2,None,None, None, quantity*row['hourly_weight'] )
                 periods.append(cpp)
             cp=ContractProfile(periods)
             contract.contract_profile=cp
             contract.counterpart=counterpart_pk
+
+            comprand=random.randint(1, 10)
+            if comprand< 3:
+                contract.counterpart = counterpart2_pk
+            elif comprand< 6:
+                contract.counterpart = counterpart3_pk
             contract.commodity_delivery_from = orig_deliv_from
             contract.commodity_delivery_until = dt2
             contract.trader = user_pk
@@ -350,7 +367,7 @@ def lookup_tenders(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    register_caopacity_contracts(api_conn, tender="Nedre Glomma", count=1)
+    register_caopacity_contracts(api_conn, tender="Nedre Glomma", count=10)
    # register_capacity_requests(api_conn)
     #lookup_tenders(api_conn)
     #register_capacity_requests(api_conn)

@@ -56,11 +56,7 @@ class ContractProfilePeriod:
 
     @property
     def json(self):
-        """
-        get the json formated string
-        """
-        #print(self.__dict__())
-        return json.dumps(self.__dict__())
+        return self.__dict__()
     @staticmethod
     def from_json(elem):
         """
@@ -105,7 +101,6 @@ class ContractProfile:
         parsed=[]
         for subperiod in json_obj['profile_periods']:
             cpp=ContractProfilePeriod.from_json(subperiod)
-            print(cpp)
             parsed.append(cpp)
         mpobj = ContractProfile(parsed)
         return mpobj
