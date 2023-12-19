@@ -52,7 +52,7 @@ def get_settlement_view(api_conn):
         'contract_type':3,
         #'commodity__area': 'NO1',
         "view_period_from__gte":'2023-07-01',
-        "view_period_until__lt": '2023-08-01',
+        "view_period_until__lt": '2023-10-01',
         #"commodity__delivery_from": '2023-08-01',
         #"commodity__delivery_until": '2023-09-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
@@ -60,7 +60,7 @@ def get_settlement_view(api_conn):
     }
     print(filter)
     v, df=SettlementApi.get_settlement_view_df(api_conn, filter)
-
+    return
     subset = ['trade_id', 'counterpart',  'period_from', 'period_until','price', 'value', 'netpos', 'avgcostsell', 'netvol', 'sellvol']
     print(df[subset])
     return
@@ -93,4 +93,4 @@ def get_settlement_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_settlement_view_data(api_conn)
+    get_settlement_view(api_conn)
