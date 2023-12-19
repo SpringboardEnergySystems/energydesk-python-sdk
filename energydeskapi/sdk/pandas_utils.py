@@ -40,7 +40,7 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
     dtuntil = dtuntil.replace(tzinfo=None)
     if pandas_res=="YS":
         dtfrom=dtfrom.replace(month=1)
-        dtuntil=(dtfrom + relativedelta(years=2))#.replace(month=1)
+        dtuntil=(dtuntil + relativedelta(years=1))#.replace(month=1)
 
 
     if len(predefined_columns)==0:
