@@ -19,9 +19,11 @@ def get_country_code(country_pref_enum=CountryPrefEnum.NORWAY):
         return "de_DE.utf-8"
     return "nb_NO.utf-8"  #Default
 
-def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True, remove_thousands_sep=False):
+def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True, remove_thousands_sep=False, round_decimals=True):
     if type(dec) == str:
         dec=parse_decimal(dec)
+    if round_decimals:
+        dec=round(dec, decimal_places)
     dec_pattern="".join(["0" for l in range(decimal_places)])  #Number of minimum decials
     with babel_decimal.localcontext(babel_decimal.Context(rounding=babel_decimal.ROUND_HALF_UP)):
         thouspattern='###0.' if remove_thousands_sep else '#,##0.'
