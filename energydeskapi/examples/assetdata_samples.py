@@ -163,7 +163,7 @@ def load_assetdata2(api_conn):
     #     #df1['date'] = df['date'].tz_convert(None)
     #     #df1['dates_shift'] = df['dates_shift'].tz_convert(None)
     #     print(df1)
-    #     df1.iloc[:, 4:].to_excel("./output.xlsx")
+    #     df1.ioc[:, 4:].to_excel("./output.xlsx")
     #     df = df.iloc[:, 4:]
     print(df)
 
