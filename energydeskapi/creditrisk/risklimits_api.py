@@ -46,7 +46,7 @@ class RatingCategoryApi:
         :type api_connection: str, required
         """
         logger.info("Fetching risk categories")
-        json_res=api_connection.exec_get_url('/api/creditrisk/rating/risklimits/', params)
+        json_res=api_connection.exec_get_url('/api/creditrisk/rating/category/', params)
         if json_res is not None:
             return json_res
         return None
@@ -58,8 +58,8 @@ class RatingCategoryApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("PostinSg risk limits")
-        json_res=api_connection.exec_post_url('/api/creditrisk/rating/risklimits/', payload)
+        logger.info("Posting risk limits")
+        json_res=api_connection.exec_post_url('/api/creditrisk/rating/category/', payload)
         if json_res is not None:
             return json_res
         return None
