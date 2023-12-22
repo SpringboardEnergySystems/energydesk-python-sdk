@@ -12,16 +12,16 @@ class SettlementApi:
 
 
     @staticmethod
-    def get_settlement_data(api_connection, payload={}):
+    def get_settlement_data(api_connection, parameters={}):
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching settlement view", payload)
-        success, json_res, status_code, error_msg = api_connection.exec_post_url(
-            '/api/settlement/exportinvoicedata/', payload)
-        return json_res
+        logger.info("Fetching settlement view", parameters)
+        res = api_connection.exec_get_url(
+            '/api/settlement/exportinvoicedata/', parameters)
+        return res
 
     @staticmethod
     def get_settlement_view(api_connection, parameters={}):
