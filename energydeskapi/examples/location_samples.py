@@ -32,7 +32,7 @@ def load_dso(api_conn, name="elvia"):
 def get_asset_geo(api_conn, name="Nedre Glomma"):
     res = AssetsApi.get_assets(api_conn, {'description': name})
     group_pk=res['results'][0]['pk']
-    res=AssetGroupApi.get_asset_groups(api_conn, {'main_asset__pk':group_pk})
+    res=AssetGroupApi.get_asset_groups(api_conn, {'main_asset__id':group_pk})
     sub_asset_list=[]
     for r in res[0]['sub_assets']:
         sub_asset_list.append(int(key_from_url(r)))
