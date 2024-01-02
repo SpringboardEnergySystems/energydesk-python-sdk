@@ -131,7 +131,7 @@ class Contract:
         c.pk=d['pk']
         c.instrument_type=d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
-        c.profile_type = d['commodity']['profile_type']#ProfileTypeEnum.BASELOAD if d['commodity']['profile_type']=="BASELOAD" else ProfileTypeEnum.PROFILE
+        c.profile_type = ProfileTypeEnum.BASELOAD if 'profile_type' not in d['commodity'] else d['commodity']['profile_type']#
         c.profile_category = ProfileTypeEnum.BASELOAD if d['commodity'][
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
@@ -153,7 +153,7 @@ class Contract:
 
         c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']
-        c.contract_type=1 if not 'contract_type' in d else d['contract_type']
+        c.contract_type=ContractTypeEnum.NASDAQ.value if not 'contract_type' in d else d['contract_type']
         c.trading_fee = gen_money_from_json(d['trading_fee'])
         c.clearing_fee = gen_money_from_json(d['clearing_fee'])
         c.contract_status = d['contract_status']
