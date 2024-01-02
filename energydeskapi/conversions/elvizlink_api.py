@@ -250,6 +250,9 @@ class ElvizLinksApi:
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
+        open("./usermappings.json", "w").write(usr_maps)
+        open("./companymappings.json", "w").write(comp_maps)
+        open("./portfolioappings.json", "w").write(port_maps)
         print(usr_maps,comp_maps,port_maps)
         elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, days_back )
         return elviz_trades
