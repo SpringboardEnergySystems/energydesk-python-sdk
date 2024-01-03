@@ -28,6 +28,7 @@ def on_disconnect(client, userdata, rc):
     logging.info("disconnecting reason  "  +str(rc))
     client.connected_flag=False
     client.disconnect_flag=True
+    userdata.handle.handle_disconnect()
 
 class MqttClient(EventClient):
     def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
@@ -40,6 +41,7 @@ class MqttClient(EventClient):
         self.ca_certificate=None if 'ca_certificate' not in certificates else certificates['ca_certificate']
         self.client_certificate=None if 'client_certificate' not in certificates else certificates['client_certificate']
         self.client_key=None if 'client_key' not in certificates else certificates['client_key']
+        self.disconnect_callbacks = []
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None
@@ -121,6 +123,14 @@ class MqttClient(EventClient):
         print("Looping")
         result=self.client.loop_start()  # start the loop
         #print(result)
+
+    def register_disconnect_callback(self, callback_function: Callable[[], None]):
+        self.disconnect_callbacks.append(callback_function)
+
+    def handle_disconnect(self):
+        for callback in self.disconnect_callbacks:
+            callback()
+
 
 def on_my_callback(topic, data):
     print("GOT CALLBACK",topic, data)
