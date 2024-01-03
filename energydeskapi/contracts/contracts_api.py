@@ -201,7 +201,7 @@ class Contract:
         if self.quantity is not None: dict['quantity'] = self.quantity
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
-        if self.contract_type is not None: dict['contract_type'] = self.contract_type
+        if self.contract_type is not None: dict['contract_type'] = self.contract_type.value
         if self.contract_status is not None: dict['contract_status'] = self.contract_status.value
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
