@@ -230,7 +230,7 @@ class ElvizLinksApi:
     @staticmethod
     def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings, days_back):
         env = environ.Env()
-        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/api/elviztrades"
+        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/elviz/api/elviztrades"
         logger.info("Calling URL " + str(server_url))
         payload={
             "user_mappings": user_mappings,
