@@ -2,6 +2,7 @@
 import json
 import logging
 import ssl
+from typing import Callable
 
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 import paho.mqtt.client as mqtt
