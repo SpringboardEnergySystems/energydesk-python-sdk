@@ -32,7 +32,7 @@ def on_disconnect(client, userdata, rc):
     userdata.handle_disconnect()
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, transport = None):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, force_transport=None, force_tls=False):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
@@ -43,8 +43,9 @@ class MqttClient(EventClient):
         self.client_certificate=None if 'client_certificate' not in certificates else certificates['client_certificate']
         self.client_key=None if 'client_key' not in certificates else certificates['client_key']
         self.disconnect_callbacks = []
-        #either tcp or websockets
-        self.transport = transport
+        #force_transport either tcp or websockets
+        self.force_transport = force_transport
+        self.force_tls = force_tls
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None
@@ -63,9 +64,9 @@ class MqttClient(EventClient):
             #self.start_listener()
         try:
             logger.info("Initializing MQTT")
-            if not self.transport is None:
-                self.client = mqtt.Client(client_name, transport=self.transport)  # create new instance
-                print("Using MQTT transport "+self.transport)
+            if not self.force_transport is None:
+                self.client = mqtt.Client(client_name, transport=self.force_transport)  # create new instance
+                print("Using MQTT transport "+self.force_transport)
             elif self.mqtt_port == "8080":
                 self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
                 print("Using MQTT transport Websockets")
@@ -82,11 +83,12 @@ class MqttClient(EventClient):
             logger.info("Connecting " + str(self.mqtt_host) + ":"  + str(self.mqtt_port))
             #print(self.client_certificate)
             if self.client_certificate is not None:
-                if self.mqtt_port == "8080":
+                if self.mqtt_port == "8080" and self.force_tls is not True:
                     print("Setting not tls")
                     self.client.tls_set(certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 else:
+                    print("Setting tls")
                     self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 self.client.tls_insecure_set(True)
