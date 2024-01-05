@@ -24,7 +24,7 @@ class GoContract:
     self.flexible_delivery = False
     self.production_until = None
     self.delivery_date = None
-    self.invoice_date = None
+    self.settlement_date = None
     self.invoice_with_mva = None
     self.technology = GosTechnologyEnum.HYDRO.value
     self.quality = []
@@ -41,7 +41,7 @@ class GoContract:
     if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_conn, self.asset)
     if self.extra_info is not None: dict['extra_info'] = self.extra_info
     if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
-    if self.invoice_date is not None: dict['invoice_date'] = self.invoice_date
+    if self.settlement_date is not None: dict['settlement_date'] = self.settlement_date
     if self.support is not None: dict['support'] = self.support
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
     if self.technology is not None: dict['technology'] = GosApi.get_technology_url(api_conn, self.technology)
@@ -72,6 +72,7 @@ class GoContract:
     c.technology = None if not 'technology' in d else key_from_url(d['technology'])
     c.quality = None if not 'quality' in d else d['quality']
     c.delivery_date = None if not 'delivery_date' in d else d['delivery_date']
+    c.settlement_date = c.delivery_date  if not 'settlement_date' in d else d['settlement_date']
     return c
 
 
