@@ -32,7 +32,7 @@ def on_disconnect(client, userdata, rc):
     userdata.handle_disconnect()
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, transport = None):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
@@ -43,6 +43,8 @@ class MqttClient(EventClient):
         self.client_certificate=None if 'client_certificate' not in certificates else certificates['client_certificate']
         self.client_key=None if 'client_key' not in certificates else certificates['client_key']
         self.disconnect_callbacks = []
+        #either tcp or websockets
+        self.transport = transport
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None
@@ -61,12 +63,15 @@ class MqttClient(EventClient):
             #self.start_listener()
         try:
             logger.info("Initializing MQTT")
-            if self.mqtt_port == "8080":
+            if not self.transport is None:
+                self.client = mqtt.Client(client_name, transport=self.transport)  # create new instance
+                print("Using MQTT transport "+self.transport)
+            elif self.mqtt_port == "8080":
                 self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
-                print("Using Websockets")
+                print("Using MQTT transport Websockets")
             else:
                 self.client = mqtt.Client(client_name)  # create new instance
-                print("Using Mqtt")
+                print("Using MQTT transport Mqtt")
             self.client.on_message = on_message_callback  # attach function to callback
             self.client.on_connect = on_connect
             self.client.on_disconnect=on_disconnect
