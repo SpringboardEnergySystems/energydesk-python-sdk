@@ -219,7 +219,7 @@ class MarketsApi:
     def send_market_update(api_connection, record_type="prices", marketdata={}):
       payload={
         "record_type":record_type,
-        "datarecord":json.dumps(marketdata)
+        "datarecord":json.loads(json.dumps(marketdata))
       }
       success, returned_data, status_code, error_msg  = api_connection.exec_post_url("/api/markets/updated-marketdata/",
                                                                                      payload=payload)
