@@ -1,4 +1,5 @@
 import logging
+import json
 logger = logging.getLogger(__name__)
 
 
@@ -213,3 +214,14 @@ class MarketsApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def send_market_update(api_connection, record_type="prices", marketdata={}):
+      payload={
+        "record_type":record_type,
+        "datarecord":json.dumps(marketdata)
+      }
+      success, returned_data, status_code, error_msg  = api_connection.exec_post_url("/api/markets/updated-marketdata/",
+                                                                                     payload=payload)
+      print(returned_data)  # Save file to blob for ADF?
+      return returned_data
