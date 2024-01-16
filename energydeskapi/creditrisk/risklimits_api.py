@@ -63,3 +63,17 @@ class RatingCategoryApi:
         if json_res is not None:
             return json_res
         return None
+    
+    @staticmethod
+    def delete_rating_category(api_connection, payload):
+        """Deleting risk category
+
+        Args:
+            api_connection (_type_): _description_
+            payload (_type_): _description_
+        """
+        logger.info("Deleting risk limits")
+        json_res=api_connection.exec_delete_url('/api/creditrisk/rating/category/', payload)
+        if json_res is not None:
+            return json_res
+        return None

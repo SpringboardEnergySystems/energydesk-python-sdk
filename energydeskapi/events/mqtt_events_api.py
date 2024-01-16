@@ -123,10 +123,12 @@ class MqttClient(EventClient):
         if status == 0:
             logger.info(f"Send `{msg}` to topic `{topic}`")
         else:
-            logger.warning(f"Failed to send message to topic {topic}" + str(result))
+            logger.error(f"Failed to send message to topic {topic}" + str(result))
+        return status
 
     def manual_loop(self):
         print(self.client.loop())
+
     def start_listener(self):
         print("Looping")
         result=self.client.loop_start()  # start the loop
