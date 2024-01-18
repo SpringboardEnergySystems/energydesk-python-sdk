@@ -12,6 +12,7 @@ from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
 
 from energydeskapi.contracts.profile_contract import ContractProfile, ContractProfilePeriod
+import json
 
 logger = logging.getLogger(__name__)
 #  Change
