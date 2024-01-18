@@ -72,7 +72,7 @@ def go_technology_description(x):
 
 def contract_type_description(x):
     return {
-        ContractTypeEnum.NASDAQ: MarketPlaceEnum.NASDAQ_OMX.name,
+        ContractTypeEnum.NASDAQ: "Nasdaq OMX",
         ContractTypeEnum.EEX: "EEX",
         ContractTypeEnum.BILAT_FIXPRICE: "Bilateral Fixed Price",
         ContractTypeEnum.GOO: "Guarantee of Origin",
