@@ -103,7 +103,7 @@ class RiskApi:
         return dfvars,portfolio_mean,portfolio_stdev
 
     @staticmethod
-    def calc_covariance_matrix(api_connection, days_back=40):
+    def calc_covariance_matrix(api_connection, days_back=40, decay_factor=0.94):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -112,17 +112,18 @@ class RiskApi:
         logger.info("Calc Covariance Matrix")
         payload={
             'price_days':days_back,
+            'decay_factor': decay_factor,
         }
         print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calccovariancematrix/', payload)
         #print(error_msg)
         return success, json_res, status_code, error_msg
     @staticmethod
-    def calc_covariance_matrix_df(api_connection, days_back=40):
-        success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back)
+    def calc_covariance_matrix_df(api_connection, days_back=40, decay_factor=0.94):
+        success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back, decay_factor)
         if success ==False:
             print(error_msg)
             return None,None,None
-        dfvars=pd.DataFrame(data=json.loads(json_res))
+        dfvars=pd.DataFrame(data=json.loads(json_res['covariance_data']))
         dfvars.index=dfvars.columns.to_flat_index()
         return dfvars

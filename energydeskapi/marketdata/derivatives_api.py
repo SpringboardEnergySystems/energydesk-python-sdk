@@ -2,7 +2,7 @@ import requests
 import logging
 import pandas as pd
 import json
-
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 logger = logging.getLogger(__name__)
 #  Change
 class DerivativesApi:
@@ -11,7 +11,7 @@ class DerivativesApi:
     """
 
     @staticmethod
-    def fetch_markets(api_connection, market_place="Nasdaq OMX"):
+    def fetch_markets(api_connection, market_place=MarketPlaceEnum.NASDAQ_OMX.name):
         """Fetches markets
 
         :param api_connection: class with API token for use with API

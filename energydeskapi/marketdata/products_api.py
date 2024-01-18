@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.product_utils import convert_productjson_dataframe
 from energydeskapi.types.market_enum_types import MarketEnum
@@ -23,7 +24,7 @@ class ProductHelper(Singleton):
         res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
         if len(res['results']) == 0:
             print( {'market_ticker': ticker})
-            res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
+            res = ProductsApi.generate_market_product_from_ticker(api_conn, MarketPlaceEnum.NASDAQ_OMX.name, ticker)
             if res[0]==False:
                 print("What is wrong here", res)
             k = res[1][0]['pk']
@@ -127,6 +128,7 @@ class ProductsApi:
     def generate_market_product_from_ticker(api_connection, market, market_ticker):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
                                                 {'market_ticker':market_ticker, 'market':market})
+        print(status_code, json_res)
         return success, json_res, status_code, error_msg
 
     @staticmethod

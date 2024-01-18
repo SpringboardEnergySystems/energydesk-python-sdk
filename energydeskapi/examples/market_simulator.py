@@ -3,6 +3,7 @@ import logging
 import json
 import time
 import random
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.events.mqtt_events_api import MqttClient
 import environ
 from datetime import datetime
@@ -37,7 +38,7 @@ def generate_send_marketdata(mqttcli, df,  ticker_idx, ticker):
     rec = {"ticker": ticker \
         , "area": area \
         , 'instrument': instrument \
-        , "market": "Nasdaq OMX" \
+        , "market": MarketPlaceEnum.NASDAQ_OMX.name \
         , "bid": str(df.loc[ticker_idx, "bid"]) \
         , "ask": str(df.loc[ticker_idx, "ask"]) \
         , "open": str(df.loc[ticker_idx, "open"]) \
@@ -57,7 +58,7 @@ def get_current_snapshot(api_conn):
     params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
     #params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
     jd=DerivativesApi.get_prices_flatlist(api_conn, params)
-    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
+    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= MarketPlaceEnum.NASDAQ_OMX.name, market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
     df=pd.DataFrame(data=eval(jd['results']))
     print(df)
     return df

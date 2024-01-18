@@ -13,6 +13,12 @@ class MarketEnum(Enum):
     CURRENCY_MARKET = 4
     GOs_MARKET = 5
 
+class MarketPlaceEnum(Enum):
+    NASDAQ_OMX = 1
+    NORDPOOL_SPOT = 2
+    EEX = 3
+
+
 class DeliveryTypeEnum(Enum):
     FINANCIAL = 1
     PHYSICAL = 2
@@ -101,4 +107,11 @@ def market_description(x):
         MarketEnum.CARBON_EMISSIONS: "European Carbon Market",
         MarketEnum.CURRENCY_MARKET: "Currency Market",
         MarketEnum.GOs_MARKET: "European GoO Market",
+    }[x]
+
+def market_place_description(x):
+    return {
+        MarketPlaceEnum.NASDAQ_OMX: MarketPlaceEnum.NASDAQ_OMX.name,
+        MarketPlaceEnum.NORDPOOL_SPOT: "Nord Pool Spot",
+        MarketPlaceEnum.EEX: "EEX",
     }[x]
