@@ -228,8 +228,8 @@ class Contract:
             dict["contract_profile"] = self.contract_profile.json
         else:
             dict["contract_profile"]={'profile_periods':[]}
-        if c.contract_sub_type is not None: dict["contract_sub_type"]=c.contract_sub_type
-        if c.contract_status_comment is not None: dict["contract_status_comment"] = c.contract_status_comment
+        if self.contract_sub_type is not None: dict["contract_sub_type"]=self.contract_sub_type
+        if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
 
         return dict
 
@@ -312,8 +312,8 @@ class Contract:
             dict["contract_profile"] = self.contract_profile.json
         else:
             dict["contract_profile"]={'profile_periods':[]}
-        if c.contract_sub_type is not None: dict["contract_sub_type"] = c.contract_sub_type
-        if c.contract_status_comment is not None: dict["contract_status_comment"] = c.contract_status_comment
+        if self.contract_sub_type is not None: dict["contract_sub_type"] = self.contract_sub_type
+        if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
 
         return dict
 

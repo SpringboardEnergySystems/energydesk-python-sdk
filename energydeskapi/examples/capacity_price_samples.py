@@ -173,7 +173,7 @@ def create_save_profile(api_conn):
 
 
 def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
-    trading_books = TradingBooksApi.get_tradingbooks(api_conn, {"description": 'Avaiability Contracts'})
+    trading_books = TradingBooksApi.get_tradingbooks(api_conn, {"description": 'LongFlex Simulated'})
     print(trading_books)
     if len(trading_books['results']) == 0:
         logger.error("No trading books to save on")
