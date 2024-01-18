@@ -98,7 +98,8 @@ class Contract:
         self.otc = False
         self.delivery_type=delivery_type
         self.contract_type=contract_type
-
+        self.contract_sub_type=contract_type  #Default
+        self.contract_status_comment=""  # Default
     def update_users_company(self, apiconn):
         prof=UsersApi.get_user_profile(apiconn)
         if prof is None:
@@ -164,6 +165,8 @@ class Contract:
         for t in d['contract_tags']:
             c.contract_tags.append(ContractTag.from_dict(t))
 
+        c.contract_sub_type=c.contract_type if not 'contract_sub_type' in d else d['contract_sub_type']
+        c.contract_status_comment=""  if not 'contract_status_comment' in d else d['contract_status_comment']
         return c
 
     def get_simple_dict(self):
@@ -225,6 +228,8 @@ class Contract:
             dict["contract_profile"] = self.contract_profile.json
         else:
             dict["contract_profile"]={'profile_periods':[]}
+        if c.contract_sub_type is not None: dict["contract_sub_type"]=c.contract_sub_type
+        if c.contract_status_comment is not None: dict["contract_status_comment"] = c.contract_status_comment
 
         return dict
 
@@ -307,6 +312,9 @@ class Contract:
             dict["contract_profile"] = self.contract_profile.json
         else:
             dict["contract_profile"]={'profile_periods':[]}
+        if c.contract_sub_type is not None: dict["contract_sub_type"] = c.contract_sub_type
+        if c.contract_status_comment is not None: dict["contract_status_comment"] = c.contract_status_comment
+
         return dict
 
 

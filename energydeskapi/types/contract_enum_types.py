@@ -6,6 +6,8 @@ class ContractStatusEnum(Enum):
     CONFIRMED = 2
     APPROVED = 3
     CANCELLED = 4
+    PROPOSAL = 5
+    PENDING = 6
 
 class QuantityTypeEnum(Enum):
     EFFECT = 1
@@ -86,4 +88,6 @@ def contract_status_description(x):
         ContractStatusEnum.CONFIRMED: "Confirmed",
         ContractStatusEnum.APPROVED: "Approved",
         ContractStatusEnum.CANCELLED: "Cancelled",
+        ContractStatusEnum.PROPOSAL: "Proposal",
+        ContractStatusEnum.PENDING: "Pending",
     }[x]
