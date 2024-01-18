@@ -36,6 +36,7 @@ class ContractProfilePeriod:
     period_price_currency: str = "NOK"
     period_volume: float = 0
     period_effect: float = 0
+    period_hours: float = 0
 
 
     def __dict__(self):
@@ -51,6 +52,8 @@ class ContractProfilePeriod:
             d['period_volume']=self.period_volume
         if self.period_effect is not None:
             d['period_effect'] = self.period_effect
+        if self.period_hours is not None:
+            d['period_hours'] = self.period_hours
         return d
 
 
@@ -74,6 +77,8 @@ class ContractProfilePeriod:
             mpobj.period_volume=None
         if 'period_effect' not in json_obj:
             mpobj.period_effect=None
+        if 'period_hours' not in json_obj:
+            mpobj.period_hours=None
         return mpobj
 
 
@@ -111,5 +116,3 @@ class ContractProfile:
             dict_list.append(rec)
         df = pd.DataFrame.from_dict(dict_list)
         return df
-
-
