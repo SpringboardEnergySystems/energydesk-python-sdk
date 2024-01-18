@@ -60,7 +60,8 @@ class Contract:
                  profile_category=ProfileTypeEnum.BASELOAD.name,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
-                 contract_type=ContractTypeEnum.NASDAQ.value
+                 contract_type=ContractTypeEnum.NASDAQ.value,
+                 grid_connection=None
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -75,6 +76,7 @@ class Contract:
         self.quantity_unit=quantity_unit
         self.quantity_type=quentity_type
         self.commodity_type=commodity_type
+        self.grid_connection = grid_connection
         self.profile_type=profile_type
         self.profile_category=profile_category
         self.instrument_type=instrument_type
@@ -161,6 +163,7 @@ class Contract:
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
+        c.grid_connection=None if 'grid_connection' not in d else d['grid_connection']
         c.trader = d['trader']
         c.marketplace_product = d['marketplace_product']
         for t in d['contract_tags']:
@@ -231,7 +234,7 @@ class Contract:
             dict["contract_profile"]={'profile_periods':[]}
         if self.contract_sub_type is not None: dict["contract_sub_type"]=self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
-
+        if self.grid_connection is not None: dict['grid_connection']=self.grid_connection
         return dict
 
 
@@ -315,6 +318,7 @@ class Contract:
             dict["contract_profile"]={'profile_periods':[]}
         if self.contract_sub_type is not None: dict["contract_sub_type"] = self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
+        if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
 
         return dict
 
