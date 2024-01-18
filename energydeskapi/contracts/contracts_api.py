@@ -5,6 +5,7 @@ from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.marketdata.products_api import ProductHelper
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum, ContractTypeEnum
@@ -140,6 +141,7 @@ class Contract:
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
         c.delivery_type = d['commodity']['delivery_type']
+        c.grid_connection = d['commodity']['grid_connection']
         c.commodity_delivery_from = check_fix_date2str(d['commodity']['delivery_from'])
         c.commodity_delivery_until = check_fix_date2str(d['commodity']['delivery_until'])
         c.market = d['commodity']['market']
@@ -177,6 +179,7 @@ class Contract:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
+        if self.grid_connection  is not None: prod['grid_connection'] = self.grid_connection
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
         if self.profile_type is not None: prod['profile_type'] = self.profile_type.value
@@ -251,6 +254,7 @@ class Contract:
                 prod['profile_category'] =self.profile_category
             else:
                 prod['profile_category'] = str(self.profile_category.name)
+        if self.grid_connection is not None: prod['grid_connection'] = AssetsApi.get_asset_url(api_conn, self.grid_connection)
 
         if self.delivery_type is not None: prod['delivery_type'] = MarketsApi.get_delivery_type_url(api_conn,
                                                                                                        self.delivery_type)
@@ -318,7 +322,7 @@ class Contract:
             dict["contract_profile"]={'profile_periods':[]}
         if self.contract_sub_type is not None: dict["contract_sub_type"] = self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
-        if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
+
 
         return dict
 
