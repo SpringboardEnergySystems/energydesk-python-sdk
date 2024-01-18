@@ -60,7 +60,7 @@ class Contract:
                  profile_category=ProfileTypeEnum.BASELOAD.name,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
-                 contract_type=ContractTypeEnum.NASDAQ
+                 contract_type=ContractTypeEnum.NASDAQ.value
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
