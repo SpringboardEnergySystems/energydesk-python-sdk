@@ -111,7 +111,7 @@ def market_description(x):
 
 def market_place_description(x):
     return {
-        MarketPlaceEnum.NASDAQ_OMX: "Nasdaq OMX",
+        MarketPlaceEnum.NASDAQ_OMX: MarketPlaceEnum.NASDAQ_OMX.name,
         MarketPlaceEnum.NORDPOOL_SPOT: "Nord Pool Spot",
         MarketPlaceEnum.EEX: "EEX",
     }[x]
