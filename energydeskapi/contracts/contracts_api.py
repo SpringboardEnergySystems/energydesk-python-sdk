@@ -62,7 +62,7 @@ class Contract:
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  contract_type=ContractTypeEnum.NASDAQ.value,
-                 grid_connection=None
+                 asset_link=None
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -77,7 +77,7 @@ class Contract:
         self.quantity_unit=quantity_unit
         self.quantity_type=quentity_type
         self.commodity_type=commodity_type
-        self.grid_connection = grid_connection
+        self.asset_link = asset_link
         self.profile_type=profile_type
         self.profile_category=profile_category
         self.instrument_type=instrument_type
@@ -141,7 +141,7 @@ class Contract:
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
         c.delivery_type = d['commodity']['delivery_type']
-        c.grid_connection = d['commodity']['grid_connection']
+        c.asset_link = d['commodity']['asset_link']
         c.commodity_delivery_from = check_fix_date2str(d['commodity']['delivery_from'])
         c.commodity_delivery_until = check_fix_date2str(d['commodity']['delivery_until'])
         c.market = d['commodity']['market']
@@ -165,7 +165,7 @@ class Contract:
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
-        c.grid_connection=None if 'grid_connection' not in d else d['grid_connection']
+        c.asset_link=None if 'asset_link' not in d else d['asset_link']
         c.trader = d['trader']
         c.marketplace_product = d['marketplace_product']
         for t in d['contract_tags']:
@@ -179,7 +179,7 @@ class Contract:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
-        if self.grid_connection  is not None: prod['grid_connection'] = self.grid_connection
+        if self.asset_link  is not None: prod['asset_link'] = self.asset_link
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
         if self.profile_type is not None: prod['profile_type'] = self.profile_type.value
@@ -237,7 +237,7 @@ class Contract:
             dict["contract_profile"]={'profile_periods':[]}
         if self.contract_sub_type is not None: dict["contract_sub_type"]=self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
-        if self.grid_connection is not None: dict['grid_connection']=self.grid_connection
+        if self.asset_link is not None: dict['asset_link']=self.asset_link
         return dict
 
 
@@ -254,7 +254,7 @@ class Contract:
                 prod['profile_category'] =self.profile_category
             else:
                 prod['profile_category'] = str(self.profile_category.name)
-        if self.grid_connection is not None: prod['grid_connection'] = AssetsApi.get_asset_url(api_conn, self.grid_connection)
+        if self.asset_link is not None: prod['asset_link'] = AssetsApi.get_asset_url(api_conn, self.asset_link)
 
         if self.delivery_type is not None: prod['delivery_type'] = MarketsApi.get_delivery_type_url(api_conn,
                                                                                                        self.delivery_type)
