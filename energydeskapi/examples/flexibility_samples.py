@@ -43,7 +43,13 @@ def register_flexible_asset(api_conn):
                                                crontab=crontab, kw_available=200)
     print(outdata)
 
+def check_schedule(api_conn):
+
+    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="123asset")
+    print(outdata)
+
 if __name__ == '__main__':
 
     api_conn=init_api()
-    register_flexible_asset(api_conn)
+    #register_flexible_asset(api_conn)
+    check_schedule(api_conn)

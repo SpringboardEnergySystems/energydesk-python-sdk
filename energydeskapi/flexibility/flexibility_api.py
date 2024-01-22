@@ -22,6 +22,22 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
+    def get_availability_schedule(api_connection, extern_asset_id):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset_type_enum: type of asset
+        :type asset_type_enum: str, required
+        """
+
+        json_res = api_connection.exec_get_url(
+            '/api/flexiblepower/assetavailabilityschedule/?extern_asset_id=' + extern_asset_id)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,
                                 address, city, latitude, longitude, asset_category,asset_type,
                                 asset_owner_regnumber,asset_manager_regnumber, dso_regnumber,
@@ -68,9 +84,9 @@ class FlexibilityApi:
             "period_from": period_from,
             "period_until": period_until,
             "crontab": crontab,
-            "kw_available": kw_available
+            "kw_flexibility": kw_available
         }
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/assetregistration/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/specifyassetavailability/', payload)
         if success is False:
             return None
         return json_res
