@@ -22,7 +22,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_availability_schedule(api_connection, extern_asset_id):
+    def get_availability_schedule(api_connection, extern_asset_id, period_from, period_until):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -32,7 +32,7 @@ class FlexibilityApi:
         """
 
         json_res = api_connection.exec_get_url(
-            '/api/flexiblepower/assetavailabilityschedule/?extern_asset_id=' + extern_asset_id)
+            '/api/flexiblepower/assetavailabilityschedule/?extern_asset_id=' + extern_asset_id + "&period_from=" + period_from + "&period_until=" + period_until)
         if json_res is None:
             return None
         return json_res

@@ -44,8 +44,10 @@ def register_flexible_asset(api_conn):
     print(outdata)
 
 def check_schedule(api_conn):
-
-    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="123asset")
+    t1="2024-02-01"
+    t2="2024-02-03"
+    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="123asset",
+                                                     period_from=t1,period_until=t2)
     print(outdata)
 
 if __name__ == '__main__':
