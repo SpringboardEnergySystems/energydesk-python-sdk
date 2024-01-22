@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def register_flexible_asset(api_conn):
-    outdata=FlexibilityApi.register_flexible_asset(api_conn, external_id="123asset",
+    outdata=FlexibilityApi.register_flexible_asset(api_conn, extern_asset_id="123asset",
                                                    description="Fryselager",
                                                    meter_id="7055122312321",
                                                    sub_meter_id="1231",
@@ -33,6 +33,15 @@ def register_flexible_asset(api_conn):
                                            )
     print(outdata)
 
+
+    t1="2024-02-01 00:00:00+02:00"
+    t2="2024-03-01 00:00:00+02:00"
+    crontab="0 11-13 * * 1-5"   # 11 12 and 13 monday-friday
+
+    outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id="123asset",
+                                               period_from=t1, period_until=t2,
+                                               crontab=crontab, kw_available=200)
+    print(outdata)
 
 if __name__ == '__main__':
 
