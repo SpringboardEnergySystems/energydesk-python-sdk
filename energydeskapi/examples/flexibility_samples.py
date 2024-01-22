@@ -34,6 +34,10 @@ def register_flexible_asset(api_conn):
     print(outdata)
 
 
+
+
+
+def register_flex_availability(api_conn):
     t1="2024-02-01 00:00:00+02:00"
     t2="2024-03-01 00:00:00+02:00"
     crontab="0 11-13 * * 1-5"   # 11 12 and 13 monday-friday

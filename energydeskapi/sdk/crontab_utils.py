@@ -13,15 +13,13 @@ def generate_dataframe(period_from, period_until, crontab):
     base=conv_from_pendulum(period_from, "Europe/Oslo")
     end = conv_from_pendulum(period_until, "Europe/Oslo")
     iter = croniter(crontab, base)
-    n = iter.get_next(datetime)
+    n = None#iter.get_next(datetime)
     #records = []
     print(df2)
-    while n < end:
+    while n is None or n < end:
         n = iter.get_next(datetime)
         if n >= base and n < end:
-            #records.append(n)
             mask = ((df2.index == n) )
             df2.loc[mask, 'standby']=True
     df2['hour']=df2.index
-    print(df2[df2['standby']==True])
     return df2
