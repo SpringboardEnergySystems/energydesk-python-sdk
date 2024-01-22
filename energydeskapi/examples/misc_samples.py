@@ -4,6 +4,7 @@ from energydeskapi.system.system_api import SystemApi
 from energydeskapi.types.company_enum_types import UserRoleEnum
 from energydeskapi.sdk.datetime_utils import prev_weekday
 from datetime import datetime
+from energydeskapi.sdk.crontab_utils import generate_dataframe
 from dateutil.relativedelta import relativedelta
 import pytz
 from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
@@ -54,8 +55,17 @@ def small_sample():
     print(df)
 
 
+def crontab_sample():
+
+    t1="2023-07-01 00:00:00+02:00"
+    t2="2024-08-01 00:00:00+02:00"
+    tmp="0 14,15,16 ? * *"
+    tmp2="0 11-12 * * 1-5"
+    df=generate_dataframe(t1,t2, tmp2)
+    print(df)
+
 if __name__ == '__main__':
     api_conn = init_api()
 
-    small_sample()
+    crontab_sample()
     #get_sysmanager_info(api_conn)
