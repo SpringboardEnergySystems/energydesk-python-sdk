@@ -2,7 +2,7 @@ import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
-from energydeskapi.flexibility.flexibility_api import FlexibilityApi
+from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
 import pendulum
 import json
 logging.basicConfig(level=logging.INFO,
@@ -58,6 +58,15 @@ def check_schedule(api_conn):
 def load_registered_data(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)
     print(data)
+    for d in data['results']:
+        exist=d['pk']
+        if len(d['external_market_offerings'])==0:
+            print("Not yet offered externally")
+            ext=ExternalMarketAsset(exist, "1234")
+            FlexibilityApi.upsert_market_offering(api_conn, ext)
+        else:
+            logging.info("Asset already offered")
+
 
 if __name__ == '__main__':
 

@@ -1,10 +1,30 @@
 import logging
+from energydeskapi.types.flexibility_enum_types import ExternalMarketTypeEnums
 import pandas as pd
 logger = logging.getLogger(__name__)
 
+
+class ExternalMarketAsset:
+    def __init__(self, asset_offered_pk, external_market_asset_id, external_market_name=ExternalMarketTypeEnums.NODES.name):
+        self.pk = 0
+        self.asset_offered_pk = asset_offered_pk
+        self.external_market_name=external_market_name
+        self.external_market_asset_id = external_market_asset_id
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.asset_offered_pk is not None:
+            dict['asset_offered'] = FlexibilityApi.get_asset_offer_url(api_conn, self.asset_offered_pk)
+        if self.external_market_name is not None:
+            dict['external_market'] = self.external_market_name
+        if self.external_market_asset_id is not None:
+            dict['external_market_asset_id'] = self.external_market_asset_id
+        return dict
+
+
 class FlexibilityApi:
     """ Class for flexibility
-
     """
 
     @staticmethod
@@ -18,6 +38,38 @@ class FlexibilityApi:
         if json_res is None:
             return None
         return json_res
+
+
+    @staticmethod
+    def get_asset_offer_url(api_connection, asset_offer_pk):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        return api_connection.get_base_url() + '/api/flexiblepower/assetsoffered/' + str(asset_offer_pk) + "/"
+
+    @staticmethod
+    def upsert_market_offering(api_connection, external_market_asset):
+
+        """Creates/Updates master contract agreements
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param master_agreement: master contract agreement object
+        :type master_agreement: str, required
+        """
+        logger.info("Upserting master agreement")
+        payload = external_market_asset.get_dict(api_connection)
+        key = int(payload['pk'])
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/assetsofferedinmarkets/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/assetsofferedinmarkets/', payload)
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_empty_dispatch_schedule(api_connection):
