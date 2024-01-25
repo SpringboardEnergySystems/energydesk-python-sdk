@@ -54,8 +54,13 @@ def check_schedule(api_conn):
                                                      period_from=t1,period_until=t2)
     print(outdata)
 
+
+def load_registered_data(api_conn):
+    data=FlexibilityApi.get_offered_assets(api_conn)
+    print(data)
+
 if __name__ == '__main__':
 
     api_conn=init_api()
-    register_flex_availability(api_conn)
-    #check_schedule(api_conn)
+    #register_flex_availability(api_conn)
+    load_registered_data(api_conn)

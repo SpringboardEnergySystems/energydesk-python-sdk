@@ -8,6 +8,18 @@ class FlexibilityApi:
     """
 
     @staticmethod
+    def get_offered_assets(api_connection):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/assetsoffered/embedded/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_empty_dispatch_schedule(api_connection):
         """Fetches empty schedule
 
