@@ -28,13 +28,13 @@ class FlexibilityApi:
     """
 
     @staticmethod
-    def get_offered_assets(api_connection):
+    def get_offered_assets(api_connection, parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/flexiblepower/assetsoffered/embedded/')
+        json_res = api_connection.exec_get_url('/api/flexiblepower/assetsoffered/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
@@ -49,6 +49,19 @@ class FlexibilityApi:
         """
 
         return api_connection.get_base_url() + '/api/flexiblepower/assetsoffered/' + str(asset_offer_pk) + "/"
+
+    @staticmethod
+    def get_external_market_offers(api_connection, parameters):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res = api_connection.exec_get_url('/api/flexiblepower/assetsofferedinmarkets/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def upsert_market_offering(api_connection, external_market_asset):
@@ -71,6 +84,13 @@ class FlexibilityApi:
                 '/api/flexiblepower/assetsofferedinmarkets/', payload)
         return success, returned_data, status_code, error_msg
 
+    @staticmethod
+    def remove_market_offering(api_connection, external_asset_id):
+        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, {'asset_offered__asset__extern_asset_id':external_asset_id})
+        print(market_offerings)
+        for off in market_offerings:
+            success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/assetsofferedinmarkets/' + str(off['pk']) + "/")
+            print(returned_data)
     @staticmethod
     def get_empty_dispatch_schedule(api_connection):
         """Fetches empty schedule

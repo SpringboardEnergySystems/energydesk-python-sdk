@@ -62,12 +62,12 @@ def load_registered_data(api_conn):
         exist=d['pk']
         if len(d['external_market_offerings'])==0:
             print("Not yet offered externally")
-            ext=ExternalMarketAsset(exist, "1234")
-            FlexibilityApi.upsert_market_offering(api_conn, ext)
+            nodes_asset=ExternalMarketAsset(exist, "1234")
+            FlexibilityApi.upsert_market_offering(api_conn, nodes_asset)
         else:
             logging.info("Asset already offered")
 
-
+    FlexibilityApi.remove_market_offering(api_conn, "123asset")
 if __name__ == '__main__':
 
     api_conn=init_api()
