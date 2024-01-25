@@ -93,7 +93,9 @@ def save_availability_hours(api_conn):
 
 
 
-def register_capacity_requests(api_conn):
+def register_capacity_requests(api_conn,
+                               period_from=pendulum.datetime(2024,1,1, tz="Europe/Oslo"),
+                                                         period_until=pendulum.datetime(2024,4,1, tz="Europe/Oslo")):
     params={"asset_category":AssetCategoryEnum.GROUPED_ASSET.value,"page_size":100}
     assets=AssetsApi.get_assets_embedded(api_conn, params)
     for ass in assets['results']:
@@ -101,8 +103,8 @@ def register_capacity_requests(api_conn):
         cap.description="Euroflex"
         cap.activation_addon=3000
         cap.grid_component=ass['pk']
-        cap.availability_period_from=str(pendulum.datetime(2024,1,1, tz="Europe/Oslo"))
-        cap.availability_period_until = str(pendulum.datetime(2024, 4, 1, tz="Europe/Oslo"))
+        cap.availability_period_from=str(period_from)
+        cap.availability_period_until = str(period_until)
         prof=get_zero_profile()
         prof["monthly_profile"]['January']=1
         prof["monthly_profile"]['February'] = 1
@@ -119,9 +121,9 @@ def register_capacity_requests(api_conn):
         for i in range(7,10):
             prof["daily_profile"][i] = 1.0
         cap.requested_hours = prof
-        inst=AvailabilityTenderInstance("Q1-2024",
-                                        str(pendulum.datetime(2024,1,1, tz="Europe/Oslo")),
-                                        str(pendulum.datetime(2024, 4, 1, tz="Europe/Oslo")))
+        inst=AvailabilityTenderInstance("Q1-" + str(period_from)[:4],
+                                        str(period_from),
+                                        str(period_until))
         cap.instances.append(inst)
         print(cap.get_dict(api_conn))
         CapacityApi.upsert_capacity_request(api_conn,cap)
@@ -173,7 +175,7 @@ def create_save_profile(api_conn):
 
 
 def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
-    trading_books = TradingBooksApi.get_tradingbooks(api_conn, {"description": 'LongFlex Simulated'})
+    trading_books = TradingBooksApi.get_tradingbooks(api_conn, {"description": 'Simulert LongFlex'})
     print(trading_books)
     if len(trading_books['results']) == 0:
         logger.error("No trading books to save on")
@@ -207,19 +209,20 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
         requested_hours = c["requested_hours"]
         if area!=tender:
             continue
-
+        import random
         random.seed(time.time())
         df= relative_profile_to_dataframe(period_from, period_until, requested_hours,
                                           active_tz=pytz.timezone("Europe/Oslo"))
         dt1=pendulum.parse(period_from).astimezone(pytz.timezone("Europe/Oslo"))
-        dt2 = pendulum.parse(period_until).astimezone(pytz.timezone("Europe/Oslo"))
+        dt2 = dt1.add(days=random.randint(15,45))#pendulum.parse(period_until).astimezone(pytz.timezone("Europe/Oslo"))
+        #dt1 = dt2.add(days=-90)
         today=pendulum.today("Europe/Oslo")
         orig_deliv_from=dt1
 
         # Create number of contracts
         for idx in range(count):
             df_contract_profile=df.copy(deep=True)
-            quantity = round(random.uniform(0, 1.3),2)
+            quantity = round(random.uniform(1, 10.3),2)
             price = int(random.uniform(145, 160))
 
 
@@ -367,6 +370,10 @@ def lookup_tenders(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
+
+
+    register_capacity_requests(api_conn,pendulum.datetime(2025, 11, 1, tz="Europe/Oslo"),
+                                   pendulum.datetime(2026, 4, 1, tz="Europe/Oslo"))
     register_caopacity_contracts(api_conn, tender="Nedre Glomma", count=10)
    # register_capacity_requests(api_conn)
     #lookup_tenders(api_conn)

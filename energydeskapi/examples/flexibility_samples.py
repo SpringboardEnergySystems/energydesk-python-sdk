@@ -57,5 +57,5 @@ def check_schedule(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #register_flexible_asset(api_conn)
-    check_schedule(api_conn)
+    register_flex_availability(api_conn)
+    #check_schedule(api_conn)
