@@ -141,7 +141,7 @@ class Contract:
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
         c.delivery_type = d['commodity']['delivery_type']
-        c.asset_link = d['commodity']['asset_link']
+        c.asset_link = None if 'asset_link' not in d['commodity'] else d['commodity']['asset_link']
         c.commodity_delivery_from = check_fix_date2str(d['commodity']['delivery_from'])
         c.commodity_delivery_until = check_fix_date2str(d['commodity']['delivery_until'])
         c.market = d['commodity']['market']
