@@ -77,3 +77,17 @@ class RatingCategoryApi:
         if json_res is not None:
             return json_res
         return None
+    
+    @staticmethod
+    def update_rating_category(api_connection, pk, payload):
+        """Updating risk category
+
+        Args:
+            api_connection (_type_): _description_
+            payload (_type_): _description_
+        """
+        logger.info("Update risk limits")
+        json_res=api_connection.exec_patch_url('/api/creditrisk/rating/category/' + str(pk) + '/', payload)
+        if json_res is not None:
+            return json_res
+        return None
