@@ -118,6 +118,7 @@ class MqttClient(EventClient):
 
     def publish(self,topic, msg, quality_of_service=0, retain=True):
         result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
+        result.wait_for_publish(3)
         if result.is_published():
             logger.info(f"Send `{msg}` to topic `{topic}`")
             return 0
