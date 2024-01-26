@@ -118,13 +118,12 @@ class MqttClient(EventClient):
 
     def publish(self,topic, msg, quality_of_service=0, retain=True):
         result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
-        # result: [0, 1]
-        status = result[0]
-        if status == 0:
+        if result.is_published():
             logger.info(f"Send `{msg}` to topic `{topic}`")
+            return 0
         else:
             logger.error(f"Failed to send message to topic {topic}" + str(result))
-        return status
+            return -1
 
     def manual_loop(self):
         print(self.client.loop())
