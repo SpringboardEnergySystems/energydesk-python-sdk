@@ -116,8 +116,8 @@ class MqttClient(EventClient):
                 logger.info("Returning from connect MQTT with result code " + str(self.connected))
         return self.connected
 
-    def publish(self,topic, msg):
-        result = self.client.publish(topic, msg, qos=0, retain=True)
+    def publish(self,topic, msg, quality_of_service=0, retain=True):
+        result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
         # result: [0, 1]
         status = result[0]
         if status == 0:
