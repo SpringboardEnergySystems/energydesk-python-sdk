@@ -174,7 +174,7 @@ def create_save_profile(api_conn):
     print(res)
 
 
-def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
+def register_caopacity_contracts(aoi_conn,from_dt ,tender="Nedre Glomma",count=1):
     trading_books = TradingBooksApi.get_tradingbooks(api_conn, {"description": 'Simulert LongFlex'})
     print(trading_books)
     if len(trading_books['results']) == 0:
@@ -213,8 +213,8 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
         random.seed(time.time())
         df= relative_profile_to_dataframe(period_from, period_until, requested_hours,
                                           active_tz=pytz.timezone("Europe/Oslo"))
-        dt1=pendulum.parse(period_from).astimezone(pytz.timezone("Europe/Oslo"))
-        dt2 = dt1.add(days=random.randint(15,45))#pendulum.parse(period_until).astimezone(pytz.timezone("Europe/Oslo"))
+        dt1=from_dt.add(days=random.randint(1,30))#pendulum.parse(period_from).astimezone(pytz.timezone("Europe/Oslo"))
+        dt2 = dt1.add(days=random.randint(1,90))#pendulum.parse(period_until).astimezone(pytz.timezone("Europe/Oslo"))
         #dt1 = dt2.add(days=-90)
         today=pendulum.today("Europe/Oslo")
         orig_deliv_from=dt1
@@ -222,7 +222,7 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
         # Create number of contracts
         for idx in range(count):
             df_contract_profile=df.copy(deep=True)
-            quantity = round(random.uniform(1, 10.3),2)
+            quantity = round(random.uniform(10, 25),2)
             price = int(random.uniform(145, 160))
 
 
@@ -258,6 +258,7 @@ def register_caopacity_contracts(aoi_conn,tender="Nedre Glomma", count=1):
                 contract.counterpart = counterpart3_pk
             contract.commodity_delivery_from = orig_deliv_from
             contract.commodity_delivery_until = dt2
+            contract.contract_sub_type="LongFlex"
             contract.trader = user_pk
             contract.quantity=quantity
             contract.contract_price=FormattedMoney(price, CurrencyCode.NOK)
@@ -372,9 +373,16 @@ if __name__ == '__main__':
     api_conn=init_api()
 
 
-    register_capacity_requests(api_conn,pendulum.datetime(2025, 11, 1, tz="Europe/Oslo"),
-                                   pendulum.datetime(2026, 4, 1, tz="Europe/Oslo"))
-    register_caopacity_contracts(api_conn, tender="Nedre Glomma", count=10)
+    #register_capacity_requests(api_conn,pendulum.datetime(2024, 11, 1, tz="Europe/Oslo"),
+    #                               pendulum.datetime(2025, 4, 1, tz="Europe/Oslo"))
+    register_caopacity_contracts(api_conn,
+                                 pendulum.datetime(2024, 11, 1, tz="Europe/Oslo"),
+                                 tender="Nedre Glomma",
+                                count=30)
+    register_caopacity_contracts(api_conn,
+                                 pendulum.datetime(2025, 11, 1, tz="Europe/Oslo"),
+                                 tender="Nedre Glomma",
+                                count=30)
    # register_capacity_requests(api_conn)
     #lookup_tenders(api_conn)
     #register_capacity_requests(api_conn)

@@ -233,8 +233,7 @@ class Contract:
             dict["certificates"] = self.certificates
         if self.contract_profile is not None:
             dict["contract_profile"] = self.contract_profile.json
-        else:
-            dict["contract_profile"]={'profile_periods':[]}
+
         if self.contract_sub_type is not None: dict["contract_sub_type"]=self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
         if self.asset_link is not None: dict['asset_link']=self.asset_link
@@ -302,13 +301,7 @@ class Contract:
         taglist=[]
         for c in self.contract_tags:
             taglist.append(c.get_dict())
-            # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
-            # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
-            #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
-            #     if success:
-            #         taglist.append(returned_data)
-            # else:
-            #     taglist.append(existing_tags[0])
+
         dict['contract_tags']=taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
@@ -318,8 +311,7 @@ class Contract:
         dict["certificates"] = cert_dicts
         if self.contract_profile is not None:
             dict["contract_profile"] = self.contract_profile.json
-        else:
-            dict["contract_profile"]={'profile_periods':[]}
+
         if self.contract_sub_type is not None: dict["contract_sub_type"] = self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
 
