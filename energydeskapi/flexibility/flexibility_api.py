@@ -5,11 +5,12 @@ logger = logging.getLogger(__name__)
 
 
 class ExternalMarketAsset:
-    def __init__(self, asset_offered_pk, external_market_asset_id, external_market_name=ExternalMarketTypeEnums.NODES.name):
+    def __init__(self, asset_offered_pk, external_market_asset_id, external_market_name=ExternalMarketTypeEnums.NODES.name, external_market_properties=None):
         self.pk = 0
         self.asset_offered_pk = asset_offered_pk
         self.external_market_name=external_market_name
         self.external_market_asset_id = external_market_asset_id
+        self.external_market_properties = external_market_properties
 
     def get_dict(self, api_conn):
         dict = {}
@@ -20,6 +21,8 @@ class ExternalMarketAsset:
             dict['external_market'] = self.external_market_name
         if self.external_market_asset_id is not None:
             dict['external_market_asset_id'] = self.external_market_asset_id
+        if self.external_market_properties is not None:
+            dict['external_market_properties'] = self.external_market_properties
         return dict
 
 
