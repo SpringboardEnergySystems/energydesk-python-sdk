@@ -76,7 +76,7 @@ class FlexibilityApi:
         :param master_agreement: master contract agreement object
         :type master_agreement: str, required
         """
-        logger.info("Upserting master agreement")
+        logger.debug("Upserting market offering")
         payload = external_market_asset.get_dict(api_connection)
         key = int(payload['pk'])
         if key > 0:
