@@ -466,7 +466,7 @@ class ContractsApi:
         json_list=[]
         for c in contract_list:
             contract_dict=c.get_dict(api_connection)
-            print(json.dumps(contract_dict, indent=2))
+            logger.debug(json.dumps(contract_dict, indent=2))
             json_list.append(contract_dict)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinsert/',json_list)
         return success, returned_data, status_code, error_msg
