@@ -1,10 +1,13 @@
 import queue
+from dataclasses import dataclass
 from typing import Callable, TypeVar, Generic
 
 U = TypeVar('U')
 
 
-
+@dataclass(frozen=True)
+class QueueWithPutBackStatus:
+    times_item_was_put_back: int
 
 # a queue to communicate between two threads, one reading from an external source (montel, tradingtech), the'
 # other sending to MQTT, The idea is that if there are problem sending an item to MQTT, the MQTT thread can set it back
@@ -14,14 +17,15 @@ class QueueWithPutBack(Generic[U]):
         self._main_queue = queue.Queue()
         # no need of locks for putback_item which is only used by the listening thread
         self._putback_item = None
+        self._times_item_was_put_back = 0
 
     def put(self, item: U):
         self._main_queue.put(item)
 
-    def handle_one_message_with(self, callback: Callable[[U], None]) -> None:
+    def handle_one_message_with(self, callback: Callable[[U, QueueWithPutBackStatus], None]) -> None:
         item = self._get()
         try:
-            callback(item)
+            callback(item, QueueWithPutBackStatus(self._times_item_was_put_back))
         except Exception as e:
             self._put_back(item)
             raise
@@ -30,8 +34,10 @@ class QueueWithPutBack(Generic[U]):
         if self._putback_item is not None:
             to_return = self._putback_item
             self._putback_item = None
+            self._times_item_was_put_back += 1
             return to_return
         else:
+            self._times_item_was_put_back = 0
             return self._main_queue.get()
 
     def _put_back(self, item: U) -> None:
