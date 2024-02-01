@@ -76,7 +76,7 @@ def contract_type_description(x):
         ContractTypeEnum.EEX: "EEX",
         ContractTypeEnum.BILAT_FIXPRICE: "Bilateral Fixed Price",
         ContractTypeEnum.GOO: "Guarantee of Origin",
-        ContractTypeEnum.PROFILE: "Varying Periodic Profile",
+        ContractTypeEnum.PROFILE: "Industrial Contract",
         ContractTypeEnum.CAPACITY: "Capacity Contract",
         ContractTypeEnum.FX: "Currency Contract"
     }[x]
