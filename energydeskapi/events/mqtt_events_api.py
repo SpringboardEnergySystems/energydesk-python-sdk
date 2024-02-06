@@ -31,6 +31,15 @@ def on_disconnect(client, userdata, rc):
     client.disconnect_flag=True
     userdata.handle_disconnect()
 
+
+class MqttException(Exception):
+    def __init__(self, message, status=None):
+        self.message = message
+        self.status = status # you could add more args
+    def __str__(self):
+        return str(self.message)
+
+
 class MqttClient(EventClient):
     def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, force_transport=None, force_tls=False):
         super().__init__()
@@ -118,13 +127,16 @@ class MqttClient(EventClient):
 
     def publish(self,topic, msg, quality_of_service=0, retain=True):
         result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
-        result.wait_for_publish(3)
-        if result.is_published():
-            logger.info(f"Send `{msg}` to topic `{topic}`")
-            return 0
-        else:
-            logger.error(f"Failed to send message to topic {topic}" + str(result))
-            return -1
+        try:
+            result.wait_for_publish(3)
+            if result.is_published():
+                logger.info(f"Send `{msg}` to topic `{topic}`")
+                return 0
+            else:
+                logger.error(f"Failed to send message to topic {topic}" + str(result))
+                return -1
+        except Exception as e:
+            raise MqttException(e, result.rc if result else None) from e
 
     def manual_loop(self):
         print(self.client.loop())
