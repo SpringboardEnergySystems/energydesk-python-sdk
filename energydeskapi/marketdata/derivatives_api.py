@@ -174,9 +174,10 @@ class DerivativesApi:
 
         qry_payload={"currency_code":"EUR"}
         if market_place is not None:
-            logger.info("Fetching prices in " + market_name)
+            logger.info("Fetching prices from " + market_place)
             qry_payload[ "market_place"]=market_place
         if market_name is not None:
+            logger.info("Fetching prices in " + market_name)
             qry_payload[ "market_name"]=market_name
         if ticker is not None:
             logger.info("Fetching prices for product " + str(ticker))
