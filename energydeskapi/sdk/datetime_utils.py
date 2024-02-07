@@ -82,7 +82,16 @@ def localized_datestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
     return tmp[:10]
 
 
-
+def add_business_days(pendulum_start_date, day_count):
+    business_days_to_add = day_count
+    current_date = pendulum_start_date
+    while business_days_to_add > 0:
+        current_date = current_date.add(days=1)
+        weekday = current_date.weekday()
+        if weekday >= 5: # sunday = 6
+            continue
+        business_days_to_add -= 1
+    return current_date
 
 # Data retrieved from server are in UTC time ("GMT without daylight savings time")
 # This function converts to local time
