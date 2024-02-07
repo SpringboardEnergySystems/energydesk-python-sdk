@@ -34,7 +34,7 @@ def default_quality_codes():
     codes.append(("BVM", "Bra Miljøvalg"))
     return codes
 
-def generate_default_gofields( asset_pk, delivery_date, production_from, production_until):
+def generate_default_gofields( asset_pk, delivery_date, settlement_date, production_from, production_until):
     go=GoContract()
     go.extra_info=None
     go.asset=None
@@ -42,6 +42,7 @@ def generate_default_gofields( asset_pk, delivery_date, production_from, product
     go.technology=GosTechnologyEnum.HYDRO.value
     go.flexible_delivery=False
     go.delivery_date=delivery_date
+    go.settlement_date=settlement_date
     go.production_from=production_from
     go.production_until=production_until
     go.asset=asset_pk
