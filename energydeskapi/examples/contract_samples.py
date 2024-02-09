@@ -42,7 +42,7 @@ def get_contract_filter_pk(api_conn):
     print(json_contractfilter)
 
 def get_contracts(api_conn, trading_book=None):
-    filter={"no_pagination": True}
+    filter={"counterpart__in": [1,3]}
     json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
     #records=json_data['results']  # 200 at a time
     print(json.dumps(json_data, indent=2))
