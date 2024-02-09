@@ -101,7 +101,7 @@ class MqttClient(EventClient):
                     self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 self.client.tls_insecure_set(True)
-
+            self.client.on_log = self.on_log_print
             x=self.client.connect(host=self.mqtt_host, port=int(self.mqtt_port))
 
         except Exception as e:
@@ -109,6 +109,9 @@ class MqttClient(EventClient):
             return False
         self.connected = True
         return True
+
+    def on_log_print(self, client, userdata, level, buf):
+        logger.info(f"MQTT: {level} {buf}")
 
     def waiting_connect(self, subscriber_list, client_name="client" ):
         attempts = 0
