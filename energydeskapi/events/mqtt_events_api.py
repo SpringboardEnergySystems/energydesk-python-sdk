@@ -131,13 +131,14 @@ class MqttClient(EventClient):
     def publish(self,topic, msg, quality_of_service=0, publish_timeout=3, retain=True):
         result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
         try:
-            time.sleep(publish_timeout)
-            if result.is_published():
-                logger.info(f"Sent `{msg}` to topic `{topic}`")
-                return 0
-            else:
-                logger.error(f"Failed to send message to topic {topic}: {result}")
-                return result.rc
+            for n in range(publish_timeout * 10):
+                if result.is_published():
+                    logger.info(f"Sent `{msg}` to topic `{topic}`")
+                    return 0
+                else:
+                    time.sleep(0.1)
+            logger.error(f"Failed to send message to topic {topic}: {result}")
+            return result.rc
         except Exception as e:
             raise MqttException(e, result.rc if result else None) from e
 
