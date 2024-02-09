@@ -125,16 +125,16 @@ class MqttClient(EventClient):
                 logger.info("Returning from connect MQTT with result code " + str(self.connected))
         return self.connected
 
-    def publish(self,topic, msg, quality_of_service=0, retain=True):
+    def publish(self,topic, msg, quality_of_service=0, publish_timeout=3, retain=True):
         result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
         try:
-            result.wait_for_publish(3)
+            result.wait_for_publish(publish_timeout)
             if result.is_published():
                 logger.info(f"Send `{msg}` to topic `{topic}`")
                 return 0
             else:
-                logger.error(f"Failed to send message to topic {topic}" + str(result))
-                return -1
+                logger.error(f"Failed to send message to topic {topic}: {result}")
+                return result.rc
         except Exception as e:
             raise MqttException(e, result.rc if result else None) from e
 
