@@ -133,7 +133,7 @@ class MqttClient(EventClient):
         try:
             time.sleep(publish_timeout)
             if result.is_published():
-                logger.info(f"Send `{msg}` to topic `{topic}`")
+                logger.info(f"Sent `{msg}` to topic `{topic}`")
                 return 0
             else:
                 logger.error(f"Failed to send message to topic {topic}: {result}")
