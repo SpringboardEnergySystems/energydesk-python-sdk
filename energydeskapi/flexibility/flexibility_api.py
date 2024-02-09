@@ -103,7 +103,26 @@ class FlexibilityApi:
         :param asset_type_enum: type of asset
         :type asset_type_enum: str, required
         """
-        json_res = api_connection.exec_get_url('/api/flexiblepower/generateemptyschedule/')
+        json_res = api_connection.exec_get_url('/api/flexiblepower/sampledispatchschedule/')
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_asset_dispatch_schedule(api_connection,  extern_asset_id, period_from, period_until):
+        """Fetches asset dispatch schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param extern_asset_id: Asset ID provided by external party (managed in EnergyDesk)
+        :type extern_asset_id: str, required
+        :param period_from: Start period to load
+        :type period_from: str, required
+        :param period_until: End period to load
+        :type period_until: str, required
+        """
+        json_res = api_connection.exec_get_url(
+            '/api/flexiblepower/assetdispatchschedule/?extern_asset_id=' + extern_asset_id + "&period_from=" + period_from + "&period_until=" + period_until)
         if json_res is None:
             return None
         return json_res
