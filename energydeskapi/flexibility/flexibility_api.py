@@ -144,6 +144,14 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
+    def trade_notification(api_connection,payload):
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/tradenotification/',
+                                                                                 payload)
+        if success is False:
+            return None
+        return json_res
+
+    @staticmethod
     def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,
                                 address, city, latitude, longitude, asset_category,asset_type,
                                 asset_owner_regnumber,asset_manager_regnumber, dso_regnumber,
