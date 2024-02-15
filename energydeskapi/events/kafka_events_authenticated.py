@@ -49,7 +49,10 @@ class KafkaClientAuthenticated(EventClient):
     def publish(self,topic, msg, headers=[]):
         print("Sending", topic)
         result = self.producer.send(topic, msg)
-        logger.info("Sendt to kafka")
+        if result.exception is not None:
+            logger.info("Sendt to kafka")
+        else:
+            logger.error(f"Not able to send to kafka: {result.exception}")
         return result
 
 
