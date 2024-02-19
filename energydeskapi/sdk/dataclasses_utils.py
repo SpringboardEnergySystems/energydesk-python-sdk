@@ -21,7 +21,7 @@ class DataclassEncoder(JSONEncoder):
         #if isinstance(obj, (list, dict, str, int, float, bool, type(None))):
         #return super().default(obj)
         if dataclasses.is_dataclass(obj):
-            return obj.to_dict()#{'_python_object': b64encode(pickle.dumps(obj)).decode('utf-8')}
+            return obj.__dict__#{'_python_object': b64encode(pickle.dumps(obj)).decode('utf-8')}
 
 def date_hook(json_dict):
     for (key, value) in json_dict.items():
