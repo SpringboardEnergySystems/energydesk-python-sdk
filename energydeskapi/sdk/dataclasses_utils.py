@@ -17,7 +17,7 @@ class DataclassEncoder(JSONEncoder):
         elif isinstance(obj, numpy.int64):
             return float(obj)
         if isinstance(obj, set):
-            return dict(_set_object=list(obj))
+            return dict(_set_object=list(obj.json))
         #if isinstance(obj, (list, dict, str, int, float, bool, type(None))):
         #return super().default(obj)
         #return {'_python_object': b64encode(pickle.dumps(obj)).decode('utf-8')}
