@@ -6,7 +6,7 @@ from decimal import Decimal
 from base64 import b64encode, b64decode
 from json import dumps, loads, JSONEncoder
 import pickle
-
+import dataclasses
 class DataclassEncoder(JSONEncoder):
     # Override the default method
     def default(self, obj):
@@ -17,10 +17,11 @@ class DataclassEncoder(JSONEncoder):
         elif isinstance(obj, numpy.int64):
             return float(obj)
         if isinstance(obj, set):
-            return dict(_set_object=list(obj.json))
+            return dict(_set_object=list(obj))
         #if isinstance(obj, (list, dict, str, int, float, bool, type(None))):
         #return super().default(obj)
-        #return {'_python_object': b64encode(pickle.dumps(obj)).decode('utf-8')}
+        if dataclasses.is_dataclass(obj):
+            return obj.json#{'_python_object': b64encode(pickle.dumps(obj)).decode('utf-8')}
 
 def date_hook(json_dict):
     for (key, value) in json_dict.items():
