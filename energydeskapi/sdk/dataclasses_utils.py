@@ -16,22 +16,20 @@ class DataclassEncoder(JSONEncoder):
             return obj.to_dict()
         elif isinstance(obj, numpy.int64):
             return float(obj)
-        if isinstance(obj, set):
+        elif isinstance(obj, set):   # How to serialize SETS. Different approaches; this is more readble than pickle objects
             return dict(_set_object=list(obj))
-        #if isinstance(obj, (list, dict, str, int, float, bool, type(None))):
-        #return super().default(obj)
-        if dataclasses.is_dataclass(obj):
-            return obj.__dict__#{'_python_object': b64encode(pickle.dumps(obj)).decode('utf-8')}
+        elif dataclasses.is_dataclass(obj):
+            return obj.__dict__
 
-def date_hook(json_dict):
+def as_python_object(json_dict):   # Not just date_hook anymore. Also handles parsing of sets and other types
     for (key, value) in json_dict.items():
         try:
             json_dict[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S+00:00")
         except:
             pass
+    if '_set_object' in json_dict:
+        return set(json_dict['_set_object'])
     return json_dict
 
-def as_python_object(dct):
-    if '_python_object' in dct:
-        return pickle.loads(b64decode(dct['_python_object'].encode('utf-8')))
-    return dct
+def date_hook(json_dict):   # For backward compatibility
+    return as_python_object(json_dict)
