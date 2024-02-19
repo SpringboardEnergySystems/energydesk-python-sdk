@@ -21,16 +21,22 @@ class DataclassEncoder(JSONEncoder):
         elif dataclasses.is_dataclass(obj):
             return obj.__dict__
 
-def as_python_object(json_dict):   # Not just date_hook anymore. Also handles parsing of sets and other types
+def as_python_object(json_dict, obj_type=None):   # Not just date_hook anymore. Also handles parsing of sets and other types
     for (key, value) in json_dict.items():
         try:
             json_dict[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S+00:00")
         except:
             pass
     if '_set_object' in json_dict:
-        d=json_dict['_set_object']
-        print(d)
-        return set(d)
+        elems = json_dict['_set_object']
+        if obj_type is not None:
+            ret_set=set()
+            for o in elems:
+                ret_set.add(obj_type.from_json(o))
+            return ret_set
+        else:
+            return set(elems)
+
     return json_dict
 
 def date_hook(json_dict):   # For backward compatibility
