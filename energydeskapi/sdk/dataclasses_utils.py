@@ -28,7 +28,9 @@ def as_python_object(json_dict):   # Not just date_hook anymore. Also handles pa
         except:
             pass
     if '_set_object' in json_dict:
-        return set(json_dict['_set_object'])
+        d=json_dict['_set_object']
+        print(d)
+        return set(d)
     return json_dict
 
 def date_hook(json_dict):   # For backward compatibility
