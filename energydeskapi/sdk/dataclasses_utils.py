@@ -29,8 +29,7 @@ def as_python_object(json_dict):   # Not just date_hook anymore. Also handles pa
             pass
     if '_set_object' in json_dict:
         elems = json_dict['_set_object']
-        return list(elems)
-
+        return list(elems)  # Comes back as list and must be managed on the outside. Casting to set() gives a "hashable" error
     return json_dict
 
 def date_hook(json_dict):   # For backward compatibility
