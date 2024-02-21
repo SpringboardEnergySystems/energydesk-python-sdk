@@ -89,7 +89,7 @@ class FinancialCompanyParams:
     ffo: float
     total_debt: float
     ffo_debt:float
-    ffo_ebitda:float
+    debt_ebitda:float
 
     @property
     def json(self):
