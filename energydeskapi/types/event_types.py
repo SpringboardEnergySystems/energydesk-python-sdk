@@ -5,9 +5,11 @@ from enum import Enum
 class KafkaQueues(Enum):
     NORDICPOWER_PRICES = "marketdata.nordicpower.prices"
     NORDICPOWER_PRODUCTS = "marketdata.nordicpower.products"
+    NORDICPOWER_OWNDEALS = "marketdata,nordicpower,owndeals"
     PRODUCTVIEWS = "portfolioview.productview"
 
 class MqttTopics(Enum):
     NORDICPOWER_PRICES = "/marketdata/nordicpower/prices"
     NORDICPOWER_PRODUCTS = "/marketdata/nordicpower/products"
+    NORDICPOWER_OWNDEALS = "/marketdata/nordicpower/owndeals"
     PRODUCTVIEWS = "/portfolioview/productview"
