@@ -35,7 +35,7 @@ class CommodityTypeEnum(Enum):
 class InstrumentTypeEnum(Enum):
     FUT = 1
     FWD = 2
-    SPOT = 3
+    SPOT = 33
     EPAD = 4
     EUROPT = 5
     ASIOPT = 6
