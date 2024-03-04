@@ -40,7 +40,7 @@ def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=py
     dtuntil = pd.to_datetime(dtuntil).replace(tzinfo=None)
 
     # Adjust period_to for monthly resolution to ensure at least one row is returned
-    if pandas_res == "M" and period_from.format("YYYY-MM") == period_to.format("YYYY-MM"):
+    if pandas_res == "MS" and period_from.format("YYYY-MM") == period_to.format("YYYY-MM"):
         period_to = period_to.add(months=1)
         dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
         dtuntil = pd.to_datetime(dtuntil).replace(tzinfo=None)
