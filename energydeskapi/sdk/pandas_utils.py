@@ -26,17 +26,13 @@ def check_convert_datetime(d, timezone=None):
         d = d.astimezone(pytz.UTC)
         return d
 
-def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=pytz('UTC'), predefined_columns=[]):
+def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
     period_from = pendulum.parse(str(period_from))
     period_to = pendulum.parse(str(period_to))
 
     generation_timezone = timezone if pandas_res != "H" else pytz('UTC')
     period_from = period_from.in_tz(generation_timezone)
     period_to = period_to.in_tz(generation_timezone)
-
-    # Function to convert pendulum to datetime, assuming it's defined elsewhere
-    def conv_from_pendulum(pendulum_datetime, tz=None):
-        return pendulum_datetime.to_datetime_string()
 
     dtfrom = conv_from_pendulum(period_from, tz=generation_timezone)
     dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
