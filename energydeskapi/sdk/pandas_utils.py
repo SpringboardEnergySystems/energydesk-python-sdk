@@ -26,6 +26,54 @@ def check_convert_datetime(d, timezone=None):
         d = d.astimezone(pytz.UTC)
         return d
 
+def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=pytz('UTC'), predefined_columns=[]):
+    period_from = pendulum.parse(str(period_from))
+    period_to = pendulum.parse(str(period_to))
+
+    generation_timezone = timezone if pandas_res != "H" else pytz('UTC')
+    period_from = period_from.in_tz(generation_timezone)
+    period_to = period_to.in_tz(generation_timezone)
+
+    # Function to convert pendulum to datetime, assuming it's defined elsewhere
+    def conv_from_pendulum(pendulum_datetime, tz=None):
+        return pendulum_datetime.to_datetime_string()
+
+    dtfrom = conv_from_pendulum(period_from, tz=generation_timezone)
+    dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
+    dtfrom = pd.to_datetime(dtfrom).replace(tzinfo=None)
+    dtuntil = pd.to_datetime(dtuntil).replace(tzinfo=None)
+
+    # Adjust period_to for monthly resolution to ensure at least one row is returned
+    if pandas_res == "M" and period_from.format("YYYY-MM") == period_to.format("YYYY-MM"):
+        period_to = period_to.add(months=1)
+        dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
+        dtuntil = pd.to_datetime(dtuntil).replace(tzinfo=None)
+
+    # Adjustment for "YS" to include the entire year
+    if pandas_res == "YS":
+        dtfrom = dtfrom.replace(month=1, day=1)
+        dtuntil = dtuntil.replace(month=1, day=1) + relativedelta(years=1)
+
+    if len(predefined_columns) == 0:
+        df = pd.DataFrame()
+    else:
+        df = pd.DataFrame(columns=predefined_columns)
+
+    ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
+    df_new = df.reindex(ix, fill_value='NaN')
+    df_new = df_new.tz_localize(generation_timezone, ambiguous='infer')
+
+    if pandas_res == "H":
+        df_new = df_new.tz_convert(timezone)
+
+    if pandas_res is None:
+        return df_new.head(1)
+
+    if len(df_new.index) > 1:
+        df_new = df_new.head(-1)
+
+    return df_new
+
 def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
     period_from=pendulum.parse(str(period_from)) if period_from!= str else pendulum.parse(period_from)
     period_to =pendulum.parse(str(period_to)) if period_to!= str else  pendulum.parse(period_to)
