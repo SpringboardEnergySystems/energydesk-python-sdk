@@ -22,4 +22,5 @@ class ProbesHTTPRequestHandler(BaseHTTPRequestHandler):
 def start_probes_server(port: int, callback_readiness=None, callback_liveness=None):
     handler = partial(ProbesHTTPRequestHandler, callback_readiness, callback_liveness)
     httpd = HTTPServer(('', port), handler)
+    logger.info(f"Started probes server on port {port}")
     httpd.serve_forever()
