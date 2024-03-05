@@ -157,7 +157,7 @@ class ElvizLinksApi:
         :type api_connection: str, required
         """
         logger.info("Looking up portfolio mappings")
-        return api_connection.exec_get_url('/api/elvizmapping/portfolios/')
+        return api_connection.exec_get_url('/api/elvizmapping/portfolios/', {'page_size':1000})
 
     @staticmethod
     def lookup_tadingbook(api_connection, tradingbook_name):

@@ -26,7 +26,8 @@ def query_market_prices(api_conn):
     #yesterday = pendulum.timezone("Europe/Paris").convert(yesterday)
     params={"price_date__gte": str(pastday),"price_date__lt": str(yesterday), 'page_size':1000}
 
-    jd=DerivativesApi.get_prices_flatlist(api_conn, params)
+    #jd=DerivativesApi.get_prices_flatlist(api_conn, params)
+    jd=DerivativesApi.fetch_daily_prices(api_conn,MarketPlaceEnum.NASDAQ_OMX.name,MarketEnum.NORDIC_POWER.name,"ALL")
     #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= MarketPlaceEnum.NASDAQ_OMX.name, market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
     df=pd.DataFrame(data=json.loads(jd))
     print(df)
@@ -55,6 +56,7 @@ def manage_market_products(api_conn, ticker):
     print("Lookup ", ticker, " got ", res['results'])
     if len(res['results'])==0:
         print("Need to create product")
+
         res=ProductsApi.generate_market_product_from_ticker(api_conn,MarketPlaceEnum.NASDAQ_OMX.name, ticker)
         print(res)
 

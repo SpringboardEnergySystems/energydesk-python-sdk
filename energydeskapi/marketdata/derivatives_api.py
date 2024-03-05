@@ -143,6 +143,7 @@ class DerivativesApi:
         }
         print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/area-product-prices/', qry_payload)
+        print(json_res,error_msg )
         if json_res is None:
             return None
         js=json.loads(json_res)
