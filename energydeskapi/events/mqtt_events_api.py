@@ -75,29 +75,29 @@ class MqttClient(EventClient):
             logger.info("Initializing MQTT")
             if not self.force_transport is None:
                 self.client = mqtt.Client(client_name, transport=self.force_transport)  # create new instance
-                print("Using MQTT transport "+self.force_transport)
+                logger.info("Using MQTT transport "+self.force_transport)
             elif self.mqtt_port == "8080":
                 self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
-                print("Using MQTT transport Websockets")
+                logger.info("Using MQTT transport Websockets")
             else:
                 self.client = mqtt.Client(client_name)  # create new instance
-                print("Using MQTT transport Mqtt")
+                logger.info("Using MQTT transport Mqtt")
             self.client.on_message = on_message_callback  # attach function to callback
             self.client.on_connect = on_connect
             self.client.on_disconnect=on_disconnect
             if self.username is not None:
-                print("Setting userpass", self.username, self.password)
+                logger.info(f"Setting userpass {self.username} {self.password}")
                 self.client.username_pw_set(self.username, self.password)
             self.client.user_data_set(self)
-            logger.info("Connecting " + str(self.mqtt_host) + ":"  + str(self.mqtt_port))
+            logger.info(f"Connecting {self.mqtt_host}:{self.mqtt_port}")
             #print(self.client_certificate)
             if self.client_certificate is not None:
-                if self.mqtt_port == "8080" and self.force_tls is not True:
-                    print("Setting not tls")
+                if self.ca_certificate is None and self.force_tls is not True:
+                    logger.info("Setting no CA certificate")
                     self.client.tls_set(certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 else:
-                    print("Setting tls")
+                    logger.info("Setting CA certificate")
                     self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 self.client.tls_insecure_set(True)
