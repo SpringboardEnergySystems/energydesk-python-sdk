@@ -1,4 +1,11 @@
 import logging
+from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
+from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.assetdata.assetdata_api import AssetDataApi
+import pendulum
+from energydeskapi.assetdata.baselines_api import BaselinesApi
 from energydeskapi.types.flexibility_enum_types import ExternalMarketTypeEnums
 import pandas as pd
 logger = logging.getLogger(__name__)
@@ -151,6 +158,45 @@ class FlexibilityApi:
             return None
         return json_res
 
+    @staticmethod
+    def lookup_asset_registration(api_connection,extern_asset_id):
+        return AssetsApi.get_assets_embedded(api_connection, {"extern_asset_id":extern_asset_id})
+
+    @staticmethod
+    def lookup_asset_registration_by_mpid(api_connection,mpid):
+        return AssetsApi.get_assets_embedded(api_connection, {"meter_id":mpid})
+
+    @staticmethod
+    def generate_baselines_for_asset(api_connection, payload):
+        success, json_res, status_code, error_msg =BaselinesApi.generate_baselines(api_connection, payload)
+        if success is False:
+            return None
+        return json_res
+
+    @staticmethod
+    def register_asset_readings(api_connection, asset_pk, df_readings):
+        def convert_series(df):
+            df.index=df['datetime']
+            df['date'] = pd.to_datetime(df.index)
+            df['timestamp'] = df['datetime'].dt.strftime('%Y-%m-%dT%H:%M:%S+01:00')  # Asssuming Norw timezone
+            df['date'] = df['date'].dt.strftime('%Y-%m-%d')
+            df = df.rename(columns={"consumption": "value"})
+            df=df[['timestamp', 'date', 'value']]
+            print(df)
+            return df.to_json(orient='records')
+
+        payload = {
+            'asset': AssetsApi.get_asset_url(api_connection, asset_pk),
+            'time_series_type': AssetDataApi.get_timeseries_type_url(api_connection, TimeSeriesTypesEnum.METERREADINGS),
+            'quantity_unit': AssetDataApi.get_timeseries_value_unit_url(api_connection, QuantityUnitEnum.KW),
+            'quantity_type': AssetDataApi.get_timeseries_value_type_url(api_connection, QuantityTypeEnum.EFFECT),
+            'data': convert_series(df_readings),
+            'last_updated': str(pendulum.now('Europe/Oslo')),
+        }
+        success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
+        if success is False:
+            return None
+        return json_res
     @staticmethod
     def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,
                                 address, city, latitude, longitude, asset_category,asset_type,
