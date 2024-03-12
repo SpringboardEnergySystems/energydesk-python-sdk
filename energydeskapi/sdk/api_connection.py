@@ -48,6 +48,9 @@ class ApiConnection(object):
                                 auth=HTTPBasicAuth(username, password))
         if response is None:
             return False, "Unknown Error"
+        if response.status_code > 210:
+            logger.error("Problems logging in user {}".format(username))
+            return False, "Problems logging in user {}".format(username)
         if 'token' not in response.json():
             if 'detail' in response.json():
                 errmsg=response.json()['detail']

@@ -155,6 +155,6 @@ if __name__ == '__main__':
     meterdata=load_assetmeterdata_from_files(specific_mpid=None)
     for key in meterdata.keys():
         register_meterdata_for_asset(api_conn, key, meterdata[key])
-        generate_baseline(key)
-        break
+        #generate_baseline(key)
+
     #load_registered_data(api_conn)
