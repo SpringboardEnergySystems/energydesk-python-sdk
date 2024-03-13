@@ -5,8 +5,75 @@ from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum
 from energydeskapi.types.contract_enum_types import QuantityUnitEnum
 import pendulum
+from typing import List
+import pytz
+import dataclasses
+from dataclasses import dataclass
+from datetime import date
+from datetime import datetime
+from json import JSONEncoder
+from typing import List
+import json
+import pandas as pd
+import pytz
+import pendulum
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 logger = logging.getLogger(__name__)
 
+class DateTimeEncoder(JSONEncoder):
+    # Override the default method
+    def default(self, obj):
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+
+def date_hook(json_dict):
+    for (key, value) in json_dict.items():
+        try:
+            pdt=pendulum.parse(value)
+            dt=conv_from_pendulum(pdt)
+            json_dict[key]=dt
+            #json_dict[key] = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S+00:00")
+        except:
+            pass
+    return json_dict
+
+
+@dataclass
+class PeriodPrice:
+    period_from: datetime =  datetime(2022, 1, 1, 0, 0, 0,  tzinfo= pytz.timezone("Europe/Oslo"))
+    period_until: datetime = datetime(2025, 1, 1, 0, 0, 0,  tzinfo= pytz.timezone("Europe/Oslo"))
+    period_tag: str = ""
+    period_price: float = 0
+
+@dataclass
+class PeriodDef:
+    period_from: datetime = datetime(2022, 1, 1, 0, 0, 0, tzinfo=pytz.timezone("Europe/Oslo"))
+    period_until: datetime = datetime(2025, 1, 1, 0, 0, 0, tzinfo=pytz.timezone("Europe/Oslo"))
+    period_tag: str = ""
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.loads(json.dumps(self.__dict__, cls=DateTimeEncoder))
+
+@dataclass
+class AvailabilityPriceParams:
+    periods: List[PeriodDef]
+    currency_code: str = "NOK"
+    curve_model: str = "PRICEIT"
+    price_area: str = "NO1"
+    volatility: float = 0
+    rate: float = 0
+    override_strike: float = 0   # Otherwise use max price on curve
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        data=self.__dict__
+        data['periods']=[d.json for d in self.periods]
+        return data
 
 class AvailabilityTenderInstance():
     def __init__(self,description, period_from, period_until):
@@ -164,6 +231,15 @@ class CapacityApi:
           success, returned_data, status_code, error_msg = api_connection.exec_post_url(
               '/api/bilateral/availability/tender/', capacity_profile.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def calculate_availability_price(api_connection, price_params:AvailabilityPriceParams):
+        rec=price_params.json
+        print(rec)
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+              '/api/bilateral/contractpricer/calcavailability/', rec)
+
+        return success, returned_data, status_code, error_msg
 
 
     @staticmethod
