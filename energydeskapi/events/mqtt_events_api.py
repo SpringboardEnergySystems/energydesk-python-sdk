@@ -41,7 +41,7 @@ class MqttException(Exception):
 
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, force_transport=None, force_tls=False):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, force_transport=None, use_tls=False):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
@@ -54,7 +54,7 @@ class MqttClient(EventClient):
         self.disconnect_callbacks = []
         #force_transport either tcp or websockets
         self.force_transport = force_transport
-        self.force_tls = force_tls
+        self.use_tls = use_tls
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None
@@ -91,8 +91,9 @@ class MqttClient(EventClient):
             self.client.user_data_set(self)
             logger.info(f"Connecting {self.mqtt_host}:{self.mqtt_port}")
             #print(self.client_certificate)
-            if self.client_certificate is not None:
-                if self.ca_certificate is None and self.force_tls is not True:
+            if self.use_tls is True:
+                logger.info("Use TLS")
+                if self.ca_certificate is None:
                     logger.info("Setting no CA certificate")
                     self.client.tls_set(certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
