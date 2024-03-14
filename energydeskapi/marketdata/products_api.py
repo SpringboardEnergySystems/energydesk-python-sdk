@@ -120,6 +120,20 @@ class ProductsApi:
         return json_res
 
     @staticmethod
+    def get_product_prices(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/productprices/', parameters)
+        if json_res is None:
+            return False
+        return json_res
+
+    @staticmethod
+    def get_product_prices_embedded(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
+        if json_res is None:
+            return False
+        return json_res
+
+    @staticmethod
     def get_market_products_df(api_connection, parameters={}):
         json_res=ProductsApi.get_market_products_embedded(api_connection, parameters)
         return convert_productjson_dataframe(json_res)

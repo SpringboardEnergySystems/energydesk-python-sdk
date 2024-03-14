@@ -24,7 +24,7 @@ from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload
 get_default_profile_months
 from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
-from energydeskapi.bilateral.capacity_api import CapacityApi, AvailabilityTenderInstance,AvailabilityTender, AvailableHours
+from energydeskapi.bilateral.capacity_api import PeriodPrice, PeriodDef, AvailabilityPriceParams, CapacityApi, AvailabilityTenderInstance,AvailabilityTender, AvailableHours
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.contracts.contracts_api import ContractsApi
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
@@ -368,21 +368,70 @@ def lookup_tenders(api_conn):
         if j['description'] is None or 'instances' not in j:
             continue
         print(j)
+
+def calc_availability(api_conn):
+    PeriodDef, AvailabilityPriceParams,
+    periods=[]
+    period=PeriodDef()
+    period.period_from=pendulum.datetime(2024, 10, 1,tz="Europe/Paris")
+    period.period_until = pendulum.datetime(2024, 12, 1, tz="Europe/Paris")
+    period.period_tag="OCTNOV"
+    periods.append(period)
+    period=PeriodDef()
+    period.period_from=pendulum.datetime(2024, 12, 1,tz="Europe/Paris")
+    period.period_until = pendulum.datetime(2025, 2, 1, tz="Europe/Paris")
+    period.period_tag="DECJAN"
+    periods.append(period)
+    period=PeriodDef()
+    period.period_from=pendulum.datetime(2025, 2, 1,tz="Europe/Paris")
+    period.period_until = pendulum.datetime(2025, 4, 1, tz="Europe/Paris")
+    period.period_tag="FEBMAR"
+    periods.append(period)
+
+    period=PeriodDef()
+    period.period_from=pendulum.datetime(2025, 10, 1,tz="Europe/Paris")
+    period.period_until = pendulum.datetime(2025, 12, 1, tz="Europe/Paris")
+    period.period_tag="OCTNOV 26"
+    periods.append(period)
+    period=PeriodDef()
+    period.period_from=pendulum.datetime(2025, 12, 1,tz="Europe/Paris")
+    period.period_until = pendulum.datetime(2026, 2, 1, tz="Europe/Paris")
+    period.period_tag="DECJAN 26"
+    periods.append(period)
+    period=PeriodDef()
+    period.period_from=pendulum.datetime(2026, 2, 1,tz="Europe/Paris")
+    period.period_until = pendulum.datetime(2026, 4, 1, tz="Europe/Paris")
+    period.period_tag="FEBMAR 26"
+    periods.append(period)
+
+    av=AvailabilityPriceParams(periods)
+
+    av.rate=0.04
+    av.volatility=0.3
+    av.currency_code="NOK"
+    av.price_area = "NO1"
+    av.curve_model="PRICEIT"
+
+    success, json_res, status_code, error_msg =CapacityApi.calculate_availability_price(api_conn, av)
+    lst=[]
+    for p in json_res['calculated_periods']:
+        print(p['period_tag'],"Mean Option", p['mean_option_price'],"Max Option", p['max_option_price'], "Max curve",p['max_curve_price'])
+
 if __name__ == '__main__':
 
     api_conn=init_api()
 
-
+    calc_availability(api_conn)
     #register_capacity_requests(api_conn,pendulum.datetime(2024, 11, 1, tz="Europe/Oslo"),
     #                               pendulum.datetime(2025, 4, 1, tz="Europe/Oslo"))
-    register_caopacity_contracts(api_conn,
-                                 pendulum.datetime(2024, 11, 1, tz="Europe/Oslo"),
-                                 tender="Nedre Glomma",
-                                count=30)
-    register_caopacity_contracts(api_conn,
-                                 pendulum.datetime(2025, 11, 1, tz="Europe/Oslo"),
-                                 tender="Nedre Glomma",
-                                count=30)
+    # register_caopacity_contracts(api_conn,
+    #                              pendulum.datetime(2024, 11, 1, tz="Europe/Oslo"),
+    #                              tender="Nedre Glomma",
+    #                             count=30)
+    # register_caopacity_contracts(api_conn,
+    #                              pendulum.datetime(2025, 11, 1, tz="Europe/Oslo"),
+    #                              tender="Nedre Glomma",
+    #                             count=30)
    # register_capacity_requests(api_conn)
     #lookup_tenders(api_conn)
     #register_capacity_requests(api_conn)
