@@ -3,7 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.users_api import UsersApi, User, UserGroup, UserFeatureAccess
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.company_enum_types import UserRoleEnum
-
+import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -163,7 +163,7 @@ def basic_auth(api_conn):
 
 
 if __name__ == '__main__':
-
+    pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #update_user_company(api_conn, "s.r.eriksen@gmail.com","976894677" )
     #update_user_company(api_conn, "steinar.eriksen@hafslundeco.no", "976894677")
@@ -189,5 +189,5 @@ if __name__ == '__main__':
     #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
     #create_user_feature_access(api_conn)
-    get_traders(api_conn)
+    list_users_df(api_conn)
     #del_user_feature_access(api_conn)
