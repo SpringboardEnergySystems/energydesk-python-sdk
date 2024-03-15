@@ -9,6 +9,7 @@ import pandas as pd
 import os
 from energydeskapi.assetdata.baselines_utils import BaselinesModelsEnums, initialize_standard_algorithms, create_default_algo_parameters
 import glob
+import random
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -44,6 +45,19 @@ def generate_baseline(mpid):
     outdata=FlexibilityApi.generate_baselines_for_asset(api_conn,payload)
     df_base=pd.DataFrame(data=outdata)
     print(df_base)
+
+def register_flex_availability(api_conn, asset_row, crontab="0 11-13 * * 1-5"):
+    extern_asset_id = asset_row['Name']
+    t1 = pendulum.today(tz="Europe/Oslo")
+    t2 = t1.add(days=30)   # Cast to string to get ISO format
+
+       # 11 12 and 13 monday-friday
+
+    outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id=extern_asset_id,
+                                               period_from=str(t1), period_until=str(t2),
+                                               crontab=crontab, kw_available=200)
+    print(outdata)
+
 def register_flexible_asset(api_conn, asset_row):
     extern_asset_id=asset_row['Name']   # FSP provider's own identifier. For simplicity Name is used here
     end_customer_name = asset_row['Customer']
@@ -80,21 +94,13 @@ def register_flexible_asset(api_conn, asset_row):
 
 
 
-def register_flex_availability(api_conn):
-    t1="2024-02-01 00:00:00+02:00"
-    t2="2024-03-01 00:00:00+02:00"
-    crontab="0 11-13 * * 1-5"   # 11 12 and 13 monday-friday
 
-    outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id="123asset",
-                                               period_from=t1, period_until=t2,
-                                               crontab=crontab, kw_available=200)
-    print(outdata)
-
-def check_schedule(api_conn):
-    t1="2024-02-01"
-    t2="2024-02-03"
-    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="123asset",
-                                                     period_from=t1,period_until=t2)
+def check_schedule(api_conn, asset_row):
+    extern_asset_id = asset_row['Name']
+    t1 = pendulum.today(tz="Europe/Oslo")
+    t2 = t1.add(days=30)   # Cast to string to get ISO format
+    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id=extern_asset_id,
+                                                     period_from=str(t1),period_until=str(t2))
     print(outdata)
 
 def load_assets_from_file(filename="./assets_sample.xlsx"):
@@ -149,12 +155,18 @@ def show_registered_assets(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    df=load_assets_from_file("./assets_oslo_kommune.xlsx")
+    df=load_assets_from_file("./assets_sample.xlsx")
     for index, row in df.iterrows():
         register_flexible_asset(api_conn, row)
+        # Sets hours when KW available
+        start_hour=random.randint(6, 10)
+        end_hour = random.randint(12, 20)
+        crontab = "0 " + str(start_hour) + "-" + str(end_hour) + " * * 1-5"
+        register_flex_availability(api_conn, row, crontab)
+
     meterdata=load_assetmeterdata_from_files(specific_mpid=None)
     for key in meterdata.keys():
         register_meterdata_for_asset(api_conn, key, meterdata[key])
-        #generate_baseline(key)
+        generate_baseline(key)
 
     #load_registered_data(api_conn)
