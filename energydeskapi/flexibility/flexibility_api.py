@@ -12,22 +12,20 @@ logger = logging.getLogger(__name__)
 
 
 class ExternalMarketAsset:
-    def __init__(self, asset_offered_pk, external_market_asset_id, external_market_name=ExternalMarketTypeEnums.NODES.name, external_market_asset_properties=None):
+    def __init__(self, flexible_asset_pk, external_market_key=ExternalMarketTypeEnums.NODES.value,
+                 external_market_asset_properties=None):
         self.pk = 0
-        self.asset_offered_pk = asset_offered_pk
-        self.external_market_name=external_market_name
-        self.external_market_asset_id = external_market_asset_id
+        self.flexible_asset_pk = flexible_asset_pk
+        self.external_market_key=external_market_key
         self.external_market_asset_properties = external_market_asset_properties
 
     def get_dict(self, api_conn):
         dict = {}
         dict['pk'] = self.pk
-        if self.asset_offered_pk is not None:
-            dict['asset_offered'] = FlexibilityApi.get_asset_offer_url(api_conn, self.asset_offered_pk)
-        if self.external_market_name is not None:
-            dict['external_market'] = self.external_market_name
-        if self.external_market_asset_id is not None:
-            dict['external_market_asset_id'] = self.external_market_asset_id
+        if self.flexible_asset_pk is not None:
+            dict['flexible_asset'] = FlexibilityApi.get_asset_offer_url(api_conn, self.flexible_asset_pk)
+        if self.external_market_key is not None:
+            dict['external_market'] = FlexibilityApi.get_flexible_market_url(api_conn,self.external_market_key)
         if self.external_market_asset_properties is not None:
             dict['external_market_asset_properties'] = self.external_market_asset_properties
         return dict
@@ -83,6 +81,15 @@ class FlexibilityApi:
         if json_res is None:
             return None
         return json_res
+    @staticmethod
+    def get_flexible_market_url(api_connection, flexible_market_pk):
+        """Fetches url for a contract type from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        return api_connection.get_base_url() + '/api/flexiblepower/flexiblemarkets/' + str(flexible_market_pk) + "/"
 
     @staticmethod
     def upsert_market_offering(api_connection, external_market_asset):
