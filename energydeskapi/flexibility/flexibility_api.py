@@ -49,6 +49,17 @@ class FlexibilityApi:
             return None
         return json_res
 
+    @staticmethod
+    def get_flexible_markets(api_connection,  parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexiblemarkets/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_asset_offer_url(api_connection, asset_offer_pk):

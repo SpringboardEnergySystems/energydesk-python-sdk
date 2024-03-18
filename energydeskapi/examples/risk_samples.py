@@ -1,7 +1,7 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.risk.risk_api import RiskApi, RiskParameters
-
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -27,6 +27,12 @@ def calc_covariance_matrix(api_conn):
     df_covar=RiskApi.calc_covariance_matrix_df(api_conn,days_back=40)
     print(df_covar)
 
+def rolling_products(api_conn):
+    res=RiskApi.get_rolling_products(api_conn,price_days=100)
+    df_prices=pd.DataFrame(res)
+    print(df_prices)
+
+
 def test_update_riskparams(api_conn):
     res=RiskApi.get_risk_parameters(api_conn)
     print(res)
@@ -38,5 +44,5 @@ def test_update_riskparams(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    calc_covariance_matrix(api_conn)
+    rolling_products(api_conn)
 

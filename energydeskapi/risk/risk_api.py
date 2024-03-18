@@ -118,6 +118,8 @@ class RiskApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calccovariancematrix/', payload)
         #print(error_msg)
         return success, json_res, status_code, error_msg
+
+
     @staticmethod
     def calc_covariance_matrix_df(api_connection, days_back=40, decay_factor=0.94):
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back, decay_factor)
@@ -127,3 +129,15 @@ class RiskApi:
         dfvars=pd.DataFrame(data=json.loads(json_res['covariance_data']))
         dfvars.index=dfvars.columns.to_flat_index()
         return dfvars
+
+    @staticmethod
+    def get_rolling_products(api_connection, price_days=40):
+        """Lists the types of commodities
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Loads rolling products")
+        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproducts/?price_days=' + str(price_days))
+        #print(error_msg)
+        return json_res
