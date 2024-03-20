@@ -69,6 +69,7 @@ def resolution_to_pandas_freq(resolution_enum):
         return "YS"
     return "D"  #Default
 
+# Server gets Monthly, Hourly etc as input, and needs this conversion
 def resolution_str_to_pandas_freq(resolution_str):
     return resolution_to_pandas_freq(PeriodResolutionEnum(resolution_str))
 
