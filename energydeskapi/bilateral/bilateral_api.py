@@ -261,7 +261,7 @@ class BilateralApi:
         if len(df)==0:
             return None
         df.index=df.period_from
-        df=df[['netpos','buypos','sellpos','netvol','buyvol','sellvol', 'hours']]
+        df=df[['netpos','netvol']]
         df.index=pd.to_datetime(df.index)
         df=df.tz_convert("Europe/Oslo")
         return df
