@@ -10,6 +10,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.settlement.settlement_api import SettlementApi
 from energydeskapi.sdk.datetime_utils import localize_datetime
 from energydeskapi.contracts.contracts_api import ContractsApi
+from energydeskapi.types.common_enum_types import resolution_str_to_pandas_freq
 import pandas as pd
 from dateutil import parser
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
@@ -45,6 +46,18 @@ def get_settlement_view_data(api_conn):
     print("Calling")
     result= SettlementApi.get_settlement_data(api_conn, payload)
     print(result)
+
+def get_result_view(api_conn):
+
+    filter={
+        'view_currency': 'NOK',
+        'portfolio':131,
+        "view_period_from__gte":'2024-01-01',
+        "view_period_until__lt": '2025-01-01',
+        "resolution":PeriodResolutionEnum.MONTHLY.value,
+     }
+    v, df = SettlementApi.get_result_view_df(api_conn, filter)
+    print(df)
 def get_settlement_view(api_conn):
 
     filter={
@@ -93,4 +106,5 @@ def get_settlement_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_settlement_view_data(api_conn)
+    print(resolution_str_to_pandas_freq("Monthly"))
+    get_result_view(api_conn)

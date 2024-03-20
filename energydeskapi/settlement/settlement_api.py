@@ -50,5 +50,33 @@ class SettlementApi:
             return None, None
 
         df = pd.read_json(json_res, orient="table")
+        return id, df
 
+    @staticmethod
+    def get_result_view(api_connection, parameters={}):
+        """Fetches specific product view
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching settlement view")
+        json_res = api_connection.exec_get_url('/api/settlement/settlementview/results/', parameters)
+        if json_res is None:
+            return None, None
+        if len(json_res['view_data'])==0:
+            return None, None
+        view_id=json_res['view_id']
+        view_data = json_res['view_data']
+        return view_id, view_data
+
+    @staticmethod
+    def get_result_view_df(api_connection, parameters={}):
+
+
+        id, json_res = SettlementApi.get_result_view(api_connection, parameters)
+
+        if json_res is None:
+            return None, None
+
+        df = pd.read_json(json_res, orient="table")
         return id, df
