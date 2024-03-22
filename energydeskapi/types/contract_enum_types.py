@@ -31,6 +31,10 @@ class GosTechnologyEnum(Enum):
     WIND = 2
     SOLAR = 3
 
+class GosSupportEnum(Enum):
+    NOSUPPORT = 1
+    SUPPORT = 2
+    UNDEFINED = 3
 
 class ContractTypeEnum(Enum):
     NASDAQ = 1
@@ -68,6 +72,13 @@ def go_technology_description(x):
         GosTechnologyEnum.HYDRO: "Hydro power",
         GosTechnologyEnum.WIND: "Wind power",
         GosTechnologyEnum.SOLAR: "Solar power",
+    }[x]
+
+def go_support_description(x):
+    return {
+        GosSupportEnum.NOSUPPORT: "No Support",
+        GosSupportEnum.SUPPORT: "Support",
+        GosSupportEnum.UNDEFINED: "Undefined",
     }[x]
 
 def contract_type_description(x):
