@@ -34,7 +34,7 @@ class GosTechnologyEnum(Enum):
 class GosSupportEnum(Enum):
     NOSUPPORT = 1
     SUPPORT = 2
-    UNDEFINED = 3
+    UNSPECIFIED = 3
 
 class ContractTypeEnum(Enum):
     NASDAQ = 1
@@ -78,7 +78,7 @@ def go_support_description(x):
     return {
         GosSupportEnum.NOSUPPORT: "No Support",
         GosSupportEnum.SUPPORT: "Support",
-        GosSupportEnum.UNDEFINED: "Undefined",
+        GosSupportEnum.UNSPECIFIED: "Unspecified",
     }[x]
 
 def contract_type_description(x):
