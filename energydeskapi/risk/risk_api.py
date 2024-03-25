@@ -73,7 +73,7 @@ class RiskApi:
         return df
 
     @staticmethod
-    def calc_covariance_var(api_connection, portfolio_id, days_back=40):
+    def calc_covariance_var(api_connection, portfolio_id, days_back=40, decay_factor=0.94):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -82,6 +82,7 @@ class RiskApi:
         logger.info("Calc Covariance Var")
         payload={
             'price_days':days_back,
+            'decay_factor': decay_factor,
             'portfolio_id':portfolio_id
         }
         print(payload)
@@ -90,8 +91,8 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calc_covariance_var_df(api_connection, portfolio_id, days_back=40):
-        success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, portfolio_id, days_back)
+    def calc_covariance_var_df(api_connection, portfolio_id, days_back=40, decay_factor=0.94):
+        success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, portfolio_id, days_back, decay_factor)
         if success ==False:
             print(error_msg)
             return None,None,None

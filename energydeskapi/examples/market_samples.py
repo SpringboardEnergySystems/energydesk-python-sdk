@@ -38,6 +38,7 @@ def query_market_prices_embedded(api_conn):
     params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
     params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
     jd=DerivativesApi.get_prices_embedded_json(api_conn, params)
+
     print(jd)
 
 def query_market_types(api_conn):

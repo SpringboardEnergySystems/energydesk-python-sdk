@@ -14,7 +14,7 @@ def calc_volats(api_conn):
 import numpy as np
 import scipy
 def calc_covariance_var(api_conn):
-    df,port_mean,port_stdev=RiskApi.calc_covariance_var_df(api_conn, 9, days_back=40)
+    df,port_mean,port_stdev=RiskApi.calc_covariance_var_df(api_conn, 121, days_back=100)
     print(df)
     x = np.linspace(port_mean - 3 * port_stdev, port_mean + 3 * port_stdev, 40)
     pd = scipy.stats.norm.pdf(x, port_mean, port_stdev)
@@ -44,5 +44,6 @@ def test_update_riskparams(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    rolling_products(api_conn)
+    #rolling_products(api_conn)
+    calc_covariance_var(api_conn)
 
