@@ -20,7 +20,7 @@ class GoContract:
     self.extra_info = None
     self.asset = None
     self.production_from = None
-    self.support = GosSupportEnum.NOSUPPORT.value
+    self.cert_support = GosSupportEnum.NOSUPPORT.value
     self.flexible_delivery = False
     self.production_until = None
     self.delivery_date = None
@@ -42,7 +42,7 @@ class GoContract:
     if self.extra_info is not None: dict['extra_info'] = self.extra_info
     if self.invoice_with_mva is not None: dict['invoice_with_mva'] = self.invoice_with_mva
     if self.settlement_date is not None: dict['settlement_date'] = self.settlement_date
-    if self.support is not None: dict['support'] = GosApi.get_support_url(api_conn, self.support)
+    if self.cert_support is not None: dict['cert_support'] = GosApi.get_support_url(api_conn, self.cert_support)
     if self.flexible_delivery is not None: dict['flexible_delivery'] = self.flexible_delivery
     if self.technology is not None: dict['technology'] = GosApi.get_technology_url(api_conn, self.technology)
     if self.delivery_date is not None: dict['delivery_date'] = check_fix_date2str(self.delivery_date)
@@ -67,7 +67,7 @@ class GoContract:
     c.asset=None if not 'asset' in d else key_from_url(d['asset'])
     c.production_from = None if not 'production_from' in d else d['production_from']
     c.production_until = None if not 'production_until' in d else d['production_until']
-    c.support=None if not 'support' in d else key_from_url(d['support'])
+    c.cert_support=None if not 'cert_support' in d else key_from_url(d['cert_support'])
     c.flexible_delivery = False if not 'flexible_delivery' in d else d['flexible_delivery']
     c.technology = None if not 'technology' in d else key_from_url(d['technology'])
     c.quality = None if not 'quality' in d else d['quality']

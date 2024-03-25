@@ -38,7 +38,7 @@ def generate_default_gofields( asset_pk, delivery_date, settlement_date, product
     go=GoContract()
     go.extra_info=None
     go.asset=None
-    go.support=GosSupportEnum.NOSUPPORT.value
+    go.cert_support=GosSupportEnum.NOSUPPORT.value
     go.technology=GosTechnologyEnum.HYDRO.value
     go.flexible_delivery=False
     go.delivery_date=delivery_date
