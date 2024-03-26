@@ -93,6 +93,7 @@ class Contract:
         self.product_code=None
         self.otc_multi_delivery_periods=[]
         self.certificates=[]
+        self.capacity_parameters = []  # Part of contract
         self.contract_tags=[]
         self.area="SYS"
         self.commodity_profile = {}
@@ -231,6 +232,10 @@ class Contract:
         if len(self.certificates) > 0:
             print("Dicstionaries ", self.certificates)
             dict["certificates"] = self.certificates
+
+        if len(self.capacity_parameters)>0:
+            dict["capacity_parameters"] = self.capacity_parameters
+
         if self.contract_profile is not None:
             dict["contract_profile"] = self.contract_profile.json
 
@@ -309,6 +314,11 @@ class Contract:
         for c in self.certificates:
             cert_dicts.append(c.get_dict(api_conn))
         dict["certificates"] = cert_dicts
+
+        capacity_parameters=[]
+        for cap in self.capacity_parameters:
+            capacity_parameters.append(cap.get_dict(api_conn))
+        dict["capacity_parameters"] = capacity_parameters
         if self.contract_profile is not None:
             dict["contract_profile"] = self.contract_profile.json
 
