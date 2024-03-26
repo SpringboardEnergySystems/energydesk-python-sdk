@@ -56,8 +56,8 @@ class GridApi:
         logger.info("Upserting Gridmap")
         if gridmap.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/grid/gridmap/' + str(gridmap.pk) + "/", gridmap.get_dict())
+                '/api/grid/gridmap/' + str(gridmap.pk) + "/", gridmap.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/grid/gridmap/', gridmap.get_dict())
+                '/api/grid/gridmap/', gridmap.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
