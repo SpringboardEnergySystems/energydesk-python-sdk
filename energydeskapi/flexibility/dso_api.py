@@ -6,10 +6,7 @@ class DsoApi:
     """ Class for DSO
 
     """
-    @staticmethod
-    def calculate_availability_price(api_connection,
-                           ):
-        dd
+
     @staticmethod
     def simulate_dsr_value(api_connection, years=10,
                            capacity=25,current_level=20, max_change=2, invest_grid_mva=5, invest_grid_cost=5000,

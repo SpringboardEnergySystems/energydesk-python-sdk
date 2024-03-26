@@ -8,6 +8,7 @@ from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum,DeliveryTypeEnum,ProfileTypeEnum, BlockSizeEnum, MarketEnum
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
 from energydeskapi.types.contract_enum_types import  QuantityTypeEnum,QuantityUnitEnum, GosTechnologyEnum, ContractTypeEnum, ContractStatusEnum
+from energydeskapi.flexibility.capacity_api import CapacityContract
 logger = logging.getLogger(__name__)
 #  Change
 
@@ -34,3 +35,10 @@ def generate_default_capacity_contract(api_conn):
     c.trading_fee = FormattedMoney(0, CurrencyCode.NOK)
     c.clearing_fee = FormattedMoney(0, CurrencyCode.NOK)
     return c
+
+def generate_default_capacityfields( asset_pk, capacity_type, meterpoint_id):
+    cap=CapacityContract()
+    cap.meterpoint_id=meterpoint_id
+    cap.capacity_type=capacity_type
+    cap.asset=asset_pk
+    return cap
