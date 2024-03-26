@@ -3,6 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
+from energydeskapi.grid.grid_api import GridApi
 import pendulum
 import json
 logging.basicConfig(level=logging.INFO,
@@ -68,8 +69,12 @@ def load_registered_data(api_conn):
             logging.info("Asset already offered")
 
     FlexibilityApi.remove_market_offering(api_conn, "123asset")
+
+def load_capacity_coverage(api_conn):
+    data=GridApi.get_capacity_coverage(api_conn)
+    print(len(data))
 if __name__ == '__main__':
 
     api_conn=init_api()
     #register_flex_availability(api_conn)
-    load_registered_data(api_conn)
+    load_capacity_coverage(api_conn)

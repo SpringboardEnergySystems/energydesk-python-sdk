@@ -61,3 +61,17 @@ class GridApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/grid/gridmap/', gridmap.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
+
+
+    @staticmethod
+    def get_capacity_coverage(api_connection):
+        """Registers/Updates asset
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset: asset object
+        :type asset: str, required
+        """
+        logger.info("Retrieving coverage")
+        json_res = api_connection.exec_get_url('/api/grid/gridcoverage/', {})
+        return json_res
