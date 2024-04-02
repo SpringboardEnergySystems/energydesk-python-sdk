@@ -10,6 +10,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.settlement.settlement_api import SettlementApi
 from energydeskapi.sdk.datetime_utils import localize_datetime
 from energydeskapi.contracts.contracts_api import ContractsApi
+from energydeskapi.types.contract_enum_types import ContractTypeEnum
 from energydeskapi.types.common_enum_types import resolution_str_to_pandas_freq
 import pandas as pd
 from dateutil import parser
@@ -58,11 +59,27 @@ def get_result_view(api_conn):
      }
     v, df = SettlementApi.get_result_view_df(api_conn, filter)
     print(df)
+
+def get_fixprice_data(api_conn):
+
+    filter={
+        'view_currency': 'NOK',
+        'contract_type':ContractTypeEnum.BILAT_FIXPRICE.value,
+        #'commodity__area': 'NO1',
+        "view_period_from__gte":'2023-07-01',
+        "view_period_until__lt": '2023-10-01',
+        "resolution":PeriodResolutionEnum.MONTHLY.value,
+        "groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value]
+       # "groupby__in": [PeriodViewGroupingEnum.COUNTERPART.value, PeriodViewGroupingEnum.TRADEID.value]
+    }
+    v, df=SettlementApi.get_settlement_view_df(api_conn, filter)
+    print(df)   # Dataframe
+
 def get_settlement_view(api_conn):
 
     filter={
         'view_currency': 'NOK',
-        'contract_type':3,
+        'contract_type':ContractTypeEnum.BILAT_FIXPRICE.value,
         #'commodity__area': 'NO1',
         "view_period_from__gte":'2023-07-01',
         "view_period_until__lt": '2023-10-01',
@@ -73,10 +90,10 @@ def get_settlement_view(api_conn):
     }
     print(filter)
     v, df=SettlementApi.get_settlement_view_df(api_conn, filter)
-    return
+
     subset = ['trade_id', 'counterpart',  'period_from', 'period_until','price', 'value', 'netpos', 'avgcostsell', 'netvol', 'sellvol']
     print(df[subset])
-    return
+
     df_inv=df[subset]
     df_inv=df_inv.rename(columns={'period_from':'invoice_period_from','period_until':'invoice_period_until',
                                   'netvol':'period_volume'})
@@ -107,4 +124,4 @@ if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     print(resolution_str_to_pandas_freq("Monthly"))
-    get_result_view(api_conn)
+    get_fixprice_data(api_conn)
