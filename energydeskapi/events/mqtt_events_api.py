@@ -53,7 +53,7 @@ class MqttClient(EventClient):
         self.client_key=None if 'client_key' not in certificates else certificates['client_key']
         self.disconnect_callbacks = []
         #force_transport either tcp or websockets
-        self.force_transport = "websockets"
+        self.force_transport = force_transport
         self.use_tls = use_tls
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
