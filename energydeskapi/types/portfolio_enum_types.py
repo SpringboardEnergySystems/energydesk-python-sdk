@@ -38,7 +38,7 @@ class ParametersEnum(Enum):
     delivery_until = {"internal": "delivery_until", "formatting":"date", "display": "DelivTo"}
     hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
-    ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
+    # ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
     pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
