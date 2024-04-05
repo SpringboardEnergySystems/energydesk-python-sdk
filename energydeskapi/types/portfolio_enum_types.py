@@ -41,7 +41,9 @@ class ParametersEnum(Enum):
     ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "Unrealized"}
+    pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
 
+'''
 class ParametersEnum(Enum):
     netpos={"internal":"netpos", "formatting":"float", "display":"NetPos MW"}
     sellpos = {"internal": "sellpos","formatting":"float", "display": "SellPos MW"}
@@ -63,4 +65,4 @@ class ParametersEnum(Enum):
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
     price = {"internal": "price", "formatting": "float", "display": "Close"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
-
+'''
