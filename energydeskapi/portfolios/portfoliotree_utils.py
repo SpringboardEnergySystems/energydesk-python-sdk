@@ -517,6 +517,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
     def create_node(node, node_ids):
         print('XXX NODE START XXX')
         print(node)
+
         print('XXX NODE END XXX')
         percentage=1  # Defaul for now...
         parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
@@ -535,6 +536,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
             "calculation": percentage,
             "state": {"opened": True}
         }
+        current_portfolio_parent=node_ids['portfolio_node_id']
         node_ids['portfolio_node_id']+=1
 
         for a in node['assets']:
@@ -543,7 +545,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
                 "text": a['description'],
                 "type": "assets",
                 "data": [{'asset_id': a['pk']}],
-                "parent":node['pk']
+                "parent":current_portfolio_parent
             }
             jstreelist.append(anode)
             node_ids['asset_node_id'] += 1
@@ -555,7 +557,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
                 "text": tb['description'],
                 "type": "trading_books",
                 "data": [{'tradingbook_id': tb['pk']}],
-                "parent":node['pk']
+                "parent":current_portfolio_parent
             }
             node_ids['tradingook_node_id']+=1
             jstreelist.append(tbnode)
