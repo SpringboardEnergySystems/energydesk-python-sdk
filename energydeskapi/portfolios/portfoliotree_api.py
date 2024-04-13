@@ -22,12 +22,7 @@ class PortfolioTreeApi:
   @staticmethod
   def get_portfolio_flat_tree(api_connection, parameters={}):
       logger.info("Fetching portfolio flat tree")
-      #json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
-      #print("WHAT WE GET",json.dumps(json_res, indent=4))
       json_res=PortfolioTreeApi.get_portfolio_tree(api_connection, parameters)
-      #f=open("./ptree_load.json", "w")
-      ##f.write(json.dumps(json_res))
-      #f.close()
       if json_res is None:
           return None
       return convert_embedded_tree_to_jstree(json_res)

@@ -512,8 +512,9 @@ def create_flat_tree_for_jstree(flat_tree):
 
 def convert_embedded_tree_to_jstree(embedded_tree):
     jstreelist=[]
+    node_ids={"portfolio_node_id":1, "tradingook_node_id":1, "asset_node_id":1}
 
-    def create_node(node):
+    def create_node(node, node_ids):
         print('XXX NODE START XXX')
         print(node)
         print('XXX NODE END XXX')
@@ -521,54 +522,56 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
-            "id": node['pk'],
+            "id": node_ids['portfolio_node_id'],#node['pk'],
             "text": node['portfolio_name'] + " (" + str(node['pk'])  + ") "+ ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
                 "original_text": node['portfolio_name'],
                 "calculation": str(percentage*100),
-                "company": node['portfolio_manager_id']
+                "company": node['portfolio_manager_id'],
+                "portfolio_id": node['pk']  #This may be duplicated in the tree if added several places
             },
             "parent": parent,
             "calculation": percentage,
             "state": {"opened": True}
         }
-        assets_as_json = []
+        node_ids['portfolio_node_id']+=1
+
         for a in node['assets']:
             anode={
-                "id": "pka"+str(a['pk']),
+                "id": "pka" + str(node_ids['asset_node_id']),#"pka"+str(a['pk']),
                 "text": a['description'],
                 "type": "assets",
-                "data": [],
+                "data": [{'asset_id': a['pk']}],
                 "parent":node['pk']
             }
             jstreelist.append(anode)
+            node_ids['asset_node_id'] += 1
 
-        tradingbooks_as_json = []
         for tb in node['trading_books']:
             print(tb)
             tbnode={
-                "id": "pkt"+str(tb['pk']),
+                "id": "pkt"+str(node_ids['tradingook_node_id']),
                 "text": tb['description'],
                 "type": "trading_books",
-                "data": [],
+                "data": [{'tradingbook_id': tb['pk']}],
                 "parent":node['pk']
             }
+            node_ids['tradingook_node_id']+=1
             jstreelist.append(tbnode)
 
 
-        return localnode
+        return localnode, node_ids
 
-    def parse_embedded_node(emb_node):
-        dict_node=create_node(emb_node)
+    def parse_embedded_node(emb_node,node_ids):
+        dict_node, node_ids=create_node(emb_node,node_ids)
         jstreelist.append(dict_node)
         for ch in emb_node['children']:
-            parse_embedded_node(ch)
+            parse_embedded_node(ch, node_ids)
+        return node_ids
 
     for i in range(len(embedded_tree)):
-        print(i)
-        #if flat_tree[i]['parent_portfolio'] is None:
-        parse_embedded_node(embedded_tree[i])
+        node_ids=parse_embedded_node(embedded_tree[i],node_ids)
 
     return jstreelist
 
