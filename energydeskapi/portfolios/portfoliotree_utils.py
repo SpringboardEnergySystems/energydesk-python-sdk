@@ -514,13 +514,10 @@ def convert_embedded_tree_to_jstree(embedded_tree):
     jstreelist=[]
     node_ids={"portfolio_node_id":1, "tradingook_node_id":1, "asset_node_id":1}
 
-    def create_node(node, node_ids):
+    def create_node(node, parent, node_ids):
         print('XXX NODE START XXX')
         print(node)
-
-        print('XXX NODE END XXX')
         percentage=1  # Defaul for now...
-        parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
             "id": node_ids['portfolio_node_id'],#node['pk'],
@@ -551,7 +548,6 @@ def convert_embedded_tree_to_jstree(embedded_tree):
             node_ids['asset_node_id'] += 1
 
         for tb in node['trading_books']:
-            print(tb)
             tbnode={
                 "id": "pkt"+str(node_ids['tradingook_node_id']),
                 "text": tb['description'],
@@ -565,15 +561,16 @@ def convert_embedded_tree_to_jstree(embedded_tree):
 
         return localnode, node_ids
 
-    def parse_embedded_node(emb_node,node_ids):
-        dict_node, node_ids=create_node(emb_node,node_ids)
+    def parse_embedded_node(emb_node,parent, node_ids):
+        dict_node, node_ids=create_node(emb_node,parent, node_ids)
         jstreelist.append(dict_node)
         for ch in emb_node['children']:
-            parse_embedded_node(ch, node_ids)
+            #ch["parent_id"]=emb_node['pk']
+            parse_embedded_node(ch, emb_node['pk'], node_ids)
         return node_ids
 
     for i in range(len(embedded_tree)):
-        node_ids=parse_embedded_node(embedded_tree[i],node_ids)
+        node_ids=parse_embedded_node(embedded_tree[i],"#", node_ids)
 
     return jstreelist
 
