@@ -60,18 +60,26 @@ def get_period_result_view(api_conn):
     v, df = SettlementApi.get_period_result_view_df(api_conn, filter)
     print(df)
 
+
+def column_aggregation():
+    colummap = {'netvol': 'sum', 'buyvol': 'sum', 'sellvol': 'sum',
+                'avgcost': 'mean', 'avgcostbuy': 'mean', 'avgcostsell': 'mean',
+                'delivery_from': 'max', 'delivery_until': 'max',
+                'netpos': 'mean', 'buypos': 'mean', 'sellpos': 'mean', 'spot': 'mean', 'curve': 'mean','unrealized': 'sum','realized': 'sum'}
+    return colummap
 def get_product_result_view(api_conn):
 
     filter={
         'view_currency': 'NOK',
-        'portfolio':131,
+        'portfolio':130,
         'groupby__in': ["instrument"],
         "view_period_from__gte":'2024-01-01',
         "view_period_until__lt": '2028-01-01',
      }
     v, df = SettlementApi.get_product_result_view_df(api_conn, filter)
     print(df)
-    print(df['realized'].groupby('ticker').sum())
+    dfsum=df.groupby("ticker").agg(column_aggregation())
+    print(dfsum)
 def get_fixprice_data(api_conn):
 
     filter={
