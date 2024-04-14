@@ -513,11 +513,12 @@ def create_flat_tree_for_jstree(flat_tree):
 def convert_embedded_tree_to_jstree(embedded_tree):
     jstreelist=[]
     node_ids={"portfolio_node_id":1, "tradingook_node_id":1, "asset_node_id":1}
-
-    def create_node(node, parent, node_ids):
+    portfolio_node_map={}
+    def create_node(node, parent, node_ids, portfolio_node_map):
         print('XXX NODE START XXX')
         print(node)
         percentage=1  # Defaul for now...
+        portfolio_node_map[node_ids['portfolio_node_id']]=node['pk']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
             "id": node_ids['portfolio_node_id'],#node['pk'],
@@ -557,21 +558,19 @@ def convert_embedded_tree_to_jstree(embedded_tree):
             }
             node_ids['tradingook_node_id']+=1
             jstreelist.append(tbnode)
+        return localnode
 
-
-        return localnode, node_ids
-
-    def parse_embedded_node(emb_node,parent, node_ids):
-        dict_node, node_ids=create_node(emb_node,parent, node_ids)
+    def parse_embedded_node(emb_node,parent, node_ids, portfolio_node_map):
+        dict_node=create_node(emb_node, parent, node_ids, portfolio_node_map)
         jstreelist.append(dict_node)
         for ch in emb_node['children']:
-            #ch["parent_id"]=emb_node['pk']
-            parse_embedded_node(ch, emb_node['pk'], node_ids)
+            parse_embedded_node(ch, dict_node['id'], node_ids, portfolio_node_map)
         return node_ids
 
     for i in range(len(embedded_tree)):
-        node_ids=parse_embedded_node(embedded_tree[i],"#", node_ids)
-
+        #print("GOT",embedded_tree[i]['pk'] )
+        node_ids=parse_embedded_node(embedded_tree[i],"#", node_ids, portfolio_node_map)
+    print(portfolio_node_map)
     return jstreelist
 
 
