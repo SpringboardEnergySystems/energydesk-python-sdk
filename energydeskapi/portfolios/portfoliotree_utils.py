@@ -248,18 +248,12 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             numpart = remove_alpha_num(rec['parent'])
             pid = int(numpart)
         if rec['type'] == "trading_books":
-            print("******** Trading Book", rec)
-            tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['text']})
-            if len(tbdict['results'])>0:
-                pnode=pmap[pnode.pk]
-                subdict=tbdict['results']
-                numpart=remove_alpha_num(subdict[0]['pk']) #Remove non num chars
-                pnode.trading_books.append(int(numpart))
+            tbid=0 if 'tradingbook_id' not in rec['data'] else int(rec['data']['tradingbook_id'])
+            pnode.trading_books.append(tbid)
             continue
         if rec['type'] == "assets":
-            print("*********  Asset", rec)
-            numpart = remove_alpha_num(rec['id'])  # Remove non num chars
-            pnode.assets.append(int(numpart))
+            asid=0 if 'asset_id' not in rec['data'] else int(rec['data']['asset_id'])
+            pnode.assets.append(asid)
             continue
         if pid>0:
             if pid not in pmap_parents:
@@ -276,6 +270,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                                          'portfolio_name':child.description})
 
     return portfolios
+
 def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
     print("INSIDE 2")
     def get_portfolio_url(portfolio_pk):
