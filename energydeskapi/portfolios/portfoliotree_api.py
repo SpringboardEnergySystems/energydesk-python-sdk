@@ -14,7 +14,6 @@ class PortfolioTreeApi:
   def get_portfolio_tree(api_connection, parameters={}):
       logger.info("Fetching portfolio tree")
       json_res = PortfoliosApi.get_portfolios_embedded(api_connection, parameters)
-      print(json.dumps(json_res, indent=4))
       if json_res is None:
           return None
       return create_embedded_tree_recursive(json_res)
@@ -29,10 +28,6 @@ class PortfolioTreeApi:
 
   @staticmethod
   def save_portfolio_flat_tree(api_connection,comp_key, portfolio_nodes):
-
-      #f=open("./ptree.json", "w")
-      #f.write(json.dumps(portfolio_nodes))
-      #f.close()
       logger.info("Saving portfolio tree")
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       dictlist=[]

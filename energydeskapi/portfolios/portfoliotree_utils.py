@@ -248,14 +248,16 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             numpart = remove_alpha_num(rec['parent'])
             pid = int(numpart)
         if rec['type'] == "trading_books":
-            tbid=0 if 'tradingbook_id' not in rec['data'] else int(rec['data']['tradingbook_id'])
-            if pnode is not None:
-                pnode.trading_books.append(tbid)
+            for tbdata in rec['data']:
+                tbid=0 if 'tradingbook_id' not in tbdata else int(tbdata['tradingbook_id'])
+                if pnode is not None:
+                    pnode.trading_books.append(tbid)
             continue
         if rec['type'] == "assets":
-            asid=0 if 'asset_id' not in rec['data'] else int(rec['data']['asset_id'])
-            if pnode is not None:
-                pnode.assets.append(asid)
+            for adata in rec['data']:
+                asid=0 if 'asset_id' not in adata else int(adata['asset_id'])
+                if pnode is not None:
+                    pnode.assets.append(asid)
             continue
         if pid>0:
             if pid not in pmap_parents:
@@ -507,13 +509,11 @@ def convert_embedded_tree_to_jstree(embedded_tree):
     node_ids={"portfolio_node_id":1, "tradingook_node_id":1, "asset_node_id":1}
     portfolio_node_map={}
     def create_node(node, parent, node_ids, portfolio_node_map):
-        print('XXX NODE START XXX')
-        print(node)
         percentage=1  # Defaul for now...
         portfolio_node_map[node_ids['portfolio_node_id']]=node['pk']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
-            "id": node_ids['portfolio_node_id'],#node['pk'],
+            "id": node_ids['portfolio_node_id'],
             "text": node['portfolio_name'] + " (" + str(node['pk'])  + ") "+ ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
@@ -560,9 +560,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         return node_ids
 
     for i in range(len(embedded_tree)):
-        #print("GOT",embedded_tree[i]['pk'] )
         node_ids=parse_embedded_node(embedded_tree[i],"#", node_ids, portfolio_node_map)
-    print(portfolio_node_map)
     return jstreelist
 
 
