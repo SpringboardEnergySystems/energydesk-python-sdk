@@ -29,34 +29,27 @@ class PortfolioTreeApi:
 
   @staticmethod
   def save_portfolio_flat_tree(api_connection,comp_key, portfolio_nodes):
-      logger.info("Saving portfolio tree")
-      f=open("./ptree.json", "w")
-      f.write(json.dumps(portfolio_nodes))
-      f.close()
-      print("NOW SAVING ALL NODES")
+
+      #f=open("./ptree.json", "w")
+      #f.write(json.dumps(portfolio_nodes))
+      #f.close()
+      logger.debug("Saving portfolio tree")
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       dictlist=[]
       for p in pnodes:
           if p.manager is None or p.manager==0:
             p.manager=comp_key
           dictlist.append(p.get_dict(api_connection))
-          print(p.get_dict(api_connection))
-      PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
+          logger.info(p.get_dict(api_connection))
+      # Do not save until new version is tested
+      #PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
       return True
-      # for p in pnodes:
-      #     print(json.dumps(p.get_dict(api_connection), indent=4))
-      #     print("Upsering portfolio ", p.description)
-      #     success, json_res, status_code, error_msg=PortfoliosApi.upsert_portfolio(api_connection, p)
-      #     if not success:
-      #         logger.warning("Problems saving tree")
-      #         logger.warning(error_msg)
-      #
-      # return True
+
 
 
   @staticmethod
   def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):
-    print(portfolio_nodes)
+
     success, json_res, status_code, error_msg = api_connection.exec_post_url(
               '/api/portfoliomanager/portfoliotree-creation/', payload=portfolio_nodes)
 
@@ -68,7 +61,6 @@ class PortfolioTreeApi:
     list=[]
     for p in portfolio_nodes:
         list.append(p.get_simple_dict(api_connection))
-    print(list)
     return PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, list)
 
 
