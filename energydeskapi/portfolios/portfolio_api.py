@@ -40,7 +40,6 @@ class PortfolioNode:
         dict['stakeholders'] = self.stakeholders
         if self.parent_id>0:
             dict['parent_id']=self.parent_id
-        print("Parent name",  self.parent_name)
         if self.parent_name is not None:
             dict['parent_name'] = self.parent_name
         return dict

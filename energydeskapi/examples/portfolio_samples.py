@@ -35,7 +35,11 @@ def load_flat_tree(api_conn):
     output = PortfoliosApi.get_portfolios_embedded(api_conn)
     #print(json.dumps(output, indent=4))
     output=PortfolioTreeApi.get_portfolio_flat_tree(api_conn)
-    #print(json.dumps(output, indent=4))
+
+    backagain=convert_nodes_from_jstree(api_conn, output)
+    for pnode in backagain:
+        print(json.dumps(pnode.get_dict(api_conn), indent=4))
+
 
 def query_portfolios(api_conn):
     #x=PortfolioTreeApi.get_portfolio_tree(api_conn)

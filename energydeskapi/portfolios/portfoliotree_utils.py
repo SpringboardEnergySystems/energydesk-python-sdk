@@ -227,12 +227,13 @@ def create_embedded_tree_recursive(flat_tree):
 
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     pmap={}
-    pmap_children={}
     portfolios=[]
     pmap_parents={}
+    pnode= None
     for rec in portfolio_nodes:
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        if rec['type']=="default":
+        if rec['type']=="default" or rec['type']=="root":
+            node_id = int(rec['id'])
             pnode=PortfolioNode()
             pnode.description=name
             try:
@@ -241,25 +242,27 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pnode.pk=0
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
-            pmap[pnode.pk]=pnode
-            pmap_children[pnode.pk]=[]
+            pmap[node_id]=pnode
         pid=0
         if rec['parent'] != "#":
             numpart = remove_alpha_num(rec['parent'])
             pid = int(numpart)
         if rec['type'] == "trading_books":
             tbid=0 if 'tradingbook_id' not in rec['data'] else int(rec['data']['tradingbook_id'])
-            pnode.trading_books.append(tbid)
+            if pnode is not None:
+                pnode.trading_books.append(tbid)
             continue
         if rec['type'] == "assets":
             asid=0 if 'asset_id' not in rec['data'] else int(rec['data']['asset_id'])
-            pnode.assets.append(asid)
+            if pnode is not None:
+                pnode.assets.append(asid)
             continue
         if pid>0:
             if pid not in pmap_parents:
                 pmap_parents[pid]=[]
-            pmap_parents[pid].append(pnode)
+            pmap_parents[pid].append(pnode)  # pnode added to parent pnode
         portfolios.append(pnode)
+
     for parkey in pmap_parents.keys():
         portnode = pmap[parkey]
         children=pmap_parents[parkey]
