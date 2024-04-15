@@ -33,14 +33,14 @@ class PortfolioTreeApi:
       #f=open("./ptree.json", "w")
       #f.write(json.dumps(portfolio_nodes))
       #f.close()
-      logger.debug("Saving portfolio tree")
+      logger.info("Saving portfolio tree")
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       dictlist=[]
       for p in pnodes:
           if p.manager is None or p.manager==0:
             p.manager=comp_key
           dictlist.append(p.get_dict(api_connection))
-          logger.info(p.get_dict(api_connection))
+          logger.info("NOde",p.get_dict(api_connection))
       # Do not save until new version is tested
       #PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
       return True
