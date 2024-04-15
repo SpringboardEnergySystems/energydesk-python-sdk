@@ -231,14 +231,12 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     portfolios=[]
     pmap_parents={}
     for rec in portfolio_nodes:
-        print(rec)
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         if rec['type']=="default":
             pnode=PortfolioNode()
             pnode.description=name
-            print("Mapping ", name)
             try:
-                pnode.pk=int(rec['id'])
+                pnode.pk=0 if 'portfolio_id' not in rec['data'] else int(rec['data']['portfolio_id'])
             except:
                 pnode.pk=0
             if "company" in rec['data'] and rec['data']['company'] is not None:
@@ -250,7 +248,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             numpart = remove_alpha_num(rec['parent'])
             pid = int(numpart)
         if rec['type'] == "trading_books":
-            print(rec)
+            print("******** Trading Book", rec)
             tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['text']})
             if len(tbdict['results'])>0:
                 pnode=pmap[pnode.pk]
@@ -259,10 +257,10 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pnode.trading_books.append(int(numpart))
             continue
         if rec['type'] == "assets":
+            print("*********  Asset", rec)
             numpart = remove_alpha_num(rec['id'])  # Remove non num chars
             pnode.assets.append(int(numpart))
             continue
-        print("pid", pnode.pk, pid)
         if pid>0:
             if pid not in pmap_parents:
                 pmap_parents[pid]=[]
@@ -271,15 +269,11 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     for parkey in pmap_parents.keys():
         portnode = pmap[parkey]
         children=pmap_parents[parkey]
-        print("Saving children", children)
         for child in children:
             child.parent_id=portnode.pk
             child.parent_name = portnode.description
             portnode.sub_portfolios.append({'portfolio_id':child.pk,
                                          'portfolio_name':child.description})
-
-    print("DONE CONVERTING")
-    print(pnode.get_dict(api_connection))
 
     return portfolios
 def convert_nodes_from_jstree2(api_connection, portfolio_nodes):

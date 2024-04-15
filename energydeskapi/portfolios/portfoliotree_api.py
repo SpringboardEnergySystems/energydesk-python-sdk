@@ -40,7 +40,7 @@ class PortfolioTreeApi:
           if p.manager is None or p.manager==0:
             p.manager=comp_key
           dictlist.append(p.get_dict(api_connection))
-          logger.info("NOde",p.get_dict(api_connection))
+          logger.info("Node",p.get_dict(api_connection))
       # Do not save until new version is tested
       #PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
       return True
