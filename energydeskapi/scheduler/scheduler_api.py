@@ -1,8 +1,17 @@
 import logging
 import pandas as pd
 from dataclasses import dataclass, asdict, field
-
+from dataclasses import dataclass
+from enum import Enum
 logger = logging.getLogger(__name__)
+
+
+
+
+@dataclass(frozen=True)
+class SchedulerMessage():
+    receiver_id: str
+    payload: str
 
 
 class ScheduledJob:
