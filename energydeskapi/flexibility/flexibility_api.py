@@ -104,6 +104,7 @@ class FlexibilityApi:
         logger.debug("Upserting market offering")
         payload = external_market_asset.get_dict(api_connection)
         key = int(payload['pk'])
+        logger.info("Saving external market repr key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/flexiblepower/assetsofferedinmarkets/' + str(key) + "/", payload)
