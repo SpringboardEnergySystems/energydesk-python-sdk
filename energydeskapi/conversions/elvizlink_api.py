@@ -87,14 +87,12 @@ class ElvizLinksApi:
         client_id = env.str('ELVIZ_CLIENT_ID')
         client_secret = env.str('ELVIZ_CLIENT_SECRET')
         scope = env.str('ELVIZ_SCOPE')
+        tenantid=env.str('AZURE_TENANT')
         service = OAuth2Service(client_id=client_id,
                                 client_secret=client_secret,
-                                access_token_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/token",
-                                authorize_url="https://login.microsoftonline.com/20d3c681-9982-4395-abd6-7973f7e0f26a/oauth2/v2.0/authorize",
+                                access_token_url="https://login.microsoftonline.com/" + tenantid + "/oauth2/v2.0/token",
+                                authorize_url="https://login.microsoftonline.com/" +  tenantid  + "/oauth2/v2.0/authorize",
                                 base_url="https://graph.microsoft.com/oidc/userinfo")
-        # params = {'redirect_uri': 'https://login.microsoftonline.com/',
-        #           'response_type': 'code'}
-        # url = service.get_authorize_url(**params)
         data = {'grant_type': 'client_credentials',
                 'scope': scope,
                 }
@@ -159,7 +157,7 @@ class ElvizLinksApi:
         :type api_connection: str, required
         """
         logger.info("Looking up portfolio mappings")
-        return api_connection.exec_get_url('/api/elvizmapping/portfolios/')
+        return api_connection.exec_get_url('/api/elvizmapping/portfolios/', {'page_size':1000})
 
     @staticmethod
     def lookup_tadingbook(api_connection, tradingbook_name):
@@ -232,7 +230,7 @@ class ElvizLinksApi:
     @staticmethod
     def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings, days_back):
         env = environ.Env()
-        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/api/elviztrades"
+        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/elviz/api/elviztrades"
         logger.info("Calling URL " + str(server_url))
         payload={
             "user_mappings": user_mappings,
@@ -244,12 +242,7 @@ class ElvizLinksApi:
 
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
-        #response = authsess.get(server_url)
-        #print(response)
-        #oauth_session.post("", headers=h, data=payload)
         response = authsess.post(server_url, headers=h, data=json.dumps(payload))
-        #response = requests.post(server_url, json=payload)
-        #print(response.text)
         return response.json()
 
     @staticmethod

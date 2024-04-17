@@ -49,6 +49,7 @@ class Asset:
         self.asset_manager=None
         self.vendor = None
         self.meter_id=""
+        self.production_device_id = None
         self.sub_meter_id=""
         self.is_main_meter=True
         self.address = None
@@ -57,7 +58,47 @@ class Asset:
         self.price_area = None
         self.is_active=True
         self.asset_category = None
+        self.polygon=None
 
+    def from_dict(self, dict):
+        if 'pk' in dict: self.pk=dict['pk']
+        if 'asset_id' in dict: self.asset_id = dict['asset_id']
+        if 'extern_asset_id' in dict: self.extern_asset_id = dict['extern_asset_id']
+        if 'description' in dict: self.description = dict['description']
+        if 'asset_type' in dict: self.asset_type = dict['asset_type']
+        if 'asset_technical_data' in dict:
+            at=AssetTechData()
+            if "max_effect_mw" in dict['asset_technical_data']:
+                print("Found it")
+                print(dict['asset_technical_data']["max_effect_mw"])
+                at.max_effect_mw = dict['asset_technical_data']["max_effect_mw"]
+            if "yearly_volume_mwh" in dict['asset_technical_data']: at.yearly_volume_mwh = dict['asset_technical_data'][
+                "yearly_volume_mwh"]
+            if "pk" in dict['asset_technical_data']: at.pk = dict['asset_technical_data'][
+                "pk"]
+            if "elcert_support_percentage" in dict['asset_technical_data']: at.elcert_support_percentage = dict['asset_technical_data'][
+                "elcert_support_percentage"]
+            if "licenced_until" in dict['asset_technical_data']: at.licenced_until = dict['asset_technical_data'][
+                "licenced_until"]
+            if "startup_date" in dict['asset_technical_data']: at.startup_date = dict['asset_technical_data'][
+                "startup_date"]
+            self.asset_technical_data = at
+        if 'grid_connection' in dict: self.grid_connection = dict['grid_connection']
+        if 'power_supplier' in dict: self.power_supplier = dict['power_supplier']
+        if 'asset_owner' in dict: self.asset_owner = dict['asset_owner']
+        if 'asset_manager' in dict: self.asset_manager = dict['asset_manager']
+        if 'vendor' in dict: self.vendor = dict['vendor']
+        if 'meter_id' in dict: self.meter_id = dict['meter_id']
+        if 'production_device_id' in dict: self.production_device_id = dict['production_device_id']
+        if 'sub_meter_id' in dict: self.sub_meter_id = dict['sub_meter_id']
+        if 'is_main_meter' in dict: self.is_main_meter = dict['is_main_meter']
+        if 'address' in dict: self.address = dict['address']
+        if 'city' in dict: self.city = dict['city']
+        if 'location' in dict: self.location = dict['location']
+        if 'price_area' in dict: self.price_area = dict['price_area']
+        if 'is_active' in dict: self.is_active = dict['is_active']
+        if 'asset_category' in dict: self.asset_category = dict['asset_category']
+        if 'polygon' in dict: self.polygon = dict['polygon']
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
@@ -72,6 +113,7 @@ class Asset:
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
         if self.meter_id is not None: dict['meter_id'] = self.meter_id
+        if self.production_device_id is not None: dict['production_device_id']=self.production_device_id
         if self.sub_meter_id is not None: dict['sub_meter_id'] = self.sub_meter_id
         if self.vendor is not None: dict['vendor'] = self.vendor
         if self.is_main_meter is not None: dict['is_main_meter'] = self.is_main_meter
@@ -80,6 +122,7 @@ class Asset:
         if self.is_active is not True: dict['is_active'] = self.is_active
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
+        if self.polygon is not None: dict['polygon']=self.polygon
         return dict
 
 
@@ -167,6 +210,8 @@ class AssetsApi:
         logger.info("Registering " + str(len(asset_list) )+ " assets")
         for asset in asset_list:
             payload=asset.get_dict()
+            print(payload)
+
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/assets/assets/', payload)
             if json_res is None:
                 logger.error("Problems registering asset "  + asset.description)
@@ -281,6 +326,15 @@ class AssetsApi:
         :type api_connection: str, required
         """
         json_res = api_connection.exec_get_url('/api/assets/assets/embedded', parameters)
+        return json_res
+    @staticmethod
+    def get_assets_compact(api_connection, parameters={}):
+        """Fetches all assets with extended information
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/assets/assets/compact', parameters)
         return json_res
 
     @staticmethod

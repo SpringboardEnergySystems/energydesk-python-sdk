@@ -4,6 +4,7 @@ import logging
 import copy
 from random import randrange
 import random
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
@@ -40,11 +41,11 @@ if __name__ == '__main__':
     api_conn.set_token(tok, "Token")
 
 
-    ndaq_pk=CustomersApi.get_company_by_name(api_conn, "Nasdaq OMX")
+    ndaq_pk=CustomersApi.get_company_by_name(api_conn, MarketPlaceEnum.NASDAQ_OMX.name)
     prof=CustomersApi.get_user_profile(api_conn)
     my_user_keey=prof['pk']
 
-    all_prod_df=DerivativesApi.fetch_products(api_conn, "Nasdaq OMX", MarketEnum.NORDIC_POWER.name, convert_datime_to_utcstr(datetime.today()))
+    all_prod_df=DerivativesApi.fetch_products(api_conn, MarketPlaceEnum.NASDAQ_OMX.name, MarketEnum.NORDIC_POWER.name, convert_datime_to_utcstr(datetime.today()))
     qtr_products=all_prod_df[all_prod_df.ticker.str.contains("BLQ") &
                     ~all_prod_df.instrument.str.contains("EPAD")] #Filter away EPADs in this test
     import pandas as pd

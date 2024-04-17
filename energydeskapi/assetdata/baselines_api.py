@@ -7,7 +7,7 @@ class BaselinesApi:
     def generate_baselines(api_connection,  payload):
 
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/baselines/generatebaseline/', payload)
-        return json_res
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def upsert_algorithm_instance(api_connection, payload):

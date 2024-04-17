@@ -30,6 +30,8 @@ def load_portfolio(api_conn):
     ut=PortfoliosApi.get_portfolios_embedded(api_conn)
     print(ut)
 
+
+
 def query_portfolios(api_conn):
     #x=PortfolioTreeApi.get_portfolio_tree(api_conn)
     #x2=convert_embedded_tree_to_jstree(x)

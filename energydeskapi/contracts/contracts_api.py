@@ -5,17 +5,36 @@ from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.marketdata.products_api import ProductHelper
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum, ContractTypeEnum
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.sdk.common_utils import check_fix_date2str
 
-
+from energydeskapi.contracts.profile_contract import ContractProfile, ContractProfilePeriod
+import json
 
 logger = logging.getLogger(__name__)
 #  Change
 
+# class ContractPeriod:
+#     def __init__(self,
+#                  period_from=None,
+#                  period_until=None,
+#                  period_price=None,
+#                  period_volume=None):
+#         self.period_from=period_from
+#         self.period_until = period_until
+#         self.period_price = period_price
+#         self.period_volume = period_volume
+#     def get_dict(self, api_conn):
+#         dict = {}
+#         dict['period_from']=str(self.period_from)
+#         dict['period_until'] = str(self.period_until)
+#         if self.period_price is not None: dict['period_price'] = gen_json_money(self.period_price)
+#         dict['period_volume'] = self.period_volume
+#         return dict
 class Contract:
     """ Class for contracts
 
@@ -42,7 +61,8 @@ class Contract:
                  profile_category=ProfileTypeEnum.BASELOAD.name,
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
-                 contract_type=ContractTypeEnum.NASDAQ
+                 contract_type=ContractTypeEnum.NASDAQ.value,
+                 asset_link=None
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -57,6 +77,7 @@ class Contract:
         self.quantity_unit=quantity_unit
         self.quantity_type=quentity_type
         self.commodity_type=commodity_type
+        self.asset_link = asset_link
         self.profile_type=profile_type
         self.profile_category=profile_category
         self.instrument_type=instrument_type
@@ -72,14 +93,18 @@ class Contract:
         self.product_code=None
         self.otc_multi_delivery_periods=[]
         self.certificates=[]
+        self.capacity_parameters = []  # Part of contract
         self.contract_tags=[]
         self.area="SYS"
         self.commodity_profile = {}
+        self.contract_profile=None
+
         self.spread = False
         self.otc = False
         self.delivery_type=delivery_type
         self.contract_type=contract_type
-
+        self.contract_sub_type=contract_type  #Default
+        self.contract_status_comment=""  # Default
     def update_users_company(self, apiconn):
         prof=UsersApi.get_user_profile(apiconn)
         if prof is None:
@@ -92,6 +117,7 @@ class Contract:
 
     def add_contract_tag(self, tag):
         self.contract_tags.append(tag)
+
 
     def add_otc_delivery_period(self, delivery_from, delivery_until):
         if isinstance(delivery_from, str):
@@ -111,11 +137,12 @@ class Contract:
         c.pk=d['pk']
         c.instrument_type=d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
-        c.profile_type = d['commodity']['profile_type']#ProfileTypeEnum.BASELOAD if d['commodity']['profile_type']=="BASELOAD" else ProfileTypeEnum.PROFILE
+        c.profile_type = ProfileTypeEnum.BASELOAD if 'profile_type' not in d['commodity'] else d['commodity']['profile_type']#
         c.profile_category = ProfileTypeEnum.BASELOAD if d['commodity'][
                                                              'profile_category'] == "BASELOAD" else ProfileTypeEnum.PROFILE.name
 
         c.delivery_type = d['commodity']['delivery_type']
+        c.asset_link = None if 'asset_link' not in d['commodity'] else d['commodity']['asset_link']
         c.commodity_delivery_from = check_fix_date2str(d['commodity']['delivery_from'])
         c.commodity_delivery_until = check_fix_date2str(d['commodity']['delivery_until'])
         c.market = d['commodity']['market']
@@ -133,22 +160,27 @@ class Contract:
 
         c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']
-
+        c.contract_type=ContractTypeEnum.NASDAQ.value if not 'contract_type' in d else d['contract_type']
         c.trading_fee = gen_money_from_json(d['trading_fee'])
         c.clearing_fee = gen_money_from_json(d['clearing_fee'])
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
+        c.asset_link=None if 'asset_link' not in d else d['asset_link']
         c.trader = d['trader']
         c.marketplace_product = d['marketplace_product']
         for t in d['contract_tags']:
             c.contract_tags.append(ContractTag.from_dict(t))
+
+        c.contract_sub_type=c.contract_type if not 'contract_sub_type' in d else d['contract_sub_type']
+        c.contract_status_comment=""  if not 'contract_status_comment' in d else d['contract_status_comment']
         return c
 
     def get_simple_dict(self):
         dict = {}
         dict['pk'] = self.pk
         prod = {}
+        if self.asset_link  is not None: prod['asset_link'] = self.asset_link
         if self.instrument_type is not None: prod['instrument_type'] = self.instrument_type.value
         if self.commodity_type is not None: prod['commodity_type'] = self.commodity_type.value
         if self.profile_type is not None: prod['profile_type'] = self.profile_type.value
@@ -169,6 +201,8 @@ class Contract:
         else:
             prod['otc'] = True
         dict['commodity'] = prod
+        dict['trade_time'] = self.trade_datetime
+        #dict['contract_profile']= {} if  self.contract_profile is None else self.contract_profile
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = self.trading_book
         if self.trade_date is not None: dict['trade_date'] = self.trade_date
@@ -178,7 +212,7 @@ class Contract:
         if self.quantity is not None: dict['quantity'] = self.quantity
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
-        # if self.contract_type is not None: dict['contract_type'] = self.contract_type
+        if self.contract_type is not None: dict['contract_type'] = self.contract_type.value
         if self.contract_status is not None: dict['contract_status'] = self.contract_status.value
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
@@ -196,7 +230,18 @@ class Contract:
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
         if len(self.certificates) > 0:
+            print("Dicstionaries ", self.certificates)
             dict["certificates"] = self.certificates
+
+        if len(self.capacity_parameters)>0:
+            dict["capacity_parameters"] = self.capacity_parameters
+
+        if self.contract_profile is not None:
+            dict["contract_profile"] = self.contract_profile.json
+
+        if self.contract_sub_type is not None: dict["contract_sub_type"]=self.contract_sub_type
+        if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
+        if self.asset_link is not None: dict['asset_link']=self.asset_link
         return dict
 
 
@@ -213,6 +258,7 @@ class Contract:
                 prod['profile_category'] =self.profile_category
             else:
                 prod['profile_category'] = str(self.profile_category.name)
+        if self.asset_link is not None: prod['asset_link'] = AssetsApi.get_asset_url(api_conn, self.asset_link)
 
         if self.delivery_type is not None: prod['delivery_type'] = MarketsApi.get_delivery_type_url(api_conn,
                                                                                                        self.delivery_type)
@@ -220,6 +266,7 @@ class Contract:
         if self.commodity_delivery_until is not None: prod['delivery_until'] = check_fix_date2str(self.commodity_delivery_until)
         if self.market is not None: prod['market'] = MarketsApi.get_market_url(api_conn, self.market)
         prod['area']=self.area
+        #dict['contract_profile'] ={} if  self.contract_profile is None else self.contract_profile
         prod['commodity_profile'] = {} if self.commodity_profile is None else self.commodity_profile
         prod['spread'] = self.spread
         prod['otc'] = self.otc
@@ -230,7 +277,7 @@ class Contract:
         dict['commodity']=prod
         if self.external_contract_id is not None: dict['external_contract_id'] = self.external_contract_id
         if self.trading_book is not None: dict['trading_book'] = TradingBooksApi.get_tradingbook_url(api_conn,self.trading_book)
-        s_trade_date=check_fix_date2str(self.trade_date)
+        s_trade_date=str(self.trade_date)#check_fix_date2str(self.trade_date)
         if s_trade_date is not None:
             dict['trade_date'] = s_trade_date[:10]
         #dict['last_update_time']=self.trade_datetime#convert_datime_to_utcstr(datetime.now()),
@@ -243,7 +290,7 @@ class Contract:
                                                                                                             self.quantity_type)
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
-        #if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
+        if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
         if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn,
                                                                                                             self.contract_status)
 
@@ -259,13 +306,7 @@ class Contract:
         taglist=[]
         for c in self.contract_tags:
             taglist.append(c.get_dict())
-            # existing_tags=ContractsApi.get_contract_tags(api_conn, {"tagname": c})
-            # if len(existing_tags)==0:  #Need to create new tag. Using tagname as description as default
-            #     success, returned_data, status_code, error_msg=ContractsApi.upsert_contract_tag(api_conn, c)
-            #     if success:
-            #         taglist.append(returned_data)
-            # else:
-            #     taglist.append(existing_tags[0])
+
         dict['contract_tags']=taglist
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
@@ -273,6 +314,18 @@ class Contract:
         for c in self.certificates:
             cert_dicts.append(c.get_dict(api_conn))
         dict["certificates"] = cert_dicts
+
+        capacity_parameters=[]
+        for cap in self.capacity_parameters:
+            capacity_parameters.append(cap.get_dict(api_conn))
+        dict["capacity_parameters"] = capacity_parameters
+        if self.contract_profile is not None:
+            dict["contract_profile"] = self.contract_profile.json
+
+        if self.contract_sub_type is not None: dict["contract_sub_type"] = self.contract_sub_type
+        if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
+
+
         return dict
 
 
@@ -423,7 +476,7 @@ class ContractsApi:
         json_list=[]
         for c in contract_list:
             contract_dict=c.get_dict(api_connection)
-            #print(json.dumps(contract_dict, indent=2))
+            logger.debug(json.dumps(contract_dict, indent=2))
             json_list.append(contract_dict)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/bulkinsert/',json_list)
         return success, returned_data, status_code, error_msg
@@ -627,6 +680,19 @@ class ContractsApi:
         logger.info("Listing contracts embedded")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
         return json_res
+
+    @staticmethod
+    def list_contracts_xml(api_connection, parameters={}):
+        """Lists contracts with embedding
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param parameters: parameters to filter contracts
+        :type parameters: str
+        """
+        logger.info("Listing contracts as XML")
+        xmlres = api_connection.exec_get_url('/api/portfoliomanager/contracts/xmlelviz/', parameters)
+        return xmlres
     @staticmethod
     def list_contracts_compact(api_connection, parameters={}):
         """Lists contracts with embedding

@@ -6,7 +6,7 @@ from energydeskapi.contracts.masteragreement_api import MasterAgreementApi, Mast
 from energydeskapi.gos.gos_api import GosApi, GoContract
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.users_api import UsersApi
-from moneyed import EUR
+from energydeskapi.sdk.money_utils import FormattedMoney, Money, CurrencyCode, gen_json_money, gen_money_from_json
 import pandas as pd
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.contracts.masteragreement_api import MasterContractAgreement
@@ -14,7 +14,7 @@ from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.location_enum_types import LocationTypeEnum
 from datetime import datetime, timedelta
 from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
-from energydeskapi.types.contract_enum_types import ContractStatusEnum, GosEnergySources
+from energydeskapi.types.contract_enum_types import ContractStatusEnum
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
 import json
@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_contract_types(api_conn):
-    df=ContractsApi.get_contract_types(api_conn)
+    df=ContractsApi.get_contract_types(api_conn, {"no_pagination": True})
     print(df)
 
 def get_contract_filters(api_conn):
@@ -42,12 +42,12 @@ def get_contract_filter_pk(api_conn):
     print(json_contractfilter)
 
 def get_contracts(api_conn, trading_book=None):
-    filter={'page_size':200}
-    json_data = ContractsApi.list_contracts_compact(api_conn,filter)
-    records=json_data['results']  # 200 at a time
-    print(json.dumps(records, indent=2))
-    df=pd.DataFrame(data=eval(records))
-    print(df)
+    filter={"portfolio":117}#"pk": [1,3]}
+    json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
+    #records=json_data['results']  # 200 at a time
+    print(json.dumps(json_data, indent=2))
+    #df=pd.DataFrame(data=eval(records))
+    #print(df)
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)
@@ -125,9 +125,9 @@ def get_sample_contract(api_conn, commodity):
     trader=2
     c=Contract("EXT ID SAMPLE 137312381263",
                trading_book,
-               FormattedMoney(232.30, EUR),5,
-               FormattedMoney(2.1, EUR),
-               FormattedMoney(2.0, EUR),
+               FormattedMoney(232.30, CurrencyCode.EUR),5,
+               FormattedMoney(2.1, CurrencyCode.EUR),
+               FormattedMoney(2.0, CurrencyCode.EUR),
                dtstr2[0:10],dtstr1,
                commodity_type,
                instrument_type,
@@ -179,10 +179,8 @@ def register_sample_contract(api_conn):
     GosApi.upsert_contract(api_conn, go_contract)
 import pandas as pd
 def load_contracts(api_conn):
-    res=ContractsApi.list_contracts_compact(api_conn, {'tradingbook':11})
-    print(res)
-    df=pd.DataFrame(data=eval(res['results']))
-    print(df)
+    res=ContractsApi.list_contracts_embedded(api_conn)
+    print(json.dumps(res, indent=2))
 def test_gos(api_conn):
     #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
     #print(res)
@@ -214,7 +212,7 @@ def get_fixedprice_contracts(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
-    get_fixedprice_contracts(api_conn)
+    get_contracts(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)

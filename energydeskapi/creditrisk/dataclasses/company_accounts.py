@@ -15,6 +15,7 @@ class CompanyAccounts:
     company_regnumber: str
     nace_industry_code: str
     accounts: dict
+    country: str
 
     @property
     def json(self):

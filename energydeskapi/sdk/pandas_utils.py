@@ -9,6 +9,8 @@ import pytz
 from dateutil.relativedelta import relativedelta
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from decimal import Decimal
+import pendulum
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 def make_none_tz( utc_dt):
     tmp =str(utc_dt)[:19]
     return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S')
@@ -24,15 +26,82 @@ def check_convert_datetime(d, timezone=None):
         d = d.astimezone(pytz.UTC)
         return d
 
-def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=None):
-    period_from=check_convert_datetime(period_from, timezone)
-    period_to = check_convert_datetime(period_to, timezone)
-    df=pd.DataFrame()
-    ix = pd.date_range(start=make_none_tz(period_from), end=make_none_tz(period_to), freq=pandas_res)
+def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
+    period_from = pendulum.parse(str(period_from))
+    period_to = pendulum.parse(str(period_to))
+
+    generation_timezone = timezone if pandas_res != "H" else pytz('UTC')
+    period_from = period_from.in_tz(generation_timezone)
+    period_to = period_to.in_tz(generation_timezone)
+
+    dtfrom = conv_from_pendulum(period_from, tz=generation_timezone)
+    dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
+    dtfrom = pd.to_datetime(dtfrom).replace(tzinfo=None)
+    dtuntil = pd.to_datetime(dtuntil).replace(tzinfo=None)
+
+    # Adjust period_to for monthly resolution to ensure at least one row is returned
+    if pandas_res == "MS" and period_from.format("YYYY-MM") == period_to.format("YYYY-MM"):
+        period_to = period_to.add(months=1)
+        dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
+        dtuntil = pd.to_datetime(dtuntil).replace(tzinfo=None)
+
+    # Adjustment for "YS" to include the entire year
+    if pandas_res == "YS":
+        dtfrom = dtfrom.replace(month=1, day=1)
+        dtuntil = dtuntil.replace(month=1, day=1) + relativedelta(years=1)
+
+    if len(predefined_columns) == 0:
+        df = pd.DataFrame()
+    else:
+        df = pd.DataFrame(columns=predefined_columns)
+
+    ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
     df_new = df.reindex(ix, fill_value='NaN')
-    df_new=df_new.tz_localize(pytz.UTC)
-    df_new = df_new.tz_convert(timezone)
-    if len(df_new.index)>0:
+    df_new = df_new.tz_localize(generation_timezone, ambiguous='infer')
+
+    if pandas_res == "H":
+        df_new = df_new.tz_convert(timezone)
+
+    if pandas_res is None:
+        return df_new.head(1)
+
+    if len(df_new.index) > 1:
+        df_new = df_new.head(-1)
+
+    return df_new
+
+def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
+    period_from=pendulum.parse(str(period_from)) if period_from!= str else pendulum.parse(period_from)
+    period_to =pendulum.parse(str(period_to)) if period_to!= str else  pendulum.parse(period_to)
+
+    generation_timezone=timezone if pandas_res is not "H" else pytz.timezone("UTC")
+    period_from=period_from.in_timezone(generation_timezone)
+    period_to = period_to.in_timezone(generation_timezone)
+    dtfrom=conv_from_pendulum(period_from, tz=generation_timezone)
+    dtuntil = conv_from_pendulum(period_to, tz=generation_timezone)
+    dtfrom = dtfrom.replace(tzinfo=None)
+    dtuntil = dtuntil.replace(tzinfo=None)
+    if pandas_res=="YS":
+        dtfrom=dtfrom.replace(month=1)
+        dtuntil=(dtuntil + relativedelta(years=1))#.replace(month=1)
+
+
+    if len(predefined_columns)==0:
+        df=pd.DataFrame()
+    else:
+        df = pd.DataFrame(columns=predefined_columns)
+    if pandas_res is None:
+        ix = pd.date_range(start=dtfrom, end=dtuntil)
+    else:
+        ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
+
+    df_new = df.reindex(ix, fill_value='NaN')
+    df_new = df_new.tz_localize(generation_timezone)
+    if pandas_res == "H":
+        df_new = df_new.tz_convert(timezone)
+    if pandas_res is None:  #No resolution, so only return first line defininig the full period
+        return df_new.head(1)
+    if len(df_new.index)>1:  #Will generate the last entry
         df_new=df_new.head(-1)
     return df_new
 

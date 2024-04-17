@@ -28,10 +28,19 @@ def initialize_default_etrm_assettypes(api_conn):
 
 def initialize_default_flexibility_assettypes(api_conn):
     register_asset_type(api_conn, "Demand Response")
+    register_asset_type(api_conn, "EV Charger")
     register_asset_type(api_conn, "Battery")
     register_asset_type(api_conn, "Wind Power")
     register_asset_type(api_conn, "Solar Power")
 
+def initialize_default_dso_assettypes(api_conn):
+    register_asset_type(api_conn, "Demand Response")
+    register_asset_type(api_conn, "EV Charger")
+    register_asset_type(api_conn, "Battery")
+    register_asset_type(api_conn, "Transformer Station")
+    register_asset_type(api_conn, "Sub Station")
+    register_asset_type(api_conn, "Secondary Substation")
+    register_asset_type(api_conn, "Congested Line")
 
 
 

@@ -61,9 +61,9 @@ class PortfolioTreeApi:
 
   @staticmethod
   def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):
-
+    print(portfolio_nodes)
     success, json_res, status_code, error_msg = api_connection.exec_post_url(
-              '/api/portfoliomanager/portfoliotree-creation/', portfolio_nodes)
+              '/api/portfoliomanager/portfoliotree-creation/', payload=portfolio_nodes)
 
     return success, None
 

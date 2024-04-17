@@ -19,11 +19,22 @@ def get_country_code(country_pref_enum=CountryPrefEnum.NORWAY):
         return "de_DE.utf-8"
     return "nb_NO.utf-8"  #Default
 
-def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True):
+def format_decimal(dec, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True, remove_thousands_sep=False, round_decimals=True):
+    if type(dec) == str:
+        dec=parse_decimal(dec)
+    if round_decimals:
+        dec=round(dec, decimal_places)
     dec_pattern="".join(["0" for l in range(decimal_places)])  #Number of minimum decials
     with babel_decimal.localcontext(babel_decimal.Context(rounding=babel_decimal.ROUND_HALF_UP)):
-        return babel_format_decimal(dec, format='#,##0.' + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
+        thouspattern='###0.' if remove_thousands_sep else '#,##0.'
+        strdec= babel_format_decimal(dec, format=thouspattern + dec_pattern + ';-#', locale=get_country_code(country_pref_enum), decimal_quantization=truncate)
+        if truncate:
+            strdec = strdec.rstrip('0')
+            strdec= strdec if (strdec[-1:]!="." and strdec[-1:]!=",") else strdec[:-1]  # If last 0 is removed, add
+        return strdec
 def parse_decimal(dec_str, country_pref_enum=CountryPrefEnum.NORWAY):
+    if type(dec_str) != str:
+        return dec_str
     return babel_parse_decimal(dec_str,locale=get_country_code(country_pref_enum))
 
 def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'),country_pref_enum=CountryPrefEnum.NORWAY):
@@ -36,10 +47,8 @@ def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.ti
 def format_datetime_from_iso(dts, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
     dt=parser.isoparse(dts)
     if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
-        print("Localizing")
         dt=tzinfo.localize(dt)
     else:
-        print("Already localized")
         dt=dt.astimezone(tzinfo)
     return babel_format_datetime(dt, format=format,tzinfo=tzinfo, locale=get_country_code(country_pref_enum))
 # Usage

@@ -6,7 +6,7 @@ from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
 from energydeskapi.types.contract_enum_types import ContractStatusEnum
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, DeliveryTypeEnum,MarketEnum, InstrumentTypeEnum
-from moneyed import NOK
+from energydeskapi.sdk.money_utils import FormattedMoney, Money, CurrencyCode, gen_json_money, gen_money_from_json
 from energydeskapi.sdk.money_utils import FormattedMoney
 
 def bilateral_dealcapture(api_conn):
@@ -45,9 +45,9 @@ def bilateral_dealcapture(api_conn):
         prof = UsersApi.get_user_profile(api_conn)
         tader_pk = prof['pk']
         c=Contract(trade_id, tb,
-                    FormattedMoney(price, NOK),round(quantity, 1),
-                    FormattedMoney(0, NOK),
-                    FormattedMoney(0, NOK),
+                    FormattedMoney(price, CurrencyCode.NOK),round(quantity, 1),
+                    FormattedMoney(0, CurrencyCode.NOK),
+                    FormattedMoney(0, CurrencyCode.NOK),
                    create_at[0:10],create_at, 
                    commodity_type,
                    instrument_type,

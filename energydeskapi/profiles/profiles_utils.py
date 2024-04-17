@@ -7,6 +7,7 @@ from energydeskapi.profiles.profiles_api import ProfilesApi
 logger = logging.getLogger(__name__)
 
 
+
 #  parse input profile
 def parse_absolute_profile(xlfilepath):
     df = pd.read_excel(xlfilepath)

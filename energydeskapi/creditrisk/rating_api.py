@@ -60,6 +60,13 @@ class AnnualAccountsApi:
         if json_res is not None:
             return json_res
         return None
+    
+    def post_manual_annual_accounts(api_connection, payload):
+        logger.info("Fetching company with id " + str(id))
+        json_res=api_connection.exec_post_url('/api/creditrisk/manualinput/', payload)
+        if json_res is not None:
+            return json_res
+        return None
 
 class RatingApi:
     """Class for rating API wrapper
@@ -97,13 +104,6 @@ class RatingApi:
             return json_res
         return None
 
-    @staticmethod
-    def get_rating_from_company_pk(api_connection, company_pk):
-        logger.info("Fetching rated companny with key " + str(company_pk))
-        json_res=api_connection.exec_get_url('/api/creditrisk/ratings/', parameters={'company__id': str(company_pk)})
-        if json_res is not None:
-            return json_res
-        return None
 
     @staticmethod
     def get_rating(api_connection, pk):
@@ -112,7 +112,7 @@ class RatingApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching rated companny with key " + str(pk))
+        logger.info("Fetching rating with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/creditrating/ratings/' + str(pk) + "/")
         if json_res is not None:
             return json_res
@@ -127,6 +127,76 @@ class RatingApi:
         """
         logger.info("Fetching rated companny with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/creditrisk/ratings/' + str(pk) + "/")
+        if json_res is not None:
+            return json_res
+        return None
+
+class CompanyRatingApi:
+    """Class for rating API wrapper
+
+    """
+    #
+    @staticmethod
+    def update_rating(api_connection, rating_pk, payload):
+        """Updates crea
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param user: object of user
+        :type user: str, required
+        """
+        #If rating[0] is zero, we should send a POST command in stead; and/or use a different function for it
+        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/creditrating/companyratings/' + str(rating_pk) + '/', payload)
+        if json_res is None:
+            logger.error("Problems updating rating for comnpany " + str(rating_pk))
+            return False
+        else:
+            logger.info("Updated rating")
+            return True
+
+    @staticmethod
+    def get_ratings(api_connection):
+        """Fetching list of companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching rated companies")
+        json_res=api_connection.exec_get_url('/api/creditrisk/companyratings/')
+        if json_res is not None:
+            return json_res
+        return None
+
+    @staticmethod
+    def get_rating_from_company_pk(api_connection, company_pk):
+        logger.info("Fetching rated companny with key " + str(company_pk))
+        json_res=api_connection.exec_get_url('/api/creditrisk/companyratings/', parameters={'company__id': str(company_pk)})
+        if json_res is not None:
+            return json_res
+        return None
+
+    @staticmethod
+    def get_rating(api_connection, pk):
+        """Fetches rated rating
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching rating with key " + str(pk))
+        json_res=api_connection.exec_get_url('/api/creditrating/companyratings/' + str(pk) + "/")
+        if json_res is not None:
+            return json_res
+        return None
+    
+    @staticmethod
+    def get_embedded_rating(api_connection, pk):
+        """Fetches rated rating
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching rated companny with key " + str(pk))
+        json_res=api_connection.exec_get_url('/api/creditrisk/companyratings/' + str(pk) + "/")
         if json_res is not None:
             return json_res
         return None

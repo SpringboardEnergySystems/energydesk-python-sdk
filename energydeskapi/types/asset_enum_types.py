@@ -8,6 +8,7 @@ class AssetCategoryEnum(Enum):
     BEHIND_THE_METER_LOAD = 4
     TRADING_ACCOUNT = 5
     GROUPED_ASSET = 6
+    GRID_COMPONENT = 7
 
 class AssetForecastAdjustDenomEnum(Enum):
     PERC = 1

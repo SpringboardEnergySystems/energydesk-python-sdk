@@ -2,6 +2,7 @@
 import json
 import logging
 import ssl
+from typing import Callable
 
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 import paho.mqtt.client as mqtt
@@ -28,9 +29,19 @@ def on_disconnect(client, userdata, rc):
     logging.info("disconnecting reason  "  +str(rc))
     client.connected_flag=False
     client.disconnect_flag=True
+    userdata.handle_disconnect()
+
+
+class MqttException(Exception):
+    def __init__(self, message, status=None):
+        self.message = message
+        self.status = status # you could add more args
+    def __str__(self):
+        return str(self.message)
+
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}):
+    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, force_transport=None, use_tls=False):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
@@ -40,6 +51,10 @@ class MqttClient(EventClient):
         self.ca_certificate=None if 'ca_certificate' not in certificates else certificates['ca_certificate']
         self.client_certificate=None if 'client_certificate' not in certificates else certificates['client_certificate']
         self.client_key=None if 'client_key' not in certificates else certificates['client_key']
+        self.disconnect_callbacks = []
+        #force_transport either tcp or websockets
+        self.force_transport = force_transport
+        self.use_tls = use_tls
 
     def connect(self,subscriberlist, client_name="client",  log_error=True):
         self.client=None
@@ -58,30 +73,36 @@ class MqttClient(EventClient):
             #self.start_listener()
         try:
             logger.info("Initializing MQTT")
-            if self.mqtt_port == "8080":
+            if not self.force_transport is None:
+                self.client = mqtt.Client(client_name, transport=self.force_transport)  # create new instance
+                logger.info("Using MQTT transport "+self.force_transport)
+            elif self.mqtt_port == "8080":
                 self.client = mqtt.Client(client_name, transport="websockets")  # create new instance
-                print("Using Websockets")
+                logger.info("Using MQTT transport Websockets")
             else:
                 self.client = mqtt.Client(client_name)  # create new instance
-                print("Using Mqtt")
+                logger.info("Using MQTT transport Mqtt")
             self.client.on_message = on_message_callback  # attach function to callback
             self.client.on_connect = on_connect
             self.client.on_disconnect=on_disconnect
             if self.username is not None:
-                print("Setting userpass", self.username, self.password)
+                logger.info(f"Setting userpass {self.username} {self.password}")
                 self.client.username_pw_set(self.username, self.password)
             self.client.user_data_set(self)
-            logger.info("Connecting " + str(self.mqtt_host) + ":"  + str(self.mqtt_port))
+            logger.info(f"Connecting {self.mqtt_host}:{self.mqtt_port}")
             #print(self.client_certificate)
-            if self.client_certificate is not None:
-                if self.mqtt_port == "8080":
+            if self.use_tls is True:
+                logger.info("Use TLS")
+                if self.ca_certificate is None:
+                    logger.info("Setting no CA certificate")
                     self.client.tls_set(certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 else:
+                    logger.info("Setting CA certificate")
                     self.client.tls_set(ca_certs=self.ca_certificate, certfile=self.client_certificate,
                                         keyfile=self.client_key, tls_version=ssl.PROTOCOL_TLSv1_2)
                 self.client.tls_insecure_set(True)
-
+            self.client.on_log = self.on_log_print
             x=self.client.connect(host=self.mqtt_host, port=int(self.mqtt_port))
 
         except Exception as e:
@@ -89,6 +110,9 @@ class MqttClient(EventClient):
             return False
         self.connected = True
         return True
+
+    def on_log_print(self, client, userdata, level, buf):
+        logger.info(f"MQTT: {level} {buf}")
 
     def waiting_connect(self, subscriber_list, client_name="client" ):
         attempts = 0
@@ -105,21 +129,35 @@ class MqttClient(EventClient):
                 logger.info("Returning from connect MQTT with result code " + str(self.connected))
         return self.connected
 
-    def publish(self,topic, msg):
-        result = self.client.publish(topic, msg, qos=0, retain=True)
-        # result: [0, 1]
-        status = result[0]
-        if status == 0:
-            logger.info(f"Send `{msg}` to topic `{topic}`")
-        else:
-            logger.warning(f"Failed to send message to topic {topic}" + str(result))
+    def publish(self,topic, msg, quality_of_service=0, publish_timeout=3, retain=True):
+        result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
+        try:
+            for n in range(publish_timeout * 10):
+                if result.is_published():
+                    logger.info(f"Sent `{msg}` to topic `{topic}`")
+                    return 0
+                else:
+                    time.sleep(0.1)
+            logger.error(f"Failed to send message to topic {topic}: {result}")
+            return result.rc
+        except Exception as e:
+            raise MqttException(e, result.rc if result else None) from e
 
     def manual_loop(self):
         print(self.client.loop())
+
     def start_listener(self):
         print("Looping")
         result=self.client.loop_start()  # start the loop
         #print(result)
+
+    def register_disconnect_callback(self, callback_function: Callable[[], None]):
+        self.disconnect_callbacks.append(callback_function)
+
+    def handle_disconnect(self):
+        for callback in self.disconnect_callbacks:
+            callback()
+
 
 def on_my_callback(topic, data):
     print("GOT CALLBACK",topic, data)

@@ -1,7 +1,9 @@
 import logging
 import pandas as pd
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.product_utils import convert_productjson_dataframe
+from energydeskapi.types.market_enum_types import MarketEnum
 logger = logging.getLogger(__name__)
 
 class Singleton(object):
@@ -21,10 +23,10 @@ class ProductHelper(Singleton):
             return self.product_map[ticker]
         res = ProductsApi.get_market_products(api_conn, {'market_ticker': ticker})
         if len(res['results']) == 0:
-            res = ProductsApi.generate_market_product_from_ticker(api_conn, "Nasdaq OMX", ticker)
-            print(ticker)
-            if res[0]==False:
-                print("What is wrong here", res)
+            logger.info( {'need to generate product from market_ticker': ticker})
+            res = ProductsApi.generate_market_product_from_ticker(api_conn, MarketPlaceEnum.NASDAQ_OMX.name, ticker)
+            if res[0] == False:
+                logger.error(f"Error generating product from ticker {res}")
             k = res[1][0]['pk']
         else:
             k = res['results'][0]['pk']
@@ -118,6 +120,20 @@ class ProductsApi:
         return json_res
 
     @staticmethod
+    def get_product_prices(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/productprices/', parameters)
+        if json_res is None:
+            return False
+        return json_res
+
+    @staticmethod
+    def get_product_prices_embedded(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
+        if json_res is None:
+            return False
+        return json_res
+
+    @staticmethod
     def get_market_products_df(api_connection, parameters={}):
         json_res=ProductsApi.get_market_products_embedded(api_connection, parameters)
         return convert_productjson_dataframe(json_res)
@@ -126,6 +142,7 @@ class ProductsApi:
     def generate_market_product_from_ticker(api_connection, market, market_ticker):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
                                                 {'market_ticker':market_ticker, 'market':market})
+        print(status_code, json_res)
         return success, json_res, status_code, error_msg
 
     @staticmethod

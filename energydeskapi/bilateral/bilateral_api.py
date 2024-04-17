@@ -99,7 +99,7 @@ class BilateralApi:
 
     @staticmethod
     def calculate_deliveries_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value,  area_filter=None, counterpart_filter=None):
-
+        print("Calculating deliveries with resolution ", resolution)
         success, json_res, status_code, error_msg = BilateralApi.calculate_deliveries(api_connection ,period_from, period_until, resolution, area_filter, counterpart_filter)
         if success==False:
             return success, None, None, status_code, error_msg
@@ -109,8 +109,43 @@ class BilateralApi:
             return True, None, None, status_code, error_msg
         df_deliveries = pd.DataFrame(data=eval(deliveries))
         df_deliveries.index = df_deliveries['period_from']
-        trades = json_res['bilateral_trades']
-        df_trades = pd.DataFrame(data=eval(trades))
+        if 'bilateral_trades' in json_res and len(json_res['bilateral_trades'])>0:
+            trades = json_res['bilateral_trades']
+            df_trades = pd.DataFrame(data=eval(trades))
+        else:
+            df_trades=None
+
+        return True, df_deliveries,df_trades, status_code, error_msg
+
+
+    @staticmethod
+    def calculate_contracted_capacity(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value, groupby=None):
+        qry_payload = {
+                "period_from": period_from,
+                "period_until": period_until,
+                "resolution":resolution,
+                "groupby":groupby
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractedcapacity/', qry_payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def calculate_contracted_capacity_df(api_connection ,period_from, period_until, resolution=PeriodResolutionEnum.DAILY.value, groupby=None):
+        print("Calculating deliveries with resolution ", resolution)
+        success, json_res, status_code, error_msg = BilateralApi.calculate_contracted_capacity(api_connection ,period_from, period_until, resolution, groupby)
+        if success==False:
+            return success, None, None, status_code, error_msg
+
+        deliveries=json_res['bilateral_deliveries']
+        if len(deliveries)==0:
+            return True, None, None, status_code, error_msg
+        df_deliveries = pd.DataFrame(data=eval(deliveries))
+        df_deliveries.index = df_deliveries['period_from']
+        if 'bilateral_trades' in json_res and len(json_res['bilateral_trades'])>0:
+            trades = json_res['bilateral_trades']
+            df_trades = pd.DataFrame(data=eval(trades))
+        else:
+            df_trades=None
 
         return True, df_deliveries,df_trades, status_code, error_msg
 
@@ -128,8 +163,12 @@ class BilateralApi:
             return success, None, status_code, error_msg
         if len(json_res['bilateral_trades']) == 0:
             return success, None, status_code, error_msg
-        df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
-        return success, df_trades, status_code, error_msg
+        try:
+            internjson=json.loads(json_res['bilateral_trades'])
+            df_trades = pd.DataFrame(data=internjson)
+            return success, df_trades, status_code, error_msg
+        except:
+            return False, None, status_code, "Problems reading the list of trades from server"
 
     @staticmethod
     def get_bilateral_trades_for_externals(api_connection, period_from, period_until):
@@ -144,9 +183,13 @@ class BilateralApi:
             return success, None, status_code, error_msg
         if len(json_res['bilateral_trades']) == 0:
             return success, None, status_code, error_msg
-        df_trades = pd.DataFrame(data=eval(json_res['bilateral_trades']))
-        print(df_trades)
-        return success, df_trades, status_code, error_msg
+        try:
+            internjson=json.loads(json_res['bilateral_trades'])
+            df_trades = pd.DataFrame(data=internjson)
+            return success, df_trades, status_code, error_msg
+        except:
+            return False, None, status_code, "Problems reading the list of trades from server"
+
 
     @staticmethod
     def get_avaiable_fixprice_periods(api_connection):
@@ -174,6 +217,32 @@ class BilateralApi:
         return json_res
 
     @staticmethod
+    def get_capacity_contract_doc(api_connection, external_id):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/bilateral/capacity/contractdoc/?external_id=' + external_id
+        json_res = api_connection.exec_get_url(url)
+        return json_res
+
+    @staticmethod
+    def preview_capacity_contract_doc(api_connection, payload):
+        """Fetches all counterparts and displays in a dataframe
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        logger.info("Query contract_doc")
+        url = '/api/bilateral/capacity/previewcontractdoc/'
+        json_res = api_connection.exec_post_url(url, payload)
+        return json_res
+
+    @staticmethod
     def get_contract_profile(api_connection, contract_id, resolution="Monthly"):
         """Fetches all counterparts and displays in a dataframe
 
@@ -185,13 +254,70 @@ class BilateralApi:
         params= {"id":contract_id, "resolution":resolution}
         url = '/api/portfoliomanager/contractprofile/'
         json_res = api_connection.exec_get_url(url, params)
-        df=pd.DataFrame(data=json.loads(json_res))
+        if type(json_res)==str:
+            df=pd.DataFrame(data=json.loads(json_res))
+        else:
+            df = pd.DataFrame(data=json_res)
+        if len(df)==0:
+            return None
         df.index=df.period_from
         df=df[['netpos','buypos','sellpos','netvol','buyvol','sellvol', 'hours']]
         df.index=pd.to_datetime(df.index)
         df=df.tz_convert("Europe/Oslo")
         return df
 
+
+    @staticmethod
+    def get_capacity_allocation(api_connection, periods, substation_profile):
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
+            })
+        qry_payload = {
+                "substation_profile":substation_profile,
+                "periods":dict_periods,
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/capacity/allocation/', qry_payload)
+        return success, json_res, status_code, error_msg
+    @staticmethod
+    def upsert_capacity_allocation(api_connection, periods, substation_profile, capacity_map):
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
+            })
+        qry_payload = {
+                "capacity_map": capacity_map,
+                "substation_profile":substation_profile,
+                "periods":dict_periods,
+        }
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/capacity/allocation/', qry_payload)
+        return success, json_res, status_code, error_msg
+    @staticmethod
+    def calculate_capacity_price(api_connection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
+        dict_periods=[]
+        for p in periods:
+            dict_periods.append({
+            "period_tag": p[0],
+            "contract_date_from":p[1],
+            "contract_date_until": p[2],
+            })
+        qry_payload = {
+                "currency_code": currency_code,
+                "substation_profile":substation_profile,
+                "periods":dict_periods,
+                "current_price": current_price,
+                "activation_price":activation_price
+        }
+
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)
+        return success, json_res, status_code, error_msg
     @staticmethod
     def calculate_contract_price(api_connection ,periods, price_area, currency_code,
                                  curve_model, wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,

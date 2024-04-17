@@ -2,7 +2,7 @@ import requests
 import logging
 import pandas as pd
 import json
-
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 logger = logging.getLogger(__name__)
 #  Change
 class DerivativesApi:
@@ -11,7 +11,7 @@ class DerivativesApi:
     """
 
     @staticmethod
-    def fetch_markets(api_connection, market_place="Nasdaq OMX"):
+    def fetch_markets(api_connection, market_place=MarketPlaceEnum.NASDAQ_OMX.name):
         """Fetches markets
 
         :param api_connection: class with API token for use with API
@@ -143,6 +143,7 @@ class DerivativesApi:
         }
         print(qry_payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/area-product-prices/', qry_payload)
+        print(json_res,error_msg )
         if json_res is None:
             return None
         js=json.loads(json_res)
@@ -171,17 +172,16 @@ class DerivativesApi:
         :param period_until: period to
         :type period_until: str, required
         """
-        logger.info("Fetching prices for product " + str(ticker))
 
-
-        #server_url = base_url + '/api/markets/derivatives_prices_in_period/'
-        logger.info("Fetching prices in " + market_name)
         qry_payload={"currency_code":"EUR"}
         if market_place is not None:
+            logger.info("Fetching prices from " + market_place)
             qry_payload[ "market_place"]=market_place
         if market_name is not None:
+            logger.info("Fetching prices in " + market_name)
             qry_payload[ "market_name"]=market_name
         if ticker is not None:
+            logger.info("Fetching prices for product " + str(ticker))
             qry_payload[ ticker]=ticker
         if period_from is not None:
             qry_payload[ "period_from"]=period_from

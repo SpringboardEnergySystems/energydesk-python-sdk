@@ -6,6 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import http.client
 import logging
+import environ
 logger = logging.getLogger(__name__)
 
 class AuthorizationFailedException(Exception):
@@ -47,6 +48,9 @@ class ApiConnection(object):
                                 auth=HTTPBasicAuth(username, password))
         if response is None:
             return False, "Unknown Error"
+        if response.status_code > 210:
+            logger.error("Problems logging in user {}".format(username))
+            return False, "Problems logging in user {}".format(username)
         if 'token' not in response.json():
             if 'detail' in response.json():
                 errmsg=response.json()['detail']
@@ -60,19 +64,29 @@ class ApiConnection(object):
         print("We are OK for basic auth, return token", tok)
         return True, tok
 
-    #Example
     @staticmethod
-    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+    def get_internal_auth():
+        env = environ.Env()
+        auth_id = None if not 'ENERGYDESK_AUTH_ID' in env else env.str('ENERGYDESK_AUTH_ID')
+        auth_secret = None if not 'ENERGYDESK_AUTH_SECRET' in env else env.str('ENERGYDESK_AUTH_SECRET')
+        return auth_id, auth_secret
+    #Example
+
+    @staticmethod
+    def __exec_impl_jwt_conversion(base_url, token, backend="google-oauth2"):
+        auth_id, auth_secret=ApiConnection.get_internal_auth()
         http.client._MAXHEADERS = 1000
         server_url = base_url + "/auth/convert-token"
         payload = {
             "grant_type": "convert_token",
-            "client_id": "client_id",
-            "client_secret": "client_secret",
+            "client_id": auth_id,
+            "client_secret": auth_secret,
             "backend": backend,
             "token": token}
-        print("VALIDATING TOKEN", payload)
+        print(payload)
         result = requests.post(server_url, json=payload)
+        print(result)
+        print(result.text)
         if result.status_code != 200:
             print("Could not validate user with backend")
             print(result.text)
@@ -80,27 +94,12 @@ class ApiConnection(object):
         access_token = result.json()['access_token']
         return access_token
 
-    def validate_token(self, token, backend="google-oauth2"):
-        """Validates a token
+    @staticmethod
+    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+        return ApiConnection.__exec_impl_jwt_conversion( base_url, token, backend)
 
-        :param token: API token
-        :type token: str, required
-        """
-        print("Validation....", self.base_url)
-        http.client._MAXHEADERS = 1000
-        server_url = self.get_base_url() + "/auth/convert-token"
-        payload = {
-            "grant_type": "convert_token",
-            "client_id": "client_id",
-            "client_secret": "client_secret",
-            "backend":backend,
-            "token": token}
-        print("VALIDATING TOKEN", payload)
-        result = requests.post(server_url, json=payload)
-        if result.status_code != 200:
-            print("Could not validate user with backend")
-            return False
-        access_token = result.json()['access_token']
+    def validate_token(self, token, backend="google-oauth2"):
+        access_token=ApiConnection.__exec_impl_jwt_conversion(self.get_base_url(), token, backend)
         self.set_token(access_token, "Bearer")
         return True
 
@@ -115,13 +114,12 @@ class ApiConnection(object):
         if token!="" and token_type=="Bearer":
             self.token_type=token_type
             self.token=token
-            print("Bearer setting token ",token, token_type)
+
         elif token!="" and token_type=="Token":
             self.token_type=token_type
             self.token=token
-            print("Token setting token ", token, token_type)
+
         else:
-            print("Not setting token ",token, token_type)
             logger.info("Token is Null")
             self.token_type=None
             self.token=token
@@ -132,6 +130,8 @@ class ApiConnection(object):
     def get_authorization_header(self):
         """Returns the authorization header
         """
+        if self.token is None or self.token=="":
+            return {}
         return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
     def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
@@ -163,6 +163,8 @@ class ApiConnection(object):
         if result.status_code<210:
             if result.status_code>200 and result.text.strip()=="":
                 return True, [], result.status_code, None
+            if result.headers.get('content-type') != 'application/json':# Text data , e.g. CSV
+                return  True, result.text, result.status_code, None
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
@@ -242,9 +244,10 @@ class ApiConnection(object):
             headers[key]=extra_headers[key]
         server_url= self.get_base_url() + trailing_url
         logger.info("Calling URL " + str(server_url))
-        logger.info("...with payload " + " and headers " + str(headers))
+        logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
+            print(result.url)
         else:
             result = requests.get(server_url, headers=headers)
         if result.status_code<202:

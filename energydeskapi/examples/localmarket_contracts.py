@@ -1,16 +1,6 @@
-import logging
-from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.lems.lems_api import LemsApi, LocalProduct
-import pandas as pd
-import pytz
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum
-from os.path import join, dirname
-from energydeskapi.customers.users_api import UsersApi
-from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.geolocation.location_api import LocationApi
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum
-from datetime import datetime
+
+import pendulum
+
 from energydeskapi.profiles.profiles_api import ProfilesApi, VolumeProfile
 from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import logging
@@ -27,9 +17,9 @@ from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.contracts.contracts_api import ContractsApi, Contract
 from energydeskapi.types.contract_enum_types import ContractStatusEnum
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, DeliveryTypeEnum,MarketEnum, InstrumentTypeEnum
-from moneyed import NOK
+from energydeskapi.sdk.money_utils import FormattedMoney, Money, CurrencyCode, gen_json_money, gen_money_from_json
 from dateutil.relativedelta import relativedelta
-from miscutils.timeconversion import current_timestamp_as_utcstr
+
 from energydeskapi.sdk.money_utils import FormattedMoney
 from uuid import uuid4
 logger = logging.getLogger(__name__)
@@ -52,7 +42,7 @@ def generate_contract(prod_dict):
             buy_sell = "SELL"
             quantity = 4
             counterpart = comp
-            create_at = current_timestamp_as_utcstr()#p['traded_until']
+            create_at =str(pendulum.now())#p['traded_until']
             tb=-1
             tbs=TradingBooksApi.get_tradingbooks(api_conn, {'page_size':100, 'contract_types':1})
             for tb in tbs['results']:
@@ -73,9 +63,9 @@ def generate_contract(prod_dict):
             prof = UsersApi.get_user_profile(api_conn)
             tader_pk = prof['pk']
             c=Contract(trade_id, tb,
-                        FormattedMoney(price, NOK),round(quantity, 1),
-                        FormattedMoney(0, NOK),
-                        FormattedMoney(0, NOK),
+                        FormattedMoney(price, CurrencyCode.NOK),round(quantity, 1),
+                        FormattedMoney(0, CurrencyCode.NOK),
+                        FormattedMoney(0, CurrencyCode.NOK),
                        create_at[0:10],create_at,
                        commodity_type,
                        instrument_type,

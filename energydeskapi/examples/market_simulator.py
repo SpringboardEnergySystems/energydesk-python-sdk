@@ -3,6 +3,7 @@ import logging
 import json
 import time
 import random
+from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.events.mqtt_events_api import MqttClient
 import environ
 from datetime import datetime
@@ -37,7 +38,7 @@ def generate_send_marketdata(mqttcli, df,  ticker_idx, ticker):
     rec = {"ticker": ticker \
         , "area": area \
         , 'instrument': instrument \
-        , "market": "Nasdaq OMX" \
+        , "market": MarketPlaceEnum.NASDAQ_OMX.name \
         , "bid": str(df.loc[ticker_idx, "bid"]) \
         , "ask": str(df.loc[ticker_idx, "ask"]) \
         , "open": str(df.loc[ticker_idx, "open"]) \
@@ -49,7 +50,7 @@ def generate_send_marketdata(mqttcli, df,  ticker_idx, ticker):
         , "trading_date": str(df.loc[ticker_idx, "trading_date"]) \
         , "timestamp": str(df.loc[ticker_idx, "timestamp"])}
     print("Publishing", rec)
-    mqttcli.publish("/marketdata/nordicpower/prices/nasdaqweb", json.dumps(rec))
+    mqttcli.publish("/marketdata/nordicpower/prices/montel", json.dumps(rec))
 
 def get_current_snapshot(api_conn):
     yesterday = pendulum.yesterday('Europe/Oslo')
@@ -57,12 +58,16 @@ def get_current_snapshot(api_conn):
     params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
     #params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
     jd=DerivativesApi.get_prices_flatlist(api_conn, params)
-    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= "Nasdaq OMX", market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
-    df=pd.DataFrame(data=eval(jd['results']))
+    if type(jd)==str:
+        jd=json.loads(jd)
+
+    #df=DerivativesApi.fetch_prices_in_period(api_conn,market_place= MarketPlaceEnum.NASDAQ_OMX.name, market_name=MarketEnum.NORDIC_POWER.name, ticker=None, period_from="2022-12-15", period_until="2023-01-15")
+    df=pd.DataFrame(data=jd)
     print(df)
     return df
 
 def pick_test_product():
+    return "ENOFUTBLQ2-26"
     c = randrange(4)
     if c==0:
         return "ENOFUTBLQ1-24"
@@ -86,15 +91,7 @@ def simulate_price_changes(api_conn, mqttcli):
         ticker_idx=tickrow.index[0]
         ticker = df.loc[ticker_idx, 'ticker']
         v = random.uniform(-0.5, 0.5)
-        type_change = randrange(4)
-        if type_change==0:
-            colname="high"
-        elif type_change == 1:
-            colname = "low"
-        elif type_change == 2:
-            colname = "last"
-        else:
-            colname="close"
+        colname="close"
         val = df.loc[ticker_idx, colname]
         val+=v
         dec_val = float("{:.2f}".format(val))
@@ -106,19 +103,21 @@ def simulate_price_changes(api_conn, mqttcli):
         #mqttcli.manual_loop()
 
 if __name__ == '__main__':
+    #pd.set_option('display.max_rows', None)
     random.seed(datetime.now())
     api_conn=init_api()
     env = environ.Env()
     mqtt_broker = env.str('MQTT_HOST')
     mqtt_port= env.str('MQTT_WEBSOCKET_PORT')
     mqtt_usr=None if "MQTT_USER" not in env else env.str("MQTT_USER")
-    mqtt_pwd = None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
-    client_cert = None if "MQTT_CLIENT_CERT" not in env else env.str('MQTT_CLIENT_CERT')
-    client_key = None if "MQTT_CLIENT_KEY" not in env else env.str('MQTT_CLIENT_KEY')
-    certificates= {'client_certificate': client_cert, 'client_key': client_key}
-    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd, {})
+    mqtt_pwd =None if "MQTT_PASSWORD" not in env else env.str("MQTT_PASSWORD")
+    print(mqtt_broker, mqtt_port, mqtt_usr, mqtt_pwd)
+    #client_cert = None if "MQTT_CLIENT_CERT" not in env else env.str('MQTT_CLIENT_CERT')
+    #client_key = None if "MQTT_CLIENT_KEY" not in env else env.str('MQTT_CLIENT_KEY')
+    #certificates= {'client_certificate': client_cert, 'client_key': client_key}
+    mqttcli=MqttClient(mqtt_broker,mqtt_port,mqtt_usr,mqtt_pwd,  use_tls=True)
     mqttcli.connect([], "Feed Sender")
 
-    mqttcli.start_listener()
+    #mqttcli.start_listener()
 
     simulate_price_changes(api_conn, mqttcli)

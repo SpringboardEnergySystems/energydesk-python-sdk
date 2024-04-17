@@ -16,6 +16,7 @@ class PeriodViewGroupingEnum(Enum):
     TICKER = "ticker"
     ASSET = "asset"
     TRADEID = "trade_id"
+    MARKET = "market"
 
 
 class ParametersEnum(Enum):
@@ -26,9 +27,9 @@ class ParametersEnum(Enum):
     buyvol = {"internal": "buyvol", "formatting":"float", "display": "Buy MWh"}
     sellvol = {"internal": "sellvol","formatting":"float",  "display": "Sell MWh"}
 
-    avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Cost"}
-    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Buy Cost"}
-    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Sell Cost"}
+    avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Price"}
+    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Buy Price"}
+    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Sell Price"}
     market = {"internal": "market", "formatting":"str","display": "Market"}
     asset = {"internal": "asset", "formatting":"str", "display": "Underlying"}
     area = {"internal": "area", "formatting":"str", "display": "Area"}
@@ -37,10 +38,12 @@ class ParametersEnum(Enum):
     delivery_until = {"internal": "delivery_until", "formatting":"date", "display": "DelivTo"}
     hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
-    ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
+    # ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
-    unreal = {"internal": "unreal", "formatting": "float", "display": "Unrealized"}
+    unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
+    pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
 
+'''
 class ParametersEnum(Enum):
     netpos={"internal":"netpos", "formatting":"float", "display":"NetPos MW"}
     sellpos = {"internal": "sellpos","formatting":"float", "display": "SellPos MW"}
@@ -49,9 +52,9 @@ class ParametersEnum(Enum):
     buyvol = {"internal": "buyvol", "formatting":"float", "display": "Buy MWh"}
     sellvol = {"internal": "sellvol","formatting":"float",  "display": "Sell MWh"}
 
-    avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Cost"}
-    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Buy Cost"}
-    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Sell Cost"}
+    avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Price"}
+    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Buy Price"}
+    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Sell Price"}
     market = {"internal": "market", "formatting":"str","display": "Market"}
     asset = {"internal": "asset", "formatting":"str", "display": "Underlying"}
     area = {"internal": "area", "formatting":"str", "display": "Area"}
@@ -62,4 +65,4 @@ class ParametersEnum(Enum):
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
     price = {"internal": "price", "formatting": "float", "display": "Close"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
-
+'''

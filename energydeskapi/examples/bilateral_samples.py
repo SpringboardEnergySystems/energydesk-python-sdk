@@ -1,13 +1,18 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.bilateral.bilateral_api import BilateralApi, PricingConfiguration
+from energydeskapi.bilateral.bilateral_api import BilateralApi
 from energydeskapi.lems.lems_api import LemsApi
 from datetime import datetime, timedelta
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
-from energydeskapi.types.fwdcurve_enum_types import FwdCurveModels
-from energydeskapi.sdk.profiles_utils import get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
+from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
+from energydeskapi.sdk.profiles_utils import get_zero_profile,get_baseload_weekdays, get_baseload_dailyhours, get_baseload_months
 import pandas as pd
+import pendulum
+
+from energydeskapi.bilateral.capacity_api import CapacityApi, CapacityProfile
+from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -27,11 +32,16 @@ def get_deliveries(api_conn):
 
     df3=df.pivot_table(index='period_from', columns='area', values='netpos', aggfunc='sum')
     print(df3)
-    #df2=df.pivot_table(index='period_from', columns='counterpart', values='netpos', aggfunc='sum')
-    #print(df2)
-    #df = df.pivot(index='period_from', columns='counterpart', values='netpos')
-    #print(df)
 
+
+def get_bilateral_trades(api_conn):
+    from_date=pendulum.today()
+    from_date=from_date.set(month=1, day=1)
+    until_date = from_date + timedelta(days=500)
+    print(from_date, until_date)
+    success, df_trades, status_code, error_msg = BilateralApi.get_bilateral_trades(api_conn,
+                                                                                   str(from_date),str(until_date))
+    print(df_trades)
 def calculate_price(api_conn):
     fromd="2023-10-01"
     untild = "2024-10-01"
@@ -58,6 +68,42 @@ def calculate_price(api_conn):
     print(cprices)
 
 
+def calculate_capacity_price(api_conn):
+    fromd=str(pendulum.parse("2024-02-01", tz="Europe/Oslo"))
+    untild = str(pendulum.parse("2024-03-01", tz="Europe/Oslo"))
+    periods=[["Holmlia", fromd, untild]]
+
+    months=get_baseload_months()
+    for m in months.keys():
+        months[m]=0
+    months['January'] = 1
+    months['February'] = 0.2
+    months['March'] = 1
+    months['October'] = 0
+    months['November'] = 0
+    months['December'] = 0
+    print(months)
+    weekdays=get_baseload_weekdays()
+    for m in weekdays.keys():
+        weekdays[m]=0
+    weekdays['Thursday'] = 1
+    weekdays['Friday'] = 1
+    weekdays['Sunday'] = 1
+    hours=get_baseload_dailyhours()
+    for m in hours.keys():
+        hours[m]=0
+    hours[21] = 0.6
+    hours[22]=0.4
+    subst={
+        "monthly_profile":months,
+        "weekday_profile":weekdays,
+        "daily_profile":hours
+    }
+    print(periods)
+    success, returned_data, status_code, error_msg=BilateralApi.calculate_capacity_price(api_conn,periods, subst, 1000, 2000)
+    print(returned_data)
+
+
 
 def generate_sell_prices(api_conn):
     mw=500
@@ -69,7 +115,7 @@ def generate_sell_prices(api_conn):
 
         success, res, status_code, error_msg = BilateralApi.calculate_contract_price(api_conn, periods, row['area'],
                                                                                      "NOK",
-                                                                                     FwdCurveModels.PRICEIT.value)
+                                                                                     FwdCurveTypesEnum.PRICEIT.value)
         for result in res['period_prices']:
             print(result['period_tag'], result['contract_price'])
             LemsApi.add_order(api_conn, result['period_tag'], result['contract_price'], "NOK", mw, "SELL", "NORMAL", expiry)
@@ -105,10 +151,13 @@ def generate_adjusted_curve(api_conn):
     print(df_curve)
 
 if __name__ == '__main__':
+    #pd.set_option('display.max_rows', None)
     api_conn=init_api()
 
     #generate_sell_prices(api_conn)
     #fetch_pricing_configurations(api_conn)
-    calculate_price(api_conn)
+    register_test_capacity_requests(api_conn)
+    test_capacity_config(api_conn)
+
     #register_pricing_configuration(api_conn)
     #get_deliveries(api_conn)

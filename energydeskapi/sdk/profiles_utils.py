@@ -3,6 +3,8 @@ from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_li
 import numpy as np
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import pytz
+from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 def check_flat_profile(vmap):
     df=pd.DataFrame.from_dict(vmap, orient='index')
     print(df)
@@ -15,23 +17,23 @@ def is_baseload(profile):
     b3 = check_flat_profile(profile['daily_profile'])
     return b1 and b2 and b3
 
-def get_baseload_weekdays():
+def get_baseload_weekdays(entry_value=1.0):
     week=get_weekdays_list()
-    return {k: 1.0 for k in week}
+    return {k: entry_value for k in week}
 
-def get_baseload_dailyhours():
+def get_baseload_dailyhours(entry_value=1.0):
     hours=list(range(24))
-    return {k: 1.0 for k in hours}
+    return {k: entry_value for k in hours}
 
 # This function may be misguiding for users since identical months weights is not
 # the same as basloed on a fixed volume.   Specify BASELOAD as profile category in addition
-def get_baseload_months():
+def get_baseload_months(entry_value=1.0):
     months=get_month_list()
-    return {k: 1.0 for k in months}
+    return {k: entry_value for k in months}
 
-def get_flat_months():
+def get_flat_months(entry_value=1.0):
     months=get_month_list()
-    return {k: 1.0 for k in months}
+    return {k: entry_value for k in months}
 
 
 # Used to get a default profile that factorize months based on hours. Using 2022 as sample year
@@ -52,6 +54,13 @@ def get_baseload_profile():
         'weekday_profile': get_baseload_weekdays(),
         'daily_profile': get_baseload_dailyhours()
     }
+
+def get_zero_profile():
+    return {
+        'monthly_profile': get_baseload_months(0.0),
+        'weekday_profile': get_baseload_weekdays(0.0),
+        'daily_profile': get_baseload_dailyhours(0.0)
+    }
 def normalize_elements(elements):
     sum=0
     for key in elements.keys():
@@ -68,6 +77,53 @@ def generate_normalized_profile(profile):
     profile['weekday_profile'] = normalize_elements(profile['weekday_profile'])
     profile['daily_profile'] = normalize_elements(profile['daily_profile'])
     return profile
+
+
+def __stringify_dictionary(d):
+    newdict={}
+    for key in d.keys():
+        newdict[str(key)]=d[key]
+    return newdict
+def __convert_from_named_profiles(profile):
+    months=profile['monthly_profile']
+
+    monthkeys={(index+1): months[month] for index, month in enumerate(get_month_list()) if month}
+    profile['monthly_profile']=monthkeys
+    weekdays=profile['weekday_profile']
+    weekdayskeys={(index): weekdays[month] for index, month in enumerate(get_weekdays_list()) if month}
+    profile['weekday_profile']=weekdayskeys
+    dayshours=profile['daily_profile']
+    dayshours=__stringify_dictionary(dayshours)  # Otherwise the lookup below fails
+    hourlykeys={(index): dayshours[str(index)] for index in list(range(24))}
+    profile['daily_profile']=hourlykeys
+    return profile
+
+
+def relative_profile_to_dataframe(period_from, period_until,relative_profile, active_tz=pytz.timezone("Europe/Oslo")):
+
+    try:
+        calender_profile=__convert_from_named_profiles(relative_profile)
+    except Exception as e:
+        #traceback.print_exc()
+        calender_profile=relative_profile
+
+    monthly_weights=calender_profile['monthly_profile']
+    weekly_weights = calender_profile['weekday_profile']
+    daily_weights = calender_profile['daily_profile']
+
+    df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
+
+
+    df['timestamp'] = df.index
+
+
+    df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month], axis=1)
+    df['weekday_weight'] = df.apply(lambda x: weekly_weights[x['timestamp'].dayofweek], axis=1)
+    df['hour_weight'] = df.apply(lambda x: daily_weights[x['timestamp'].hour], axis=1)
+    df['hourly_weight'] =df['monthly_weight']*df['weekday_weight']*df['hour_weight']
+
+    return df[['timestamp','hourly_weight']]
+
 
 if __name__ == '__main__':
     months=get_baseload_months()
