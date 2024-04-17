@@ -147,6 +147,7 @@ if __name__ == '__main__':
     df=load_assets_from_file("./assets_sample.xlsx")
     for index, row in df.iterrows():
         register_flexible_asset(api_conn, row)
+        #sys.exit(0)
         # Sets hours when KW available
         start_hour=random.randint(6, 10)
         end_hour = random.randint(12, 20)
