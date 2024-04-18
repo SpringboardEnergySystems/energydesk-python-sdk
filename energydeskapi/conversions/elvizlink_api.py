@@ -228,7 +228,7 @@ class ElvizLinksApi:
         return True
 
     @staticmethod
-    def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings, days_back):
+    def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings, owner_company_key, days_back):
         env = environ.Env()
         server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/elviz/api/elviztrades"
         logger.info("Calling URL " + str(server_url))
@@ -236,6 +236,7 @@ class ElvizLinksApi:
             "user_mappings": user_mappings,
             "portfolio_mappings": portfolio_mappings,
             "company_mappings": company_mappings,
+            "owner_company_key": owner_company_key,
             "days_back": days_back
         }
         logger.debug("...with payload " + str(payload) )
@@ -246,10 +247,10 @@ class ElvizLinksApi:
         return response.json()
 
     @staticmethod
-    def get_latest_elviz_trades(api_connection, days_back=1):
+    def get_latest_elviz_trades(api_connection, owner_company_key=0, days_back=1):
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
-        elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, days_back )
+        elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, owner_company_key, days_back )
         return elviz_trades
 
