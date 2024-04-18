@@ -1,4 +1,4 @@
-import logging
+import logging, os
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.curves.curve_api import CurveApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
@@ -72,6 +72,20 @@ def query_spot_forward_curves(api_conn):
     success, df, status_code, error_msg =CurveApi.get_spotforward_curve_df(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
     print(df)
 
+def upload_curve_on_date(api_conn, price_date, file):
+    filename = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__), file))
+    df = pd.read_excel(filename)
+    print(df)
+
+    price_periods=[]
+    for l in open(file).readlines():
+        pass
+    CurveApi.upload_forward_curve(api_conn,price_date, "NO4", "NOK",FwdCurveTypesEnum.ELVIZ.name, price_periods)
+
+def get_curves_on_date(api_conn):
+    curves=CurveApi.get_curves_on_date(api_conn, "2024-03-12")
+    print(curves)
 def get_rolling(api_conn):
     df_res=CurveApi.retrieve_rolling_products(api_conn, "NO2")
     print(list(df_res["product"].unique()))
@@ -96,5 +110,5 @@ def apply_julia_smoothcurve():
 
 if __name__ == '__main__':
     api_conn=init_api()
-
-    query_forward_curves(api_conn)
+    upload_curve_on_date(api_conn,"2023-11-01", "elviz_curves.xlsx")
+    #get_curves_on_date(api_conn)

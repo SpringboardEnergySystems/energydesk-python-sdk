@@ -48,7 +48,7 @@ def get_settlement_view_data(api_conn):
     result= SettlementApi.get_settlement_data(api_conn, payload)
     print(result)
 
-def get_result_view(api_conn):
+def get_period_result_view(api_conn):
 
     filter={
         'view_currency': 'NOK',
@@ -57,9 +57,29 @@ def get_result_view(api_conn):
         "view_period_until__lt": '2025-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
      }
-    v, df = SettlementApi.get_result_view_df(api_conn, filter)
+    v, df = SettlementApi.get_period_result_view_df(api_conn, filter)
     print(df)
 
+
+def column_aggregation():
+    colummap = {'netvol': 'sum', 'buyvol': 'sum', 'sellvol': 'sum',
+                'avgcost': 'mean', 'avgcostbuy': 'mean', 'avgcostsell': 'mean',
+                'delivery_from': 'max', 'delivery_until': 'max',
+                'netpos': 'mean', 'buypos': 'mean', 'sellpos': 'mean', 'spot': 'mean', 'curve': 'mean','unrealized': 'sum','realized': 'sum'}
+    return colummap
+def get_product_result_view(api_conn):
+
+    filter={
+        'view_currency': 'NOK',
+        'portfolio':130,
+        'groupby__in': ["instrument"],
+        "view_period_from__gte":'2024-01-01',
+        "view_period_until__lt": '2028-01-01',
+     }
+    v, df = SettlementApi.get_product_result_view_df(api_conn, filter)
+    print(df)
+    dfsum=df.groupby("ticker").agg(column_aggregation())
+    print(dfsum)
 def get_fixprice_data(api_conn):
 
     filter={
@@ -121,7 +141,8 @@ def get_settlement_view(api_conn):
 
 
 if __name__ == '__main__':
-    #pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_rows', None)
     api_conn=init_api()
     print(resolution_str_to_pandas_freq("Monthly"))
-    get_fixprice_data(api_conn)
+    #get_period_result_view(api_conn)
+    get_product_result_view(api_conn)

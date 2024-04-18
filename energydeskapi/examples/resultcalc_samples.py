@@ -16,7 +16,7 @@ def calculate_results(api_conn):
     currency="NOK"
     resolution="MONTHLY"
     trading_date = pendulum.today()
-    for i in range(10):
+    for i in range(1):
         print("Trading Date ", trading_date)
         rpar=ResultCalcParams(portfolios, trading_date, resolution, currency)
         success, json_res, status_code, error_msg  = ResultsApi.calculate_results(api_conn, rpar)

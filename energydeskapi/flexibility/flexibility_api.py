@@ -1,4 +1,5 @@
 import logging
+import json
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
@@ -104,6 +105,7 @@ class FlexibilityApi:
         logger.debug("Upserting market offering")
         payload = external_market_asset.get_dict(api_connection)
         key = int(payload['pk'])
+        logger.info("Saving external market repr key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/flexiblepower/assetsofferedinmarkets/' + str(key) + "/", payload)
@@ -243,6 +245,9 @@ class FlexibilityApi:
             "brp_company_regnumber":brp_company_regnumber,
             "callback_url":callback_url
         }
+
+        print(json.dumps(payload, indent=2))
+
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/assetregistration/', payload)
         if success is False:
             return None

@@ -227,61 +227,55 @@ def create_embedded_tree_recursive(flat_tree):
 
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     pmap={}
-    pmap_children={}
     portfolios=[]
     pmap_parents={}
+    pnode= None
     for rec in portfolio_nodes:
-        print(rec)
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        if rec['type']=="default":
+        if rec['type']=="default" or rec['type']=="root":
+            node_id = int(rec['id'])
             pnode=PortfolioNode()
             pnode.description=name
-            print("Mapping ", name)
             try:
-                pnode.pk=int(rec['id'])
+                pnode.pk=0 if 'portfolio_id' not in rec['data'] else int(rec['data']['portfolio_id'])
             except:
                 pnode.pk=0
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
-            pmap[pnode.pk]=pnode
-            pmap_children[pnode.pk]=[]
+            pmap[node_id]=pnode
         pid=0
         if rec['parent'] != "#":
             numpart = remove_alpha_num(rec['parent'])
             pid = int(numpart)
         if rec['type'] == "trading_books":
-            print(rec)
-            tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['text']})
-            if len(tbdict['results'])>0:
-                pnode=pmap[pnode.pk]
-                subdict=tbdict['results']
-                numpart=remove_alpha_num(subdict[0]['pk']) #Remove non num chars
-                pnode.trading_books.append(int(numpart))
+            for tbdata in rec['data']:
+                tbid=0 if 'tradingbook_id' not in tbdata else int(tbdata['tradingbook_id'])
+                if pnode is not None:
+                    pnode.trading_books.append(tbid)
             continue
         if rec['type'] == "assets":
-            numpart = remove_alpha_num(rec['id'])  # Remove non num chars
-            pnode.assets.append(int(numpart))
+            for adata in rec['data']:
+                asid=0 if 'asset_id' not in adata else int(adata['asset_id'])
+                if pnode is not None:
+                    pnode.assets.append(asid)
             continue
-        print("pid", pnode.pk, pid)
         if pid>0:
             if pid not in pmap_parents:
                 pmap_parents[pid]=[]
-            pmap_parents[pid].append(pnode)
+            pmap_parents[pid].append(pnode)  # pnode added to parent pnode
         portfolios.append(pnode)
+
     for parkey in pmap_parents.keys():
         portnode = pmap[parkey]
         children=pmap_parents[parkey]
-        print("Saving children", children)
         for child in children:
             child.parent_id=portnode.pk
             child.parent_name = portnode.description
             portnode.sub_portfolios.append({'portfolio_id':child.pk,
                                          'portfolio_name':child.description})
 
-    print("DONE CONVERTING")
-    print(pnode.get_dict(api_connection))
-
     return portfolios
+
 def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
     print("INSIDE 2")
     def get_portfolio_url(portfolio_pk):
@@ -512,64 +506,61 @@ def create_flat_tree_for_jstree(flat_tree):
 
 def convert_embedded_tree_to_jstree(embedded_tree):
     jstreelist=[]
-
-    def create_node(node):
-        print('XXX NODE START XXX')
-        print(node)
-        print('XXX NODE END XXX')
+    node_ids={"portfolio_node_id":1, "tradingook_node_id":1, "asset_node_id":1}
+    portfolio_node_map={}
+    def create_node(node, parent, node_ids, portfolio_node_map):
         percentage=1  # Defaul for now...
-        parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
+        portfolio_node_map[node_ids['portfolio_node_id']]=node['pk']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
-            "id": node['pk'],
+            "id": node_ids['portfolio_node_id'],
             "text": node['portfolio_name'] + " (" + str(node['pk'])  + ") "+ ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
                 "original_text": node['portfolio_name'],
                 "calculation": str(percentage*100),
-                "company": node['portfolio_manager_id']
+                "company": node['portfolio_manager_id'],
+                "portfolio_id": node['pk']  #This may be duplicated in the tree if added several places
             },
             "parent": parent,
             "calculation": percentage,
             "state": {"opened": True}
         }
-        assets_as_json = []
+        current_portfolio_parent=node_ids['portfolio_node_id']
+        node_ids['portfolio_node_id']+=1
+
         for a in node['assets']:
             anode={
-                "id": "pka"+str(a['pk']),
+                "id": "pka" + str(node_ids['asset_node_id']),#"pka"+str(a['pk']),
                 "text": a['description'],
                 "type": "assets",
-                "data": [],
-                "parent":node['pk']
+                "data": [{'asset_id': a['pk']}],
+                "parent":current_portfolio_parent
             }
             jstreelist.append(anode)
+            node_ids['asset_node_id'] += 1
 
-        tradingbooks_as_json = []
         for tb in node['trading_books']:
-            print(tb)
             tbnode={
-                "id": "pkt"+str(tb['pk']),
+                "id": "pkt"+str(node_ids['tradingook_node_id']),
                 "text": tb['description'],
                 "type": "trading_books",
-                "data": [],
-                "parent":node['pk']
+                "data": [{'tradingbook_id': tb['pk']}],
+                "parent":current_portfolio_parent
             }
+            node_ids['tradingook_node_id']+=1
             jstreelist.append(tbnode)
-
-
         return localnode
 
-    def parse_embedded_node(emb_node):
-        dict_node=create_node(emb_node)
+    def parse_embedded_node(emb_node,parent, node_ids, portfolio_node_map):
+        dict_node=create_node(emb_node, parent, node_ids, portfolio_node_map)
         jstreelist.append(dict_node)
         for ch in emb_node['children']:
-            parse_embedded_node(ch)
+            parse_embedded_node(ch, dict_node['id'], node_ids, portfolio_node_map)
+        return node_ids
 
     for i in range(len(embedded_tree)):
-        print(i)
-        #if flat_tree[i]['parent_portfolio'] is None:
-        parse_embedded_node(embedded_tree[i])
-
+        node_ids=parse_embedded_node(embedded_tree[i],"#", node_ids, portfolio_node_map)
     return jstreelist
 
 
