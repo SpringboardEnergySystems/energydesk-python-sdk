@@ -269,6 +269,7 @@ class FlexibilityApi:
             "crontab": crontab,
             "kw_flexibility": kw_available
         }
+        print(json.dumps(payload, indent=2))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/specifyassetavailability/', payload)
         if success is False:
             return None
