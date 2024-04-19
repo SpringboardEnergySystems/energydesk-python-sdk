@@ -81,7 +81,7 @@ class SchedulerApi:
                 '/api/schedulemanager/scheduledjobs/' + str(job.pk) + "/", job.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/scheduledjobs/scheduledjobs/', job.get_dict(api_connection))
+                '/api/schedulemanager/scheduledjobs/', job.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
     @staticmethod
