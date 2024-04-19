@@ -153,7 +153,7 @@ if __name__ == '__main__':
         end_hour = random.randint(12, 20)
         crontab = "0 " + str(start_hour) + "-" + str(end_hour) + " * * 1-5"
         register_flex_availability(api_conn, row, crontab)
-    sys.exit(0)
+
     meterdata=load_assetmeterdata_from_files(specific_mpid=None)
     for key in meterdata.keys():
         register_meterdata_for_asset(api_conn, key, meterdata[key])
