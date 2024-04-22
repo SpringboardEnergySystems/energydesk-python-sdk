@@ -63,14 +63,12 @@ class KafkaClient(EventClient):
 
     def connect(self,subscriberlist,  consumer_group="default producer", log_error=True):
         self.consumer_group = consumer_group
-        logger.info("COnnecting producer")
         self.connect_producer()
         self.kafka_topics = []
         for es in subscriberlist:
-            print("Subscr", es)
             self.register_callback(es)
             self.kafka_topics.append(es.topic)  # Format is topic name and quality of service 1,2,3
-        self.connecnt_subscribers(self.kafka_topics)
+        return self.connecnt_subscribers(self.kafka_topics)
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         try:
