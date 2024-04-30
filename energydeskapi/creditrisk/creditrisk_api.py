@@ -27,11 +27,16 @@ class CreditCalculation:
             self.commodity_diversity = CompetitivePosEnums.ADEQUATE.value
             self.geographic_diversity = CompetitivePosEnums.ADEQUATE.value
             self.trading_risk_management = CompetitivePosEnums.ADEQUATE.value
+        elif company_type == "COMMODITY":
+            self.commodity_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.geographic_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.trading_risk_management = CompetitivePosEnums.ADEQUATE.value
 
 
     def get_dict(self):
         dict = {}
-        if self.government_influence_adjust is not None: dict['government_influence_adjust'] = self.government_influence_adjust
+        if self.company_type is not None: dict['company_type'] = self.company_type
+        if self.adjust_government_influence is not None: dict['adjust_government_influence'] = self.adjust_government_influence
         if self.liquidity is not None: dict['liquidity'] = self.liquidity
         if self.management_governance is not None: dict['management_governance'] = self.management_governance
         if self.comparable_rating_analysis is not None: dict['comparable_rating_analysis'] = self.comparable_rating_analysis
@@ -46,6 +51,11 @@ class CreditCalculation:
             return dict
         
         elif self.company_type == "FINANCIAL":
+            if self.commodity_diversity is not None: dict['commodity_diversity'] = self.commodity_diversity
+            if self.geographic_diversity is not None: dict['geographic_diversity'] = self.geographic_diversity
+            if self.trading_risk_management is not None: dict['trading_risk_management'] = self.trading_risk_management
+            return dict
+        elif self.company_type == "COMMODITY":
             if self.commodity_diversity is not None: dict['commodity_diversity'] = self.commodity_diversity
             if self.geographic_diversity is not None: dict['geographic_diversity'] = self.geographic_diversity
             if self.trading_risk_management is not None: dict['trading_risk_management'] = self.trading_risk_management
