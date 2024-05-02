@@ -59,9 +59,9 @@ def quantity_type_description(x):
 
 def quantity_unit_description(x):
     return {
-        QuantityUnitEnum.KW: "Kilowatt",
-        QuantityUnitEnum.MW: "Megawatt",
-        QuantityUnitEnum.GW: "Gigawatt",
+        QuantityUnitEnum.KW: "KWh",
+        QuantityUnitEnum.MW: "MWh",
+        QuantityUnitEnum.GW: "Gwh",
         QuantityUnitEnum.EUR: "EUR amount",
         QuantityUnitEnum.LOTS: "Lots",
         QuantityUnitEnum.DECIMALS: "Decimals"
