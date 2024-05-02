@@ -28,7 +28,7 @@ class PortfolioTreeApi:
 
   @staticmethod
   def save_portfolio_flat_tree(api_connection,comp_key, portfolio_nodes):
-      logger.info("Saving portfolio tree")
+      logger.info("Saving portfolio tree (save_portfolio_flat_tree)")
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       dictlist=[]
       for p in pnodes:
@@ -51,7 +51,7 @@ class PortfolioTreeApi:
 
   @staticmethod
   def upsert_portfolio_tree(api_connection, portfolio_nodes):
-    print("SAVING TREE", portfolio_nodes)
+    print("SAVING TREE (upsert_portfolio_tree)")
     list=[]
     for p in portfolio_nodes:
         list.append(p.get_simple_dict(api_connection))
