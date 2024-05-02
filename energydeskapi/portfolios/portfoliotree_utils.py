@@ -210,11 +210,15 @@ def create_embedded_tree_recursive(flat_tree):
 
 
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
+
     pmap={}
     portfolios=[]
     pmap_parents={}
     pnode= None
     for rec in portfolio_nodes:
+        print("**********************")
+        print(print(json.dumps(rec, indent=4)))
+        print("**********************")
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         if rec['type']=="default" or rec['type']=="root":
             node_id = int(rec['id'])
