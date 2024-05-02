@@ -277,7 +277,6 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
     return portfolios
 
 def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
-    print("INSIDE 2")
     def get_portfolio_url(portfolio_pk):
         return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
     def get_asset_url(asset_pk):
@@ -346,8 +345,7 @@ def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
             purl=get_portfolio_url(c)
             newlist.append(purl)
         j['sub_portfolios']=newlist
-    print(passets)
-    print(pbooks)
+
     for j in jstreelist:
         if j['pk']  in passets:
             nlist=[]
