@@ -239,7 +239,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             continue
         if rec['type'] == "assets":
             for adata in rec['data']:
-                print("Handling asset")
+                print("Managing asset ",adata['asset_id'] , " with parent " , adata['parent'])
                 asid=0 if 'asset_id' not in adata else int(adata['asset_id'])
                 if pnode is not None:
                     pnode.assets.append(asid)
