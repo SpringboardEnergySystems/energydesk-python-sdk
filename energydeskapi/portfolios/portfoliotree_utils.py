@@ -241,7 +241,7 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
             for adata in rec['data']:
                 print("Managing asset ",adata['asset_id'] , " with parent " ,pid)
                 paret=pmap[pid]
-                print("Lookup parents", pnode, paret)
+                print("Lookup parents", pnode.description, paret.description)
                 asid=0 if 'asset_id' not in adata else int(adata['asset_id'])
                 if pnode is not None:
                     pnode.assets.append(asid)
