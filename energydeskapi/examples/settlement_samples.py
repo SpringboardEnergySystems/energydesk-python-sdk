@@ -42,9 +42,9 @@ def get_settlement_view_data(api_conn):
         "period_from":'2023-07-01',
         "period_until": '2023-08-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
-        #"groupby__in":[PeriodViewGroupingEnum.COUNTERPART.value,PeriodViewGroupingEnum.TRADEID.value]
+        "groupby__in":[PeriodViewGroupingEnum.TRADEID.value]
     }
-    print("Calling")
+    print("Calling", payload)
     result= SettlementApi.get_settlement_data(api_conn, payload)
     print(result)
 
@@ -52,10 +52,12 @@ def get_period_result_view(api_conn):
 
     filter={
         'view_currency': 'NOK',
-        'portfolio':131,
+        'portfolio':14,
+         'include_assets': False,
         "view_period_from__gte":'2024-01-01',
         "view_period_until__lt": '2025-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
+        "groupby__in": [PeriodViewGroupingEnum.COUNTERPART.value]
      }
     v, df = SettlementApi.get_period_result_view_df(api_conn, filter)
     print(df)
@@ -144,5 +146,5 @@ if __name__ == '__main__':
     pd.set_option('display.max_rows', None)
     api_conn=init_api()
     print(resolution_str_to_pandas_freq("Monthly"))
-    #get_period_result_view(api_conn)
-    get_product_result_view(api_conn)
+    get_period_result_view(api_conn)
+    #get_product_result_view(api_conn)
