@@ -35,7 +35,6 @@ class PortfolioTreeApi:
           if p.manager is None or p.manager==0:
             p.manager=comp_key
           dictlist.append(p.get_dict(api_connection))
-          #print(json.dumps(p.get_dict(api_connection), indent=4))
       PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
       return True
 

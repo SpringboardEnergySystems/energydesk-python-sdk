@@ -211,14 +211,13 @@ def create_embedded_tree_recursive(flat_tree):
 
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
 
-    pmap={}
+    portfolio_map={}
+    parentmap={}
     portfolios=[]
-    pmap_parents={}
-    pnode= None
     for rec in portfolio_nodes:
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
         if rec['type']=="default" or rec['type']=="root":
-            node_id = int(rec['id'])
+            node_id = rec['id']
             pnode=PortfolioNode()
             pnode.description=name
             try:
@@ -227,40 +226,35 @@ def convert_nodes_from_jstree(api_connection, portfolio_nodes):
                 pnode.pk=0
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
-            pmap[node_id]=pnode
-        pid=0
+            portfolio_map[node_id]=pnode
+            portfolios.append(pnode)
+
+    for rec in portfolio_nodes:
         if rec['parent'] != "#":
-            numpart = remove_alpha_num(rec['parent'])
-            pid = int(numpart)
+            parent_node = portfolio_map[rec['parent']]
+            parentmap[rec['id']] =  parent_node
+
         if rec['type'] == "trading_books":
             for tbdata in rec['data']:
                 tbid=0 if 'tradingbook_id' not in tbdata else int(tbdata['tradingbook_id'])
-                if pnode is not None:
-                    pnode.trading_books.append(tbid)
+                if parent_node is not None and tbid not in parent_node.trading_books:
+                    parent_node.trading_books.append(tbid)
             continue
+
         if rec['type'] == "assets":
             for adata in rec['data']:
-                print("Managing asset ",adata['asset_id'] , " with parent " ,pid)
-                paret=pmap[pid]
-                print("Lookup parents", pnode.description, paret.description)
                 asid=0 if 'asset_id' not in adata else int(adata['asset_id'])
-                if pnode is not None:
-                    pnode.assets.append(asid)
+                if parent_node is not None and asid not in parent_node.assets:
+                    parent_node.assets.append(asid)
             continue
-        if pid>0:
-            if pid not in pmap_parents:
-                pmap_parents[pid]=[]
-            pmap_parents[pid].append(pnode)  # pnode added to parent pnode
-        portfolios.append(pnode)
 
-    for parkey in pmap_parents.keys():
-        portnode = pmap[parkey]
-        children=pmap_parents[parkey]
-        for child in children:
-            child.parent_id=portnode.pk
-            child.parent_name = portnode.description
-            portnode.sub_portfolios.append({'portfolio_id':child.pk,
-                                         'portfolio_name':child.description})
+    for rec in portfolio_nodes:
+        if rec['id'] in parentmap and rec['id'] in portfolio_map:
+            parent_port=parentmap[rec['id']]
+            child_port=portfolio_map[rec['id']]
+            parent_port.sub_portfolios.append({'portfolio_id':child_port.pk,
+                                         'portfolio_name':child_port.description})
+
 
     return portfolios
 
