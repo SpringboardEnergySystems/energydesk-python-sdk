@@ -49,6 +49,41 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
+    def remove_asset_flexibility(api_connection, extern_asset_id):
+        asset_offering=FlexibilityApi.get_flexible_assets(api_connection, parameters={'asset__extern_asset_id':extern_asset_id})
+        print(asset_offering)
+        flag=True
+        for off in asset_offering['results']:
+            success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/flexibleassets/' + str(off['pk']) + "/")
+            flag=flag and success
+            logger.info("Deletion status {success}")
+        return flag
+
+
+    @staticmethod
+    def get_asset_flexibility_periodoffers(api_connection, parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/periodoffers/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def remove_asset_flexibility_periodoffers(api_connection, extern_asset_id):
+        asset_offering=FlexibilityApi.get_asset_flexibility_periodoffers(api_connection, parameters={'flexible_asset__asset__extern_asset_id':extern_asset_id})
+        print(asset_offering)
+        flag=True
+        for off in asset_offering['results']:
+            success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/periodoffers/' + str(off['pk']) + "/")
+            flag=flag and success
+            logger.info("Deletion status {success}")
+        return flag
+
+    @staticmethod
     def get_flexible_markets(api_connection,  parameters={}):
         """Fetches empty schedule
 
@@ -67,8 +102,9 @@ class FlexibilityApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-
         return api_connection.get_base_url() + '/api/flexiblepower/flexibleassets/' + str(asset_offer_pk) + "/"
+
+
 
     @staticmethod
     def get_external_market_offers(api_connection, parameters):
@@ -121,6 +157,7 @@ class FlexibilityApi:
         for off in market_offerings:
             success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/assetsofferedinmarkets/' + str(off['pk']) + "/")
             print(returned_data)
+
     @staticmethod
     def get_empty_dispatch_schedule(api_connection):
         """Fetches empty schedule
