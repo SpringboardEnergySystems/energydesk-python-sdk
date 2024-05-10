@@ -51,13 +51,13 @@ def get_settlement_view_data(api_conn):
 def get_period_result_view(api_conn):
 
     filter={
-        'view_currency': 'NOK',
-        'portfolio':14,
-         'include_assets': False,
+        '#view_currency': 'NOK',
+        'portfolio':13,
+        'include_assets': False,
         "view_period_from__gte":'2024-01-01',
         "view_period_until__lt": '2025-01-01',
         "resolution":PeriodResolutionEnum.MONTHLY.value,
-        "groupby__in": [PeriodViewGroupingEnum.COUNTERPART.value]
+        "groupby__in": [PeriodViewGroupingEnum.AREA.value]
      }
     v, df = SettlementApi.get_period_result_view_df(api_conn, filter)
     print(df)

@@ -45,6 +45,7 @@ class Asset:
         self.tech_data = None
         self.grid_connection=None
         self.power_supplier=None
+        self.balance_service_provider = None
         self.asset_owner=None
         self.asset_manager=None
         self.vendor = None
@@ -86,6 +87,7 @@ class Asset:
         if 'grid_connection' in dict: self.grid_connection = dict['grid_connection']
         if 'power_supplier' in dict: self.power_supplier = dict['power_supplier']
         if 'asset_owner' in dict: self.asset_owner = dict['asset_owner']
+        if 'balance_service_provider' in dict: self.balance_service_provider = dict['balance_service_provider']
         if 'asset_manager' in dict: self.asset_manager = dict['asset_manager']
         if 'vendor' in dict: self.vendor = dict['vendor']
         if 'meter_id' in dict: self.meter_id = dict['meter_id']
@@ -110,6 +112,7 @@ class Asset:
         if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
+        if self.balance_service_provider is not None: dict['balance_service_provider'] = self.balance_service_provider
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
         if self.meter_id is not None: dict['meter_id'] = self.meter_id

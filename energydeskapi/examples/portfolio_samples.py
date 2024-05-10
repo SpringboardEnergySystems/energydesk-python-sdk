@@ -49,7 +49,7 @@ def load_flat_tree(api_conn):
 
     return backagain
 
-
+from copy import copy, deepcopy
 
 def update_flat_tree(api_conn, nodes):
     comps = CustomersApi.get_companies_compact(api_conn,
@@ -60,21 +60,31 @@ def update_flat_tree(api_conn, nodes):
     print("Assigning company key", comp_pk)
 
     for node in nodes:
-        if node.description=="Varmesalg":
-            for a in ['B2B', 'B2C']:
-                asset=AssetsApi.get_assets(api_conn, {'description':a})
-                if len(asset['results'])>0:
-                    id=asset['results'][0]['pk']
-                    if id not in node.assets:
-                        node.assets.append(id)
-            print(json.dumps(node.get_dict(api_conn), indent=4))
+        if node.description=="HEV Hedging Exchange":
+            print("So far")
+            n1 = deepcopy(node)
+            n1.pk=0
+            n1.portfolio_id = None
+            n1.description="E-CO Vannkraft_Hedging"
+            n1.trading_books=[node.trading_books[0]]
+            n2 = deepcopy(node)
+            n2.pk=0
+            n2.portfolio_id = None
+            n2.description = "E-CO Vannkraft_Hedging 2"
+            n2.trading_books = [node.trading_books[1]]
+            nodes.append(n1)
+            nodes.append(n2)
+            node.sub_portfolios.append({'portfolio_id':0, 'portfolio_name':n1.description})
+            node.sub_portfolios.append({'portfolio_id':0, 'portfolio_name':n2.description})
+            node.trading_books=[]
+            #print(json.dumps(node.get_dict(api_conn), indent=4))
     found={}
     dictlist = []
     for p in nodes:
         if p.manager is None or p.manager == 0:
             p.manager = comp_pk
 
-        if p.pk not in found:
+        if p.pk==0 or p.pk not in found:
             found[p.pk]=p.pk
             dictlist.append(p.get_dict(api_conn))
             print(json.dumps(p.get_dict(api_conn), indent=4))

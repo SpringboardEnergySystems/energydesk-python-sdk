@@ -155,9 +155,9 @@ if __name__ == '__main__':
     api_conn=init_api()
     # load_flexibility_offers(api_conn, extern_asset_id="Elkjele A")
     # FlexibilityApi.remove_asset_flexibility(api_conn, extern_asset_id="Elkjele A")
-    # data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"Elkjele A"})
+    data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"3b964bcc-d08c-40c0-b945-3788162b5d59"})
     # FlexibilityApi.remove_asset_flexibility_periodoffers(api_conn, extern_asset_id="Elkjele A")
-    # sys.exit(0)
+    sys.exit(0)
     df=load_assets_from_file("./assets_sample.xlsx")
     for index, row in df.iterrows():
         register_flexible_asset(api_conn, row)
