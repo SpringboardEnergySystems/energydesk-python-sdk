@@ -38,7 +38,7 @@ class KafkaClient(EventClient):
 
     def publish(self,topic, msg, headers=[]):
         print("Sending", topic)
-        result = self.producer.send(topic, msg)
+        result = self.producer.send(topic, msg, headers)
 
         print(result)
 
