@@ -70,17 +70,18 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
+    def get_period_result_view_csv(api_connection, parameters={}):
+        data = api_connection.exec_get_url('/api/settlement/settlementview/periodresultscsv/', parameters)
+        return data
+
+    @staticmethod
     def get_period_result_view_df(api_connection, parameters={}):
 
-
         id, json_res = SettlementApi.get_period_result_view(api_connection, parameters)
-
         if json_res is None:
             return None, None
-
         df = pd.read_json(json_res, orient="table")
         return id, df
-
 
     @staticmethod
     def get_product_result_view(api_connection, parameters={}):
@@ -101,7 +102,6 @@ class SettlementApi:
 
     @staticmethod
     def get_product_result_view_df(api_connection, parameters={}):
-
 
         id, json_res = SettlementApi.get_product_result_view(api_connection, parameters)
 
