@@ -12,6 +12,7 @@ class User:
         self.email=None
         self.first_name=None
         self.last_name=None
+        self.alias=None
         self.user_role = None
         self.is_super_user=False
         self.company=None
@@ -30,6 +31,7 @@ class User:
             dict['username'] = self.username
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
+        if self.alias is not None: dict['alias'] = self.alias
         if self.user_role is not None: dict['user_role'] = self.user_role
         if self.password is not None and self.password!="": dict['password'] = self.password
         if self.company is not None: dict['company'] = self.company
