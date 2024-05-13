@@ -41,6 +41,7 @@ class KafkaClient(EventClient):
         result = self.producer.send(topic, value=msg)
 
         print(result)
+        return result
 
 
     def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000):
