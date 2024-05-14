@@ -194,6 +194,14 @@ class ElvizLinksApi:
                 print("Found portfolio ", comp)
                 return comp
         return None
+
+    # Appserver needs full list of Elviz Portfolios for a mapping used in Export XML
+    @staticmethod
+    def update_portfolio_name(api_connection, elviz_portfolio_name):
+        payload = {"portfolio_name": elviz_portfolio_name}
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/elvizmapping/elvizportfolio/',
+                                                                                 payload)
+
     @staticmethod
     def upsert_portfolio_mapping(api_connection, tradingbook, elviz_portfolio_id, elviz_portfolio_name):
         """Registers or updates a portfolio mapping
@@ -245,6 +253,8 @@ class ElvizLinksApi:
         authsess = ElvizLinksApi.obtain_session()
         response = authsess.post(server_url, headers=h, data=json.dumps(payload))
         return response.json()
+
+
 
     @staticmethod
     def get_latest_elviz_trades(api_connection, owner_company_pk=0, days_back=1):
