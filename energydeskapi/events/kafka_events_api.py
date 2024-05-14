@@ -81,9 +81,12 @@ class KafkaClient(EventClient):
                         content=None
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
                         print("Headers ",message.headers)
+                        decoded_headers=[]
+                        for h in message.headers:
+                            decoded_headers.append((h[0],h[1].decode('utf-8')))
                         content=str(message.value.decode('utf-8'))
-                        logger.debug("Received content on " + message.topic)
-                        self.handle_callback(message.topic, content)
+                        logger.debug("Received content on {} with headers {}".format(message.topic,decoded_headers))
+                        self.handle_callback(message.topic, content, decoded_headers)
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
