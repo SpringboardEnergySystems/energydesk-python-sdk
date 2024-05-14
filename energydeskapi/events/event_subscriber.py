@@ -27,7 +27,7 @@ class EventClient:
 
 
 def lookup_header(headers, field):
-    for h in headers:
-        if h[0]==field:
-            return h[1]
+    d=dict(headers)
+    if field in d:
+        return d[field]
     return None
