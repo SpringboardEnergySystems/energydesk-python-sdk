@@ -37,10 +37,8 @@ class KafkaClient(EventClient):
             return False
 
     def publish(self,topic, msg, headers=[]):
-        print("Sending", topic)
-        result = self.producer.send(topic, value=msg)
 
-        print(result)
+        result = self.producer.send(topic, value=msg, headers=headers)
         return result
 
 
@@ -82,11 +80,7 @@ class KafkaClient(EventClient):
                     for message in self.consumer:
                         content=None
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
-                        # if is_df:
-                        #     txtmsg = str(message.value.decode('utf-8'))
-                        #     payload = json.loads(txtmsg)
-                        #     content = pd.read_json(payload)
-                        # else:
+                        print("Headers ",message.headers)
                         content=str(message.value.decode('utf-8'))
                         logger.debug("Received content on " + message.topic)
                         self.handle_callback(message.topic, content)
