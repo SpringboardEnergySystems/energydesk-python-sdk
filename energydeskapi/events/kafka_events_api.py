@@ -80,7 +80,6 @@ class KafkaClient(EventClient):
                     for message in self.consumer:
                         content=None
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
-                        print("Headers ",message.headers)
                         decoded_headers=[]
                         for h in message.headers:
                             decoded_headers.append((h[0],h[1].decode('utf-8')))
