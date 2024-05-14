@@ -24,3 +24,10 @@ class EventClient:
         subscribers=self.lookup_subscribers(topic)
         for s in subscribers:
             s.callback_function(topic, message, headers)
+
+
+def lookup_header(headers, field):
+    for h in headers:
+        if h[0]==field:
+            return h[1]
+    return None
