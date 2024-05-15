@@ -23,6 +23,7 @@ def load_env(current_dir):
     if current_dir is None:
         current_dir=dirname(__file__)
     dotenv_path = join(current_dir, '.env')
+    logger.info("Env file" + str(dotenv_path))
     load_dotenv(dotenv_path)
 
 
