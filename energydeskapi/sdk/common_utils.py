@@ -38,6 +38,7 @@ def init_api(current_dir=None):
     else:
         tok=None
     url= env.str('ENERGYDESK_URL')
+    logger.info("Using url {} and token {}".format(url, tok))
     api_conn=ApiConnection(url)
     api_conn.set_token(tok, "Token")
     return api_conn
