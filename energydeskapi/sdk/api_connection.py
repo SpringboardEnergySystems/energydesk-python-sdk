@@ -120,7 +120,6 @@ class ApiConnection(object):
             self.token=token
 
         else:
-            logger.info("Token is Null")
             self.token_type=None
             self.token=token
 
