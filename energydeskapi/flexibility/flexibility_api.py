@@ -65,6 +65,12 @@ class AssetScheduledRegulation:
                                                                                                             self.quantity_type)
         if self.regulation_type is not None: dict['regulation_type'] = FlexibilityApi.get_regulation_type_url(api_conn,
                                                                                                             self.regulation_type)
+
+        if self.regulation_cancelled is not None: dict['regulation_cancelled'] = self.regulation_cancelled
+        if self.regulation_start is not None: dict['regulation_start'] = self.regulation_start
+        if self.regulation_stop is not None: dict['regulation_stop'] = self.regulation_stop
+        if self.updated_at_time is not None: dict['updated_at_time'] = self.updated_at_time
+        if self.regulation_quantity is not None: dict['regulation_quantity'] = self.regulation_quantity
         return dict
 
 
