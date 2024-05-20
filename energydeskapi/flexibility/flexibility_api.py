@@ -9,6 +9,13 @@ import pendulum
 from energydeskapi.assetdata.baselines_api import BaselinesApi
 from energydeskapi.types.flexibility_enum_types import ExternalMarketTypeEnums
 import pandas as pd
+from datetime import timezone, datetime, date
+import json, pendulum
+from energydeskapi.contracts.contracts_api import ContractsApi
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.types.flexibility_enum_types import RegulationTypeEnums
+from json import JSONEncoder
+from dataclasses import dataclass
 logger = logging.getLogger(__name__)
 
 
@@ -32,9 +39,45 @@ class ExternalMarketAsset:
         return dict
 
 
+class AssetScheduledRegulation:
+    def __init__(self, flexible_asset_pk, regulation_quantity,
+                 regulation_start, regulation_stop):
+        self.pk = 0
+        self.flexible_asset_pk = flexible_asset_pk
+        self.updated_at_time=pendulum.now(tz="Europe/Oslo")
+        self.regulation_quantity = regulation_quantity
+        # Default values. Consumption down is same as regulate up (energy)
+        self.regulation_type = RegulationTypeEnums.REGULATE_UP.value
+        self.quantity_type=QuantityTypeEnum.EFFECT.value
+        self.quantity_unit=QuantityUnitEnum.KW.value
+        self.regulation_cancelled=False
+        self.regulation_start=regulation_start
+        self.regulation_stop=regulation_stop
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.flexible_asset_pk is not None:
+            dict['flexible_asset'] = FlexibilityApi.get_asset_offer_url(api_conn, self.flexible_asset_pk)
+        if self.quantity_unit is not None: dict['quantity_unit'] = ContractsApi.get_quantity_unit_url(api_conn,
+                                                                                                            self.quantity_unit)
+        if self.quantity_type is not None: dict['quantity_type'] = ContractsApi.get_quantity_type_url(api_conn,
+                                                                                                            self.quantity_type)
+        if self.regulation_type is not None: dict['regulation_type'] = FlexibilityApi.get_regulation_type_url(api_conn,
+                                                                                                            self.regulation_type)
+        return dict
+
+
 class FlexibilityApi:
     """ Class for flexibility
     """
+
+    @staticmethod
+    def get_regulation_type_url(api_connection, regulation_type_enum):
+        """
+        """
+        type_pk = regulation_type_enum if isinstance(regulation_type_enum, int) else regulation_type_enum.value
+        return api_connection.get_base_url() + '/api/flexiblepower/regulation/' + str(type_pk) + "/"
 
     @staticmethod
     def get_flexible_assets(api_connection, parameters={}):
@@ -104,6 +147,31 @@ class FlexibilityApi:
         """
         return api_connection.get_base_url() + '/api/flexiblepower/flexibleassets/' + str(asset_offer_pk) + "/"
 
+
+    @staticmethod
+    def upsert_scheduled_regulation(api_connection, scheduled_regulation):
+        logger.debug("Upserting scheduled_regulation")
+        payload = scheduled_regulation.get_dict(api_connection)
+        key = int(payload['pk'])
+        logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/regulationschedule/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/regulationschedule/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def get_regulation_schedule(api_connection, parameters, external_asset_id=None):
+        if external_asset_id is not None:
+            parameters={
+                'flexible_asset__asset__extern_asset_id':external_asset_id
+            }
+        json_res = api_connection.exec_get_url('/api/flexiblepower/regulationschedule/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
 
     @staticmethod
