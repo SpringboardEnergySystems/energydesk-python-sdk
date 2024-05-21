@@ -45,7 +45,7 @@ class AssetScheduledRegulation:
         self.pk = 0
         self.flexible_asset_pk = flexible_asset_pk
         self.extern_asset_id = extern_asset_id
-        self.updated_at_time=pendulum.now(tz="UTC")
+        self.updated_at_time=pendulum.now(tz="Europe/Oslo").in_timezone("UTC")
         self.regulation_quantity = regulation_quantity
         # Default values. Consumption down is same as regulate up (energy)
         self.regulation_type = RegulationTypeEnums.REGULATE_UP.value
