@@ -41,9 +41,10 @@ class ExternalMarketAsset:
 
 class AssetScheduledRegulation:
     def __init__(self, flexible_asset_pk, regulation_quantity,
-                 regulation_start, regulation_stop):
+                 regulation_start, regulation_stop, extern_asset_id=None):
         self.pk = 0
         self.flexible_asset_pk = flexible_asset_pk
+        self.extern_asset_id = extern_asset_id
         self.updated_at_time=pendulum.now(tz="UTC")
         self.regulation_quantity = regulation_quantity
         # Default values. Consumption down is same as regulate up (energy)
@@ -71,6 +72,7 @@ class AssetScheduledRegulation:
         if self.regulation_stop is not None: dict['regulation_stop'] = str(self.regulation_stop)
         if self.updated_at_time is not None: dict['updated_at_time'] = str(self.updated_at_time)
         if self.regulation_quantity is not None: dict['regulation_quantity'] = self.regulation_quantity
+        if self.extern_asset_id is not None: dict['extern_asset_id'] = self.extern_asset_id
         return dict
 
 
