@@ -8,7 +8,7 @@ class RegulationTypeEnums(Enum):
 def regulation_type_description(x):
     return {
         RegulationTypeEnums.REGULATE_UP: "Regulate Up (consumption down)",
-        RegulationTypeEnums.REGULATE_DOWN: "Regulate Down (consumption up)"
+        RegulationTypeEnums.REGULATE_DOWN: "Regulate Down (consumption up)",
         RegulationTypeEnums.NO_REGULATION: "No Regulation"
     }[x]
 
