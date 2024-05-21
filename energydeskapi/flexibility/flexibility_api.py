@@ -44,7 +44,7 @@ class AssetScheduledRegulation:
                  regulation_start, regulation_stop):
         self.pk = 0
         self.flexible_asset_pk = flexible_asset_pk
-        self.updated_at_time=pendulum.now(tz="Europe/Oslo")
+        self.updated_at_time=pendulum.now(tz="UTC")
         self.regulation_quantity = regulation_quantity
         # Default values. Consumption down is same as regulate up (energy)
         self.regulation_type = RegulationTypeEnums.REGULATE_UP.value
