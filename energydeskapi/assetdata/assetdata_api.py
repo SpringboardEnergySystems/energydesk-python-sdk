@@ -373,7 +373,7 @@ class AssetDataApi:
         parameters={
             "assets":assets,
             "resolution": reso.value,
-            "timeseries_type_pk":timseries_types.value
+            "timeseries_type__id":timseries_types.value
         }
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', parameters)
         if json_res is not None:
