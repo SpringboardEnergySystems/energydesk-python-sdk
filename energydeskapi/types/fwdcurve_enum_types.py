@@ -7,6 +7,7 @@ class FwdCurveTypesEnum(Enum):
     FB_PROPHET = 3
     ELVIZ = 4
     SMOOTH_FORWARD = 5
+    FUNDAMENTAL = 6
 
 class FwdCurveUsageEnum(Enum):
     GENERAL_PORTFOLIO_PRICING = 1
