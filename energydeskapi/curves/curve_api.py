@@ -109,7 +109,7 @@ class CurveApi:
             'currency_code':currency_code,
             'periods':period_prices#period_prices_df.to_json(orient='records',date_format='iso')
         }
-        print(price_area)
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/upload-forwardcurve/', payload)
         return success, json_res, status_code, error_msg
 
