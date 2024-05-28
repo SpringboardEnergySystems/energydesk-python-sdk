@@ -79,9 +79,9 @@ class SettlementApi:
         logger.info("Fetching settlement view")
         json_res = api_connection.exec_get_url('/api/settlement/settlementview/periodresults/', parameters)
         if json_res is None:
-            return None, None
+            return None, None, None
         if len(json_res['view_data'])==0:
-            return None, None
+            return None, None, None
         view_id=json_res['view_id']
         view_data = json_res['view_data']
         positionview_data = json_res['positionview_data']
