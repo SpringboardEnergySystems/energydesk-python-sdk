@@ -209,4 +209,51 @@ class CounterPartsApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
         return success, returned_data, status_code, error_msg
 
+    @staticmethod
+    def get_counterpart_allowances(api_connection, parameters={}):
+        """Fetches all counterparts
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart allowances list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterpartallowances/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk):
+        """Fetches counterpart limit from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param counterpartallowance_pk: key to counterpart allowance
+        :type counterpartallowance_pk: required
+        """
+        logger.info("Loading counterpart limit with pk " + str(counterpartallowance_pk))
+        json_res = api_connection.exec_get_url(f"/api/counterparts/counterpartallowances/{counterpartallowance_pk}/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_counterpart_allowances(api_connection, counterpartallowance):
+        logger.info("Registering counterpart allowance")
+        payload = counterpartallowance.get_dict(api_connection)
+
+        if counterpartallowance.pk>0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(f"/api/counterparts/counterpartallowances/{counterpartallowance.pk}/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartallowances/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def delete_counterpart_allowances(api_connection, counterpartallowance_pk):
+        """Deletes a counterpart allowance
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url(f"/api/counterparts/counterpartallowances/{counterpartallowance_pk}/")
+        return success, returned_data, status_code, error_msg
