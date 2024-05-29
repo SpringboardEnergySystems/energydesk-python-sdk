@@ -40,6 +40,23 @@ class CounterPartLimit:
         if self.volume_limit_mwh is not None: dict['volume_limit_mwh'] = self.volume_limit_mwh
         return dict
 
+class CounterPartAllowance:
+    def __init__(self):
+        self.pk = 0
+        self.company = None
+        self.counterpart_type = None
+        self.valid_from_date = None
+        self.valid_until_date = None
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.company is not None: dict['company'] = self.company
+        if self.counterpart_type is not None: dict['counterpart_type'] = self.counterpart_type
+        if self.valid_from_date is not None: dict['valid_from_date'] = self.valid_from_date
+        if self.valid_until_date is not None: dict['valid_until_date'] = self.valid_until_date
+        return dict
+
 def convert_to_dataframe(dict):
     newdict=[]
     for rec in dict:
@@ -210,7 +227,7 @@ class CounterPartsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_counterpart_allowances(api_connection, parameters={}):
+    def get_counterpart_allowances(api_connection, parameters={}) -> CounterPartAllowance:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -223,7 +240,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk):
+    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk) -> CounterPartAllowance:
         """Fetches counterpart limit from pk
 
         :param api_connection: class with API token for use with API
@@ -238,7 +255,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def upsert_counterpart_allowances(api_connection, counterpartallowance):
+    def upsert_counterpart_allowances(api_connection, counterpartallowance: CounterPartAllowance):
         logger.info("Registering counterpart allowance")
         payload = counterpartallowance.get_dict(api_connection)
 
