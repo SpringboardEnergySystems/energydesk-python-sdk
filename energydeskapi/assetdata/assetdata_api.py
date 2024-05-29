@@ -355,6 +355,15 @@ class AssetDataApi:
             return json_res
         return None
     @staticmethod
+    def calculate_maxusage(api_connection, parameters):
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/maxusage/', parameters)
+        if json_res is None:
+            logger.error("Problems retrieving max usage " + str(error_msg))
+        else:
+            logger.info("retrieved max usage")
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
     def get_aggregated_timeseries(api_connection, params={}):
         print(params)
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', params)
