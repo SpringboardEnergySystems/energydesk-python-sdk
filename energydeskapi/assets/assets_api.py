@@ -60,6 +60,7 @@ class Asset:
         self.is_active=True
         self.asset_category = None
         self.polygon=None
+        self.color_code=None
 
     def from_dict(self, dict):
         if 'pk' in dict: self.pk=dict['pk']
@@ -100,6 +101,7 @@ class Asset:
         if 'price_area' in dict: self.price_area = dict['price_area']
         if 'is_active' in dict: self.is_active = dict['is_active']
         if 'asset_category' in dict: self.asset_category = dict['asset_category']
+        if 'color_code' in dict: self.color_code = dict['color_code']
         if 'polygon' in dict: self.polygon = dict['polygon']
     def get_dict(self):
         dict = {}
@@ -126,6 +128,7 @@ class Asset:
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
         if self.polygon is not None: dict['polygon']=self.polygon
+        if self.color_code is not None: dict['color_code']=self.color_code
         return dict
 
 
