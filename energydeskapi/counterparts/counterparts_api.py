@@ -301,7 +301,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_typee_url(api_connection, counterpart_type_enum):
+    def get_counterpart_type_url(api_connection, counterpart_type_enum):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
