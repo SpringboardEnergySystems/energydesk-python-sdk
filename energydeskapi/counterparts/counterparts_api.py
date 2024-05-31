@@ -299,3 +299,16 @@ class CounterPartsApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_counterpart_typee_url(api_connection, counterpart_type_enum):
+        """Fetches url for company types from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_type_enum: type of company
+        :type company_type_enum: str, required
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = counterpart_type_enum if isinstance(counterpart_type_enum, int) else counterpart_type_enum.value
+        return api_connection.get_base_url() + '/api/counterparts/counterparttypes/' + str(type_pk) + "/"
