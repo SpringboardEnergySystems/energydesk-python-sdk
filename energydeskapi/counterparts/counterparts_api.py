@@ -240,6 +240,19 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
+    def get_counterpart_allowances_embedded(api_connection, parameters={}) -> CounterPartAllowance:
+        """Fetches all counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart allowances list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterpartallowances/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk) -> CounterPartAllowance:
         """Fetches counterpart limit from pk
 
