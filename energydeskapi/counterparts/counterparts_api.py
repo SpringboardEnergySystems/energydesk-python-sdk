@@ -287,3 +287,16 @@ class CounterPartsApi:
         """
         success, returned_data, status_code, error_msg = api_connection.exec_delete_url(f"/api/counterparts/counterpartallowances/{counterpartallowance_pk}/")
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def get_counterpart_types(api_connection, parameters={}) -> CounterPartAllowance:
+        """Fetches all counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart types list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterparttypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
