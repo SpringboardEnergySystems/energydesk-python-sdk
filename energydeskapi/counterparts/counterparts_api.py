@@ -225,9 +225,8 @@ class CounterPartsApi:
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
         return success, returned_data, status_code, error_msg
-
     @staticmethod
-    def get_counterpart_allowances(api_connection, parameters={}) -> CounterPartAllowance:
+    def get_counterpart_allowances(api_connection, parameters={}) -> list[dict]:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -240,7 +239,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_allowances_embedded(api_connection, parameters={}) -> CounterPartAllowance:
+    def get_counterpart_allowances_embedded(api_connection, parameters={}) -> dict:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -253,7 +252,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk) -> CounterPartAllowance:
+    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk) -> dict:
         """Fetches counterpart limit from pk
 
         :param api_connection: class with API token for use with API
@@ -289,7 +288,7 @@ class CounterPartsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_counterpart_types(api_connection, parameters={}) -> CounterPartAllowance:
+    def get_counterpart_types(api_connection, parameters={}) -> list[dict]:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
