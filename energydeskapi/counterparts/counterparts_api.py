@@ -52,7 +52,7 @@ class CounterPartAllowance:
         dict = {}
         dict['pk'] = self.pk
         if self.company is not None: dict['company'] = self.company
-        if self.counterpart_type is not None: dict['counterpart_type'] = self.counterpart_type
+        if self.counterpart_type is not None: dict['counterparttype'] = self.counterpart_type
         if self.valid_from_date is not None: dict['valid_from_date'] = self.valid_from_date
         if self.valid_until_date is not None: dict['valid_until_date'] = self.valid_until_date
         return dict
