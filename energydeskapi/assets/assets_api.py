@@ -188,6 +188,8 @@ class AssetsApi:
         atype_pk = asset_category_enum if isinstance(asset_category_enum, int) else asset_category_enum.value
         return api_connection.get_base_url() + '/api/assets/assetcategories/' + str(atype_pk) + "/"
 
+
+
     @staticmethod
     def get_asset_category(api_connection, asset_category_enum):
         """Fetches asset type from url
