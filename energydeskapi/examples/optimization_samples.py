@@ -1,13 +1,32 @@
 import logging
 from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.assetdata.assetdata_api import AssetDataApi
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.optimization.battery_optimizer_api import BatteryOptimizationApi, OptimizerInput
+from energydeskapi.optimization.flexibility_optimizer_api import FlexibilityOptimizationApi
 import pendulum
+import pandas as pd
 import json
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
+
+
+def optimize_assets(api_conn):
+    param={}
+    param['period_from']=str(pendulum.today(tz="Europe/Oslo").subtract(days=500))[0:10]
+    param['period_until']=str(pendulum.today(tz="Europe/Oslo").subtract(days=1))[0:10]
+    param['assets']=['707057500032174572', '707057500032140638']
+
+    success, json_res, status_code, error_msg=AssetDataApi.calculate_maxusage(api_conn, param)
+    df_max=pd.DataFrame(json_res['assetdata'])
+    print(df_max)
+    sum_max=df_max['fuse_size'].sum()
+    print("Optimize under ", sum_max)
+    param['period_from'] = str(pendulum.today(tz="Europe/Oslo").subtract(days=100))[0:10]
+    param['tot_capacity_limit'] = sum_max
+    FlexibilityOptimizationApi.optimize_flexibility(api_conn, param)
 
 
 
@@ -40,4 +59,4 @@ def optimize_battery(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    optimize_battery(api_conn)
+    optimize_assets(api_conn)

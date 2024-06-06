@@ -246,15 +246,18 @@ class ApiConnection(object):
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
-            print(result.url)
         else:
             result = requests.get(server_url, headers=headers)
+
         if result.status_code<202:
             try:
-                json_data = result.json()
+                if result.headers.get('content-type')=="text/csv":
+                    return result.text
+                if result.headers.get('content-type') == "application/json":
+                    return result.json()
+                return result.text
             except:
                 return None
-            return json_data
         else:
             logger.error("Problens calling EnergyDesk API " + str(result) )
             if result.status_code==401:

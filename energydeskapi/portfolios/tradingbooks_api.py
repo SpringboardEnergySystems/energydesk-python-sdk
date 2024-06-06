@@ -155,7 +155,7 @@ class TradingBooksApi:
 
     @staticmethod
     def upsert_tradingbook(api_connection, tradingbook):
-        """Insefrts or updates a tradingbook
+        """Inserts or updates a tradingbook
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -163,15 +163,18 @@ class TradingBooksApi:
         :type tradingbooks: str, required
         """
         logger.info("Updating a tradingbook")
-        payload=tradingbook.get_dict()
-        if tradingbook.pk>0:
-            success, json_res, status_code, error_msg=api_connection.exec_patch_url('/api/portfoliomanager/tradingbooks/', payload)
+        payload = tradingbook.get_dict()
+        if tradingbook.pk > 0:
+            success, json_res, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/portfoliomanager/tradingbooks/' + str(tradingbook.pk) + '/', payload)
         else:
-            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/tradingbooks/', payload)
+            success, json_res, status_code, error_msg = api_connection.exec_post_url(
+                '/api/portfoliomanager/tradingbooks/', payload)
         if json_res is None:
-            logger.error("Problems saving tradingbook "  + str(tradingbook.description))
+            logger.error("Problems saving tradingbook " + str(tradingbook.description))
         else:
             logger.info("Tradingbook updated " + str(tradingbook.description))
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def register_tradingbooks(api_connection, tradingbooks):
