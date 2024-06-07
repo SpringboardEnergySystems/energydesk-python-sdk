@@ -86,7 +86,8 @@ class UsersApi:
         :type user: str, required
         """
         payload = user.get_dict()
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/update-userprofile', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/update-userprofile/' +
+                                                                                 str(user.pk) + '/', payload)
         if json_res is None:
             logger.error("Problems updating user " + user.username)
         else:
