@@ -10,6 +10,7 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
+from energydeskapi.events.kafka_utils import decode_message
 from energydeskapi.sdk.common_utils import init_api
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -78,13 +79,9 @@ class KafkaClient(EventClient):
                 try:
                     logger.info("Checking consumer " + str(self.consumer))
                     for message in self.consumer:
-                        content=None
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
-                        decoded_headers=[]
-                        for h in message.headers:
-                            decoded_headers.append((h[0],h[1].decode('utf-8')))
-                        content=str(message.value.decode('utf-8'))
-                        logger.debug("Received content on {} with headers {}".format(message.topic,decoded_headers))
+                        content, decoded_headers = decode_message(message)
+                        logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
                         self.handle_callback(message.topic, content, decoded_headers)
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
