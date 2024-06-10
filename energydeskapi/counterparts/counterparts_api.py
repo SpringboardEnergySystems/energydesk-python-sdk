@@ -40,6 +40,23 @@ class CounterPartLimit:
         if self.volume_limit_mwh is not None: dict['volume_limit_mwh'] = self.volume_limit_mwh
         return dict
 
+class CounterPartAllowance:
+    def __init__(self):
+        self.pk = 0
+        self.company = None
+        self.counterpart_type = None
+        self.valid_from_date = None
+        self.valid_until_date = None
+
+    def get_dict(self, api_conn):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.company is not None: dict['company'] = self.company
+        if self.counterpart_type is not None: dict['counterparttype'] = self.counterpart_type
+        if self.valid_from_date is not None: dict['valid_from_date'] = self.valid_from_date
+        if self.valid_until_date is not None: dict['valid_until_date'] = self.valid_until_date
+        return dict
+
 def convert_to_dataframe(dict):
     newdict=[]
     for rec in dict:
@@ -208,5 +225,90 @@ class CounterPartsApi:
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
         return success, returned_data, status_code, error_msg
+    @staticmethod
+    def get_counterpart_allowances(api_connection, parameters={}) -> list[dict]:
+        """Fetches all counterparts
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart allowances list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterpartallowances/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
+    @staticmethod
+    def get_counterpart_allowances_embedded(api_connection, parameters={}) -> dict:
+        """Fetches all counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart allowances list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterpartallowances/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk) -> dict:
+        """Fetches counterpart limit from pk
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param counterpartallowance_pk: key to counterpart allowance
+        :type counterpartallowance_pk: required
+        """
+        logger.info("Loading counterpart limit with pk " + str(counterpartallowance_pk))
+        json_res = api_connection.exec_get_url(f"/api/counterparts/counterpartallowances/{counterpartallowance_pk}/")
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_counterpart_allowances(api_connection, counterpartallowance: CounterPartAllowance):
+        logger.info("Registering counterpart allowance")
+        payload = counterpartallowance.get_dict(api_connection)
+
+        if counterpartallowance.pk>0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(f"/api/counterparts/counterpartallowances/{counterpartallowance.pk}/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartallowances/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def delete_counterpart_allowances(api_connection, counterpartallowance_pk):
+        """Deletes a counterpart allowance
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url(f"/api/counterparts/counterpartallowances/{counterpartallowance_pk}/")
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def get_counterpart_types(api_connection, parameters={}) -> list[dict]:
+        """Fetches all counterparts
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching counterpart types list")
+        json_res = api_connection.exec_get_url('/api/counterparts/counterparttypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_counterpart_type_url(api_connection, counterpart_type_enum):
+        """Fetches url for company types from enum value
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param company_type_enum: type of company
+        :type company_type_enum: str, required
+        """
+        # Will accept both integers of the actual enum type
+        type_pk = counterpart_type_enum if isinstance(counterpart_type_enum, int) else counterpart_type_enum.value
+        return api_connection.get_base_url() + '/api/counterparts/counterparttypes/' + str(type_pk) + "/"
