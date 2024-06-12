@@ -230,7 +230,11 @@ class ApiConnection(object):
                 raise AuthorizationFailedException("Not authorized")
             return False, None, result.status_code, result.text
 
-    def exec_get_url(self, trailing_url,  parameters={}, extra_headers={}):
+
+    def _add_trailing_slash_if_missing(self, server_url: str) -> str:
+        return server_url if server_url.endswith("/") else server_url + "/"
+
+    def exec_get_url(self, trailing_url: str,  parameters={}, extra_headers={}):
         """Returns content from URL
 
         :param trailing_url: description...
@@ -241,7 +245,8 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
+
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
