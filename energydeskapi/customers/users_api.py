@@ -488,7 +488,7 @@ class UsersApi:
         """
         logger.info("Fetching user feature access")
         params = {'group': group_pk}
-        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/', params)
+        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/embedded/', params)
         if json_res is None:
             return None
         return json_res
