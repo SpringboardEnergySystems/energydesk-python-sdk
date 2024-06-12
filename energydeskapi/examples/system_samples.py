@@ -4,6 +4,7 @@ from energydeskapi.system.system_api import SystemApi
 from energydeskapi.types.company_enum_types import UserRoleEnum
 from energydeskapi.sdk.datetime_utils import prev_weekday
 from datetime import datetime
+import json
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -12,6 +13,7 @@ logging.basicConfig(level=logging.INFO,
 def fetch_system_features(api_conn):
     result = SystemApi.get_system_features(api_conn)
     print(result)
+    print(json.dumps(result, indent=2))
 
 def fetch_system_feature_by_key(api_conn):
     pk = 2
