@@ -269,7 +269,7 @@ class ApiConnection(object):
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
                 raise AuthorizationFailedException("Not authorized")
-            return None
+            return result.text
 
 
 class Borg:
