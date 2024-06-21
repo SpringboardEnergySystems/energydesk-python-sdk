@@ -530,7 +530,7 @@ class UsersApi:
         """
         logger.info("Updating permissions")
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-            '/api/customers/userfeatureaccesses/', permissions)
+            '/api/customers/update-feature-access/', permissions)
         if success:
             return success, returned_data, status_code, error_msg
         return None
