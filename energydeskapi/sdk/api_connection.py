@@ -268,7 +268,7 @@ class ApiConnection(object):
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
-                raise AuthorizationFailedException("Not authorized")
+                raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return None
 
 
