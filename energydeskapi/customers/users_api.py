@@ -172,10 +172,12 @@ class UsersApi:
     @staticmethod
     def get_embedded_profile_by_key(api_connection, pk):
         payload = {"id": pk}
-
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', payload)
-        result = json_res['results'][0]
-        return result
+        results = json_res['results']
+        if len(results) > 0:
+            return results[0]
+        else:
+            raise Exception(f"No profile found with pk {pk}")
 
 
     @staticmethod

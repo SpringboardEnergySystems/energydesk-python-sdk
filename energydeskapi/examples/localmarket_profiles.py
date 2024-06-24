@@ -1,23 +1,11 @@
 import logging
-from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.lems.lems_api import LemsApi, CustomProfile
-import pandas as pd
+
 import pytz
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum
-from os.path import join, dirname
-from energydeskapi.customers.users_api import UsersApi
-from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.geolocation.location_api import LocationApi
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
-from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum
-from datetime import datetime
-import logging
+
+from energydeskapi.lems.lems_api import LemsApi, CustomProfile
 from energydeskapi.sdk.common_utils import init_api
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_list
 from energydeskapi.sdk.pandas_utils import get_winter_profile, get_workweek, get_weekend
+
 logger = logging.getLogger(__name__)
 
 def list_current_profiles(api_conn):
@@ -88,7 +76,8 @@ def define_custom_profiles():
         }
     profiles.append(p2)
     return profiles
-import sys
+
+
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
