@@ -60,7 +60,7 @@ class LocationApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching DSO area")
+        logger.info("Fetching DSO area {}".format(dso_name))
         json_res=api_connection.exec_get_url('/api/locations/dsomap/?dso_name=' + dso_name)
         if json_res is not None:
             return json_res

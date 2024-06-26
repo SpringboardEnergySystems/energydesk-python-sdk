@@ -252,6 +252,7 @@ class ApiConnection(object):
         if result.status_code<202:
             try:
                 if result.headers.get('content-type')=="text/csv":
+                    print("It is CSV")
                     return result.text
                 if result.headers.get('content-type') == "application/json":
                     return result.json()
