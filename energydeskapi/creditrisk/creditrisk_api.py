@@ -9,32 +9,57 @@ from energydeskapi.customers.users_api import UsersApi
 logger = logging.getLogger(__name__)
 
 class CreditCalculation:
-    def __init__(self):
-        self.government_influence_adjust = GovernmentInfluenceEnums.MODERATE.value
-        self.diversification = DiversificationEnums.NEUTRAL.value
-        self.capital_structure = CapStructEnums.NEUTRAL.value
+    def __init__(self, company_type="INDUSTRIAL"):
+        self.company_type = company_type
+
+        self.adjust_government_influence = GovernmentInfluenceEnums.MODERATE.value
         self.liquidity = LiquidityEnums.ADEQUATE.value
-        self.financial_policy = FinancialPolicyEnums.NEUTRAL.value
         self.management_governance = ManagmentGovernanceEnums.SATISFACTORY.value
         self.comparable_rating_analysis = ComparableRatingsEnums.NEUTRAL.value
-        self.competitive_advantage =  CompetitivePosEnums.ADEQUATE.value
-        self.scale_scope_diversity = CompetitivePosEnums.ADEQUATE.value
-        self.operating_efficiency = CompetitivePosEnums.ADEQUATE.value
+        if company_type == "INDUSTRIAL":
+            self.diversification = DiversificationEnums.NEUTRAL.value
+            self.capital_structure = CapStructEnums.NEUTRAL.value
+            self.financial_policy = FinancialPolicyEnums.NEUTRAL.value
+            self.competitive_advantage =  CompetitivePosEnums.ADEQUATE.value
+            self.scale_scope_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.operating_efficiency = CompetitivePosEnums.ADEQUATE.value
+        elif company_type == "FINANCIAL":
+            self.commodity_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.geographic_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.trading_risk_management = CompetitivePosEnums.ADEQUATE.value
+        elif company_type == "COMMODITY":
+            self.commodity_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.geographic_diversity = CompetitivePosEnums.ADEQUATE.value
+            self.trading_risk_management = CompetitivePosEnums.ADEQUATE.value
 
 
     def get_dict(self):
         dict = {}
-        if self.government_influence_adjust is not None: dict['government_influence_adjust'] = self.government_influence_adjust
-        if self.diversification is not None: dict['diversification'] = self.diversification
-        if self.capital_structure is not None: dict['capital_structure'] = self.capital_structure
+        if self.company_type is not None: dict['company_type'] = self.company_type
+        if self.adjust_government_influence is not None: dict['adjust_government_influence'] = self.adjust_government_influence
         if self.liquidity is not None: dict['liquidity'] = self.liquidity
-        if self.financial_policy is not None: dict['financial_policy'] = self.financial_policy
         if self.management_governance is not None: dict['management_governance'] = self.management_governance
         if self.comparable_rating_analysis is not None: dict['comparable_rating_analysis'] = self.comparable_rating_analysis
-        if self.competitive_advantage is not None: dict['competitive_advantage'] = self.competitive_advantage
-        if self.scale_scope_diversity is not None: dict['scale_scope_diversity'] = self.scale_scope_diversity
-        if self.operating_efficiency is not None: dict['operating_efficiency'] = self.operating_efficiency
-        return dict
+    
+        if self.company_type == "INDUSTRIAL":
+            if self.diversification is not None: dict['diversification'] = self.diversification
+            if self.capital_structure is not None: dict['capital_structure'] = self.capital_structure
+            if self.financial_policy is not None: dict['financial_policy'] = self.financial_policy
+            if self.competitive_advantage is not None: dict['competitive_advantage'] = self.competitive_advantage
+            if self.scale_scope_diversity is not None: dict['scale_scope_diversity'] = self.scale_scope_diversity
+            if self.operating_efficiency is not None: dict['operating_efficiency'] = self.operating_efficiency
+            return dict
+        
+        elif self.company_type == "FINANCIAL":
+            if self.commodity_diversity is not None: dict['commodity_diversity'] = self.commodity_diversity
+            if self.geographic_diversity is not None: dict['geographic_diversity'] = self.geographic_diversity
+            if self.trading_risk_management is not None: dict['trading_risk_management'] = self.trading_risk_management
+            return dict
+        elif self.company_type == "COMMODITY":
+            if self.commodity_diversity is not None: dict['commodity_diversity'] = self.commodity_diversity
+            if self.geographic_diversity is not None: dict['geographic_diversity'] = self.geographic_diversity
+            if self.trading_risk_management is not None: dict['trading_risk_management'] = self.trading_risk_management
+            return dict
 #  Change
 class CreditRiskApi:
     """Class for credit risk

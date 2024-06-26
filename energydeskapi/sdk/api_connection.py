@@ -137,7 +137,7 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         return  requests.post(server_url, json=payload,   headers=headers)
@@ -155,7 +155,7 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
@@ -185,7 +185,7 @@ class ApiConnection(object):
         headers = self.get_authorization_header()
         for key in extra_headers:
             headers[key] = extra_headers[key]
-        server_url = self.get_base_url() + trailing_url
+        server_url = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         result = requests.delete(server_url, headers=headers)
         if result.status_code < 210:
@@ -215,7 +215,7 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.patch(server_url, json=payload,   headers=headers)
@@ -230,7 +230,11 @@ class ApiConnection(object):
                 raise AuthorizationFailedException("Not authorized")
             return False, None, result.status_code, result.text
 
-    def exec_get_url(self, trailing_url,  parameters={}, extra_headers={}):
+
+    def _add_trailing_slash_if_missing(self, server_url: str) -> str:
+        return server_url if server_url.endswith("/") else server_url + "/"
+
+    def exec_get_url(self, trailing_url: str,  parameters={}, extra_headers={}):
         """Returns content from URL
 
         :param trailing_url: description...
@@ -241,7 +245,8 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
+
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
@@ -264,7 +269,7 @@ class ApiConnection(object):
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
-                raise AuthorizationFailedException("Not authorized")
+                raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return None
 
 

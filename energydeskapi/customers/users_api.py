@@ -172,10 +172,12 @@ class UsersApi:
     @staticmethod
     def get_embedded_profile_by_key(api_connection, pk):
         payload = {"id": pk}
-
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', payload)
-        result = json_res['results'][0]
-        return result
+        results = json_res['results']
+        if len(results) > 0:
+            return results[0]
+        else:
+            raise Exception(f"No profile found with pk {pk}")
 
 
     @staticmethod
@@ -355,6 +357,19 @@ class UsersApi:
         return json_res
 
     @staticmethod
+    def get_user_group_url(api_connection, pk):
+        """Fetches url for a specified user group
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user group key
+        :type pk: str, required
+        """
+        base_url = api_connection.get_base_url()
+        full_url = "{}/api/customers/usergroups/{}/".format(base_url, pk)
+        return full_url
+
+    @staticmethod
     def get_users_from_user_group(api_connection, pk):
         """Fetches users from user groups
 
@@ -478,6 +493,19 @@ class UsersApi:
         return json_res
 
     @staticmethod
+    def get_user_feature_access_embedded(api_connection, params={}):
+        """Fetches accesses to features for user groups with embedding
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching user feature access")
+        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/embedded/', params)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_user_feature_access_for_user_group(api_connection, group_pk):
         """Fetches features to user groups
 
@@ -488,10 +516,26 @@ class UsersApi:
         """
         logger.info("Fetching user feature access")
         params = {'group': group_pk}
-        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/', params)
+        json_res = api_connection.exec_get_url('/api/customers/userfeatureaccesses/embedded/', params)
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def update_permissions(api_connection, permissions):
+        """Updates feature accesses
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param permissions: bulk of user feature accesses
+        :type permissions: list
+        """
+        logger.info("Updating permissions")
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/customers/update-feature-access/', permissions)
+        if success:
+            return success, returned_data, status_code, error_msg
+        return None
 
     @staticmethod
     def upsert_user_feature_access(api_connection, user_feature_access):
