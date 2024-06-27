@@ -23,6 +23,7 @@ def load_env(current_dir):
     if current_dir is None:
         current_dir=dirname(__file__)
     dotenv_path = join(current_dir, '.env')
+    logger.info("Env file" + str(dotenv_path))
     load_dotenv(dotenv_path)
 
 
@@ -37,6 +38,7 @@ def init_api(current_dir=None):
     else:
         tok=None
     url= env.str('ENERGYDESK_URL')
+    logger.info("Using url {} and token {}".format(url, tok))
     api_conn=ApiConnection(url)
     api_conn.set_token(tok, "Token")
     return api_conn

@@ -120,7 +120,6 @@ class ApiConnection(object):
             self.token=token
 
         else:
-            logger.info("Token is Null")
             self.token_type=None
             self.token=token
 
@@ -138,7 +137,7 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         return  requests.post(server_url, json=payload,   headers=headers)
@@ -156,7 +155,7 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
@@ -186,7 +185,7 @@ class ApiConnection(object):
         headers = self.get_authorization_header()
         for key in extra_headers:
             headers[key] = extra_headers[key]
-        server_url = self.get_base_url() + trailing_url
+        server_url = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         result = requests.delete(server_url, headers=headers)
         if result.status_code < 210:
@@ -216,7 +215,7 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.patch(server_url, json=payload,   headers=headers)
@@ -231,7 +230,11 @@ class ApiConnection(object):
                 raise AuthorizationFailedException("Not authorized")
             return False, None, result.status_code, result.text
 
-    def exec_get_url(self, trailing_url,  parameters={}, extra_headers={}):
+
+    def _add_trailing_slash_if_missing(self, server_url: str) -> str:
+        return server_url if server_url.endswith("/") else server_url + "/"
+
+    def exec_get_url(self, trailing_url: str,  parameters={}, extra_headers={}):
         """Returns content from URL
 
         :param trailing_url: description...
@@ -242,20 +245,24 @@ class ApiConnection(object):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
-        server_url= self.get_base_url() + trailing_url
+        server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
+
         logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
-            print(result.url)
         else:
             result = requests.get(server_url, headers=headers)
+
         if result.status_code<202:
             try:
-                json_data = result.json()
+                if result.headers.get('content-type')=="text/csv":
+                    return result.text
+                if result.headers.get('content-type') == "application/json":
+                    return result.json()
+                return result.text
             except:
                 return None
-            return json_data
         else:
             logger.error("Problens calling EnergyDesk API " + str(result) )
             if result.status_code==401:

@@ -146,22 +146,6 @@ def create_flat_tree(embedded_tree):
             embedded_tre['children'][child] = portfolio_child['portfolio_id']
     print(flat_list)
 
-
-def create_flat_tree2(embedded_tree):
-    flat_list = []
-    def manage_node(node):
-        simple_children=[]
-        for c in node['children']:
-            manage_node(c)
-            simple_children.append(c['portfolio_id'])
-        node['children']=simple_children
-        flat_list.append(copy.deepcopy(node))
-
-    manage_node(embedded_tree[0])
-    result = json.dumps(flat_list, indent=4)
-    print(result)
-
-
 from energydeskapi.sdk.common_utils import key_from_url
 def create_embedded_tree_recursive(flat_tree):
     roots=[]
@@ -226,241 +210,59 @@ def create_embedded_tree_recursive(flat_tree):
 
 
 def convert_nodes_from_jstree(api_connection, portfolio_nodes):
-    pmap={}
-    pmap_children={}
+
+    portfolio_map={}
+    parentmap={}
     portfolios=[]
-    pmap_parents={}
     for rec in portfolio_nodes:
-        print(rec)
         name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        if rec['type']=="default":
+        if rec['type']=="default" or rec['type']=="root":
+            node_id = rec['id']
             pnode=PortfolioNode()
             pnode.description=name
-            print("Mapping ", name)
             try:
-                pnode.pk=int(rec['id'])
+                pnode.pk=0 if 'portfolio_id' not in rec['data'] else int(rec['data']['portfolio_id'])
             except:
                 pnode.pk=0
             if "company" in rec['data'] and rec['data']['company'] is not None:
                 pnode.manager=rec['data']['company']
-            pmap[pnode.pk]=pnode
-            pmap_children[pnode.pk]=[]
-        pid=0
-        if rec['parent'] != "#":
-            numpart = remove_alpha_num(rec['parent'])
-            pid = int(numpart)
-        if rec['type'] == "trading_books":
-            print(rec)
-            tbdict=TradingBooksApi.get_tradingbooks(api_connection, {'description':rec['text']})
-            if len(tbdict['results'])>0:
-                pnode=pmap[pnode.pk]
-                subdict=tbdict['results']
-                numpart=remove_alpha_num(subdict[0]['pk']) #Remove non num chars
-                pnode.trading_books.append(int(numpart))
-            continue
-        if rec['type'] == "assets":
-            numpart = remove_alpha_num(rec['id'])  # Remove non num chars
-            pnode.assets.append(int(numpart))
-            continue
-        print("pid", pnode.pk, pid)
-        if pid>0:
-            if pid not in pmap_parents:
-                pmap_parents[pid]=[]
-            pmap_parents[pid].append(pnode)
-        portfolios.append(pnode)
-    for parkey in pmap_parents.keys():
-        portnode = pmap[parkey]
-        children=pmap_parents[parkey]
-        print("Saving children", children)
-        for child in children:
-            child.parent_id=portnode.pk
-            child.parent_name = portnode.description
-            portnode.sub_portfolios.append({'portfolio_id':child.pk,
-                                         'portfolio_name':child.description})
+            portfolio_map[node_id]=pnode
+            portfolios.append(pnode)
 
-    print("DONE CONVERTING")
-    print(pnode.get_dict(api_connection))
+    for rec in portfolio_nodes:
+        if rec['parent'] != "#":
+            parent_node = portfolio_map[rec['parent']]
+            parentmap[rec['id']] =  parent_node
+
+        if rec['type'] == "trading_books":
+            for tbdata in rec['data']:
+                tbid=0 if 'tradingbook_id' not in tbdata else int(tbdata['tradingbook_id'])
+                if parent_node is not None and tbid not in parent_node.trading_books:
+                    parent_node.trading_books.append(tbid)
+            continue
+
+        if rec['type'] == "assets":
+            for adata in rec['data']:
+                asid=0 if 'asset_id' not in adata else int(adata['asset_id'])
+                if parent_node is not None and asid not in parent_node.assets:
+                    parent_node.assets.append(asid)
+            continue
+
+    for rec in portfolio_nodes:
+        if rec['id'] in parentmap and rec['id'] in portfolio_map:
+            parent_port=parentmap[rec['id']]
+            child_port=portfolio_map[rec['id']]
+            parent_port.sub_portfolios.append({'portfolio_id':child_port.pk,
+                                         'portfolio_name':child_port.description})
+
 
     return portfolios
-def convert_nodes_from_jstree2(api_connection, portfolio_nodes):
-    print("INSIDE 2")
-    def get_portfolio_url(portfolio_pk):
-        return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
-    def get_asset_url(asset_pk):
-        return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
-    def get_tradingbook_url(trading_book_pk):
-        return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(trading_book_pk) + "/"
-    jstreelist = []
-    pbooks = {}
-    passets = {}
-    pchildren={}
-    for rec in portfolio_nodes:
-        name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        dict={
-            'pk':rec['id'],
-            'description':name
-        }
 
-        if "company" in rec['data'] and rec['data']['company'] is not None:
-            dict['manager']=CustomersApi.get_company_url(api_connection, rec['data']['company'])
-
-
-            if rec['type'] == "trading_books":
-                if pid not in pbooks:
-                    pbooks[pid] = []
-                pbooks[pid].append(rec['id'])
-                continue
-            if rec['type'] == "assets":
-                if pid not in passets:
-                    passets[pid] = []
-                passets[pid].append(rec['id'])
-                continue
-            if pid not in pchildren:
-                pchildren[pid]=[]
-            pchildren[pid].append(rec['id'])
-
-        if rec['parent']!="#":
-            pid=str(rec['parent'])
-            if rec['type'] == "trading_books":
-                if pid not in pbooks:
-                    pbooks[pid] = []
-                pbooks[pid].append(rec['id'])
-                continue
-            if rec['type'] == "assets":
-                if pid not in passets:
-                    passets[pid] = []
-                passets[pid].append(rec['id'])
-                continue
-            if pid not in pchildren:
-                pchildren[pid]=[]
-            pchildren[pid].append(rec['id'])
-        else:
-            print("Node without parent", rec['parent'])
-        dict["stakeholders"]=[]
-        dict["portfolio_type"]= None
-        dict["assets"]= []
-        dict["trading_books"]= []
-        jstreelist.append(dict)
-
-    for j in jstreelist:
-        if j['pk'] not in pchildren:
-            j['sub_portfolios']=[]
-            continue
-        ch=pchildren[j['pk']]
-        newlist=[]
-        for c in ch:
-            purl=get_portfolio_url(c)
-            newlist.append(purl)
-        j['sub_portfolios']=newlist
-    print(passets)
-    print(pbooks)
-    for j in jstreelist:
-        if j['pk']  in passets:
-            nlist=[]
-            for x in passets[j['pk']]:
-                nlist.append(get_asset_url(x[2:]))
-            j['assets']=nlist
-        if j['pk']  in pbooks:
-            nlist=[]
-            for book in pbooks[j['pk']]:
-                nlist.append(get_tradingbook_url(book[2:]))
-            j['trading_books']=nlist
-    return jstreelist
-
-def convert_nodes_from_jstree3(api_connection, portfolio_nodes):
-    def get_portfolio_url(portfolio_pk):
-        return api_connection.get_base_url() + '/api/portfoliomanager/portfolios/' + str(portfolio_pk) + "/"
-    def get_asset_url(asset_pk):
-        return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
-    def get_tradingbook_url(trading_book_pk):
-        return api_connection.get_base_url() + '/api/portfoliomanager/tradingbooks/' + str(trading_book_pk) + "/"
-    jstreelist = []
-    pbooks = {}
-    passets = {}
-    pchildren={}
-    for rec in portfolio_nodes:
-        print(rec)
-        name=rec['data']['original_text'] if 'original_text' in rec['data'] else rec['text']
-        node=PortfolioNode()
-        if rec['type'] == "default":
-            if str(rec['id'])[:2]=="pk":
-                node.pk = 0#rec['id']
-            else:
-                node.pk = int(rec['id'])
-        else:
-            node.pk=rec['id']
-        node.description=name
-
-        if "company" in rec['data'] and rec['data']['company'] is not None:
-            node.manager=CustomersApi.get_company_url(api_connection, rec['data']['company'])
-        if rec['parent']!="#":
-            pid=int(rec['parent'])
-            if rec['type'] == "trading_books":
-                if pid not in pbooks:
-                    pbooks[pid] = []
-                pbooks[pid].append(rec['id'])
-                continue
-            if rec['type'] == "assets":
-                if pid not in passets:
-                    passets[pid] = []
-                passets[pid].append(rec['id'])
-                continue
-            node.parent_id=pid
-            if pid not in pchildren:
-                pchildren[pid]=[]
-                print("Appending porttfoliosub, ", rec)
-            if 'data' in rec:
-                pchildren[pid].append((rec['id'], rec['data']['original_text']))
-        else:
-            print("Node without parent", rec['parent'])
-
-        jstreelist.append(node)
-
-    for j in jstreelist:
-        if j.pk not in pchildren:
-            #j['sub_portfolios']=[]
-            continue
-        ch=pchildren[j.pk]
-        newlist=[]
-        for c in ch:
-            print("Lookup porttfoliosub, ", c)
-            #purl=get_portfolio_url(c)
-            print({'portfolio_id': c[0],'portfolio_name': c[1]})
-            #print(purl)
-            newlist.append({'portfolio_id': c[0],'portfolio_name': c[1]})
-        j.sub_portfolios=newlist
-    print(passets)
-    print(pbooks)
-    for j in jstreelist:
-        if j.pk in passets:
-            nlist=[]
-            print(passets[j.pk])
-            for x in passets[j.pk]:
-                if str(x)[:3]=="pka":
-                    x=int(x[3:])
-                elif str(x)[:2]=="pk":
-                    x=int(x[2:])
-                nlist.append(get_asset_url(x))
-            j.assets=nlist
-
-        if j.pk in pbooks:
-            nlist=[]
-            for x in pbooks[j.pk]:
-                if str(x)[:3]=="pkt":  #Strip away pk se by UI
-                    x=int(x[3:])
-                elif str(x)[:2]=="pk":  #Strip away pk se by UI
-                    x=int(x[2:])
-                nlist.append(get_tradingbook_url(x))
-            j.trading_books=nlist
-    return jstreelist
 
 def create_flat_tree_for_jstree(flat_tree):
     jstreelist=[]
 
     def create_node(node):
-        print('XXX NODE START XXX')
-        print(node)
-        print('XXX NODE END XXX')
         percentage=1  # Defaul for now...
         parent="#" if node['parent_portfolio'] is None else key_from_url(node['parent_portfolio'])
         type_tag = "root" if node['parent_portfolio'] is None else "default"
@@ -512,64 +314,61 @@ def create_flat_tree_for_jstree(flat_tree):
 
 def convert_embedded_tree_to_jstree(embedded_tree):
     jstreelist=[]
-
-    def create_node(node):
-        print('XXX NODE START XXX')
-        print(node)
-        print('XXX NODE END XXX')
+    node_ids={"portfolio_node_id":1, "tradingook_node_id":1, "asset_node_id":1}
+    portfolio_node_map={}
+    def create_node(node, parent, node_ids, portfolio_node_map):
         percentage=1  # Defaul for now...
-        parent="#" if "parent_id" not in node or node['parent_id'] is None else node['parent_id']
+        portfolio_node_map[node_ids['portfolio_node_id']]=node['pk']
         type_tag = "root" if "parent_id" not in node or node['parent_id'] is None else "default"
         localnode = {
-            "id": node['pk'],
+            "id": node_ids['portfolio_node_id'],
             "text": node['portfolio_name'] + " (" + str(node['pk'])  + ") "+ ' <span class=\'label label-default\'>' + str(percentage*100.0) + '%</span>',
             "type": type_tag,
             "data": {
                 "original_text": node['portfolio_name'],
                 "calculation": str(percentage*100),
-                "company": node['portfolio_manager_id']
+                "company": node['portfolio_manager_id'],
+                "portfolio_id": node['pk']  #This may be duplicated in the tree if added several places
             },
             "parent": parent,
             "calculation": percentage,
             "state": {"opened": True}
         }
-        assets_as_json = []
+        current_portfolio_parent=node_ids['portfolio_node_id']
+        node_ids['portfolio_node_id']+=1
+
         for a in node['assets']:
             anode={
-                "id": "pka"+str(a['pk']),
+                "id": "pka" + str(node_ids['asset_node_id']),#"pka"+str(a['pk']),
                 "text": a['description'],
                 "type": "assets",
-                "data": [],
-                "parent":node['pk']
+                "data": [{'asset_id': a['pk']}],
+                "parent":current_portfolio_parent
             }
             jstreelist.append(anode)
+            node_ids['asset_node_id'] += 1
 
-        tradingbooks_as_json = []
         for tb in node['trading_books']:
-            print(tb)
             tbnode={
-                "id": "pkt"+str(tb['pk']),
+                "id": "pkt"+str(node_ids['tradingook_node_id']),
                 "text": tb['description'],
                 "type": "trading_books",
-                "data": [],
-                "parent":node['pk']
+                "data": [{'tradingbook_id': tb['pk']}],
+                "parent":current_portfolio_parent
             }
+            node_ids['tradingook_node_id']+=1
             jstreelist.append(tbnode)
-
-
         return localnode
 
-    def parse_embedded_node(emb_node):
-        dict_node=create_node(emb_node)
+    def parse_embedded_node(emb_node,parent, node_ids, portfolio_node_map):
+        dict_node=create_node(emb_node, parent, node_ids, portfolio_node_map)
         jstreelist.append(dict_node)
         for ch in emb_node['children']:
-            parse_embedded_node(ch)
+            parse_embedded_node(ch, dict_node['id'], node_ids, portfolio_node_map)
+        return node_ids
 
     for i in range(len(embedded_tree)):
-        print(i)
-        #if flat_tree[i]['parent_portfolio'] is None:
-        parse_embedded_node(embedded_tree[i])
-
+        node_ids=parse_embedded_node(embedded_tree[i],"#", node_ids, portfolio_node_map)
     return jstreelist
 
 

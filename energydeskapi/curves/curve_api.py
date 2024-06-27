@@ -87,7 +87,12 @@ class CurveApi:
             return success, df, status_code, error_msg
         return success, None, status_code, error_msg
 
+    @staticmethod
 
+    def get_curves_on_date(api_connection ,price_date):
+        logger.info("Fetching curves")
+        json_res = api_connection.exec_get_url('/api/curvemanager/listcurves/', {'price_date':price_date})
+        return json_res
     @staticmethod
     def upload_forward_curve(api_connection ,price_date, price_area,
                                 currency_code, forward_curve_model,
@@ -104,7 +109,7 @@ class CurveApi:
             'currency_code':currency_code,
             'periods':period_prices#period_prices_df.to_json(orient='records',date_format='iso')
         }
-        print(price_area)
+        print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/upload-forwardcurve/', payload)
         return success, json_res, status_code, error_msg
 

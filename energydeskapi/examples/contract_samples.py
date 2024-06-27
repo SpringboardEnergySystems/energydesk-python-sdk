@@ -42,10 +42,12 @@ def get_contract_filter_pk(api_conn):
     print(json_contractfilter)
 
 def get_contracts(api_conn, trading_book=None):
-    filter={"portfolio":117}#"pk": [1,3]}
+    filter={"portfolio":2}#"pk": [1,3]}
     json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
     #records=json_data['results']  # 200 at a time
-    print(json.dumps(json_data, indent=2))
+    for rec in json_data['results']:
+        if rec['commodity']['product_code'].startswith("SYOSL"):
+            print(json.dumps(rec, indent=2))
     #df=pd.DataFrame(data=eval(records))
     #print(df)
 
@@ -181,6 +183,11 @@ import pandas as pd
 def load_contracts(api_conn):
     res=ContractsApi.list_contracts_embedded(api_conn)
     print(json.dumps(res, indent=2))
+
+def load_contracts_csv(api_conn):
+    data=ContractsApi.list_contracts_csv(api_conn, {'portfolio_id':13})
+    print(data)
+
 def test_gos(api_conn):
     #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
     #print(res)
@@ -212,7 +219,7 @@ def get_fixedprice_contracts(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
-    get_contracts(api_conn)
+    load_contracts_csv(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)

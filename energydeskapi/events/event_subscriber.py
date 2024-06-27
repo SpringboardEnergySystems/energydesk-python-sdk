@@ -20,7 +20,14 @@ class EventClient:
                 subscr.append(v)
         return subscr
 
-    def handle_callback(self, topic, message):
+    def handle_callback(self, topic, message, headers:list=[]):
         subscribers=self.lookup_subscribers(topic)
         for s in subscribers:
-            s.callback_function(topic, message)
+            s.callback_function(topic, message, headers)
+
+
+def lookup_header(headers, field):
+    d=dict(headers)
+    if field in d:
+        return d[field]
+    return None

@@ -45,6 +45,7 @@ class Asset:
         self.tech_data = None
         self.grid_connection=None
         self.power_supplier=None
+        self.balance_service_provider = None
         self.asset_owner=None
         self.asset_manager=None
         self.vendor = None
@@ -59,6 +60,7 @@ class Asset:
         self.is_active=True
         self.asset_category = None
         self.polygon=None
+        self.limit_data=None
 
     def from_dict(self, dict):
         if 'pk' in dict: self.pk=dict['pk']
@@ -86,6 +88,7 @@ class Asset:
         if 'grid_connection' in dict: self.grid_connection = dict['grid_connection']
         if 'power_supplier' in dict: self.power_supplier = dict['power_supplier']
         if 'asset_owner' in dict: self.asset_owner = dict['asset_owner']
+        if 'balance_service_provider' in dict: self.balance_service_provider = dict['balance_service_provider']
         if 'asset_manager' in dict: self.asset_manager = dict['asset_manager']
         if 'vendor' in dict: self.vendor = dict['vendor']
         if 'meter_id' in dict: self.meter_id = dict['meter_id']
@@ -99,6 +102,7 @@ class Asset:
         if 'is_active' in dict: self.is_active = dict['is_active']
         if 'asset_category' in dict: self.asset_category = dict['asset_category']
         if 'polygon' in dict: self.polygon = dict['polygon']
+        if 'limit_data' in dict: self.limit_data = dict['limit_data']
     def get_dict(self):
         dict = {}
         dict['pk']=self.pk
@@ -110,6 +114,7 @@ class Asset:
         if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
+        if self.balance_service_provider is not None: dict['balance_service_provider'] = self.balance_service_provider
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
         if self.meter_id is not None: dict['meter_id'] = self.meter_id
@@ -123,6 +128,7 @@ class Asset:
         if self.price_area is not None: dict['price_area'] = self.price_area
         if self.location is not None: dict['location'] = self.location
         if self.polygon is not None: dict['polygon']=self.polygon
+        if self.limit_data is not None: dict['limit_data'] = self.limit_data
         return dict
 
 
@@ -181,6 +187,8 @@ class AssetsApi:
         """
         atype_pk = asset_category_enum if isinstance(asset_category_enum, int) else asset_category_enum.value
         return api_connection.get_base_url() + '/api/assets/assetcategories/' + str(atype_pk) + "/"
+
+
 
     @staticmethod
     def get_asset_category(api_connection, asset_category_enum):

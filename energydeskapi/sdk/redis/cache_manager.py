@@ -154,9 +154,9 @@ class ExpirationMap:
 
     def cleanup(self):
         for k in self.key_map.keys():
-            obj=self.key_map[key]
+            obj=self.key_map[k]
             if obj.expiry<datetime.now():
-                del self.key_map[key]
+                del self.key_map[k]
 
 
     def lookup(self, key):

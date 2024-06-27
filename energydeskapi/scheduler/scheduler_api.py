@@ -1,8 +1,17 @@
 import logging
 import pandas as pd
 from dataclasses import dataclass, asdict, field
-
+from dataclasses import dataclass
+from enum import Enum
 logger = logging.getLogger(__name__)
+
+
+
+
+@dataclass(frozen=True)
+class SchedulerMessage():
+    receiver_id: str
+    payload: str
 
 
 class ScheduledJob:
@@ -10,7 +19,9 @@ class ScheduledJob:
         self.pk = 0
         self.job_definition_pk = 0
         self.crontab = None
+        #must be removed
         self.dynamic_parameter = None
+        self.dynamic_config = None
         self.is_active = None
 
     def get_dict(self, api_conn):
@@ -18,6 +29,7 @@ class ScheduledJob:
         if self.job_definition_pk  != 0: dict['job_definition'] = SchedulerApi.get_job_definition_url(api_conn,self.job_definition_pk)
         if self.crontab is not None: dict['crontab'] = self.crontab
         if self.dynamic_parameter is not None: dict['dynamic_parameter'] = self.dynamic_parameter
+        if self.dynamic_config is not None: dict['dynamic_config'] = self.dynamic_config
         if self.is_active is not None: dict['is_active'] = self.is_active
 
         return dict
@@ -69,7 +81,7 @@ class SchedulerApi:
                 '/api/schedulemanager/scheduledjobs/' + str(job.pk) + "/", job.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/scheduledjobs/scheduledjobs/', job.get_dict(api_connection))
+                '/api/schedulemanager/scheduledjobs/', job.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
 
     @staticmethod

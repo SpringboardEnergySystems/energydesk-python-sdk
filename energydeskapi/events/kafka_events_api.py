@@ -10,6 +10,7 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
+from energydeskapi.events.kafka_utils import decode_message
 from energydeskapi.sdk.common_utils import init_api
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -37,10 +38,9 @@ class KafkaClient(EventClient):
             return False
 
     def publish(self,topic, msg, headers=[]):
-        print("Sending", topic)
-        result = self.producer.send(topic, msg)
 
-        print(result)
+        result = self.producer.send(topic, value=msg, headers=headers)
+        return result
 
 
     def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000):
@@ -68,7 +68,7 @@ class KafkaClient(EventClient):
         for es in subscriberlist:
             self.register_callback(es)
             self.kafka_topics.append(es.topic)  # Format is topic name and quality of service 1,2,3
-        self.connecnt_subscribers(self.kafka_topics)
+        return self.connecnt_subscribers(self.kafka_topics)
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         try:
@@ -79,16 +79,10 @@ class KafkaClient(EventClient):
                 try:
                     logger.info("Checking consumer " + str(self.consumer))
                     for message in self.consumer:
-                        content=None
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
-                        # if is_df:
-                        #     txtmsg = str(message.value.decode('utf-8'))
-                        #     payload = json.loads(txtmsg)
-                        #     content = pd.read_json(payload)
-                        # else:
-                        content=str(message.value.decode('utf-8'))
-                        logger.debug("Received content on " + message.topic)
-                        self.handle_callback(message.topic, content)
+                        content, decoded_headers = decode_message(message)
+                        logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
+                        self.handle_callback(message.topic, content, decoded_headers)
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)

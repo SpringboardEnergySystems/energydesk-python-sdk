@@ -194,6 +194,14 @@ class ElvizLinksApi:
                 print("Found portfolio ", comp)
                 return comp
         return None
+
+    # Appserver needs full list of Elviz Portfolios for a mapping used in Export XML
+    @staticmethod
+    def update_portfolio_name(api_connection, elviz_portfolio_name):
+        payload = {"portfolio_name": elviz_portfolio_name}
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/elvizmapping/elvizportfolio/',
+                                                                                 payload)
+
     @staticmethod
     def upsert_portfolio_mapping(api_connection, tradingbook, elviz_portfolio_id, elviz_portfolio_name):
         """Registers or updates a portfolio mapping
@@ -228,7 +236,7 @@ class ElvizLinksApi:
         return True
 
     @staticmethod
-    def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings, days_back):
+    def exec_post_elvizapi(user_mappings, company_mappings, portfolio_mappings, owner_company_pk, days_back):
         env = environ.Env()
         server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/elviz/api/elviztrades"
         logger.info("Calling URL " + str(server_url))
@@ -236,6 +244,7 @@ class ElvizLinksApi:
             "user_mappings": user_mappings,
             "portfolio_mappings": portfolio_mappings,
             "company_mappings": company_mappings,
+            "owner_company_pk": owner_company_pk,
             "days_back": days_back
         }
         logger.debug("...with payload " + str(payload) )
@@ -245,11 +254,13 @@ class ElvizLinksApi:
         response = authsess.post(server_url, headers=h, data=json.dumps(payload))
         return response.json()
 
+
+
     @staticmethod
-    def get_latest_elviz_trades(api_connection, days_back=1):
+    def get_latest_elviz_trades(api_connection, owner_company_pk=0, days_back=1):
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
-        elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, days_back )
+        elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, owner_company_pk, days_back )
         return elviz_trades
 

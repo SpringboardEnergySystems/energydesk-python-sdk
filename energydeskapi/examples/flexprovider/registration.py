@@ -10,6 +10,7 @@ import os
 from energydeskapi.assetdata.baselines_utils import BaselinesModelsEnums, initialize_standard_algorithms, create_default_algo_parameters
 import glob
 import random
+import sys
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -50,9 +51,6 @@ def register_flex_availability(api_conn, asset_row, crontab="0 11-13 * * 1-5"):
     extern_asset_id = asset_row['Name']
     t1 = pendulum.today(tz="Europe/Oslo")
     t2 = t1.add(days=30)   # Cast to string to get ISO format
-
-       # 11 12 and 13 monday-friday
-
     outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id=extern_asset_id,
                                                period_from=str(t1), period_until=str(t2),
                                                crontab=crontab, kw_available=200)
@@ -71,7 +69,6 @@ def register_flexible_asset(api_conn, asset_row):
         logging.info("Asset {} managed by {} is already registered".format(extern_asset_id, manager))
         return
     logging.info("Now registering Asset {} ".format(extern_asset_id))
-
     outdata=FlexibilityApi.register_flexible_asset(api_conn, extern_asset_id=extern_asset_id,
                                                    description=extern_asset_id,
                                                    meter_id=meterpoint_id,
@@ -88,12 +85,6 @@ def register_flexible_asset(api_conn, asset_row):
                                                    brp_company_regnumber="876944642",
                                                    callback_url="http://127.0.0.1:8090/callback"
                                            )
-    print(outdata)
-
-
-
-
-
 
 def check_schedule(api_conn, asset_row):
     extern_asset_id = asset_row['Name']
@@ -103,13 +94,20 @@ def check_schedule(api_conn, asset_row):
                                                      period_from=str(t1),period_until=str(t2))
     print(outdata)
 
+def load_flexibility_offers(api_conn, extern_asset_id=None):
+    param={}
+    if extern_asset_id is not None:
+        param['asset__extern_asset_id']=extern_asset_id
+    t1 = pendulum.today(tz="Europe/Oslo")
+    t2 = t1.add(days=30)   # Cast to string to get ISO format
+    outdata=FlexibilityApi.get_flexible_assets(api_conn, param)
+    print(outdata)
+
 def load_assets_from_file(filename="./assets_sample.xlsx"):
     __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__)))
     filename = os.path.join(__location__, filename)
     df = pd.read_excel(filename)
-    print(df)
-
     return df
 
 def load_assetmeterdata_from_files(specific_mpid="707057500057530000", specific_file="sample_meterdata.xlsx"):
@@ -155,9 +153,18 @@ def show_registered_assets(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
+    #data=load_flexibility_offers(api_conn, "3b964bcc-d08c-40c0-b945-3788162b5d59")#, extern_asset_id="Elkjele A")
+    #print(data)
+    # FlexibilityApi.remove_asset_flexibility(api_conn, extern_asset_id="Elkjele A")
+    #data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"Elkjele A"})#,
+    data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"3b964bcc-d08c-40c0-b945-3788162b5d59"})
+    # FlexibilityApi.remove_asset_flexibility_periodoffers(api_conn, extern_asset_id="Elkjele A")
+    print(data)
+    sys.exit(0)
     df=load_assets_from_file("./assets_sample.xlsx")
     for index, row in df.iterrows():
         register_flexible_asset(api_conn, row)
+        #sys.exit(0)
         # Sets hours when KW available
         start_hour=random.randint(6, 10)
         end_hour = random.randint(12, 20)
