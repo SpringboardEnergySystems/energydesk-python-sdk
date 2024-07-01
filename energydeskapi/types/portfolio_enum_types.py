@@ -40,6 +40,10 @@ class ParametersEnum(Enum):
     contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
     # ticker={"internal": "ticker","formatting":"str",  "display": "Product"}
     price = {"internal": "price", "formatting": "float", "display": "Price"}
+    spot = {"internal": "spot", "formatting": "float", "display": "Spot"}
+    curve = {"internal": "curve", "formatting": "float", "display": "Curve"}
+    unrealized = {"internal": "unrealized", "formatting": "float", "display": "Unrealized"}
+    realized = {"internal": "realized", "formatting": "float", "display": "Realized"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
     pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
 
