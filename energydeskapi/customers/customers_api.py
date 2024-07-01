@@ -140,8 +140,8 @@ class CustomersApi:
         :type country: str, required
         """
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/register-company-from-regnr/', {
-          registry_number: registry_number,
-          country: country
+          'registry_number': registry_number,
+          'country': country
         })
         return json_res, success
 
