@@ -129,6 +129,21 @@ class CustomersApi:
         print(json_res)
         return json_res, success
 
+    def register_company_from_regnumber(api_connection, registry_number: str, country: str):
+        """Registers company with registry number
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param registry_number: registry number
+        :type registry_number: str, required
+        :param country: country
+        :type country: str, required
+        """
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/register-company-from-regnr/', {
+          'registry_number': registry_number,
+          'country': country
+        })
+        return json_res, success
+
     @staticmethod
     def get_company_types(api_connection):
         """Fetches all company types in system with basic key+ name infmation
