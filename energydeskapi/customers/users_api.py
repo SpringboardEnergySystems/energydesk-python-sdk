@@ -177,7 +177,7 @@ class UsersApi:
         if len(results) > 0:
             return results[0]
         else:
-            raise Exception(f"No profile found with pk {pk}")
+            raise Exception(f"No profile found with pk {pk} in result {json.dumps(json_res)}")
 
 
     @staticmethod
