@@ -171,7 +171,7 @@ class ApiConnection(object):
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
-                raise AuthorizationFailedException("Not authorized")
+                raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return False, None, result.status_code, result.text
 
     def exec_delete_url(self, trailing_url,extra_headers={}):
@@ -198,7 +198,7 @@ class ApiConnection(object):
             if result.status_code == 401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
-                raise AuthorizationFailedException("Not authorized")
+                raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return False, None, result.status_code, result.text
 
 
@@ -227,7 +227,7 @@ class ApiConnection(object):
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
-                raise AuthorizationFailedException("Not authorized")
+                raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return False, None, result.status_code, result.text
 
 
