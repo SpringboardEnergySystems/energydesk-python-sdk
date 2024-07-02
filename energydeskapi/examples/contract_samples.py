@@ -188,6 +188,10 @@ def load_contracts_csv(api_conn):
     data=ContractsApi.list_contracts_csv(api_conn, {'portfolio_id':13})
     print(data)
 
+def load_contracts_emir(api_conn):
+    data=ContractsApi.list_contracts_emir(api_conn, {'portfolio_id':13})
+    print(data)
+
 def test_gos(api_conn):
     #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
     #print(res)
@@ -219,7 +223,8 @@ def get_fixedprice_contracts(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
-    load_contracts_csv(api_conn)
+    #load_contracts_csv(api_conn)
+    load_contracts_emir(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)

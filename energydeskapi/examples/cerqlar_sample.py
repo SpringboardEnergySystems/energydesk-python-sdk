@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 trade_query={
-  "query": {
+  "quuery": {
     "filter": {},
     "page": {
       "pageSize": 100,
@@ -23,10 +23,11 @@ trade_query={
 def fetch_trades(base_url, token):
     trades_url=base_url + "/trading/v1/trades/search"
     print("Loading from " + trades_url)
+    print(json.dumps(trade_query))
     headers = {"Authorization": "Bearer " + token,'accept': '*/*', 'Content-Type': 'application/json'}
-    x = requests.post(trades_url, headers=headers, json=json.dumps(trade_query))
-    print(x)
-    print(x.json())
+    x = requests.post(trades_url, headers=headers, json=json.loads(json.dumps(trade_query)))
+
+    print(json.dumps(x.json(), indent=2))
 
 def cerqlar_token(client_id, client_secret, token_endpoint):
     payload={
@@ -38,6 +39,8 @@ def cerqlar_token(client_id, client_secret, token_endpoint):
     x = requests.post(token_endpoint, json=payload)
     if x.status_code==200:
         return x.json()['access_token']
+    print(x.status_code)
+    print(x.text)
     return None
 
 if __name__ == '__main__':
