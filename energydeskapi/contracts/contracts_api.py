@@ -682,16 +682,16 @@ class ContractsApi:
         return json_res
     @staticmethod
     def list_contracts_csv(api_connection, parameters={}):
-        """Lists contracts with embedding
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        :param parameters: parameters to filter contracts
-        :type parameters: str
-        """
         logger.info("Listing contracts as CSV")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/csv/', parameters)
         return json_res
+
+    @staticmethod
+    def list_contracts_emir(api_connection, parameters={}):
+        logger.info("Listing contracts on format for EMIR reporting")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/emir/', parameters)
+        return json_res
+
     @staticmethod
     def list_contracts_xml(api_connection, parameters={}):
         """Lists contracts with embedding

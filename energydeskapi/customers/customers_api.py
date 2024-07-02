@@ -131,7 +131,6 @@ class CustomersApi:
 
     def register_company_from_regnumber(api_connection, registry_number: str, country: str):
         """Registers company with registry number
-
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         :param registry_number: registry number
