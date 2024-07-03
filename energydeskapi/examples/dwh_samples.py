@@ -18,11 +18,25 @@ def get_contracts(api_conn):
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
     print(df)
-
+def get_reports(api_conn):
+    jsondata = DwhApi.get_report_dimension( api_conn, {})
+    #print(json.dumps(jsondata, indent=2))
+    df=pd.DataFrame(jsondata)
+    print(df)
+def get_contract_timeseries(api_conn):
+    jsondata = DwhApi.get_contract_timeseries( api_conn, {})
+    #print(json.dumps(jsondata, indent=2))
+    df=pd.DataFrame(jsondata)
+    print(df)
+def get_periodview_timeseries(api_conn):
+    jsondata = DwhApi.get_periodview_timeseries( api_conn, {})
+    #print(json.dumps(jsondata, indent=2))
+    df=pd.DataFrame(jsondata)
+    print(df)
 
 if __name__ == '__main__':
 
     api_conn = init_api()
-
-    get_contracts(api_conn)
+    get_contract_timeseries(api_conn)
+    get_periodview_timeseries(api_conn)
 
