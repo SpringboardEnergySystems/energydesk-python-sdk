@@ -212,8 +212,7 @@ class BilateralApi:
         """
 
         logger.info("Query contract_doc")
-        url = '/api/bilateral/contractdoc/?external_id=' + external_id
-        json_res = api_connection.exec_get_url(url)
+        json_res = api_connection.exec_get_url('/api/bilateral/contractdoc/', parameters={'external_id': external_id})
         return json_res
 
     @staticmethod
