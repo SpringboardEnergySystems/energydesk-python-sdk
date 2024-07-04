@@ -7,13 +7,13 @@ logger = logging.getLogger(__name__)
 class ReportParameter:
     def __init__(self):
         self.pk = 0
-        self.parameter_code = None
+        self.field_name = None
         self.value_unit = None
 
     def get_dict(self):
         dict = {}
         dict['pk'] = self.pk
-        if self.parameter_code is not None: dict['parameter_code'] = self.parameter_code
+        if self.field_Name is not None: dict['field_name'] = self.field_name
         if self.value_unit is not None: dict['value_unit'] = self.value_unit
         return dict
 
@@ -21,10 +21,10 @@ class ReportParameter:
     def from_simple_dict(d):
         c=ReportParameter()
         c.pk=d['pk']
-        c.parameter_code=d['parameter_code']
+        c.field_name=d['field_name']
         c.value_unit = d['value_unit']
         return c
-class ReportSetup:
+class ReportConfig:
     def __init__(self):
         self.pk = 0
         self.currency = None
@@ -45,7 +45,7 @@ class ReportSetup:
         return dict
     @staticmethod
     def from_simple_dict(d):
-        c=ReportSetup()
+        c=ReportConfig()
         c.pk=d['pk']
         c.currency=d['parameter_code']
         c.report_type = d['report_type']
@@ -54,23 +54,23 @@ class ReportSetup:
         for rp in d['report_parameters']:
             c.report_parameters.append(rp.from_simple_dict())
         return c
-class ReportSetupApi:
+class ReportConfigApi:
     """ Class for audit log REST API
     """
 
     @staticmethod
-    def get_report_setups(api_connection, parameters={}):
+    def get_report_configs(api_connection, parameters={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/reporting/reportsetup/', parameters)
+        json_res = api_connection.exec_get_url('/api/reporting/reportconfig/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def upsert_report_setups(api_connection, report_setup):
+    def upsert_report_config(api_connection, report_config):
         """Registers/Updates asset
 
         :param api_connection: class with API token for use with API
@@ -78,11 +78,11 @@ class ReportSetupApi:
         :param asset: asset object
         :type asset: str, required
         """
-        logger.info("Upserting report setup")
-        if report_setup.pk > 0:
+        logger.info("Upserting report confie")
+        if report_config.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/reporting/reportsetup/' + str(report_setup.pk) + "/", report_setup.get_dict())
+                '/api/reporting/reportconfig/' + str(report_config.pk) + "/", report_config.get_dict())
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/reporting/reportsetup/', report_setup.get_dict())
+                '/api/reporting/reportconfig/', report_config.get_dict())
         return success, returned_data, status_code, error_msg
