@@ -81,8 +81,8 @@ class ReportConfigApi:
         logger.info("Upserting report confie")
         if report_config.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/reporting/reportconfig/' + str(report_config.pk) + "/", report_config.get_dict())
+                '/api/reporting/reportconfig/' + str(report_config.pk) + "/", report_config.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/reporting/reportconfig/', report_config.get_dict())
+                '/api/reporting/reportconfig/', report_config.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
