@@ -46,9 +46,21 @@ class CertificateSchedulesApi:
         """
         logger.info("Fetching certificate schedules")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/certificateschedules/', parameters)
-        if json_res is None:
-            return None
         return json_res
+
+    @staticmethod
+    def get_certificate_schedule(api_connection, pk: int):
+        """Fetches a specific certificate schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: the id of the schedule that must be loaded
+        :type pk: int, required
+        """
+        logger.info(f"Fetching certificate schedule {pk}")
+        json_res = api_connection.exec_get_url(f"/api/portfoliomanager/certificateschedules/{pk}/")
+        return json_res
+
 
     @staticmethod
     def get_certificate_schedules_of_certificate(api_connection, certificate_id: int, additional_parameters={}):
