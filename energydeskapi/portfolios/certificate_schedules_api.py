@@ -107,7 +107,7 @@ class CertificateSchedulesApi:
         """
         logger.info(f"Updating certificate schedule {schedule.pk}")
         payload=schedule.get_dict()
-        success, json_res, status_code, error_msg=api_connection.exec_patch_url('/api/portfoliomanager/certificateschedules/', payload)
+        success, json_res, status_code, error_msg=api_connection.exec_patch_url(f"/api/portfoliomanager/certificateschedules/{pk}/", payload)
         if json_res is None:
             logger.error(f"Problems updating certificate schedule {payload}")
         else:
