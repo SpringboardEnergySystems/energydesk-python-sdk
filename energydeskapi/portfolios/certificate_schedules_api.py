@@ -79,7 +79,7 @@ class CertificateSchedulesApi:
         return json_res
 
     @staticmethod
-    def register_certificate_schedules(api_connection, schedules: list[CertificateSchedule]):
+    def register_certificate_schedule(api_connection, schedule: CertificateSchedule):
         """Registers certificate schedules
 
         :param api_connection: class with API token for use with API
@@ -87,14 +87,32 @@ class CertificateSchedulesApi:
         :param schedules: list of schedules
         :type schedules: list[CertificateSchedule], required
         """
-        logger.info(f"Registering {len(schedules)}  certificate schedules")
-        for schedule in schedules:
-            payload=schedule.get_dict()
-            success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/certificateschedules/', payload)
-            if json_res is None:
-                logger.error(f"Problems registering certificate schedule {payload}")
-            else:
-                logger.info(f"Certificate schedule registered {payload}")
+        logger.info(f"Registering certificate schedule")
+        payload=schedule.get_dict()
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/portfoliomanager/certificateschedules/', payload)
+        if json_res is None:
+            logger.error(f"Problems registering certificate schedule {payload}")
+        else:
+            logger.info(f"Certificate schedule registered {payload}")
+
+    @staticmethod
+    def update_certificate_schedule(api_connection, schedule: CertificateSchedule):
+        """Registers certificate schedules
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param schedules: list of schedules
+        :type schedules: list[CertificateSchedule], required
+        """
+        logger.info(f"Updating certificate schedule {schedule.pk}")
+        payload=schedule.get_dict()
+        success, json_res, status_code, error_msg=api_connection.exec_patch_url('/api/portfoliomanager/certificateschedules/', payload)
+        if json_res is None:
+            logger.error(f"Problems updating certificate schedule {payload}")
+        else:
+            logger.info(f"Certificate schedule updated {payload}")
+
+
     @staticmethod
     def delete_certificate_schedule(api_connection, pk: int):
         """Deletes a certificate schedule
