@@ -84,8 +84,8 @@ class CertificateSchedulesApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param schedules: list of schedules
-        :type schedules: list[CertificateSchedule], required
+        :param schedule: schedule to register
+        :type schedule: CertificateSchedule, required
         """
         logger.info(f"Registering certificate schedule")
         payload=schedule.get_dict()
@@ -93,16 +93,17 @@ class CertificateSchedulesApi:
         if json_res is None:
             logger.error(f"Problems registering certificate schedule {payload}")
         else:
-            logger.info(f"Certificate schedule registered {payload}")
+           logger.info(f"Certificate schedule registered {payload}")
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def update_certificate_schedule(api_connection, schedule: CertificateSchedule):
-        """Registers certificate schedules
+        """Update certificate schedules
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
-        :param schedules: list of schedules
-        :type schedules: list[CertificateSchedule], required
+        :param schedule: schedule to update
+        :type schedule: CertificateSchedule, required
         """
         logger.info(f"Updating certificate schedule {schedule.pk}")
         payload=schedule.get_dict()
@@ -111,7 +112,7 @@ class CertificateSchedulesApi:
             logger.error(f"Problems updating certificate schedule {payload}")
         else:
             logger.info(f"Certificate schedule updated {payload}")
-
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def delete_certificate_schedule(api_connection, pk: int):
