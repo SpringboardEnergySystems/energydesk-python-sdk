@@ -124,3 +124,14 @@ class CertificateSchedulesApi:
         """
         success, returned_data, status_code, error_msg = api_connection.exec_delete_url(f"/api/portfoliomanager/certificateschedules/{pk}/")
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def get_certificate_contract_url(api_connection, certificate_contract_pk: int) -> str:
+        """Certificate url from key
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param certificate_contract_pk: the certificate contract id
+        :type certificate_contract_pk: integer, required
+        """
+
+        return f"{api_connection.get_base_url()}/api/portfoliomanager/certificatecontracts/{certificate_contract_pk}/"
