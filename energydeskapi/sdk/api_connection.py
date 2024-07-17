@@ -167,7 +167,7 @@ class ApiConnection(object):
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
-            logger.error("Problens calling EnergyDesk API " + str(result.status_code))
+            logger.error("Problems calling EnergyDesk API " + str(result.status_code))
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
@@ -194,7 +194,7 @@ class ApiConnection(object):
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
-            logger.error("Problens calling EnergyDesk API " + str(result.status_code))
+            logger.error("Problems calling EnergyDesk API " + str(result.status_code))
             if result.status_code == 401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
@@ -223,7 +223,7 @@ class ApiConnection(object):
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
-            logger.error("Problens calling EnergyDesk API- (patch) " + str(result) + " " )
+            logger.error("Problems calling EnergyDesk API- (patch) " + str(result) + " " )
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
@@ -265,7 +265,7 @@ class ApiConnection(object):
             except:
                 return None
         else:
-            logger.error("Problens calling EnergyDesk API " + str(result) )
+            logger.error("Problems calling EnergyDesk API " + str(result) )
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:

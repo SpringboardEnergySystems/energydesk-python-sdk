@@ -89,7 +89,7 @@ class DerivativesApi:
 
         result = requests.post(server_url, json=qry_payload, headers=headers)
         if result.status_code!=200:
-            logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)
+            logger.error("Problems calling EnergyDesk API " + str(result) + " " + result.text)
             return None
         df = pd.read_json(result.json()['dataframe'], orient='records')
         return df
@@ -191,7 +191,7 @@ class DerivativesApi:
 
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/derivatives-prices-in-period/', qry_payload)
         if not success:
-            logger.error("Problens calling EnergyDesk API " + str(status_code) + " " + error_msg)
+            logger.error("Problems calling EnergyDesk API " + str(status_code) + " " + error_msg)
             return None
         data=json.loads(json_res)
         df = pd.DataFrame(data=data)

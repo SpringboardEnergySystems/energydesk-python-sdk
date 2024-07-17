@@ -35,7 +35,7 @@ class Fundamentals:
             df=pd.DataFrame(events)
             return df
         else:
-            logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)
+            logger.error("Problems calling EnergyDesk API " + str(result) + " " + result.text)
             return None
 
 if __name__ == '__main__':
