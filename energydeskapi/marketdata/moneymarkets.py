@@ -30,7 +30,7 @@ class MoneyMarkets:
             logger.debug("Forex " + str(df))
             return df
         else:
-            logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)
+            logger.error("Problems calling EnergyDesk API " + str(result) + " " + result.text)
             return None
 
     @staticmethod
@@ -72,5 +72,5 @@ class MoneyMarkets:
             logger.debug("Zero coupon rates " + str(df))
             return df
         else:
-            logger.error("Problens calling EnergyDesk API " + str(result) + " " + result.text)
+            logger.error("Problems calling EnergyDesk API " + str(result) + " " + result.text)
             return None
