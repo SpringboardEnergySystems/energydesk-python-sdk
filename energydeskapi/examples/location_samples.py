@@ -42,4 +42,4 @@ def get_asset_geo(api_conn, name="Nedre Glomma"):
     print(res)
 if __name__ == '__main__':
     api_conn=init_api()
-    get_asset_geo(api_conn, "Nedre Glomma")
+    load_dso(api_conn, "demodso")
