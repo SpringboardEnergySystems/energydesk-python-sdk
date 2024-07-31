@@ -13,20 +13,21 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-def optimize_assets(api_conn):
+def optimize_maxusage(api_conn):
     param={}
-    param['period_from']=str(pendulum.today(tz="Europe/Oslo").subtract(days=500))[0:10]
-    param['period_until']=str(pendulum.today(tz="Europe/Oslo").subtract(days=1))[0:10]
-    param['assets']=['707057500032174572', '707057500032140638']
+    param['period_from']=str(pendulum.parse("2024-05-01",tz="Europe/Oslo"))
+    param['period_until']=str(pendulum.parse("2024-05-10",tz="Europe/Oslo"))
+    param['assets']=[74,75]
+    param['rolling_window_size'] = 8
 
-    success, json_res, status_code, error_msg=AssetDataApi.calculate_maxusage(api_conn, param)
-    df_max=pd.DataFrame(json_res['assetdata'])
-    print(df_max)
-    sum_max=df_max['fuse_size'].sum()
-    print("Optimize under ", sum_max)
-    param['period_from'] = str(pendulum.today(tz="Europe/Oslo").subtract(days=100))[0:10]
-    param['tot_capacity_limit'] = sum_max
-    FlexibilityOptimizationApi.optimize_flexibility(api_conn, param)
+    success, data, status_code, error_msg=AssetDataApi.calculate_maxupeak(api_conn, param)
+    print("Current peak",data['maxpeak'])
+    peak=data['maxpeak']
+    peak=peak*0.9  # 90% of current
+    print("Optimize under ", peak)
+    #param['period_from'] = str(pendulum.today(tz="Europe/Oslo").subtract(days=100))[0:10]
+    param['tot_capacity_limit'] = peak
+    FlexibilityOptimizationApi.optimize_max_usage(api_conn, param)
 
 
 
@@ -59,4 +60,4 @@ def optimize_battery(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    optimize_assets(api_conn)
+    optimize_maxusage(api_conn)

@@ -355,8 +355,8 @@ class AssetDataApi:
             return json_res
         return None
     @staticmethod
-    def calculate_maxusage(api_connection, parameters):
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/maxusage/', parameters)
+    def calculate_maxupeak(api_connection, parameters):
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/maxpeak/', parameters)
         if json_res is None:
             logger.error("Problems retrieving max usage " + str(error_msg))
         else:
