@@ -25,6 +25,8 @@ def optimize_maxusage(api_conn):
     peak=data['maxpeak']
     peak=peak*0.9  # 90% of current
     print("Optimize under ", peak)
+
+
     #param['period_from'] = str(pendulum.today(tz="Europe/Oslo").subtract(days=100))[0:10]
     param['tot_capacity_limit'] = peak
     FlexibilityOptimizationApi.optimize_max_usage(api_conn, param)
