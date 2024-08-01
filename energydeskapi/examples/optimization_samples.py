@@ -33,8 +33,12 @@ def optimize_maxusage(api_conn):
     success, json_res, status_code, error_msg=FlexibilityOptimizationApi.optimize_max_usage(api_conn, param)
     df_original=pd.DataFrame(json_res['original'])
     peak_original = float(json_res['peak_original'])
+    cost_original = float(json_res['cost_original'])
+    sumenergy_original = float(json_res['sumenergy_original'])
     df_optimized = pd.DataFrame(json_res['optimized'])
     peak_optimized = float(json_res['peak_optimized'])
+    cost_optimized = float(json_res['cost_optimized'])
+    sumenergy_optimized= float(json_res['sumenergy_optimized'])
     def prepare_timestamp(df):
         df.index = df['timestamp']
         df.index = pd.to_datetime(df.index)
@@ -46,9 +50,8 @@ def optimize_maxusage(api_conn):
     df_optimized = prepare_timestamp(df_optimized)
     df_original = prepare_timestamp(df_original)
 
-    print(df_optimized)
-
-
+    print("Original peak {} energy {} and cost {}".format(peak_original, sumenergy_original, cost_original))
+    print("Optimized peak {} energy {} and cost {}".format(peak_optimized, sumenergy_optimized, cost_optimized))
 
 
 def optimize_battery(api_conn):
