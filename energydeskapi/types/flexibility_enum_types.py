@@ -1,5 +1,8 @@
 from enum import Enum
 
+
+
+
 class RegulationTypeEnums(Enum):
     REGULATE_UP = 1
     REGULATE_DOWN = 2
@@ -23,3 +26,7 @@ def external_flexmarkets_description(x):
         ExternalMarketTypeEnums.NODES: "NODES local flex market",
         ExternalMarketTypeEnums.STATNETT_MFRR: "Norwegian TSO mFRR"
     }[x]
+
+class MaxUsageCriteria(Enum):
+    FEWEST_REGULATIONS = 1
+    LOWEST_ENERGY_COST = 2
