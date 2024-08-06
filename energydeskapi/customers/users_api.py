@@ -185,14 +185,14 @@ class UsersApi:
     def process_dataframe(df):
         dfsubset = df.rename(columns={"pk":"pk",
                                       "user.username":"username",
-                                      "user_group.description": "user_group",
+                                      "user_role.description": "user_role",
                                       "user.email": "email",
                                       "user.first_name": "first_name",
                                       "user.last_name": "last_name",
                                       "company.name":"company"
                                       })
 
-        return dfsubset[['pk', 'username', 'user_group', 'email', 'first_name', 'last_name', 'company']]
+        return dfsubset[['pk', 'username', 'user_role', 'email', 'first_name', 'last_name', 'company']]
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
@@ -262,10 +262,9 @@ class UsersApi:
         output=[]
         for d in dict:
             d['user_role']=0
-            if len(d['usergroup_set'])>0:
+            if 'usergroup_set' in d and  len(d['usergroup_set'])>0:
                 prim_group=key_from_url(d['usergroup_set'][0])
                 d['user_role'] = prim_group
-            d['user_group']=d['user_role']
             output.append(d)
         return output
     @staticmethod
