@@ -21,8 +21,11 @@ def optimize_maxusage(api_conn):
     param['period_until']=str(pendulum.parse("2024-05-10",tz="Europe/Oslo"))
     param['assets']=[74,75]
     param['rolling_window_size'] = 8
+    param['price_area'] = "DK1"
+    param['optimization_criteria'] =1
 
     success, data, status_code, error_msg=AssetDataApi.calculate_maxupeak(api_conn, param)
+    print(data)
     print("Current peak",data['maxpeak'])
     peak=data['maxpeak']
     peak=peak*0.9  # 90% of current

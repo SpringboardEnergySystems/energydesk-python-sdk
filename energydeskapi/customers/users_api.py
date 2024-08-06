@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 from energydeskapi.sdk.common_utils import parse_enum_type
 import json
+from energydeskapi.sdk.common_utils import key_from_url
 logger = logging.getLogger(__name__)
 
 
@@ -184,14 +185,14 @@ class UsersApi:
     def process_dataframe(df):
         dfsubset = df.rename(columns={"pk":"pk",
                                       "user.username":"username",
-                                      "user_role.description": "user_role",
+                                      "user_group.description": "user_group",
                                       "user.email": "email",
                                       "user.first_name": "first_name",
                                       "user.last_name": "last_name",
                                       "company.name":"company"
                                       })
 
-        return dfsubset[['pk', 'username', 'user_role', 'email', 'first_name', 'last_name', 'company']]
+        return dfsubset[['pk', 'username', 'user_group', 'email', 'first_name', 'last_name', 'company']]
 
     @staticmethod
     def get_users_by_key_df(api_connection, user_profile_key):
@@ -256,7 +257,17 @@ class UsersApi:
         if json_res is None:
             return None
         return json_res
-
+    @staticmethod
+    def __extract_primary_usergroup(dict):
+        output=[]
+        for d in dict:
+            d['user_role']=0
+            if len(d['usergroup_set'])>0:
+                prim_group=key_from_url(d['usergroup_set'][0])
+                d['user_role'] = prim_group
+            d['user_group']=d['user_role']
+            output.append(d)
+        return output
     @staticmethod
     def get_users_df2(api_connection, parameters={}):
         """Fetches user profiles
@@ -268,7 +279,9 @@ class UsersApi:
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
         if json_res is None:
             return None
-        df = pd.json_normalize(json_res['results'], max_level=1)
+        dict = json.loads(json.dumps(json_res['results']))
+        dict = UsersApi.__extract_primary_usergroup(dict)
+        df = pd.json_normalize(dict, max_level=1)
         return UsersApi.process_dataframe(df)
     @staticmethod
     def get_users_df(api_connection, parameters={}):
@@ -276,6 +289,8 @@ class UsersApi:
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
         if json_res is not None:
             dict=json.loads(json.dumps(json_res['results']))
+            dict=UsersApi.__extract_primary_usergroup(dict)
+            print(dict)
             df = pd.json_normalize(dict, max_level=1)
             return UsersApi.process_dataframe(df)
         return None
