@@ -261,10 +261,11 @@ class UsersApi:
     def __extract_primary_usergroup(dict):
         output=[]
         for d in dict:
-            d['user_role']=0
+            print(d)
+            d['user_role']=""
             if 'usergroup_set' in d and  len(d['usergroup_set'])>0:
-                prim_group=key_from_url(d['usergroup_set'][0])
-                d['user_role'] = prim_group
+                #prim_group=key_from_url(d['usergroup_set'][0])
+                d['user_role'] = d['usergroup_set'][0]['description']
             output.append(d)
         return output
     @staticmethod
