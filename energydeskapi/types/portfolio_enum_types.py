@@ -46,6 +46,8 @@ class ParametersEnum(Enum):
     realized = {"internal": "realized", "formatting": "float", "display": "Realized"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
     pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
+    pnlmonth = {"internal": "pnlmonth", "formatting": "float", "display": "PnL Month"}
+    pnlyear = {"internal": "pnlyear", "formatting": "float", "display": "PnL Year"}
 
 '''
 class ParametersEnum(Enum):
