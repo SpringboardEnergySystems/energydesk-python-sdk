@@ -16,6 +16,7 @@ class CompanyAccounts:
     nace_industry_code: str
     accounts: dict
     country: str
+    financial_data_type: str
 
     @property
     def json(self):
