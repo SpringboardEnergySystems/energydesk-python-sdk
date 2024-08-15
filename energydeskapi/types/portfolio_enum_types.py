@@ -48,27 +48,7 @@ class ParametersEnum(Enum):
     pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
     pnlmonth = {"internal": "pnlmonth", "formatting": "float", "display": "PnL Month"}
     pnlyear = {"internal": "pnlyear", "formatting": "float", "display": "PnL Year"}
+    prevunrealday = {"internal": "prevunrealday", "formatting": "float", "display": "Prev Day"}
+    prevunrealmonth = {"internal": "prevunrealmonth", "formatting": "float", "display": "Prev Month"}
+    prevunrealyear = {"internal": "prevunrealyear", "formatting": "float", "display": "Prev Year"}
 
-'''
-class ParametersEnum(Enum):
-    netpos={"internal":"netpos", "formatting":"float", "display":"NetPos MW"}
-    sellpos = {"internal": "sellpos","formatting":"float", "display": "SellPos MW"}
-    buypos = {"internal": "buypos", "formatting":"float","display": "BuyPos MW"}
-    netvol = {"internal": "netvol", "formatting":"float", "display": "Vol MWh"}
-    buyvol = {"internal": "buyvol", "formatting":"float", "display": "Buy MWh"}
-    sellvol = {"internal": "sellvol","formatting":"float",  "display": "Sell MWh"}
-
-    avgcost = {"internal": "avgcost", "formatting":"float", "display": "Avg Price"}
-    avgcostbuy = {"internal": "avgcostbuy","formatting":"float",  "display": "Buy Price"}
-    avgcostsell = {"internal": "avgcostsell", "formatting":"float", "display": "Sell Price"}
-    market = {"internal": "market", "formatting":"str","display": "Market"}
-    asset = {"internal": "asset", "formatting":"str", "display": "Underlying"}
-    area = {"internal": "area", "formatting":"str", "display": "Area"}
-    instrument = {"internal": "instrument", "formatting":"str", "display": "Instr"}
-    delivery_from = {"internal": "delivery_from", "formatting":"date", "display": "DelivFrom"}
-    delivery_until = {"internal": "delivery_until", "formatting":"date", "display": "DelivTo"}
-    hours = {"internal": "hours", "formatting":"int", "display": "Hours"}
-    contracts = {"internal": "contracts", "formatting":"int", "display": "# Contracts"}
-    price = {"internal": "price", "formatting": "float", "display": "Close"}
-    unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
-'''
