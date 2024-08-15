@@ -261,8 +261,11 @@ class FlexibilityApi:
         :param period_until: End period to load
         :type period_until: str, required
         """
+        param={'extern_asset_id':extern_asset_id,
+               'period_from':period_from,
+               'period_until':period_until}
         json_res = api_connection.exec_get_url(
-            '/api/flexiblepower/assetdispatchschedule/?extern_asset_id=' + extern_asset_id + "&period_from=" + period_from + "&period_until=" + period_until)
+            '/api/flexiblepower/assetdispatchschedule/',param)
         if json_res is None:
             return None
         return json_res
@@ -276,9 +279,11 @@ class FlexibilityApi:
         :param asset_type_enum: type of asset
         :type asset_type_enum: str, required
         """
-
+        param={'extern_asset_id':extern_asset_id,
+               'period_from':period_from,
+               'period_until':period_until}
         json_res = api_connection.exec_get_url(
-            '/api/flexiblepower/assetavailabilityschedule/?extern_asset_id=' + extern_asset_id + "&period_from=" + period_from + "&period_until=" + period_until)
+            '/api/flexiblepower/assetavailabilityschedule/',param)
         if json_res is None:
             return None
         return json_res
