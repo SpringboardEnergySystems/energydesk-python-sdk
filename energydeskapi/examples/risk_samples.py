@@ -44,6 +44,6 @@ def test_update_riskparams(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #rolling_products(api_conn)
-    calc_covariance_var(api_conn)
+    rolling_products(api_conn)
+    #calc_covariance_var(api_conn)
 
