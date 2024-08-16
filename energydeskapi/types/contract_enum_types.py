@@ -16,6 +16,7 @@ class QuantityTypeEnum(Enum):
     CASH_AMOUNT = 4
     CERTIFICATE = 5
     PERCENTAGE = 6
+    LOTS = 7
 
 
 class QuantityUnitEnum(Enum):
@@ -54,7 +55,8 @@ def quantity_type_description(x):
         QuantityTypeEnum.VOLUME_YEARLY: "Volume per year",
         QuantityTypeEnum.CASH_AMOUNT: "Cash Amount",
         QuantityTypeEnum.CERTIFICATE: "Certificates",
-        QuantityTypeEnum.PERCENTAGE: "Percentage"
+        QuantityTypeEnum.PERCENTAGE: "Percentage",
+        QuantityTypeEnum.LOTS: "Lots"
     }[x]
 
 def quantity_unit_description(x):
