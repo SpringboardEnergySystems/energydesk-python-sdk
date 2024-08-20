@@ -242,6 +242,7 @@ class ApiConnection(object):
         :param extra_headers: description...
         :type extra_headers: str, required
         """
+
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
