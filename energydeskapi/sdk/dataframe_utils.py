@@ -5,7 +5,7 @@ from typing import Union
 import pandas as pd
 
 
-def text_to_dataframe_if_not_none(value: Union[bytes, None]) -> pd.DataFrame:
+def text_to_dataframe(value: Union[bytes, None]) -> Optional[pd.DataFrame]:
     if value is not None:
         io = BytesIO(value)
         dtypes = json.loads(io.readline())
