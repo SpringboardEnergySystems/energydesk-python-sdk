@@ -1,17 +1,18 @@
 import logging
+import traceback
+from datetime import datetime
+from datetime import timedelta
 from typing import Union, Optional
 
 import environ
-import redis
 import pendulum
-from datetime import timedelta
-from datetime import datetime
-import traceback
-import sys
+import redis
+from django.conf import settings
 
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.sdk.redis.memory_cache import MemCache
 from energydeskapi.sdk.redis.redis_connection import connect_to_redis
+
 logger = logging.getLogger(__name__)
 
 def current_date_pendulum(days_back=0, loczone="Europe/Oslo"):
@@ -97,7 +98,6 @@ def set_cache_value(cache_name: str, cache_key: str, cache_value: any, expiratio
             r.expire(cache_name, expiration_time)
 
 
-import logging
 import pickle
 
 
@@ -152,31 +152,30 @@ def saveto_datecache(cache_name: str,  v: any, date_resolution="%Y/W%V", expirat
     except:
         execstr = traceback.format_exc()
         logger.error("Exception saving to REDIS " + str(execstr))
+
+
+def saveto_datecache_str(cache_name: str, value: str, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None) -> bool:
+    datekey = current_date_localtime_dt().strftime(date_resolution)
+    if is_redis_disabled():
+        set_memcache_value(cache_name, datekey, value)
+        return True
+    try:
+        set_cache_value(cache_name, datekey, value, expiration_time)
+        return True
+    except:
+        logger.error(f"Exception saving to REDIS {traceback.format_exc()}")
         return False
 
-def loadfrom_datecache_json(cache_name: str, date_resolution="%Y/W%V") -> Union[dict, None]:
+def loadfrom_datecache_str(cache_name: str, date_resolution="%Y/W%V") -> Optional[bytes]:
     datekey = current_date_localtime_dt().strftime(date_resolution)
     if is_redis_disabled():
         return get_memcache_value(cache_name, datekey)
     try:
-        return get_cache_json_value(cache_name, datekey)
+        return get_cache_value(cache_name, datekey)
     except:
-        execstr = traceback.format_exc()
-        logger.error("Exception loading from REDIS " + str(execstr))
+        logger.error(f"Exception loading from REDIS {traceback.format_exc()}")
         return None
 
-def saveto_datecache_json(cache_name: str, v: dict, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None) -> bool:
-    datekey = current_date_localtime_dt().strftime(date_resolution)
-    if is_redis_disabled():
-        set_memcache_value(cache_name, datekey, v)
-        return True
-    try:
-        set_cache_json_value(cache_name, datekey, v, expiration_time)
-        return True
-    except:
-        execstr = traceback.format_exc()
-        logger.error("Exception saving to REDIS " + str(execstr))
-        return False
 
 def loadfrom_staticcache(cache_name):
     if is_redis_disabled():
@@ -234,6 +233,7 @@ def load_create_expiration_map(cache_name):
         return express_map
     express_map = pickle.loads(compressed_data)
     return express_map
+
 def loadfrom_expiration_cache(cache_name, cache_key):
     if is_redis_disabled():
         return None
@@ -242,6 +242,7 @@ def loadfrom_expiration_cache(cache_name, cache_key):
     compressed_data = pickle.dumps(express_map, protocol=4)
     set_cache_value("EXPIRATIONMAP", cache_name, compressed_data)
     return gval
+
 def saveto_expiration_cache(cache_name, cache_key, expiraation_date, v):
     if is_redis_disabled():
         return True
