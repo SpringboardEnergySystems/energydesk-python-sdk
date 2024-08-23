@@ -85,4 +85,5 @@ def set_dealcapture_config(api_connection, payload):
                                                                                   payload)
     if success:
         return success, returned_data, status_code, error_msg
-    return None
+    else:
+        return False, None, status_code, error_msg
