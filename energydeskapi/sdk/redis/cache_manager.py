@@ -2,7 +2,7 @@ import logging
 import traceback
 from datetime import datetime
 from datetime import timedelta
-from typing import Union, Optional
+from typing import Optional
 
 import environ
 import pendulum
@@ -64,7 +64,7 @@ def get_cache_value(cache_name: str, cache_key: str):
         return None
 
 
-def get_cache_json_value(cache_name: str, cache_key: str) -> Union[dict, None]:
+def get_cache_json_value(cache_name: str, cache_key: str) -> Optional[dict]:
     r=get_cache()
     if r is not None:
         v=r.json().get(cache_name, cache_key)
