@@ -235,7 +235,6 @@ class CapacityApi:
     @staticmethod
     def calculate_availability_price(api_connection, price_params:AvailabilityPriceParams):
         rec=price_params.json
-        print(rec)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
               '/api/bilateral/contractpricer/calcavailability/', rec)
 
