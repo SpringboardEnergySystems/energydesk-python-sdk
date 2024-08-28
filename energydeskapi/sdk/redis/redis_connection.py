@@ -1,9 +1,11 @@
+from typing import Union
+
 import redis
 import logging
 import environ
 logger = logging.getLogger(__name__)
 
-def connect_to_redis():
+def connect_to_redis() -> Union[redis.StrictRedis, None]:
     env = environ.Env()
     try:
         red_host="localhost" if not "REDIS_HOST" in env else env.str("REDIS_HOST")
