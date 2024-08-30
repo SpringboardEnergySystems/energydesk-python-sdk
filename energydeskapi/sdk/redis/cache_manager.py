@@ -64,23 +64,6 @@ def get_cache_value(cache_name: str, cache_key: str):
         return None
 
 
-def get_cache_json_value(cache_name: str, cache_key: str) -> Optional[dict]:
-    r=get_cache()
-    if r is not None:
-        v=r.json().get(cache_name, cache_key)
-        return v
-    else:
-        return None
-
-
-def set_cache_json_value(cache_name: str, cache_key: str, cache_value: dict, expiration_time: Optional[timedelta]=None):
-    r=get_cache()
-    if r is not None:
-        r.json().set(cache_name, cache_key, cache_value)
-        if expiration_time is not None:
-            r.expire(cache_name, expiration_time)
-
-
 def remove_cache_value(cache_name: str, cache_key: str):
     r=get_cache()
     if r is not None:
@@ -141,13 +124,14 @@ def loadfrom_datecache(cache_name: str, date_resolution="%Y/W%V"):
         logger.error("Exception loading from REDIS " + str(execstr))
         return None
 
-def saveto_datecache(cache_name: str,  v: any, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None):
+def saveto_datecache(cache_name: str,  value: any, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None):
     datekey = current_date_localtime_dt().strftime(date_resolution)
     if is_redis_disabled():
-        set_memcache_value(cache_name, datekey, v)
+        set_memcache_value(cache_name, datekey, value)
         return True
     try:
-        set_cache_value(cache_name, datekey, v, expiration_time)
+        compressed_data = pickle.dumps(value, protocol=4)
+        set_cache_value(cache_name, datekey, compressed_data, expiration_time)
         return True
     except:
         execstr = traceback.format_exc()
