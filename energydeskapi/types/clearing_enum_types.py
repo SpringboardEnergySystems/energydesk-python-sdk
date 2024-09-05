@@ -113,3 +113,15 @@ class ReconciliationStatusEnum(Enum):
             1: 'SUCCESS',
             2: 'ERROR',
         }.get(x.value, '')
+
+
+class ClearingReportQueryType(Enum):
+    CLEARINGDATE = 1
+    CLEARINGPERIOD = 2
+
+    @staticmethod
+    def clearing_report_query_code(x):
+        return {
+            1: 'CLEARINGDATE',
+            2: 'CLEARINGPERIOD',
+        }.get(x.value, '')
