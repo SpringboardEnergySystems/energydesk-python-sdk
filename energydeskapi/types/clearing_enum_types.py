@@ -1,5 +1,53 @@
 from enum import Enum
 
+class ClearingHouse(Enum):
+    NASDAQ = 1
+    ABNAMRO = 2
+    SEB = 3
+
+
+    @staticmethod
+    def clearing_house_code(x):
+        return {
+            1: 'NASDAQOMX',
+            2: 'ABNAMRO',
+            3: 'SEB'
+        }.get(x.value, '')
+
+    @staticmethod
+    def clearing_house_description(x):
+        return {
+            1: 'Nasdaq OMX',
+            2: 'ABN AMRO',
+            3: 'SEB'
+        }.get(x.value, '')
+
+    @staticmethod
+    def clearing_house_type_from_code(x):
+        return {
+            'NASDAQOMX': ClearingHouse.NASDAQ,
+            'ABNAMRO': ClearingHouse.ABNAMRO,
+            'SEB': ClearingHouse.SEB,
+        }.get(x, 0)
+
+    @staticmethod
+    def clearing_house_type_from_name(x):
+        return {
+            'Nasdaq OMX': ClearingHouse.NASDAQ,
+            'ABN AMRO': ClearingHouse.ABNAMRO,
+            'SEB': ClearingHouse.SEB,
+        }.get(x, 0)
+
+class ClearingReportFormat(Enum):
+    ORIGINAL = 1
+    INTERNAL = 2
+
+    @staticmethod
+    def clearing_repformat_code(x):
+        return {
+            1: 'ORIGINAL',
+            2: 'INTERNAL'
+        }.get(x.value, '')
 
 class ClearingReportTypeEnum(Enum):
     TRANSACTIONS = 1
