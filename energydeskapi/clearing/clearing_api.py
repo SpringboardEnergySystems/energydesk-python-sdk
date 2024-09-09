@@ -9,6 +9,23 @@ class ClearingApi:
 
     """
 
+
+    @staticmethod
+    def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
+
+        logger.info("Querying clearing report types")
+        crtype_pk = clearing_report_type if isinstance(clearing_report_type, int) else clearing_report_type.value
+        payload = {"clearing_house": clearing_house,
+                   "clearing_report_type": crtype_pk,
+                   "clearing_report_format": clearing_report_format,
+                   "clearing_date": clearing_report_date,
+                   "content": report_data}
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reports', payload)
+        print(json_res)
+
+        return True
+
+
     @staticmethod
     def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, from_date, to_date):
         """Queries clearing data between a set time
