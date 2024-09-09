@@ -191,7 +191,7 @@ class ClearingApi:
         return api_connection.get_base_url() + '/api/clearing/reporttypes/' + str(key) + "/"
     @staticmethod
     def get_clearing_report_format_url(api_connection, key):
-        return api_connection.get_base_url() + '/api/clearing/reportformat/' + str(key) + "/"
+        return api_connection.get_base_url() + '/api/clearing/reportformats/' + str(key) + "/"
     @staticmethod
     def get_clearing_report_house_url(api_connection, key):
         return api_connection.get_base_url() + '/api/clearing/reporthouse/' + str(key) + "/"
