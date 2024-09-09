@@ -14,9 +14,9 @@ class ClearingApi:
     def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
 
         logger.info("Querying clearing report types")
-        crtype_pk = clearing_report_type if isinstance(clearing_report_type, int) else clearing_report_type.value
+
         payload = {"clearing_house": clearing_house,
-                   "clearing_report_type": crtype_pk,
+                   "clearing_report_type": clearing_report_type,
                    "clearing_report_format": clearing_report_format,
                    "clearing_date": clearing_report_date,
                    "content": report_data}
