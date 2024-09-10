@@ -56,6 +56,11 @@ def check_schedule(api_conn):
     print(outdata)
 
 
+def find_flexibility_potential(api_conn):
+    payload={}
+    payload['flexible_assets']=[]
+    payload['flexible_assets'].append({'address':'Tiriltunga, Oslo','kw':200 })
+    FlexibilityApi.find_flexibility_potential(api_conn, payload)
 def load_registered_data(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)
     print(data)
@@ -77,4 +82,4 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     #register_flex_availability(api_conn)
-    load_capacity_coverage(api_conn)
+    find_flexibility_potential(api_conn)

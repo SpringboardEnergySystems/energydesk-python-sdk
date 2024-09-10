@@ -157,6 +157,12 @@ class FlexibilityApi:
 
 
     @staticmethod
+    def find_flexibility_potential(api_connection, payload):
+        logger.info("Lookup flexibility potential")
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/assetpotential/', payload)
+        return success, returned_data, status_code, error_msg
+    @staticmethod
     def upsert_scheduled_regulation(api_connection, scheduled_regulation):
         logger.debug("Upserting scheduled_regulation")
         payload = scheduled_regulation.get_dict(api_connection)
