@@ -21,11 +21,14 @@ def get_prices(api_conn):
     json_data=DerivativesApi.get_prices_flatlist(api_conn, param)
 
     print(json.dumps(json_data, indent=2))
+def get_products(api_conn):
+    param={}
+    json_data=ProductsApi.get_market_products_objects(api_conn, param)
 
 
 if __name__ == '__main__':
     logging.info("Loading environment")
-    pd.set_option('display.max_rows', None)
+    #pd.set_option('display.max_rows', None)
     #dotenv_path = join(dirname(__file__), '.env')
     api_conn=init_api()
-    get_prices(api_conn)
+    get_products(api_conn)

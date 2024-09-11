@@ -9,6 +9,24 @@ class ClearingApi:
 
     """
 
+
+    @staticmethod
+    def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
+
+        logger.info("Querying clearing report types")
+
+        payload = {"clearing_house": clearing_house,
+                   "clearing_report_type": clearing_report_type,
+                   "clearing_report_format": clearing_report_format,
+                   "clearing_date": clearing_report_date,
+                   "content": report_data}
+        print(payload)
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reports', payload)
+        print(json_res)
+
+        return True
+
+
     @staticmethod
     def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, from_date, to_date):
         """Queries clearing data between a set time
@@ -168,3 +186,12 @@ class ClearingApi:
             return None
         #df = pd.DataFrame(data=json_res)
         return json_res
+    @staticmethod
+    def get_clearing_report_type_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/reporttypes/' + str(key) + "/"
+    @staticmethod
+    def get_clearing_report_format_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/reportformats/' + str(key) + "/"
+    @staticmethod
+    def get_clearing_report_house_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/reporthouse/' + str(key) + "/"

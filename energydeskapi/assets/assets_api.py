@@ -158,7 +158,7 @@ class AssetsApi:
         :param asset_type_enum: type of asset
         :type asset_type_enum: str, required
         """
-        atype_pk = asset_type_enum if isinstance(asset_type_enum, int) else asset_type_enum.value
+        atype_pk = asset_type_enum# No longer an enum if isinstance(asset_type_enum, int) else asset_type_enum.value
         return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod

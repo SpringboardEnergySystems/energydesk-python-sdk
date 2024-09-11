@@ -5,9 +5,17 @@ import environ
 import jsonfield
 import json
 import re
+import os
 from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
+
+def get_environment_value(parameter, default):
+    env = environ.Env()
+    outvalue = default
+    if parameter in os.environ:
+        outvalue = env(parameter)
+    return outvalue
 
 def check_fix_date2str(dt):
     if dt is None:

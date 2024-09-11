@@ -4,6 +4,8 @@ from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.product_utils import convert_productjson_dataframe
 from energydeskapi.types.market_enum_types import MarketEnum
+
+from marketfeed.market_product import MarketProduct
 logger = logging.getLogger(__name__)
 
 class Singleton(object):
@@ -120,6 +122,15 @@ class ProductsApi:
         return json_res
 
     @staticmethod
+    def get_market_products_objects(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
+        if json_res is None:
+            return None
+        for res in json_res['results']:
+            pass
+        return None
+
+    @staticmethod
     def get_product_prices(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/productprices/', parameters)
         if json_res is None:
@@ -176,7 +187,6 @@ class ProductsApi:
             if key==0:
                 return False
             payload['commodity_definition']=ProductsApi.get_commodity_definitioon_url(api_connection, key)
-            print("REG PROD ", payload)
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
             if json_res is None:
                 return False
