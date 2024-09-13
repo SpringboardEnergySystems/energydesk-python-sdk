@@ -1,6 +1,8 @@
 
 import json
 import logging
+from typing import Optional
+
 # Confluent Kafka is more tricky to install on Windows; hence using Apache version
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
@@ -37,7 +39,7 @@ class KafkaClient(EventClient):
             logger.error("Error refreshing connection " + str(e))
             return False
 
-    def publish(self,topic, msg, headers=[]):
+    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None):
 
         result = self.producer.send(topic, value=msg, headers=headers)
         return result

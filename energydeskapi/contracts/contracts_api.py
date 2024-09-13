@@ -84,6 +84,7 @@ class Contract:
         self.contract_status=contract_status
         self.buy_or_sell=buy_or_sell
         self.counterpart=counterpart
+        self.broker = None
         self.contract_owner = None
         self.market=market
         self.trader=trader
@@ -166,7 +167,7 @@ class Contract:
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
-        c.asset_link=None if 'asset_link' not in d else d['asset_link']
+        c.asset_link = None if 'asset_link' not in d else d['asset_link']
         c.trader = d['trader']
         c.marketplace_product = d['marketplace_product']
         for t in d['contract_tags']:
@@ -174,6 +175,7 @@ class Contract:
 
         c.contract_sub_type=c.contract_type if not 'contract_sub_type' in d else d['contract_sub_type']
         c.contract_status_comment=""  if not 'contract_status_comment' in d else d['contract_status_comment']
+        c.broker = d['broker'] if 'broker' in d else None
         return c
 
     def get_simple_dict(self):
@@ -217,6 +219,7 @@ class Contract:
 
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.counterpart is not None: dict['counterpart'] = self.counterpart
+        if self.broker is not None: dict['broker'] = self.broker
         if self.contract_owner is not None: dict['contract_owner'] = self.contract_owner
         if self.trader is not None: dict['trader'] = self.trader
         if self.marketplace_product is not None: dict[
@@ -297,6 +300,7 @@ class Contract:
         if self.buy_or_sell is not None: dict['buy_or_sell'] = self.buy_or_sell
         if self.contract_owner is not None: dict['contract_owner'] = CustomersApi.get_company_url(api_conn, self.contract_owner)
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
+        if self.broker is not None: dict['broker'] = CustomersApi.get_company_url(api_conn, self.broker)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.marketplace_product==0:
             self.marketplace_product=ProductHelper().resolve_ticker(api_conn, self.product_code)
@@ -383,7 +387,7 @@ class ContractsApi:
 
     @staticmethod
     def upsert_contract(api_connection,
-                          contract):
+                          contract: Contract):
         """Registers contracts
 
         :param api_connection: class with API token for use with API
@@ -465,7 +469,7 @@ class ContractsApi:
 
     @staticmethod
     def bulk_insert_contracts(api_connection,
-                          contract_list):
+                          contract_list: list[Contract]):
         """Registers multiple contracts in a list. REST API does not return contracts, reducing bandwidth
 
         :param api_connection: class with API token for use with API
