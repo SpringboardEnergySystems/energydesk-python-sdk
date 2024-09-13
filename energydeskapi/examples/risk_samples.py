@@ -28,7 +28,7 @@ def calc_covariance_matrix(api_conn):
     print(df_covar)
 
 def rolling_products(api_conn):
-    res=RiskApi.get_rolling_products(api_conn,price_days=200)
+    res=RiskApi.get_rolling_products(api_conn,price_days=40)
     df_prices=pd.DataFrame(res['rolling_products'])
     print(df_prices)
 
