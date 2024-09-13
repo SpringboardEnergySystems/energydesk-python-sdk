@@ -60,6 +60,8 @@ def find_flexibility_potential(api_conn):
     payload={}
     payload['flexible_assets']=[]
     payload['flexible_assets'].append({'address':'Tiriltunga, Oslo','kw':200 })
+    payload['flexible_assets'].append({'address': 'Holmlia Senter vei 16, Oslo', 'kw': 200})
+    payload['flexible_assets'].append({'address': 'Nedre Prinsdals vei 79, 1263 Oslo', 'kw': 100})
     FlexibilityApi.find_flexibility_potential(api_conn, payload)
 def load_registered_data(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)

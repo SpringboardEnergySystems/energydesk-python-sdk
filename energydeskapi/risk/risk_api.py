@@ -141,5 +141,4 @@ class RiskApi:
         logger.info("Loads rolling products")
         param={'price_days':price_days}
         json_res = api_connection.exec_get_url('/api/riskmanager/rollingproducts/',param)
-        #print(error_msg)
         return json_res

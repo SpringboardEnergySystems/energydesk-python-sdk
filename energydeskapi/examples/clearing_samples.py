@@ -50,8 +50,8 @@ def fetch_clearing_report_types(api_conn):
     df=ClearingApi.get_clearing_report_types(api_conn)
     print(df)
 
-def reconcile_trades(api_conn, date):  #Performs reconciliation
-    date = "2023-03-01"
+def reconcile_trades(api_conn):  #Performs reconciliation
+    date = "2024-09-10"
     result = ClearingApi.perform_reconciliation(api_conn, date)
     print(result)
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-    fetch_riskarray_info(api_conn)
+    reconcile_trades(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
     #fetch_reconciled_trades(api_conn)
