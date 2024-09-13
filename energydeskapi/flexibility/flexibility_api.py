@@ -167,6 +167,7 @@ class FlexibilityApi:
     def load_grid_node_polygons(api_connection, grid_nodes:list):
         logger.info("Lookup flexibility potential")
         parameters = {'grid_nodes':grid_nodes}
+        print(parameters)
         json_res = api_connection.exec_get_url('/api/flexiblepower/gridnodepolygons/', parameters)
         if json_res is None:
             return None

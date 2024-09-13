@@ -6,6 +6,7 @@ from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMa
 from energydeskapi.grid.grid_api import GridApi
 import pendulum
 import json
+import pandas as pd
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -56,13 +57,20 @@ def check_schedule(api_conn):
     print(outdata)
 
 
+def load_gridnode_polygons(api_conn, df):
+    gridnodes = list(df['gnode_id'].unique())
+    print(gridnodes)
+    res=FlexibilityApi.load_grid_node_polygons(api_conn, gridnodes)
+    print(res)
 def find_flexibility_potential(api_conn):
     payload={}
     payload['flexible_assets']=[]
     payload['flexible_assets'].append({'address':'Tiriltunga, Oslo','kw':200 })
     payload['flexible_assets'].append({'address': 'Holmlia Senter vei 16, Oslo', 'kw': 200})
     payload['flexible_assets'].append({'address': 'Nedre Prinsdals vei 79, 1263 Oslo', 'kw': 100})
-    FlexibilityApi.find_flexibility_potential(api_conn, payload)
+    success, returned_data, status_code, error_msg = FlexibilityApi.find_flexibility_potential(api_conn, payload)
+    df = pd.DataFrame(returned_data)
+    return df
 def load_registered_data(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)
     print(data)
@@ -84,4 +92,5 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     #register_flex_availability(api_conn)
-    find_flexibility_potential(api_conn)
+    df=find_flexibility_potential(api_conn)
+    load_gridnode_polygons(api_conn, df)
