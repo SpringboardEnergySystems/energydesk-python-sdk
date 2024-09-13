@@ -161,6 +161,8 @@ class Contract:
 
         c.contract_price = gen_money_from_json(d['contract_price'])
         c.quantity = d['quantity']
+        c.quantity_type = QuantityTypeEnum.EFFECT.value if not 'quantity_type' in d else d['quantity_type']
+        c.quantity_unit = QuantityUnitEnum.MW.value if not 'quantity_unit' in d else d['quantity_unit']
         c.contract_type=ContractTypeEnum.NASDAQ.value if not 'contract_type' in d else d['contract_type']
         c.trading_fee = gen_money_from_json(d['trading_fee'])
         c.clearing_fee = gen_money_from_json(d['clearing_fee'])
@@ -212,6 +214,8 @@ class Contract:
         if self.trade_datetime is not None: dict['trade_time'] = self.trade_datetime
         if self.contract_price is not None: dict['contract_price'] = gen_json_money(self.contract_price)
         if self.quantity is not None: dict['quantity'] = self.quantity
+        if self.quantity_type is not None: dict['quantity_type'] = self.quantity_type.value
+        if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit.value
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         if self.contract_type is not None: dict['contract_type'] = self.contract_type.value
