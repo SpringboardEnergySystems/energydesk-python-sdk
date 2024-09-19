@@ -337,8 +337,7 @@ class FlexibilityApi:
             df['date'] = df['date'].dt.strftime('%Y-%m-%d')
             df = df.rename(columns={"consumption": "value"})
             df=df[['timestamp', 'date', 'value']]
-            print(df)
-            return df.to_json(orient='records')
+            return json.loads(df.to_json(orient='records'))
 
         payload = {
             'asset': AssetsApi.get_asset_url(api_connection, asset_pk),
