@@ -164,6 +164,15 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def load_lonflex_agreements(api_connection):  # NODES contracts
+        logger.info("Lookup flexibility potential")
+        parameters = {}
+        json_res = api_connection.exec_get_url('/api/flexiblepower/longflexagreements/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def load_grid_node_polygons(api_connection, grid_nodes:list):
         logger.info("Lookup flexibility potential")
         parameters = {'grid_nodes':grid_nodes}
