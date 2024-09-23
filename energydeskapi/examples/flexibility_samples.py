@@ -2,6 +2,7 @@ import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
 from energydeskapi.grid.grid_api import GridApi
 import pendulum
@@ -71,6 +72,19 @@ def find_flexibility_potential(api_conn):
     success, returned_data, status_code, error_msg = FlexibilityApi.find_flexibility_potential(api_conn, payload)
     df = pd.DataFrame(returned_data)
     return df
+def load_lonflex_agreements(api_conn):
+    returned_data = FlexibilityApi.load_lonflex_agreements(api_conn)
+    df = pd.DataFrame(returned_data)
+    def conv_datetime(row):
+        t=row['period_to']
+        t=pendulum.parse(t)
+        return conv_from_pendulum(t)
+    df['period_to'] = df.apply(conv_datetime, axis=1)
+    df=df.loc[df['period_to']>conv_from_pendulum(pendulum.today())]
+    df['total_availability_payment']=df['flexhours']*df['availability_price']
+    df=df.sort_values(by=['total_availability_payment', 'activation_price'],ascending=False)
+    print(df)
+
 def load_registered_data(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)
     print(data)
@@ -92,5 +106,5 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     #register_flex_availability(api_conn)
-    df=find_flexibility_potential(api_conn)
-    load_gridnode_polygons(api_conn, df)
+    #df=find_flexibility_potential(api_conn)
+    load_lonflex_agreements(api_conn)

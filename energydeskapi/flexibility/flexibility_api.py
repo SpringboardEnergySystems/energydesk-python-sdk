@@ -164,6 +164,15 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def load_lonflex_agreements(api_connection):  # NODES contracts
+        logger.info("Lookup flexibility potential")
+        parameters = {}
+        json_res = api_connection.exec_get_url('/api/flexiblepower/longflexagreements/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def load_grid_node_polygons(api_connection, grid_nodes:list):
         logger.info("Lookup flexibility potential")
         parameters = {'grid_nodes':grid_nodes}
@@ -337,8 +346,7 @@ class FlexibilityApi:
             df['date'] = df['date'].dt.strftime('%Y-%m-%d')
             df = df.rename(columns={"consumption": "value"})
             df=df[['timestamp', 'date', 'value']]
-            print(df)
-            return df.to_json(orient='records')
+            return json.loads(df.to_json(orient='records'))
 
         payload = {
             'asset': AssetsApi.get_asset_url(api_connection, asset_pk),
@@ -348,6 +356,7 @@ class FlexibilityApi:
             'data': convert_series(df_readings),
             'last_updated': str(pendulum.now('Europe/Oslo')),
         }
+        print(json.dumps(payload, indent=2))
         success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
         if success is False:
             return None
