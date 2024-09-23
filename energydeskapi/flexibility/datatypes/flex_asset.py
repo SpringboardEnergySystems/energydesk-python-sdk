@@ -3,7 +3,7 @@ import json
 from enum import Enum
 from json import JSONEncoder
 from dataclasses import dataclass, asdict
-from marketfeed.json_encoder import DateTimeEncoder, date_hook
+from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder, date_hook
 
 @dataclass(frozen=True)
 class FlexAsset:
