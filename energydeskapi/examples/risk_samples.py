@@ -27,11 +27,27 @@ def calc_covariance_matrix(api_conn):
     df_covar=RiskApi.calc_covariance_matrix_df(api_conn,days_back=40)
     print(df_covar)
 
-def rolling_products(api_conn):
+def rolling_products2(api_conn):
     res=RiskApi.get_rolling_products(api_conn,price_days=40)
     df_prices=pd.DataFrame(res['rolling_products'])
     print(df_prices)
 
+import requests
+def rolling_products():
+    base_url = "https://hafslund-test.energydesk.no/appserver/staging"
+    token=""
+    headers = {'Authorization': 'Token ' + token}
+    full_url = base_url + "/api/riskmanager/rollingproducts/"
+    payload={
+        "price_days":40
+    }
+    response = requests.get(full_url, params=payload, headers=headers)
+    print(response.status_code)
+    if response.status_code ==200:
+        df_prices = pd.DataFrame(response.json()['rolling_products'])
+        print(df_prices)
+    else:
+        print("Error code ", response.status_code)
 
 def test_update_riskparams(api_conn):
     res=RiskApi.get_risk_parameters(api_conn)
@@ -44,6 +60,6 @@ def test_update_riskparams(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    rolling_products(api_conn)
+    rolling_products()
     #calc_covariance_var(api_conn)
 
