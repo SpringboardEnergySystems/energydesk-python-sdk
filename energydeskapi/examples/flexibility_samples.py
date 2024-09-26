@@ -2,6 +2,7 @@ import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
 from energydeskapi.grid.grid_api import GridApi
@@ -102,9 +103,14 @@ def load_registered_data(api_conn):
 def load_capacity_coverage(api_conn):
     data=GridApi.get_capacity_coverage(api_conn)
     print(len(data))
+
+def load_reserves_prices(api_conn):
+    data=FlexibilityApi.get_reserves_prices(api_conn, {'resolution': PeriodResolutionEnum.MONTHLY.value})
+    df=pd.DataFrame(data)
+    print(df)
 if __name__ == '__main__':
 
     api_conn=init_api()
     #register_flex_availability(api_conn)
     #df=find_flexibility_potential(api_conn)
-    load_lonflex_agreements(api_conn)
+    load_reserves_prices(api_conn)
