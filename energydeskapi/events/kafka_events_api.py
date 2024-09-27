@@ -33,7 +33,7 @@ class KafkaClient(EventClient):
 
             self.producer = KafkaProducer(bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                           value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-                                          api_version=(2, 5, 0))
+                                          api_version=(3, 6, 0))
             return True
         except Exception as e:
             logger.error("Error refreshing connection " + str(e))
@@ -51,11 +51,11 @@ class KafkaClient(EventClient):
             if poll_interval>1800000:
                 self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
                                   bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
-                                   api_version=(2, 5, 0))
+                                   api_version=(3, 6, 0))
             else:
                 self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
                                   bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
-                                   api_version=(2, 5, 0))
+                                   api_version=(3, 6, 0))
             logger.info("Subscribing Kafka to topics " + str(topics))
             self.consumer.subscribe(topics)
             return True
