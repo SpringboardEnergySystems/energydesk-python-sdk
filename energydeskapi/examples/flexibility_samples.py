@@ -47,7 +47,7 @@ def register_flex_availability(api_conn):
     t2="2024-03-01 00:00:00+02:00"
     crontab="0 11-13 * * 1-5"   # 11 12 and 13 monday-friday
 
-    outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id="123asset",
+    outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id="minebesteår",
                                                period_from=t1, period_until=t2,
                                                crontab=crontab, kw_available=200)
     print(outdata)
@@ -55,7 +55,7 @@ def register_flex_availability(api_conn):
 def check_schedule(api_conn):
     t1="2024-02-01"
     t2="2024-02-03"
-    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="123asset",
+    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="minebesteår",
                                                      period_from=t1,period_until=t2)
     print(outdata)
 
@@ -112,6 +112,7 @@ def load_reserves_prices(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    register_flexible_asset(api_conn)
+    #register_flexible_asset(api_conn)
+    register_flex_availability(api_conn)
     #df=find_flexibility_potential(api_conn)
     #load_reserves_prices(api_conn)

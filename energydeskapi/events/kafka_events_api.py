@@ -50,11 +50,11 @@ class KafkaClient(EventClient):
             logger.info("Refreshing subscriber with max poll interval " + str(poll_interval))
             if poll_interval>1800000:
                 self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
-                                  bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
+                                  max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=(3, 6, 0))
             else:
                 self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
-                                  bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
+                                  max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=(3, 6, 0))
             logger.info("Subscribing Kafka to topics " + str(topics))
             self.consumer.subscribe(topics)
