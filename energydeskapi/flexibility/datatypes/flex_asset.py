@@ -12,8 +12,8 @@ class FlexAsset:
     description: str
     asset_category: str
     asset_type: str
-    mpid: str
-    sub_mpid: str
+    meter_id: str
+    sub_meter_id: str
     availability: dict
 
     def __str__(self):
