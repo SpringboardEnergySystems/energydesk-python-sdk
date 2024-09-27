@@ -3,6 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
+from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums, ReservesTypeEnums, ReservesCategoryEnum
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
 from energydeskapi.grid.grid_api import GridApi
@@ -19,8 +20,8 @@ logging.basicConfig(level=logging.INFO,
 
 
 def register_flexible_asset(api_conn):
-    outdata=FlexibilityApi.register_flexible_asset(api_conn, extern_asset_id="123asset",
-                                                   description="Fryselager",
+    outdata=FlexibilityApi.register_flexible_asset(api_conn, extern_asset_id="minebesteår",
+                                                   description="minebesteår",
                                                    meter_id="7055122312321",
                                                    sub_meter_id="1231",
                                                    address="Ikke gyldig 12",
@@ -105,12 +106,12 @@ def load_capacity_coverage(api_conn):
     print(len(data))
 
 def load_reserves_prices(api_conn):
-    data=FlexibilityApi.get_reserves_prices(api_conn, {'resolution': PeriodResolutionEnum.MONTHLY.value})
+    data=FlexibilityApi.get_reserves_prices(api_conn, {'regulating_direction__code': RegulatingDirectionEnums.UP.name,'reserves_type__code':ReservesTypeEnums.mFRR.name})
     df=pd.DataFrame(data)
     print(df)
 if __name__ == '__main__':
 
     api_conn=init_api()
-    #register_flex_availability(api_conn)
+    register_flexible_asset(api_conn)
     #df=find_flexibility_potential(api_conn)
-    load_reserves_prices(api_conn)
+    #load_reserves_prices(api_conn)

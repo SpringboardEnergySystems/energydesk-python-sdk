@@ -35,7 +35,7 @@ def rolling_products2(api_conn):
 import requests
 def rolling_products():
     base_url = "https://hafslund-test.energydesk.no/appserver/staging"
-    token=""
+    token="53ee077e6eafc01fa145ff938e681d6d1ced42f4"
     headers = {'Authorization': 'Token ' + token}
     full_url = base_url + "/api/riskmanager/rollingproducts/"
     payload={

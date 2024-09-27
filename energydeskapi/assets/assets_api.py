@@ -352,7 +352,6 @@ class AssetsApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        parameters['page_size']=200
         json_res = api_connection.exec_get_url('/api/assets/assets/embedded', parameters)
         if json_res is None:
             return None
