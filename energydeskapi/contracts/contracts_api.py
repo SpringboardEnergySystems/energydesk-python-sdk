@@ -865,3 +865,14 @@ class ContractsApi:
         logger.info("Fetching full bilat contract")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
+
+    def generate_second_leg_contract(api_connection, contract_pk):
+        """Generate a second leg contract for internal trades
+        
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_pk: personal key to a contract
+        :type contract_pk: str, required
+        """
+        logger.info("Generating second leg contract")
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/contract-secondleg/' + str(contract_pk) + "/")
