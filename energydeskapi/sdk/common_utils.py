@@ -2,7 +2,6 @@ import logging
 from os.path import join, dirname
 from dotenv import load_dotenv
 import environ
-import jsonfield
 import json
 import re
 import os
@@ -80,6 +79,7 @@ def key_from_url(url):
         return 0
 
 def safe_prepare_json(json_input):  #If type is json string load as json
+    import jsonfield
     if type(json_input)==str or type(json_input)==jsonfield.json.JSONString:
         json_input=json.loads(json_input)
     return json_input
