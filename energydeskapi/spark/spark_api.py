@@ -3,7 +3,6 @@ import logging
 from os.path import join, dirname
 from dotenv import load_dotenv
 import environ
-import jsonfield
 import json
 import re
 logger = logging.getLogger(__name__)
