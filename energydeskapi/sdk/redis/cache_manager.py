@@ -7,7 +7,6 @@ from typing import Optional
 import environ
 import pendulum
 import redis
-from django.conf import settings
 
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.sdk.redis.memory_cache import MemCache
