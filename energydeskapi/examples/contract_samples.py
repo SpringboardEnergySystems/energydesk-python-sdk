@@ -214,6 +214,11 @@ def currcontr(api_conn):
                                         {"page_size": 100, "commodity__commodity_type": CommodityTypeEnum.CURRENCY.value})
     df=pd.DataFrame(json.loads(res['results']))
     print(df)
+
+def load_contract(api_conn, contract_key=31837):
+    res = ContractsApi.get_contract(api_conn,
+                                                  contract_pk=contract_key)
+    print(res)
 def get_fixedprice_contracts(api_conn):
     records=ContractsApi.list_contracts_compact(api_conn, {"trading_book":29, "page_size":100})
     print(records)
@@ -224,7 +229,7 @@ if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
     #load_contracts_csv(api_conn)
-    load_contracts_emir(api_conn)
+    load_contract(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)
