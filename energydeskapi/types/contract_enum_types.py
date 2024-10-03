@@ -45,6 +45,7 @@ class ContractTypeEnum(Enum):
     PROFILE = 5
     CAPACITY = 6
     FX = 7
+    PPA = 8
 
 
 
@@ -91,7 +92,8 @@ def contract_type_description(x):
         ContractTypeEnum.GOO: "Guarantee of Origin",
         ContractTypeEnum.PROFILE: "Industrial Contract",
         ContractTypeEnum.CAPACITY: "Capacity Contract",
-        ContractTypeEnum.FX: "Currency Contract"
+        ContractTypeEnum.FX: "Currency Contract",
+        ContractTypeEnum.PPA: "Power Purchase Agreement"
     }[x]
 
 
