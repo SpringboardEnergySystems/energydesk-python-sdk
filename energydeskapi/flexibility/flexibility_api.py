@@ -101,15 +101,18 @@ class FlexibilityApi:
 
     @staticmethod
     def get_reserves_prices(api_connection, parameters={}):
-        """Fetches empty schedule
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        """
         json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_localflexibility_prices(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexmarkets/localflexprices/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
 
     @staticmethod
     def remove_asset_flexibility(api_connection, extern_asset_id):
