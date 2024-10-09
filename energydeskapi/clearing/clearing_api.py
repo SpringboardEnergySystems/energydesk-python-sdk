@@ -49,8 +49,6 @@ class ClearingApi:
                    "from_datetime": from_date,
                    "to_datetime": to_date}
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
-        print(json_res)
-
         return True
 
     @staticmethod
