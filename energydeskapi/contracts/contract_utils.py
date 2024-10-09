@@ -20,7 +20,7 @@ def contract_from_embedded_dictionary(d):
     obj.trade_datetime = d['trade_time']
     obj.commodity_type = d['commodity']['commodity_type']['pk']
     obj.instrument_type = d['commodity']['instrument_type']['pk']
-    obj.contract_status = d['contract_status']
+    obj.contract_status = d['contract_status']['pk']
     obj.buy_or_sell = d['buy_or_sell']
     obj.counterpart = d['counterpart']['pk']
     obj.market = d['commodity']['market']['pk']
