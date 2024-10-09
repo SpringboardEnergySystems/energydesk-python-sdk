@@ -10,6 +10,7 @@ def dynamic_import(name):
 def contract_from_embedded_dictionary(d):
     contract_class = dynamic_import("energydeskapi.contracts.contracts_api.Contract")
     obj=contract_class()
+    obj.pk=d['pk']
     obj.external_contract_id=d['external_contract_id']
     obj.trading_book = d['trading_book']
     obj.contract_price = d['contract_price']
