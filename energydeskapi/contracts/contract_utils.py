@@ -1,5 +1,5 @@
 
-import importlib
+from energydeskapi.contracts.contract_class import Contract
 
 def dynamic_import(name):
     components = name.split('.')
@@ -8,8 +8,7 @@ def dynamic_import(name):
         mod = getattr(mod, comp)
     return mod
 def contract_from_embedded_dictionary(d):
-    contract_class = dynamic_import("energydeskapi.contracts.contracts_api.Contract")
-    obj=contract_class()
+    obj=Contract()
     obj.pk=d['pk']
     obj.external_contract_id=d['external_contract_id']
     obj.trading_book = d['trading_book']['pk']
