@@ -29,7 +29,7 @@ def contract_from_embedded_dictionary(d):
     obj.delivery_type = d['commodity']['delivery_type']
     obj.profile_type = d['commodity']['profile_type']
     obj.profile_category = d['commodity']['profile_category']
-    obj.quentity_type = d['quentity_type']['pk']
+    obj.quantity_type = d['quantity_type']['pk']
     obj.quantity_unit = d['quantity_unit']['pk']
     obj.contract_type = d['contract_type']['pk']
     obj.asset_link = d['commodity']['asset_link']
