@@ -40,12 +40,12 @@ class ClearingApi:
         :type to_date: str, required
         """
         logger.info("Querying clearing report types")
-
+        crhouse_pk = clearing_house if isinstance(clearing_house, int) else clearing_house.value
         crtype_pk = clearing_report_type if isinstance(clearing_report_type, int) else clearing_report_type.value
         crform_pk = clearing_report_format if isinstance(clearing_report_format, int) else clearing_report_format.value
-        payload = {"clearing_house": clearing_house,
+        payload = {"clearing_house": crhouse_pk,
                    "clearing_report_type": crtype_pk,
-                   "clearing_report_format": crtype_pk,
+                   "clearing_report_format": crform_pk,
                    "from_datetime": from_date,
                    "to_datetime": to_date}
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
