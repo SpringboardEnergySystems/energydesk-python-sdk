@@ -12,7 +12,7 @@ def contract_from_embedded_dictionary(d):
     obj=contract_class()
     obj.pk=d['pk']
     obj.external_contract_id=d['external_contract_id']
-    obj.trading_book = d['trading_book']
+    obj.trading_book = d['trading_book']['pk']
     obj.contract_price = d['contract_price']
     obj.contract_qty = d['quantity']
     obj.trading_fee = d['trading_fee']['amount']
