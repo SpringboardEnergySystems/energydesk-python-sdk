@@ -13,17 +13,14 @@ class ClearingApi:
     @staticmethod
     def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
 
-        logger.info("Querying clearing report types")
+        logger.info("Storing clearing report")
 
         payload = {"clearing_house": clearing_house,
                    "clearing_report_type": clearing_report_type,
                    "clearing_report_format": clearing_report_format,
                    "clearing_date": clearing_report_date,
                    "content": report_data}
-        print(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reports', payload)
-        print(json_res)
-
         return True
 
 
