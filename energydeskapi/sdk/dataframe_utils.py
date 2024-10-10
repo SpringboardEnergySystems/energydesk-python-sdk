@@ -2,10 +2,11 @@ import json
 from io import BytesIO
 from typing import Union
 import pytz
+import typing
 import pandas as pd
 from datetime import datetime
 from dateutil import parser
-def text_to_dataframe(value: Union[bytes, None]) -> Optional[pd.DataFrame]:
+def text_to_dataframe(value: Union[bytes, None]) -> typing.Optional[pd.DataFrame]:
     if value is not None:
         io = BytesIO(value)
         dtypes = json.loads(io.readline())
