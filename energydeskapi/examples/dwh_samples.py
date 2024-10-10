@@ -33,10 +33,31 @@ def get_periodview_timeseries(api_conn):
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
     print(df)
+def get_report_types(api_conn):
+    jsondata = DwhApi.get_report_dimension( api_conn, {})
+    #print(json.dumps(jsondata, indent=2))
+    df=pd.DataFrame(jsondata)
+    print(df)
+
+
+def load_specific_reports(api_conn, report_type):
+    param={'report_type':report_type}
+    jsondata = DwhApi.get_periodview_timeseries( api_conn, param)
+    df=pd.DataFrame(jsondata)
+    return df
+def load_reports(api_conn):
+    df_powerexpo=load_specific_reports(api_conn, 'POWER_EXPOSURE')
+    print(df_powerexpo)
+    df_priceexpo = load_specific_reports(api_conn, 'PRICE_EXPOSURE')
+    print(df_priceexpo)
+    df_netfuel = load_specific_reports(api_conn, 'NET_BIOBRENSEL')
+    print(df_netfuel)
+    df_netpowerexpo = load_specific_reports(api_conn, 'NET_POWER_EXPOSURE')
+    print(df_netpowerexpo)
 
 if __name__ == '__main__':
 
     api_conn = init_api()
-    get_contract_timeseries(api_conn)
-    get_periodview_timeseries(api_conn)
+    #get_report_types(api_conn)
+    load_reports(api_conn)
 
