@@ -44,8 +44,6 @@ def __check_return_utc_datetime(v):
             dt=parser.isoparse(v)
     return dt
 def __check_convert_datetime(d, tz=None):
-    if not isinstance(d, datetime):
-        return d
     if d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None:
         d = d.astimezone(tz)
         return d
@@ -61,9 +59,9 @@ def convert_dataframe_to_json(df, active_tz=pytz.timezone("Europe/Oslo")):
         dictionary={}
         for col in df.columns.values:
             cval=row[col]
-            dt=__check_convert_datetime(cval)
+            dt=__check_return_utc_datetime(cval)
             if dt is not None:
-                d=__check_return_utc_datetime(dt, active_tz)
+                d=__check_convert_datetime(dt, active_tz)
                 dictionary[str(col)] = d.strftime("%Y-%m-%d %H:%M:%S")
             else:
                 dictionary[str(col)] = cval
