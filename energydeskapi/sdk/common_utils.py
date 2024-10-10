@@ -96,3 +96,4 @@ def dict_compare(d1, d2, ignore_fields=[]):
     modified = {o : (d1[o], d2[o]) for o in shared_keys if d1[o] != d2[o]}
     same = set(o for o in shared_keys if d1[o] == d2[o])
     return added, removed, modified, same
+
