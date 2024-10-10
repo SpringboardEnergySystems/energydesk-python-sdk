@@ -44,6 +44,8 @@ def __check_return_utc_datetime(v):
             dt=parser.isoparse(v)
     return dt
 def __check_convert_datetime(d, tz=None):
+    if not isinstance(d, datetime):
+        return d
     if d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None:
         d = d.astimezone(tz)
         return d
