@@ -18,7 +18,7 @@ class FlexAsset:
 
     def __str__(self):
         attrs = vars(self)
-        s="ProductPrice("  + (', '.join("%s: %s" % item for item in attrs.items())) + ")"
+        s="FlexAsset("  + (', '.join("%s: %s" % item for item in attrs.items())) + ")"
         return s
 
     @property

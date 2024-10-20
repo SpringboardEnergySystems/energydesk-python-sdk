@@ -1,15 +1,39 @@
-import logging
-from energydeskapi.sdk.common_utils import init_api
-from energydeskapi.energydesk.general_api import GeneralApi
-from energydeskapi.flexibility.dso_api import DsoApi
-from energydeskapi.types.common_enum_types import PeriodResolutionEnum
-from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums, ReservesTypeEnums, ReservesCategoryEnum
-from energydeskapi.sdk.datetime_utils import conv_from_pendulum
-from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
-from energydeskapi.grid.grid_api import GridApi
-import pendulum
 import json
+import logging
+
+import geojson
+import geopandas as gpd
 import pandas as pd
+import pendulum
+import logging
+import json
+from shapely.geometry import shape
+import geopandas as gpd
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.express as px
+
+import pandas as pd     # pip install pandas
+
+import numpy as np
+from matplotlib.pyplot import *
+import matplotlib
+
+import matplotlib      # pip install matplotlib
+matplotlib.use('agg')
+matplotlib.style.use('ggplot')
+import matplotlib.pyplot as plt
+import base64
+from io import BytesIO
+import pendulum
+from energydeskapi.flexibility.flexibility_api import ExternalMarketAsset
+from energydeskapi.flexibility.flexibility_api import FlexibilityApi
+from energydeskapi.grid.grid_api import GridApi
+from energydeskapi.sdk.common_utils import init_api
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
+from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums
+from energydeskapi.types.flexibility_enum_types import ReservesTypeEnums
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -60,11 +84,56 @@ def check_schedule(api_conn):
     print(outdata)
 
 
+def draw_map(node_polygons, valuemap):
+    feat_coll = {'type': 'FeatureCollection', 'features': []}
+    for x in node_polygons['grid_nodes']:
+        x['polygon']['features'][0]['id']=x['grid_node_id']
+        x['polygon']['features'][0]['type'] = "Feature"
+        x['polygon']['features'][0]['properties'] = {'name':x['grid_node_name'],
+                                                     'value': valuemap[x['grid_node_id']],
+                                                     'id':x['grid_node_id']}
+        print(x['polygon']['features'][0]['properties'])
+        feat_coll['features'].extend(x['polygon']['features'])
+    df = gpd.GeoDataFrame.from_features(feat_coll)
+    df=df.fillna(0)
+    df['type']=0
+
+    geojs=df.to_json()
+    #print(feat_coll['features'])
+    bounds=shape(feat_coll['features'][0]['geometry']).bounds
+    print("bounds ", bounds)
+    center = shape(feat_coll['features'][0]['geometry']).centroid
+    centroid = json.loads(geojson.dumps(center))['coordinates']
+    df = gpd.GeoDataFrame.from_features(json.loads(geojs))
+    df['id'] = df.index
+    df = df.dropna(subset=['geometry'])
+    print(df)
+    #zoom, box_center=get_plotting_zoom_level_and_center_coordinates_from_lonlat_tuples(np.array(lons), np.array(lats))
+    zoom= 7
+    colorscale = [ "rgb(33, 74, 12)","rgb(67, 136, 33)", "rgb(94, 179, 39)","rgb(210, 231, 154)","rgb(255, 51, 51)"]
+    fig = px.choropleth_mapbox(df, geojson=df.geometry, color="value",
+                               color_continuous_scale=colorscale, opacity=0.5,
+                               featureidkey='id',
+                               hover_data=["name", "value"],zoom=zoom,
+                               locations="id", center={"lat": centroid[1], "lon": centroid[0]},
+                               mapbox_style="carto-positron")
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(clickmode='event+select')
+    return fig
+
 def load_gridnode_polygons(api_conn, df):
     gridnodes = list(df['gnode_id'].unique())
-    print(gridnodes)
+    valuemap={}
+    for index, row in df.iterrows():
+        if row['gnode_id'] not in valuemap:
+            valuemap[row['gnode_id']]=0
+        valuemap[row['gnode_id']]+=row['total_availability_payment']
     res=FlexibilityApi.load_grid_node_polygons(api_conn, gridnodes)
-    print(res)
+    fig=draw_map(res, valuemap)
+    fig.show()
+    #for r in res['grid_nodes']:
+    #    print(r.keys())
 def find_flexibility_potential(api_conn):
     payload={}
     payload['flexible_assets']=[]
@@ -82,10 +151,11 @@ def load_lonflex_agreements(api_conn):
         t=pendulum.parse(t)
         return conv_from_pendulum(t)
     df['period_to'] = df.apply(conv_datetime, axis=1)
-    df=df.loc[df['period_to']>conv_from_pendulum(pendulum.today())]
+    df=df.loc[df['period_to']>conv_from_pendulum(pendulum.parse('2024-09-30'))]
     df['total_availability_payment']=df['flexhours']*df['availability_price']
     df=df.sort_values(by=['total_availability_payment', 'activation_price'],ascending=False)
-    print(df)
+    load_gridnode_polygons(api_conn, df)
+    #print(df)
 
 def load_registered_data(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)
@@ -108,11 +178,13 @@ def load_capacity_coverage(api_conn):
 def load_reserves_prices(api_conn):
     data=FlexibilityApi.get_reserves_prices(api_conn, {'regulating_direction__code': RegulatingDirectionEnums.UP.name,'reserves_type__code':ReservesTypeEnums.mFRR.name})
     df=pd.DataFrame(data)
+
     print(df)
 if __name__ == '__main__':
-
+    #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    register_flexible_asset(api_conn)
-    register_flex_availability(api_conn)
-    #df=find_flexibility_potential(api_conn)
+    #register_flexible_asset(api_conn)
+    #register_flex_availability(api_conn)
+    df=load_lonflex_agreements(api_conn)
+    print(df)
     #load_reserves_prices(api_conn)
