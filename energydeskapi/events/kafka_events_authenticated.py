@@ -12,7 +12,7 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
-from kafka.producer.future import FutureRecordMetadata
+#from kafka.producer.future import FutureRecordMetadata
 
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 from energydeskapi.events.kafka_utils import decode_message
