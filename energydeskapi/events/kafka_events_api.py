@@ -9,7 +9,7 @@ from kafka import KafkaProducer
 import json
 import logging
 import traceback
-#from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 from energydeskapi.events.kafka_utils import decode_message
