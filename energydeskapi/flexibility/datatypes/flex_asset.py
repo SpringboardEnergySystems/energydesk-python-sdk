@@ -12,6 +12,13 @@ class FlexAsset:
     asset_id: str # GUID
     extern_asset_id: int
     description: str
+    power_supplier :str
+    power_supplier_regnumber:str
+    asset_manager :str
+    asset_manager_regnumber :str
+    asset_owner :str
+    asset_owner_regnumber :str
+
     asset_category: str
     asset_type: str
     meter_id: str
