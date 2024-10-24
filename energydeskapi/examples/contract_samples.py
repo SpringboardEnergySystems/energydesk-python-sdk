@@ -215,10 +215,27 @@ def currcontr(api_conn):
     df=pd.DataFrame(json.loads(res['results']))
     print(df)
 
-def load_contract(api_conn, contract_key=31837):
+def load_contract(api_conn, contract_key=2128):
     res = ContractsApi.get_contract(api_conn,
                                                   contract_pk=contract_key)
     print(res)
+from energydeskapi.sdk.common_utils import key_from_url
+def cancel_contract(api_conn, contract_key=37125):
+    contract = ContractsApi.get_contract(api_conn,contract_pk=contract_key)
+    if contract is None:
+        print("Not founc")
+        return None
+    contract['external_contract_id'] = contract_key
+    contract['contract_status'] = ContractsApi.get_contract_status_url(api_conn, ContractStatusEnum.CANCELLED.value)
+    if contract['commodity']['commodity_profile'] is None:
+        contract['commodity']['commodity_profile'] = {}
+    if contract['contract_status_comment'] is None:
+        contract['contract_status_comment'] = ''
+    if contract['contract_profile'] is None:
+        contract['contract_profile'] = ""
+    success, returned_data, status_code, error_msg = ContractsApi.upsert_contract_from_dict(
+            api_conn, contract)
+    print(status_code)
 def get_fixedprice_contracts(api_conn):
     records=ContractsApi.list_contracts_compact(api_conn, {"trading_book":29, "page_size":100})
     print(records)
@@ -229,7 +246,7 @@ if __name__ == '__main__':
     api_conn=init_api()
     #get_contract_filters(api_conn)
     #load_contracts_csv(api_conn)
-    load_contract(api_conn)
+    cancel_contract(api_conn)
     #get_contract_filters(api_conn)
     #get_contract_filter_pk(api_conn)
     #register_contract_filters(api_conn)

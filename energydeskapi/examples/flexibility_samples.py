@@ -108,6 +108,7 @@ def draw_map(node_polygons, valuemap):
     df['id'] = df.index
     df = df.dropna(subset=['geometry'])
     print(df)
+
     #zoom, box_center=get_plotting_zoom_level_and_center_coordinates_from_lonlat_tuples(np.array(lons), np.array(lats))
     zoom= 7
     colorscale = [ "rgb(33, 74, 12)","rgb(67, 136, 33)", "rgb(94, 179, 39)","rgb(210, 231, 154)","rgb(255, 51, 51)"]
@@ -154,6 +155,22 @@ def load_lonflex_agreements(api_conn):
     df=df.loc[df['period_to']>conv_from_pendulum(pendulum.parse('2024-09-30'))]
     df['total_availability_payment']=df['flexhours']*df['availability_price']
     df=df.sort_values(by=['total_availability_payment', 'activation_price'],ascending=False)
+    print(df.columns)
+
+    def fix_datetime(row):
+        t1=row['period_from']
+        t2 = row['period_to']
+        t1=str(t1)[0:13] + ":00:00"
+        t2 = str(t2)[0:13] + ":00:00"
+        row['period_from']=t1
+        row['period_to'] = t2
+        return row
+
+    df=df.apply(fix_datetime, axis=1)
+    print(df)
+
+    #df = df.drop(columns=['period_from', 'period_until', 'date'])
+    df.to_excel("./longflex_value.xlsx")
     load_gridnode_polygons(api_conn, df)
     #print(df)
 

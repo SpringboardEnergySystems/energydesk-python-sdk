@@ -7,8 +7,10 @@ from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder, da
 
 @dataclass(frozen=True)
 class FlexAsset:
-    pk: int
-    asset_id: str
+    flex_pk: int
+    asset_pk: int
+    asset_id: str # GUID
+    extern_asset_id: int
     description: str
     asset_category: str
     asset_type: str
