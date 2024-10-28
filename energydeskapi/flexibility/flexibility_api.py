@@ -190,12 +190,13 @@ class FlexibilityApi:
     @staticmethod
     def load_grid_node_polygons(api_connection, grid_nodes:list):
         logger.info("Lookup flexibility potential")
-        parameters = {'grid_nodes':grid_nodes}
-        print(parameters)
-        json_res = api_connection.exec_get_url('/api/flexiblepower/gridnodepolygons/', parameters)
-        if json_res is None:
+        payload = {'grid_nodes':grid_nodes}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/flexiblepower/gridnodepolygons/', payload)
+        #json_res = api_connection.exec_get_url('/api/flexiblepower/gridnodepolygons/', parameters)
+        if returned_data is None:
             return None
-        return json_res
+        return returned_data
 
     @staticmethod
     def upsert_scheduled_regulation(api_connection, scheduled_regulation):

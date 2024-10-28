@@ -32,7 +32,7 @@ from energydeskapi.grid.grid_api import GridApi
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums
-from energydeskapi.types.flexibility_enum_types import ReservesTypeEnums
+from energydeskapi.types.flexibility_enum_types import ReservesTypeEnums, ReservesCategoryEnum
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -192,16 +192,44 @@ def load_capacity_coverage(api_conn):
     data=GridApi.get_capacity_coverage(api_conn)
     print(len(data))
 
+
+def plot_price(type_name, df):
+    df['time']=df.index
+    fig = go.Figure()  # generating a figure that will be updated in the following lines
+    fig.add_trace(go.Scatter(x=df.time, y=df.price,
+                                        mode='lines',  # you can also use "lines+markers", or just "markers"
+                                        name='Capacity Price on ' + str(type_name)))
+    fig.layout.template = 'plotly_white'
+    fig.layout.height = 500
+    fig.update_layout(margin=dict(t=50, b=50, l=25, r=25))  # this will help you optimize the chart space
+    fig.update_layout(
+        #     title='Global Portfolio Value (USD $)',
+        xaxis_tickfont_size=12,
+        yaxis=dict(
+            title='Price EUR/MWh',
+            titlefont_size=14,
+            tickfont_size=12,
+        ))
+    return fig
+
 def load_reserves_prices(api_conn):
-    data=FlexibilityApi.get_reserves_prices(api_conn, {'regulating_direction__code': RegulatingDirectionEnums.UP.name,'reserves_type__code':ReservesTypeEnums.mFRR.name})
+    data=FlexibilityApi.get_reserves_prices(api_conn,
+                                            {'regulating_direction__code': RegulatingDirectionEnums.UP.name,
+                                             'reserves_category__code':ReservesCategoryEnum.CAPACITY.name})
     df=pd.DataFrame(data)
 
-    print(df)
+    df['timestamp']=pd.to_datetime(df["timestamp"])
+    df=df.loc[df.timestamp>pendulum.today(tz="UTC").add(days=-5)]
+    df3=df.groupby(["reserves_type",'timestamp']).agg({'area':'max','regulating_direction':'max','reserves_category':'max','price':'sum'})
+    print(df3)
+    for tp, new_df in df3.groupby(level=0):
+        plot_price(tp, new_df.droplevel(0))
+
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #register_flexible_asset(api_conn)
     #register_flex_availability(api_conn)
-    df=load_lonflex_agreements(api_conn)
-    print(df)
+    load_reserves_prices(api_conn)
+
     #load_reserves_prices(api_conn)
