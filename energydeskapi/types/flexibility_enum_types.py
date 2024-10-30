@@ -52,13 +52,13 @@ def regulation_type_description(x):
 
 class ExternalMarketTypeEnums(Enum):
     NODES = 1
-    STATNETT_MFRR = 2
+    STATNETT = 2
 
 
 def external_flexmarkets_description(x):
     return {
-        ExternalMarketTypeEnums.NODES: "NODES local flex market",
-        ExternalMarketTypeEnums.STATNETT_MFRR: "Norwegian TSO mFRR"
+        ExternalMarketTypeEnums.NODES: "NODES local flex markets",
+        ExternalMarketTypeEnums.STATNETT: "Norwegian TSO markets"
     }[x]
 
 class MaxUsageCriteria(Enum):
