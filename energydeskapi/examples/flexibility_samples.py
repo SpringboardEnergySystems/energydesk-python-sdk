@@ -224,12 +224,15 @@ def load_reserves_prices(api_conn):
     print(df3)
     for tp, new_df in df3.groupby(level=0):
         plot_price(tp, new_df.droplevel(0))
-
+def get_flexibility_products(api_conn):
+    data=FlexibilityApi.get_flexibility_products(api_conn)
+    df=pd.DataFrame(data)
+    print(df)
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #register_flexible_asset(api_conn)
     #register_flex_availability(api_conn)
-    load_reserves_prices(api_conn)
+    get_flexibility_products(api_conn)
 
     #load_reserves_prices(api_conn)

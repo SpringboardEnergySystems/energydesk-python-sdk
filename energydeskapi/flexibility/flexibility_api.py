@@ -150,13 +150,36 @@ class FlexibilityApi:
         return flag
 
     @staticmethod
-    def get_flexible_markets(api_connection,  parameters={}):
+    def get_flexibility_markets(api_connection,  parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/flexiblepower/flexiblemarkets/', parameters)
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibilitymarkets/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+    @staticmethod
+    def get_flexibility_products(api_connection,  parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibilityproducts/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_flexible_portfolios(api_connection,  parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/', parameters)
         if json_res is None:
             return None
         return json_res
