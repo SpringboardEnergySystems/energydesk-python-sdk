@@ -39,8 +39,8 @@ def contract_from_embedded_dictionary(dct: dict):
     return obj
 
 
-def contract_cleared_message_from_embedded_dictionary(dct: dict):
-    cls = getattr(import_module('energydeskapi.contracts.contract_messages'), 'ContractClearedMessage')
+def contract_change_message_from_embedded_dictionary(dct: dict):
+    cls = getattr(import_module('energydeskapi.contracts.contract_messages'), 'ContractChangeMessage')
     obj = cls()
     obj.contract = contract_from_embedded_dictionary(dct['contract'])
     obj.replaced_contract = contract_from_embedded_dictionary(dct['replaced_contract']) if 'replaced_contract' in dct else None
