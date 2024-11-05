@@ -171,7 +171,7 @@ class AssetsApi:
         :type asset_type_enum: str, required
         """
 
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_pk)) + "/"
+        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(asset_type_pk) + "/")
         if json_res is None:
             return None
         return json_res
@@ -200,7 +200,7 @@ class AssetsApi:
         :type asset_type_enum: str, required
         """
         atype_pk = asset_category_enum if isinstance(asset_category_enum, int) else asset_category_enum.value
-        json_res = api_connection.exec_get_url('/api/assets/assettypes/' + str(atype_pk)) + "/"
+        json_res = api_connection.exec_get_url('/api/assets/assetcategories/' + str(atype_pk) + "/")
         if json_res is None:
             return None
         return json_res
