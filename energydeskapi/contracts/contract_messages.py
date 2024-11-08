@@ -6,6 +6,7 @@ from energydeskapi.types.contract_enum_types import QuantityTypeEnum
 
 @dataclass(frozen=True)
 class ContractForLiveViewMessage:
+    id: int
     trading_book_id: int
     ticker: str
     quantity: float
