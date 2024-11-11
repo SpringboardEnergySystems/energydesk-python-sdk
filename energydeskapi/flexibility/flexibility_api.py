@@ -385,7 +385,6 @@ class FlexibilityApi:
             df['date'] = df['date'].dt.strftime('%Y-%m-%d')
             df = df.rename(columns={"consumption": "value"})
             df=df[['timestamp', 'date', 'value']]
-            print(df)
             return json.loads(df.to_json(orient='records'))
 
         payload = {
@@ -396,7 +395,6 @@ class FlexibilityApi:
             'data': convert_series(df_readings),
             'last_updated': str(pendulum.now('Europe/Oslo')),
         }
-        return True
         success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
         if success is False:
             logger.warning(error_msg)
