@@ -20,9 +20,9 @@ class CountryPrefEnum(Enum):
 
 
 class PeriodResolutionEnum(Enum):
-    MINUTES = "Minutes"
-    FIVEMIN= "5Minutes"
-    FIFTEENMIN = "15Minutes"
+    MINUTES = "1min"
+    FIVEMIN= "5min"
+    FIFTEENMIN = "15min"
     HOURLY = "Hourly"
     DAILY = "Daily"
     WEEKLY = "Weekly"
@@ -39,7 +39,13 @@ def period_resolution_key(instance):
 PERIOD_CHOICES=[el.value for el in PeriodResolutionEnum]
 
 def period_addition_relativedelta(resolution_enum):
-    if resolution_enum==PeriodResolutionEnum.HOURLY:
+    if resolution_enum==PeriodResolutionEnum.MINUTES:
+        return relativedelta(minutes=1)
+    elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
+        return relativedelta(minutes=5)
+    elif resolution_enum==PeriodResolutionEnum.FIFTEENMIN:
+        return relativedelta(minutes=15)
+    elif resolution_enum==PeriodResolutionEnum.HOURLY:
         return relativedelta(hours=1)
     elif resolution_enum==PeriodResolutionEnum.DAILY:
         return relativedelta(days=1)
@@ -56,7 +62,13 @@ def period_addition_relativedelta(resolution_enum):
     return relativedelta(days=0)  #Default
 
 def resolution_to_pandas_freq(resolution_enum):
-    if resolution_enum==PeriodResolutionEnum.HOURLY:
+    if resolution_enum==PeriodResolutionEnum.MINUTES:
+        return "H"
+    elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
+        return "D"
+    elif resolution_enum==PeriodResolutionEnum.FIFTEENMIN:
+        return "W"
+    elif resolution_enum==PeriodResolutionEnum.HOURLY:
         return "H"
     elif resolution_enum==PeriodResolutionEnum.DAILY:
         return "D"
