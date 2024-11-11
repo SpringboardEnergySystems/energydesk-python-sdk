@@ -385,6 +385,7 @@ class FlexibilityApi:
             df['date'] = df['date'].dt.strftime('%Y-%m-%d')
             df = df.rename(columns={"consumption": "value"})
             df=df[['timestamp', 'date', 'value']]
+            print(df)
             return json.loads(df.to_json(orient='records'))
 
         payload = {
