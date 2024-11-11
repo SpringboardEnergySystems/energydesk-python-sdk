@@ -114,6 +114,15 @@ def apply_calendar_pattern_old(df, months, weekdays, hours = range(24)):
     df['profile']=df.apply(check_pattern, axis=1)
     return df
 
+# Will return 60 for hourly timestamps.
+# When receiving an unknown timeseries we may want to know if we are above or below hourly before resampling
+def detect_pandas_resolution(df):
+    try:
+        minutes=pd.Series(df.index).diff().iloc[-1].components.minutes
+        return minutes
+    except Exception as e:
+        return None
+
 def apply_calendar_pattern(df, months, weekdays, hours=list(range(24))):
     def check_tuples(lst):
         if len(lst)==0:
