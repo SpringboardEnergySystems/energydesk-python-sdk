@@ -20,6 +20,9 @@ class CountryPrefEnum(Enum):
 
 
 class PeriodResolutionEnum(Enum):
+    MINUTES = "Minutes"
+    FIVEMIN= "5Minutes"
+    FIFTEENMIN = "15Minutes"
     HOURLY = "Hourly"
     DAILY = "Daily"
     WEEKLY = "Weekly"
