@@ -63,11 +63,11 @@ def period_addition_relativedelta(resolution_enum):
 
 def resolution_to_pandas_freq(resolution_enum):
     if resolution_enum==PeriodResolutionEnum.MINUTES:
-        return "H"
+        return "1min"
     elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
-        return "D"
+        return "5min"
     elif resolution_enum==PeriodResolutionEnum.FIFTEENMIN:
-        return "W"
+        return "15min"
     elif resolution_enum==PeriodResolutionEnum.HOURLY:
         return "H"
     elif resolution_enum==PeriodResolutionEnum.DAILY:
