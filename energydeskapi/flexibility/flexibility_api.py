@@ -395,10 +395,11 @@ class FlexibilityApi:
             'data': convert_series(df_readings),
             'last_updated': str(pendulum.now('Europe/Oslo')),
         }
-        print(json.dumps(payload, indent=2))
         success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
         if success is False:
+            logger.warning(error_msg)
             return None
+        logger.info("Registered readings OK")
         return json_res
     @staticmethod
     def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,
