@@ -302,6 +302,14 @@ class FlexibilityApi:
             success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/assetsofferedinmarkets/' + str(off['pk']) + "/")
             print(returned_data)
 
+
+    @staticmethod
+    def get_market_offerings(api_connection, parameters={}):
+
+        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, parameters)
+        print(market_offerings)
+        return market_offerings
+
     @staticmethod
     def get_empty_dispatch_schedule(api_connection):
         """Fetches empty schedule
