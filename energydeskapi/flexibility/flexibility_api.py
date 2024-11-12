@@ -292,8 +292,11 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def remove_market_offering(api_connection, external_asset_id):
-        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, {'flexibleasset__asset__extern_asset_id':external_asset_id})
+    def remove_market_offering(api_connection, external_asset_id=None):
+        params={}
+        if external_asset_id is not None:
+            params['flexibleasset__asset__extern_asset_id']=external_asset_id
+        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, params)
         print(market_offerings)
         for off in market_offerings:
             success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/assetsofferedinmarkets/' + str(off['pk']) + "/")
