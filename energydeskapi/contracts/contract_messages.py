@@ -2,7 +2,10 @@ from dataclasses import dataclass
 from typing import Optional
 
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum
-
+@dataclass(frozen=True)
+class PriceWithCurrency:
+    amount: float
+    currency: str
 
 @dataclass(frozen=True)
 class ContractForLiveViewMessage:
@@ -11,7 +14,7 @@ class ContractForLiveViewMessage:
     ticker: str
     quantity: float
     volume: float
-    contract_price: float
+    contract_price: PriceWithCurrency
     quentity_type: str #QuantityTypeEnum
     buy_or_sell: str #"BUY" or "SELL"
 
