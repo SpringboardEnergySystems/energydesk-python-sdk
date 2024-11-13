@@ -23,6 +23,7 @@ class FlexAsset:
     asset_type: str
     meter_id: str
     sub_meter_id: str
+    location: str
     availability: dict
 
     def __str__(self):
