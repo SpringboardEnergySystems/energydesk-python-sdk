@@ -12,6 +12,12 @@ class ContractForLiveViewMessage:
     id: int
     trading_book_id: int
     ticker: str
+    market: str
+    area: str
+    instrument_type: str
+    delivery_from: str
+    delivery_until: str
+    hours: int
     quantity: float
     volume: float
     contract_price: PriceWithCurrency
