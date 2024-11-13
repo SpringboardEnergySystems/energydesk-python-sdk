@@ -17,6 +17,7 @@ class ContractForLiveViewMessage:
     instrument_type: str
     delivery_from: str
     delivery_until: str
+    contract_type: str
     hours: int
     quantity: float
     volume: float
