@@ -35,3 +35,22 @@ class UserRoleEnum(Enum):
     BACKOFFICE = 6
     EXTERNAL_GUEST = 7
     ORIGINATOR = 8
+
+
+class CounterpartTypeEnum(Enum):
+    FEMA = 1
+    INDUSTRIAL = 2
+    FIXED =3
+    GOO = 4
+    NASDAQ = 5
+    EEX = 6
+
+def counterpart_type_description(x):
+    return {
+        CounterpartTypeEnum.FEMA: "Financial Energy Master Agreement",
+        CounterpartTypeEnum.INDUSTRIAL: "Industry Contract",
+        CounterpartTypeEnum.FIXED: "Fixed Price Contract",
+        CounterpartTypeEnum.GOO: "Guarantee Of Origin Contract",
+        CounterpartTypeEnum.NASDAQ: "Nasdaq Contract",
+        CounterpartTypeEnum.EEX: "EEX Contract"
+    }[x]

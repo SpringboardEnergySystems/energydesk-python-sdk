@@ -100,6 +100,21 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
+    def get_reserves_prices(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_localflexibility_prices(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexmarkets/localflexprices/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+
+    @staticmethod
     def remove_asset_flexibility(api_connection, extern_asset_id):
         asset_offering=FlexibilityApi.get_flexible_assets(api_connection, parameters={'asset__extern_asset_id':extern_asset_id})
         print(asset_offering)
@@ -135,13 +150,36 @@ class FlexibilityApi:
         return flag
 
     @staticmethod
-    def get_flexible_markets(api_connection,  parameters={}):
+    def get_flexibility_markets(api_connection,  parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        json_res = api_connection.exec_get_url('/api/flexiblepower/flexiblemarkets/', parameters)
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibilitymarkets/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+    @staticmethod
+    def get_flexibility_products(api_connection,  parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibilityproducts/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_flexible_portfolios(api_connection,  parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/', parameters)
         if json_res is None:
             return None
         return json_res
@@ -162,6 +200,27 @@ class FlexibilityApi:
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/flexiblepower/assetpotential/', payload)
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def load_lonflex_agreements(api_connection):  # NODES contracts
+        logger.info("Lookup flexibility potential")
+        parameters = {}
+        json_res = api_connection.exec_get_url('/api/flexiblepower/longflexagreements/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def load_grid_node_polygons(api_connection, grid_nodes:list):
+        logger.info("Lookup flexibility potential")
+        payload = {'grid_nodes':grid_nodes}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/flexiblepower/gridnodepolygons/', payload)
+        #json_res = api_connection.exec_get_url('/api/flexiblepower/gridnodepolygons/', parameters)
+        if returned_data is None:
+            return None
+        return returned_data
+
     @staticmethod
     def upsert_scheduled_regulation(api_connection, scheduled_regulation):
         logger.debug("Upserting scheduled_regulation")
@@ -233,12 +292,23 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def remove_market_offering(api_connection, external_asset_id):
-        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, {'flexibleasset__asset__extern_asset_id':external_asset_id})
+    def remove_market_offering(api_connection, external_asset_id=None):
+        params={}
+        if external_asset_id is not None:
+            params['flexibleasset__asset__extern_asset_id']=external_asset_id
+        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, params)
         print(market_offerings)
         for off in market_offerings:
             success, returned_data, status_code, error_msg = api_connection.exec_delete_url('/api/flexiblepower/assetsofferedinmarkets/' + str(off['pk']) + "/")
             print(returned_data)
+
+
+    @staticmethod
+    def get_market_offerings(api_connection, parameters={}):
+
+        market_offerings=FlexibilityApi.get_external_market_offers(api_connection, parameters)
+        print(market_offerings)
+        return market_offerings
 
     @staticmethod
     def get_empty_dispatch_schedule(api_connection):
@@ -326,8 +396,7 @@ class FlexibilityApi:
             df['date'] = df['date'].dt.strftime('%Y-%m-%d')
             df = df.rename(columns={"consumption": "value"})
             df=df[['timestamp', 'date', 'value']]
-            print(df)
-            return df.to_json(orient='records')
+            return json.loads(df.to_json(orient='records'))
 
         payload = {
             'asset': AssetsApi.get_asset_url(api_connection, asset_pk),
@@ -339,7 +408,9 @@ class FlexibilityApi:
         }
         success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
         if success is False:
+            logger.warning(error_msg)
             return None
+        logger.info("Registered readings OK")
         return json_res
     @staticmethod
     def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,

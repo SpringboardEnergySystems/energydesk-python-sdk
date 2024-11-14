@@ -1,6 +1,8 @@
 
 import json
 import logging
+from typing import Optional
+
 # Confluent Kafka is more tricky to install on Windows; hence using Apache version
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
@@ -9,6 +11,9 @@ import logging
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+
+from kafka.producer.future import FutureRecordMetadata
+
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 from energydeskapi.events.kafka_utils import decode_message
 from energydeskapi.sdk.common_utils import init_api
@@ -47,14 +52,19 @@ class KafkaClientAuthenticated(EventClient):
             logger.error("Error refreshing connection " + str(e))
             return False
 
-    def publish(self,topic, msg, headers=[]):
-        print("Sending", topic)
-        result = self.producer.send(topic, value=msg, headers=headers)
-        if result.exception is None:
+    # if timeout_seconds is an integer it will wait for the acknowledge, otherwise it is meant as "fire and forget"
+    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None):
+        logger.info(f"Sending to {topic}")
+        future_result : FutureRecordMetadata = self.producer.send(topic, value=msg, headers=headers)
+        if timeout_seconds is None:
             logger.info("Sent to kafka")
         else:
-            logger.error(f"Not able to send to kafka: {result.exception}")
-        return result
+            try:
+                result = future_result.get(timeout_seconds) # throws exception if something went wrong
+                logger.info("Sent successfully to kafka")
+                return result
+            except Exception as ex:
+                raise Exception(f"Sending {str(msg)[:300]} to kafka topic {topic} got {traceback.format_exc()}")
 
 
     def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000):

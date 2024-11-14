@@ -13,22 +13,19 @@ class ClearingApi:
     @staticmethod
     def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
 
-        logger.info("Querying clearing report types")
+        logger.info("Storing clearing report")
 
         payload = {"clearing_house": clearing_house,
                    "clearing_report_type": clearing_report_type,
                    "clearing_report_format": clearing_report_format,
                    "clearing_date": clearing_report_date,
                    "content": report_data}
-        print(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reports', payload)
-        print(json_res)
-
         return True
 
 
     @staticmethod
-    def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, from_date, to_date):
+    def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
         """Queries clearing data between a set time
 
         :param api_connection: class with API token for use with API
@@ -43,14 +40,15 @@ class ClearingApi:
         :type to_date: str, required
         """
         logger.info("Querying clearing report types")
+        crhouse_pk = clearing_house if isinstance(clearing_house, int) else clearing_house.value
         crtype_pk = clearing_report_type if isinstance(clearing_report_type, int) else clearing_report_type.value
-        payload = {"clearing_house": clearing_house,
+        crform_pk = clearing_report_format if isinstance(clearing_report_format, int) else clearing_report_format.value
+        payload = {"clearing_house": crhouse_pk,
                    "clearing_report_type": crtype_pk,
+                   "clearing_report_format": crform_pk,
                    "from_datetime": from_date,
                    "to_datetime": to_date}
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
-        print(json_res)
-
         return True
 
     @staticmethod

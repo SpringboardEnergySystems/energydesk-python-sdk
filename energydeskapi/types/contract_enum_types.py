@@ -94,14 +94,14 @@ def contract_type_description(x):
         ContractTypeEnum.PROFILE: "Industrial Contract",
         ContractTypeEnum.CAPACITY: "Capacity Contract",
         ContractTypeEnum.FX: "Currency Contract",
-        ContractTypeEnum.PPA: "Power Purchase Agreement",
+        ContractTypeEnum.PPA: "PPA - Pay as Produced",
         ContractTypeEnum.BILAT_FINANCIAL: "Bilateral Financial Contract"
     }[x]
 
 
 def contract_status_description(x):
     return {
-        ContractStatusEnum.REGISTERED: "Registered",
+        ContractStatusEnum.REGISTERED: "Auto Imported",
         ContractStatusEnum.CONFIRMED: "Confirmed",
         ContractStatusEnum.APPROVED: "Approved",
         ContractStatusEnum.CANCELLED: "Cancelled",

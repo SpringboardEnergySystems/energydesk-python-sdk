@@ -108,14 +108,14 @@ def del_user_feature_access(api_conn):
     result = UsersApi.delete_user_feature_access(api_conn, pk)
     print(result)
 
-def create_user(api_conn):
+def create_user(api_conn, email, first_name, last_name,company_reg):
     u = User()
-    u.username = "myuser@gmail.com"
-    u.email = "myuser@gmail.com"
-    u.first_name= "My"
-    u.last_name = "User"
-    u.user_role=UserRoleEnum.RISKMANAGER
-    u.company_registry_number="666"
+    u.username = email
+    u.email = email
+    u.first_name= first_name
+    u.last_name = last_name
+    u.user_role=UserRoleEnum.RISKMANAGER.value
+    u.company_registry_number=company_reg
     print(u.get_dict())
     UsersApi.create_users(api_conn, [u])
 
@@ -189,5 +189,5 @@ if __name__ == '__main__':
     #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
     #create_user_feature_access(api_conn)
-    list_users_df(api_conn)
+    create_user(api_conn, "steinar.eriksen@hafslund.no", "Steinar", last_name="Eriksen", company_reg="976542622")
     #del_user_feature_access(api_conn)

@@ -10,6 +10,7 @@ from energydeskapi.marketdata.derivatives_api import DerivativesApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.spotprices_api import SpotPricesApi
 from energydeskapi.marketdata.products_api import ProductsApi
+from energydeskapi.moneymarkets.moneymarkets_api import MoneyMarketsApi
 from datetime import datetime
 import pendulum
 from energydeskapi.types.market_enum_types import MarketEnum, CommodityTypeEnum, InstrumentTypeEnum
@@ -18,7 +19,10 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
-
+def query_fx(api_conn):
+    par={"days_back":1000}
+    data=MoneyMarketsApi.get_fxspot(api_conn, par)
+    print(data)
 def query_market_prices(api_conn):
     today = pendulum.today('Europe/Oslo')
     pastday = today.add(days=-20)
@@ -98,7 +102,7 @@ if __name__ == '__main__':
     context = {}
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     #print(df)
-    query_market_prices(api_conn)
+    query_fx(api_conn)
     #success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
     #context['delivery_from'] = returned_data['delivery_from']

@@ -13,9 +13,7 @@ def generate_dataframe(period_from, period_until, crontab):
     base=conv_from_pendulum(period_from, "Europe/Oslo")
     end = conv_from_pendulum(period_until, "Europe/Oslo")
     iter = croniter(crontab, base)
-    n = None#iter.get_next(datetime)
-    #records = []
-    print(df2)
+    n = None
     while n is None or n < end:
         n = iter.get_next(datetime)
         if n >= base and n < end:

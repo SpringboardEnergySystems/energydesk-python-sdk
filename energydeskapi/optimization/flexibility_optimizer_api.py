@@ -11,6 +11,13 @@ class FlexibilityOptimizationApi:
     """
 
     @staticmethod
+    def optimization_price_data(api_connection, parameters):
+        json_res = api_connection.exec_get_url('/api/flexoptimizer/optimpricedata/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def optimize_max_usage(api_connection, parameters):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexoptimizer/optimizemaxusage/', parameters)
         if json_res is None:
