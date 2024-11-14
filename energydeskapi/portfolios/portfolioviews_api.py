@@ -57,6 +57,7 @@ class PortfolioViewsApi:
         """
         logger.info("Fetching product view")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/periodview/', parameters)
+        print(json_res)
         if json_res is None:
             return None, None
         #print(json_res)

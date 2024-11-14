@@ -47,12 +47,12 @@ def generate_baseline(mpid):
     df_base=pd.DataFrame(data=outdata)
     print(df_base)
 
-def register_flex_availability(api_conn, asset_row, crontab="0 11-13 * * 1-5"):
-    extern_asset_id = asset_row['Name']
-    t1 = pendulum.today(tz="Europe/Oslo")
-    t2 = t1.add(days=30)   # Cast to string to get ISO format
+def register_flex_availability(api_conn, extern_asset_id,
+                               period_from=pendulum.today(tz="Europe/Oslo").add(days=10),
+                                period_until=pendulum.today(tz="Europe/Oslo").add(days=10),
+                               crontab="0 11-13 * * 1-5"):
     outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id=extern_asset_id,
-                                               period_from=str(t1), period_until=str(t2),
+                                               period_from=str(period_from), period_until=str(period_until),
                                                crontab=crontab, kw_available=200)
     print(outdata)
 
@@ -157,11 +157,28 @@ if __name__ == '__main__':
     #print(data)
     # FlexibilityApi.remove_asset_flexibility(api_conn, extern_asset_id="Elkjele A")
     #data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"Elkjele A"})#,
-    #data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"3b964bcc-d08c-40c0-b945-3788162b5d59"})
+    data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"3b964bcc-d08c-40c0-b945-3788162b5d59"})
     # FlexibilityApi.remove_asset_flexibility_periodoffers(api_conn, extern_asset_id="Elkjele A")
     #print(data)
     #sys.exit(0)
-    df=load_assets_from_file("./assets_sample.xlsx")
+
+    data=FlexibilityApi.get_flexible_assets(api_conn)
+    for a in data['results']:
+        res = FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={
+            'flexible_asset__asset__extern_asset_id': a['asset']['extern_asset_id']})
+        print(json.dumps(res, indent=2))
+        continue
+        for horizon in [2,4,6]:
+            start_hour=random.randint(6, 10)
+            end_hour = random.randint(12, 20)
+            crontab = "0 " + str(start_hour) + "-" + str(end_hour) + " * * 1-5"
+            period_from = pendulum.today(tz="Europe/Oslo").add(months=horizon)
+            period_until = pendulum.today(tz="Europe/Oslo").add(months=horizon+2)
+            register_flex_availability(api_conn, a['asset']['extern_asset_id'],period_from,period_until, crontab)
+
+
+    sys.exit(0)
+    #df=load_assets_from_file("./assets_sample.xlsx")
     for index, row in df.iterrows():
         #register_flexible_asset(api_conn, row)
         sys.exit(0)
@@ -171,9 +188,9 @@ if __name__ == '__main__':
         crontab = "0 " + str(start_hour) + "-" + str(end_hour) + " * * 1-5"
         register_flex_availability(api_conn, row, crontab)
 
-    meterdata=load_assetmeterdata_from_files(specific_mpid=None)
-    for key in meterdata.keys():
-        register_meterdata_for_asset(api_conn, key, meterdata[key])
-        generate_baseline(key)
+    #meterdata=load_assetmeterdata_from_files(specific_mpid=None)
+    #for key in meterdata.keys():
+    #    register_meterdata_for_asset(api_conn, key, meterdata[key])
+    #    generate_baseline(key)
 
     #load_registered_data(api_conn)

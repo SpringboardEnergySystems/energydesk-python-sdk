@@ -130,5 +130,6 @@ if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
     #create_empty(api_conn)
-    tree=load_flat_tree(api_conn)
-    update_flat_tree(api_conn, tree)
+    #tree=load_flat_tree(api_conn)
+    t=query_portfolios(api_conn)
+    print(t)

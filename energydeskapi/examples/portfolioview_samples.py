@@ -35,6 +35,22 @@ def get_period_view(api_conn):
     print(df)
     #print(df['asset'].unique().tolist())
 
+def get_period_view_test(api_conn):
+    ut=PortfoliosApi.get_portfolios_embedded(api_conn)
+    for u in ut:
+        print(u['pk'],u['description'])   # Just to see ID of portfolios available for next query
+
+    filter={
+        "contract_type":3,#  3=Fastpris, 4=GO, ContractTypeEnum.GOO.value,
+        'view_currency': 'NOK',
+        "view_period_from__gte":'2023-01-01',
+        "view_period_until__lt": '2025-01-01',
+        "resolution":"Monthly",
+        "groupby":['area', 'trade_id' ]
+    }
+    print(filter)
+    v, df = PortfolioViewsApi.get_period_view_df(api_conn, filter)
+    print(v, df)
 
 def get_product_view(api_conn):
 
@@ -46,4 +62,4 @@ def get_product_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_period_view(api_conn)
+    get_period_view_test(api_conn)
