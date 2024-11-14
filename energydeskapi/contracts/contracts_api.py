@@ -855,3 +855,22 @@ class ContractsApi:
         logger.info("Fetching full bilat contract")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
+
+    def generate_second_leg_contract(api_connection, contract, external_tb):
+        """Generate a second leg contract for internal trades
+        
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_dict: personal key to a contract
+        :type contract_dict: str, required
+        """
+        logger.info("Generating second leg contract")
+        contract_dict=contract.get_dict(api_connection)
+        
+        contract_dict['external_trading_book']= TradingBooksApi.get_tradingbook_url(api_connection, external_tb)
+        try:
+            logger.debug(api_connection.get_current_token())
+        except Exception:
+            logger.debug(api_connection, "No token")
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/contract-secondleg/', contract_dict)
+        return json_res
