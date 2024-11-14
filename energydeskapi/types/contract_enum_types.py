@@ -94,6 +94,7 @@ def contract_type_description(x):
         ContractTypeEnum.PROFILE: "Industrial Contract",
         ContractTypeEnum.CAPACITY: "Capacity Contract",
         ContractTypeEnum.FX: "Currency Contract",
+        ContractTypeEnum.PPA: "Power Purchase Agreement",
         ContractTypeEnum.BILAT_FINANCIAL: "Bilateral Financial Contract"
     }[x]
 
