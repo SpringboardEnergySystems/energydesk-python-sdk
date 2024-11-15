@@ -874,3 +874,20 @@ class ContractsApi:
             logger.debug(api_connection, "No token")
         json_res = api_connection.exec_post_url('/api/portfoliomanager/contract-secondleg/', contract_dict)
         return json_res
+    
+    def generate_position_transfer_contract(api_connection, contract, external_tb):
+        """Generate a position transfer contract
+        
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param contract_dict: personal key to a contract
+        :type contract_dict: str, required
+        """
+        logger.info("Generating position transfer contract")
+        contract_dict=contract.get_dict(api_connection)
+        try:
+            logger.debug(api_connection.get_current_token())
+        except Exception:
+            logger.debug(api_connection, "No token")
+        json_res = api_connection.exec_post_url('/api/portfoliomanager/transfer-position/', contract_dict)
+        return json_res
