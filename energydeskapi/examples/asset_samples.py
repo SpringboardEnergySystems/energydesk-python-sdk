@@ -46,6 +46,22 @@ def query_asset_info(api_conn):
     print(u)
 
 
+dsample={'pk': 0, 'extern_asset_id': 'Asset Group - Super', 'description': 'Asset Group - Super',
+         'asset_type': 'http://127.0.0.1:8001/api/assets/assettypes/9/',
+         'asset_category': 'http://127.0.0.1:8001/api/assets/assetcategories/6/',
+         'asset_technical_data': {'pk': 0},
+
+         'power_supplier': 'http://127.0.0.1:8001/api/customers/companies/132/',
+         'asset_owner': 'http://127.0.0.1:8001/api/customers/companies/728/',
+         'asset_manager': 'http://127.0.0.1:8001/api/customers/companies/728/',
+         'meter_id': '', 'sub_meter_id': '', 'is_main_meter': True,
+'grid_connection': 'http://127.0.0.1:8001/api/customers/companies/112/',
+         'address': '', 'city': '', 'location': '59.8892808,10.756694'}
+
+def register(api_conn):
+    success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+        '/api/assets/assets/',dsample)
+    print(returned_data)
 
 def fetch_asset_categories(api_conn):
     result = AssetsApi.get_asset_categories(api_conn)
@@ -97,6 +113,6 @@ if __name__ == '__main__':
     #initialize_default_etrm_assettypes(api_conn)
     #fetch_asset_categories(api_conn)
     #fetch_asset_types(api_conn)
-    load_go_assets(api_conn)
+    register(api_conn)
     #register_asset_subtype(api_conn)
     #query_asset_info(api_conn)
