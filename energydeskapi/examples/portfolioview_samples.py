@@ -54,7 +54,7 @@ def get_period_view_test(api_conn):
 
 def get_product_view(api_conn):
 
-    filter={'portfolio': "10", "view_currency":"EUR",'commodity__delivery_until__gte':str(pendulum.today())}
+    filter={'portfolio': "36", "view_currency":"EUR"}#,'commodity__delivery_until__gte':str(pendulum.today())}
     print(filter)
     view_id,df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
     print(df)
@@ -62,4 +62,4 @@ def get_product_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_period_view_test(api_conn)
+    get_product_view(api_conn)

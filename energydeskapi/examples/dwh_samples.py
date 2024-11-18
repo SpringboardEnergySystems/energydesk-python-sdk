@@ -1,5 +1,6 @@
 import json
 import logging
+import geopandas as gpd
 from energydeskapi.system.default_asset_types import initialize_default_etrm_assettypes
 from energydeskapi.audit.audit_log_api import AuditLogApi
 from energydeskapi.sdk.common_utils import init_api
@@ -33,11 +34,19 @@ def get_periodview_timeseries(api_conn):
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
     print(df)
+
+def get_gridexposure(api_conn):
+    param = {'report_type': "GRIDNODE_RISK", 'portfolio_id': 15}
+    jsondata = DwhApi.get_grid_exposure( api_conn, param)
+    #print(json.dumps(jsondata, indent=2))
+    #df=pd.DataFrame(json.loads(jsondata['gridexposuremap']))
+    df = gpd.GeoDataFrame.from_features(json.loads(jsondata['gridexposuremap']))
+    print(df)
 def get_report_types(api_conn):
     jsondata = DwhApi.get_report_dimension( api_conn, {})
-    #print(json.dumps(jsondata, indent=2))
-    df=pd.DataFrame(jsondata)
-    print(df)
+    print(json.dumps(jsondata, indent=2))
+    #df=pd.DataFrame(jsondata)
+    #print(df)
 
 
 def load_specific_reports(api_conn, report_type, portfolio_id):
@@ -65,5 +74,5 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #get_report_types(api_conn)
-    load_reports(api_conn)
+    get_gridexposure(api_conn)
 
