@@ -48,7 +48,7 @@ class ContractTypeEnum(Enum):
     PPA = 8
     BILAT_FINANCIAL = 9
     POSITION_TRANSFER = 10
-
+    INTERNAL = 11
 
 
 def quantity_type_description(x):
@@ -97,7 +97,8 @@ def contract_type_description(x):
         ContractTypeEnum.FX: "Currency Contract",
         ContractTypeEnum.PPA: "PPA - Pay as Produced",
         ContractTypeEnum.BILAT_FINANCIAL: "Bilateral Financial Contract",
-        ContractTypeEnum.POSITION_TRANSFER: "Position Transfer"
+        ContractTypeEnum.POSITION_TRANSFER: "Position Transfer",
+        ContractTypeEnum.INTERNAL: "Internal Contract"
     }[x]
 
 
