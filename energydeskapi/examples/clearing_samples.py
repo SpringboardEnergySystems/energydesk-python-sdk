@@ -1,8 +1,9 @@
 from datetime import date, datetime, timedelta
-
+import json
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 import logging
+from energydeskapi.types.clearing_enum_types import ReconciliationStatusEnum
 from dateutil import parser
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.clearing.clearing_api import ClearingApi
@@ -58,10 +59,22 @@ def reconcile_trades(api_conn):  #Performs reconciliation
 def fetch_reconciled_trades(api_conn):
     from_date = datetime.today() - relativedelta(days=2)
     until_date = datetime.today()
-    param = {"clearing_date__gte": from_date,
-             "clearing_date__lte": until_date}
-    result = ClearingApi.get_reconciled_trades(api_conn, param)
-    print(result)
+    param = {"clearing_date__gte": str(from_date)[:10],
+             "clearing_date__lte": str(until_date)[:10]}
+    result = ClearingApi.get_embedded_reconciled_trades(api_conn, param)
+    print(json.dumps(result, indent=2))
+
+    #status=
+    result = ClearingApi.get_reconciled_trades(api_conn, {'id__in':[244,245]})
+    for tr in result:
+        stat=ReconciliationStatusEnum.SUCCESS
+        tr['reconciliation_status']=ClearingApi.get_reconciliation_status_url(api_conn, stat)
+        tr['comment']="Super good trade anyway"
+        tr['linked_trades'] = [244,245]
+        print(json.dumps(tr, indent=2))
+        success, returned_data, status_code, error_msg=ClearingApi.update_reconciled_trades(api_conn, tr['pk'], tr)
+        print(success, status_code)
+    #print(json.dumps(result, indent=2))
 
 def fetch_riskarray_info(api_conn):
 
@@ -115,7 +128,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-    reconcile_trades(api_conn)
+    fetch_reconciled_trades(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
     #fetch_reconciled_trades(api_conn)

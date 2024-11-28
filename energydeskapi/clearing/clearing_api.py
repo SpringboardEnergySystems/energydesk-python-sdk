@@ -50,6 +50,10 @@ class ClearingApi:
                    "to_datetime": to_date}
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
         return True
+    @staticmethod
+    def get_reconciliation_status_url(api_connection, reconciliation_status_enum):
+        type_pk = reconciliation_status_enum if isinstance(reconciliation_status_enum, int) else reconciliation_status_enum.value
+        return api_connection.get_base_url() + '/api/clearing/reconciliationstatus/' + str(type_pk) + "/"
 
     @staticmethod
     def perform_reconciliation(api_connection, date):
@@ -158,6 +162,12 @@ class ClearingApi:
         return df
 
     @staticmethod
+    def update_reconciled_trades(api_connection, key, payload={}):
+        success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+            '/api/clearing/reconciledtrades/' + str(key) + "/", payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def get_reconciled_trades(api_connection, params={}):
         """Fetches reconciled trades
 
@@ -168,8 +178,7 @@ class ClearingApi:
         json_res = api_connection.exec_get_url('/api/clearing/reconciledtrades/', params)
         if json_res is None:
             return None
-        df = pd.DataFrame(data=json_res)
-        return df
+        return json_res
 
     @staticmethod
     def get_embedded_reconciled_trades(api_connection, params={}):

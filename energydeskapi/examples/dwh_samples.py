@@ -41,7 +41,10 @@ def get_gridexposure(api_conn):
     #print(json.dumps(jsondata, indent=2))
     #df=pd.DataFrame(json.loads(jsondata['gridexposuremap']))
     df = gpd.GeoDataFrame.from_features(json.loads(jsondata['gridexposuremap']))
+    df2 = pd.DataFrame(jsondata['gridexposureview'])
+
     print(df)
+    print(df2)
 def get_report_types(api_conn):
     jsondata = DwhApi.get_report_dimension( api_conn, {})
     print(json.dumps(jsondata, indent=2))
