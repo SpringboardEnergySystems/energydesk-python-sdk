@@ -254,6 +254,27 @@ class ElvizLinksApi:
         response = authsess.post(server_url, headers=h, data=json.dumps(payload))
         return response.json()
 
+    @staticmethod
+    def exec_post_elvizapi_specific_period(user_mappings, company_mappings, portfolio_mappings, owner_company_pk, date_from: str, date_until: str):
+        env = environ.Env()
+        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/elviz/api/elviztrades_specificperiod"
+        logger.info("Calling URL " + str(server_url))
+        payload={
+            "user_mappings": user_mappings,
+            "portfolio_mappings": portfolio_mappings,
+            "company_mappings": company_mappings,
+            "owner_company_pk": owner_company_pk,
+            "date_from": date_from,
+            "date_until": date_until
+        }
+        logger.debug("...with payload " + str(payload) )
+
+        h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
+        authsess = ElvizLinksApi.obtain_session()
+        response = authsess.post(server_url, headers=h, data=json.dumps(payload))
+        return response.json()
+
+
 
 
     @staticmethod
@@ -262,5 +283,13 @@ class ElvizLinksApi:
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
         elviz_trades = ElvizLinksApi.exec_post_elvizapi(usr_maps,comp_maps,port_maps, owner_company_pk, days_back )
+        return elviz_trades
+
+    @staticmethod
+    def get_elviz_trades_specific_period(api_connection, owner_company_pk: int, date_from: str, date_until: str):
+        port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
+        usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
+        comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
+        elviz_trades = ElvizLinksApi.exec_post_elvizapi_specific_period(usr_maps,comp_maps,port_maps, owner_company_pk, date_from, date_until)
         return elviz_trades
 
