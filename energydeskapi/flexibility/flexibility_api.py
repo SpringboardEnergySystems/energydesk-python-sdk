@@ -185,6 +185,18 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
+    def get_asset_profile_types(api_connection,  parameters={}):
+        """Fetches empty schedule
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res = api_connection.exec_get_url('/api/flexiblepower/assetprofiletypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_asset_offer_url(api_connection, asset_offer_pk):
         """Fetches url for a contract type from enum value
 
@@ -236,6 +248,20 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def upsert_flexible_asset(api_connection, extern_asset_id, callback):
+        logger.debug("Upserting flexible asset")
+        asset=AssetsApi.get_assets(api_connection, {'extern_asset_id':extern_asset_id})
+        key = int(asset[0]['pk'])
+        logger.info("Saving regulation scheduled key= {} data= {}".format(key, key))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/regulationschedule/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/regulationschedule/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def get_regulation_schedule(api_connection, parameters, external_asset_id=None):
         if external_asset_id is not None:
             parameters={
@@ -259,6 +285,15 @@ class FlexibilityApi:
         if json_res is None:
             return None
         return json_res
+
+
+    @staticmethod
+    def get_availability_profile_templates(api_connection, parameters):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/availabilityprofiletemplates/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
     @staticmethod
     def get_flexible_market_url(api_connection, flexible_market_pk):
         """Fetches url for a contract type from enum value
@@ -270,15 +305,15 @@ class FlexibilityApi:
         return api_connection.get_base_url() + '/api/flexiblepower/flexiblemarkets/' + str(flexible_market_pk) + "/"
 
     @staticmethod
+    def get_asset_profile_type_url(api_connection, asset_profile_type_enum):
+        type_pk = asset_profile_type_enum if isinstance(asset_profile_type_enum,
+                                                           int) else asset_profile_type_enum.value
+        return api_connection.get_base_url() + '/api/flexiblepower/assetprofiletypes/' + str(type_pk) + "/"
+
+
+    @staticmethod
     def upsert_market_offering(api_connection, external_market_asset):
 
-        """Creates/Updates master contract agreements
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        :param master_agreement: master contract agreement object
-        :type master_agreement: str, required
-        """
         logger.debug("Upserting market offering")
         payload = external_market_asset.get_dict(api_connection)
         key = int(payload['pk'])
@@ -289,6 +324,32 @@ class FlexibilityApi:
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/flexiblepower/assetsofferedinmarkets/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def upsert_asset_availability_profile(api_connection, pk, payload):
+
+        logger.debug("Upserting availability profile")
+
+        if pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/assetavailabilityprofiles/' + str(pk) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/assetavailabilityprofiles/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def upsert_availability_profile_template(api_connection, pk, payload):
+
+        logger.debug("Upserting availability profile template")
+
+        if pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/availabilityprofiletemplates/' + str(pk) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/availabilityprofiletemplates/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
@@ -450,7 +511,7 @@ class FlexibilityApi:
 
     @staticmethod
     def register_asset_availability(api_connection, extern_asset_id,
-                                    period_from, period_until, crontab, kw_available
+                                    period_from, period_until,  profile_pk,  kw_available
                                 ):
         """Simplified registration of flexible asset
 
@@ -461,7 +522,7 @@ class FlexibilityApi:
             "extern_asset_id":extern_asset_id,
             "period_from": period_from,
             "period_until": period_until,
-            "crontab": crontab,
+            'profile': profile_pk,
             "kw_flexibility": kw_available
         }
         print(json.dumps(payload, indent=2))

@@ -2,6 +2,8 @@ import logging
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
+from energydeskapi.sdk.profiles_utils import get_baseload_profile
+from energydeskapi.types.flexibility_enum_types import AssetProfileTypeEnums
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
 import pendulum
 import json
@@ -56,6 +58,21 @@ def register_flex_availability(api_conn, extern_asset_id,
                                                crontab=crontab, kw_available=200)
     print(outdata)
 
+def register_availability_profile(api_conn, description:str, hours=[7,8,9,10],half_cpacity=[6,11,12,13]):
+    prof=get_baseload_profile()
+    prof['weekday_profile']['Saturday'] = 0
+    prof['weekday_profile']['Sunday'] = 0
+    for x in prof['daily_profile']:
+        if x in half_cpacity:
+            prof['daily_profile'][x] = 0.5
+        elif x not in hours:
+            prof['daily_profile'][x]=0
+    type_url=FlexibilityApi.get_asset_profile_type_url(api_conn, AssetProfileTypeEnums.RELATIVE)
+    payload={'profile_name':description,'profile_type':type_url, 'profile':prof}
+    print(payload)
+    success, returned_data, status_code, error_msg=FlexibilityApi.upsert_availability_profile(api_conn, 0, payload)
+    print(status_code)
+    return returned_data
 def register_flexible_asset(api_conn, asset_row):
     extern_asset_id=asset_row['Name']   # FSP provider's own identifier. For simplicity Name is used here
     end_customer_name = asset_row['Customer']
@@ -157,13 +174,18 @@ if __name__ == '__main__':
     #print(data)
     # FlexibilityApi.remove_asset_flexibility(api_conn, extern_asset_id="Elkjele A")
     #data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"Elkjele A"})#,
-    data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"3b964bcc-d08c-40c0-b945-3788162b5d59"})
+    #data=FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={'flexible_asset__asset__extern_asset_id':"3b964bcc-d08c-40c0-b945-3788162b5d59"})
     # FlexibilityApi.remove_asset_flexibility_periodoffers(api_conn, extern_asset_id="Elkjele A")
     #print(data)
     #sys.exit(0)
-
+    ptype=FlexibilityApi.get_asset_profile_types(api_conn)
+    print(ptype)
+    profile1=register_availability_profile(api_conn, 'Profile 1')
+    print(profile1)
+    #sys.exit(0)
     data=FlexibilityApi.get_flexible_assets(api_conn)
     for a in data['results']:
+        FlexibilityApi.upsert_market_offering()
         res = FlexibilityApi.get_asset_flexibility_periodoffers(api_conn, parameters={
             'flexible_asset__asset__extern_asset_id': a['asset']['extern_asset_id']})
         print(json.dumps(res, indent=2))
