@@ -288,7 +288,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_availability_profile_templates(api_connection, parameters):
+    def get_availability_profile_templates(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/availabilityprofiletemplates/', parameters)
         if json_res is None:
             return None
