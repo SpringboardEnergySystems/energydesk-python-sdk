@@ -126,6 +126,18 @@ def load_asset_availability_schedule(api_conn, extern_asset_id):
     df=pd.DataFrame(outdata['schedule'])
     print(df)
 
+def load_asset_dispatch_schedule(api_conn, extern_asset_id):
+    found=AssetsApi.get_assets(api_conn, {'extern_asset_id':extern_asset_id})
+    if len(found['results'])==0:
+        return None
+    name=found['results'][0]['description']
+    t1 = pendulum.today(tz="Europe/Oslo")
+    t2 = t1.add(days=5)   # Cast to string to get ISO format
+    outdata=FlexibilityApi.get_asset_dispatch_schedule(api_conn,extern_asset_id=extern_asset_id,
+                                                     period_from=str(t1),period_until=str(t2))
+    df=pd.DataFrame(outdata)
+    print(df)
+
 def load_available_flexibility(api_conn, extern_asset_id=None):
     param={}
     if extern_asset_id is not None:
@@ -171,7 +183,12 @@ def load_assetmeterdata_from_files(specific_mpid="707057500057530000", specific_
 def show_availability(api_conn):
     for a in AssetsApi.get_assets(api_conn)['results']:
         load_asset_availability_schedule(api_conn, a['extern_asset_id'])
+
+def show_dispatch_schedule(api_conn):
+    for a in AssetsApi.get_assets(api_conn)['results']:
+        load_asset_dispatch_schedule(api_conn, a['extern_asset_id'])
         break
+
 def show_registered_assets(api_conn):
     data=FlexibilityApi.get_offered_assets(api_conn)
     print(data)
@@ -215,4 +232,5 @@ if __name__ == '__main__':
     api_conn=init_api()
     #register_profile_on_all_assets(api_conn)
     #load_available_flexibility(api_conn)
-    show_availability(api_conn)
+    #show_availability(api_conn)
+    show_dispatch_schedule(api_conn)

@@ -441,6 +441,18 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
+    def get_portfolio_availability(api_connection, portfolio_id, period_from, period_until):
+        param={'extern_asset_id':portfolio_id,
+               'period_from':period_from,
+               'period_until':period_until}
+        json_res = api_connection.exec_get_url(
+            '/api/flexiblepower/assetavailabilityschedule/',param)
+        if json_res is None:
+            return None
+        return json_res
+
+
+    @staticmethod
     def trade_notification(api_connection,payload):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/tradenotification/',
                                                                                  payload)
