@@ -442,7 +442,7 @@ class FlexibilityApi:
 
     @staticmethod
     def get_portfolio_availability(api_connection, portfolio_id, period_from, period_until):
-        param={'extern_asset_id':portfolio_id,
+        param={'portfolio_id':portfolio_id,
                'period_from':period_from,
                'period_until':period_until}
         json_res = api_connection.exec_get_url(
