@@ -446,7 +446,7 @@ class FlexibilityApi:
                'period_from':period_from,
                'period_until':period_until}
         json_res = api_connection.exec_get_url(
-            '/api/flexiblepower/assetavailabilityschedule/',param)
+            '/api/flexiblepower/portfolioavailability/',param)
         if json_res is None:
             return None
         return json_res
