@@ -1,7 +1,7 @@
 import json
 import logging
 import pandas as pd
-
+import ast
 logger = logging.getLogger(__name__)
 #  Change
 class ClearingApi:
@@ -86,6 +86,7 @@ class ClearingApi:
                 all_record.append(r)
         return all_record
 
+
     @staticmethod
     def get_clearing_report_records_embedded(api_connection, parameters={}):
         """Fetches a list of embedded clearing report records
@@ -99,7 +100,10 @@ class ClearingApi:
             return None
         all_record = []
         for rec in json_res['results']:
-            records = json.loads(rec['content'])
+            data=rec['content']
+            records=ast.literal_eval(data)
+            #print(json.dumps(data, indent=2))
+            #records = json.loads(rec['content'])
             for r in records:
                 all_record.append(r)
         return all_record

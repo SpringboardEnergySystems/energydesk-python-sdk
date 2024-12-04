@@ -230,7 +230,7 @@ def register_profile_on_all_assets(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    #register_profile_on_all_assets(api_conn)
+    register_profile_on_all_assets(api_conn)
     #load_available_flexibility(api_conn)
     #show_availability(api_conn)
-    show_dispatch_schedule(api_conn)
+    #show_dispatch_schedule(api_conn)
