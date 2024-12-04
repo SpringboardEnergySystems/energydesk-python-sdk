@@ -1,6 +1,7 @@
 import json
 import logging
 import pandas as pd
+from energydeskapi.types.clearing_enum_types import ClearingReportFormat
 import ast
 logger = logging.getLogger(__name__)
 #  Change
@@ -94,6 +95,7 @@ class ClearingApi:
         :type api_connection: str, required
         """
         logger.info("Fetching embedded clearing report records list")
+        parameters['clearing_report_format']=ClearingReportFormat.ORIGINAL.value
         json_res = api_connection.exec_get_url('/api/clearing/reports/embedded/', parameters)
         if json_res is None:
             return None
