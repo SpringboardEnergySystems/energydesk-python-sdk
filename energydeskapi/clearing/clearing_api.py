@@ -99,19 +99,13 @@ class ClearingApi:
             return None
         all_record = []
         for rec in json_res['results']:
-            data=rec['content']
-            records=ast.literal_eval(data)
-            #print(json.dumps(data, indent=2))
-            #records = json.loads(rec['content'])
-            for r in records:
-                all_record.append(r)
-            content = rec['content']
             try:
-                records = json.loads(content)
+                data=rec['content']
+                records=ast.literal_eval(data)
                 for r in records:
                     all_record.append(r)
             except Exception as e:
-                raise Exception(f"Reading the clearing report records JSON {str(content)[:200]}: {e}")
+                raise Exception(f"Reading the clearing report records JSON {str(data)[:200]}: {e}")
         return all_record
 
     @staticmethod
