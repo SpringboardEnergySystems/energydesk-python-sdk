@@ -63,6 +63,18 @@ def external_flexmarkets_description(x):
         ExternalMarketTypeEnums.SVK: "Swedish TSO market (Svenska Kraftnett)"
     }[x]
 
+
+class AssetProfileTypeEnums(Enum):
+    ABSOLUTE = 1
+    RELATIVE = 2
+
+
+def asset_profile_type_description(x):
+    return {
+        AssetProfileTypeEnums.ABSOLUTE: "Absolute kW values",
+        AssetProfileTypeEnums.RELATIVE: "Absolute values to adjust base kW",
+    }[x]
+
 class MaxUsageCriteria(Enum):
     FEWEST_REGULATIONS = 1
     LOWEST_ENERGY_COST = 2
