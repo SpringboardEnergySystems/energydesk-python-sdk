@@ -86,7 +86,6 @@ class ClearingApi:
                 all_record.append(r)
         return all_record
 
-
     @staticmethod
     def get_clearing_report_records_embedded(api_connection, parameters={}):
         """Fetches a list of embedded clearing report records
@@ -106,6 +105,13 @@ class ClearingApi:
             #records = json.loads(rec['content'])
             for r in records:
                 all_record.append(r)
+            content = rec['content']
+            try:
+                records = json.loads(content)
+                for r in records:
+                    all_record.append(r)
+            except Exception as e:
+                raise Exception(f"Reading the clearing report records JSON {str(content)[:200]}: {e}")
         return all_record
 
     @staticmethod
