@@ -99,9 +99,13 @@ class ClearingApi:
             return None
         all_record = []
         for rec in json_res['results']:
-            records = json.loads(rec['content'])
-            for r in records:
-                all_record.append(r)
+            content = rec['content']
+            try:
+                records = json.loads(content)
+                for r in records:
+                    all_record.append(r)
+            except Exception as e:
+                raise Exception(f"Reading the clearing report records JSON {str(content)[:200]}: {e}")
         return all_record
 
     @staticmethod
