@@ -97,7 +97,7 @@ def __stringify_dictionary(d):
 def __convert_from_named_profiles(profile):
     months=profile['monthly_profile']
 
-    monthkeys={(index+1): months[month] for index, month in enumerate(get_month_list()) if month}
+    monthkeys={(index): months[month] for index, month in enumerate(get_month_list()) if month}
     profile['monthly_profile']=monthkeys
     weekdays=profile['weekday_profile']
     weekdayskeys={(index): weekdays[month] for index, month in enumerate(get_weekdays_list()) if month}
@@ -116,6 +116,7 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
     except Exception as e:
         #traceback.print_exc()
         calender_profile=relative_profile
+
 
     monthly_weights=calender_profile['monthly_profile']
     weekly_weights = calender_profile['weekday_profile']
