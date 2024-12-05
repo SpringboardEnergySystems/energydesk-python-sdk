@@ -110,14 +110,14 @@ def __convert_from_named_profiles(profile):
 
 def __convert_from_strnum_profiles(profile):
     months=profile['monthly_profile']
-    monthkeys={int(index): months[index] for index in months}
+    monthkeys={int(index): months[str(index)] for index in months}
     profile['monthly_profile']=monthkeys
     weekdays=profile['weekday_profile']
-    weekdayskeys={int(index): weekdays[index]  for index in weekdays}
+    weekdayskeys={int(index): weekdays[str(index)]  for index in weekdays}
     profile['weekday_profile']=weekdayskeys
     dayshours=profile['daily_profile']
     dayshours=__stringify_dictionary(dayshours)  # Otherwise the lookup below fails
-    hourlykeys={int(index): dayshours[index] for index in list(range(24))}
+    hourlykeys={int(index): dayshours[str(index)] for index in list(range(24))}
     profile['daily_profile']=hourlykeys
     return profile
 
