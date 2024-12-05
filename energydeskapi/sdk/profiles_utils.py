@@ -108,6 +108,18 @@ def __convert_from_named_profiles(profile):
     profile['daily_profile']=hourlykeys
     return profile
 
+def __convert_from_strnum_profiles(profile):
+    months=profile['monthly_profile']
+    monthkeys={int(index): months[index] for index in months}
+    profile['monthly_profile']=monthkeys
+    weekdays=profile['weekday_profile']
+    weekdayskeys={int(index): weekdays[index]  for index in weekdays}
+    profile['weekday_profile']=weekdayskeys
+    dayshours=profile['daily_profile']
+    dayshours=__stringify_dictionary(dayshours)  # Otherwise the lookup below fails
+    hourlykeys={int(index): dayshours[index] for index in list(range(24))}
+    profile['daily_profile']=hourlykeys
+    return profile
 
 def relative_profile_to_dataframe(period_from, period_until,relative_profile, active_tz=pytz.timezone("Europe/Oslo")):
 
@@ -115,7 +127,7 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
         calender_profile=__convert_from_named_profiles(relative_profile)
     except Exception as e:
         #traceback.print_exc()
-        calender_profile=relative_profile
+        calender_profile==__convert_from_strnum_profiles(relative_profile)
 
 
     monthly_weights=calender_profile['monthly_profile']
@@ -124,9 +136,9 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
     print(monthly_weights)
     df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
     df['timestamp'] = df.index
-    df['monthly_weight'] = df.apply(lambda x: monthly_weights[str(x['timestamp'].month-1)], axis=1)
-    df['weekday_weight'] = df.apply(lambda x: weekly_weights[str(x['timestamp'].dayofweek)], axis=1)
-    df['hour_weight'] = df.apply(lambda x: daily_weights[str(x['timestamp'].hour)], axis=1)
+    df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month-1], axis=1)
+    df['weekday_weight'] = df.apply(lambda x: weekly_weights[x['timestamp'].dayofweek], axis=1)
+    df['hour_weight'] = df.apply(lambda x: daily_weights[x['timestamp'].hour], axis=1)
     df['hourly_weight'] =df['monthly_weight']*df['weekday_weight']*df['hour_weight']
 
     return df[['timestamp','hourly_weight']]
