@@ -124,6 +124,7 @@ def load_asset_availability_schedule(api_conn, extern_asset_id):
     outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id=extern_asset_id,
                                                      period_from=str(t1),period_until=str(t2))
     df=pd.DataFrame(outdata['schedule'])
+
     print(df)
 
 def load_asset_dispatch_schedule(api_conn, extern_asset_id):

@@ -341,6 +341,14 @@ class FlexibilityApi:
                 '/api/flexiblepower/assetsofferedinmarkets/', payload)
         return success, returned_data, status_code, error_msg
 
+
+    @staticmethod
+    def get_asset_availability_profile(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/assetavailabilityprofiles/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
     @staticmethod
     def upsert_asset_availability_profile(api_connection, pk, payload):
 
