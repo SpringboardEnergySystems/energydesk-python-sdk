@@ -53,10 +53,10 @@ def generate_baseline(mpid):
 
 
 
-def register_availability_profile(api_conn, description:str, hours=[6, 7,8],half_cpacity=[11,12,13, 16,17,18]):
+def register_availability_profile(api_conn, description:str, hours=[6, 13,19],half_cpacity=[16,17,18]):
     prof=get_default_availability_profile()
+    prof['weekday_profile'][4] = 0
     prof['weekday_profile'][5] = 0
-    prof['weekday_profile'][6] = 0
     for x in prof['daily_profile']:
         if x in half_cpacity:
             prof['daily_profile'][x] = 0.5
@@ -207,7 +207,7 @@ def register_profile_on_all_assets(api_conn):
     assets = AssetsApi.get_assets(api_conn)
     counter=1
     for idx, a in enumerate(assets['results']):
-        if idx!=3:
+        if idx!=1:
             continue
 
         # Next step is to make sure there exist a FlexibleAsset object for this asset
