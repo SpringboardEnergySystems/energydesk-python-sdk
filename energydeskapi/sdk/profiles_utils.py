@@ -125,8 +125,8 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
     df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
     df['timestamp'] = df.index
     df['monthly_weight'] = df.apply(lambda x: monthly_weights[str(x['timestamp'].month-1)], axis=1)
-    df['weekday_weight'] = df.apply(lambda x: weekly_weights[x['timestamp'].dayofweek], axis=1)
-    df['hour_weight'] = df.apply(lambda x: daily_weights[x['timestamp'].hour], axis=1)
+    df['weekday_weight'] = df.apply(lambda x: weekly_weights[str(x['timestamp'].dayofweek)], axis=1)
+    df['hour_weight'] = df.apply(lambda x: daily_weights[str(x['timestamp'].hour)], axis=1)
     df['hourly_weight'] =df['monthly_weight']*df['weekday_weight']*df['hour_weight']
 
     return df[['timestamp','hourly_weight']]
