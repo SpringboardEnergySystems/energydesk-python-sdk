@@ -344,8 +344,8 @@ class FlexibilityApi:
     @staticmethod
     def upsert_asset_availability_profile(api_connection, pk, payload):
 
-        logger.debug("Upserting availability profile")
-
+        logger.info("Upserting availability profile")
+        print(json.dumps(payload, indent=2))
         if pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/flexiblepower/assetavailabilityprofiles/' + str(pk) + "/", payload)
