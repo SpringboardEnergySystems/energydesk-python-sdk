@@ -120,7 +120,7 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
     monthly_weights=calender_profile['monthly_profile']
     weekly_weights = calender_profile['weekday_profile']
     daily_weights = calender_profile['daily_profile']
-
+    print(monthly_weights)
     df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
     df['timestamp'] = df.index
     df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month], axis=1)
