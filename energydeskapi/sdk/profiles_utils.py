@@ -127,7 +127,7 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
         calender_profile=__convert_from_named_profiles(relative_profile)
     except Exception as e:
         #traceback.print_exc()
-        calender_profile==__convert_from_strnum_profiles(relative_profile)
+        calender_profile=__convert_from_strnum_profiles(relative_profile)
 
 
     monthly_weights=calender_profile['monthly_profile']
