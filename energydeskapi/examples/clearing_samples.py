@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO,
 def test_clearing_data(api_conn):
     ClearingApi.query_clearing_report_data(api_conn, 711, ClearingReportTypeEnum.TRANSACTIONS, "2021-01-01", "2023-01-01")
 
-def fetch_clearing_report_records(api_conn):
+def fetch_clearing_report_records2(api_conn):
     df = ClearingApi.get_clearing_report_records(api_conn)
     print(df)
 
@@ -42,10 +42,10 @@ def fetch_clearing_reports(api_conn):
     print(df)
 
 def fetch_embedded_clearing_reports(api_conn):
-    filter = {"clearing_report_type": ClearingReportTypeEnum.DELIVERY.value}
-    res=ClearingApi.get_clearing_reports_embedded(api_conn, filter)
-    for rec in res['results']:
-        print(rec['pk'], rec['clearing_report_type']['description'])
+    filter = {"clearing_report_type": ClearingReportTypeEnum.TRANSACTIONS.value}
+    res=ClearingApi.get_clearing_report_records_embedded(api_conn, filter)
+    #for rec in res['results']:
+    #    print(rec['pk'], rec['clearing_report_type']['description'])
 
 def fetch_clearing_report_types(api_conn):
     df=ClearingApi.get_clearing_report_types(api_conn)
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-    fetch_reconciled_trades(api_conn)
+    fetch_embedded_clearing_reports(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
     #fetch_reconciled_trades(api_conn)

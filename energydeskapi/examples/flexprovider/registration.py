@@ -3,7 +3,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.energydesk.general_api import GeneralApi
 from energydeskapi.flexibility.dso_api import DsoApi
 from energydeskapi.assets.assets_api import AssetsApi
-from energydeskapi.sdk.profiles_utils import get_baseload_profile
+from energydeskapi.sdk.profiles_utils import get_baseload_profile, get_default_availability_profile
 from energydeskapi.types.flexibility_enum_types import AssetProfileTypeEnums
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi, ExternalMarketAsset
 import pendulum
@@ -53,10 +53,10 @@ def generate_baseline(mpid):
 
 
 
-def register_availability_profile(api_conn, description:str, hours=[7,8,9,10],half_cpacity=[6,11,12,13]):
-    prof=get_baseload_profile()
-    prof['weekday_profile']['Saturday'] = 0
-    prof['weekday_profile']['Sunday'] = 0
+def register_availability_profile(api_conn, description:str, hours=[6, 13,19],half_cpacity=[16,17,18]):
+    prof=get_default_availability_profile()
+    prof['weekday_profile'][4] = 0
+    prof['weekday_profile'][5] = 0
     for x in prof['daily_profile']:
         if x in half_cpacity:
             prof['daily_profile'][x] = 0.5
@@ -64,15 +64,15 @@ def register_availability_profile(api_conn, description:str, hours=[7,8,9,10],ha
             prof['daily_profile'][x]=0
     type_url=FlexibilityApi.get_asset_profile_type_url(api_conn, AssetProfileTypeEnums.RELATIVE)
     payload={'profile_name':description,'profile_type':type_url, 'profile':prof}
-    print(payload)
+    #print(payload)
     # Store it as a template
-    success, returned_data, status_code, error_msg=FlexibilityApi.upsert_availability_profile_template(api_conn, 0, payload)
+    #success, returned_data, status_code, error_msg=FlexibilityApi.upsert_availability_profile_template(api_conn, 0, payload)
     # View templates for user
-    templates=FlexibilityApi.get_availability_profile_templates(api_conn)
+    #templates=FlexibilityApi.get_availability_profile_templates(api_conn)
 
     # Store it on Asset table to be linked to concrete asset offer
     success, returned_data, status_code, error_msg=FlexibilityApi.upsert_asset_availability_profile(api_conn, 0, payload)
-    print(status_code)
+    #print(status_code)
     return returned_data # Profile object to be saved on asset_availabiolity
 
 def register_flex_availability(api_conn, extern_asset_id,
@@ -124,6 +124,7 @@ def load_asset_availability_schedule(api_conn, extern_asset_id):
     outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id=extern_asset_id,
                                                      period_from=str(t1),period_until=str(t2))
     df=pd.DataFrame(outdata['schedule'])
+
     print(df)
 
 def load_asset_dispatch_schedule(api_conn, extern_asset_id):
@@ -162,7 +163,6 @@ def load_assetmeterdata_from_files(specific_mpid="707057500057530000", specific_
     if specific_mpid =="707057500057530000" : # The sample
         filename = os.path.join(__location__, specific_file)
         df = pd.read_excel(filename)
-        print(df)
         df['datetime'] = pd.to_datetime(df[df.columns[0]])
         df['consumption'] = df[df.columns[1]]
         mp[specific_mpid]=df
@@ -207,10 +207,12 @@ def show_registered_assets(api_conn):
 def register_profile_on_all_assets(api_conn):
     assets = AssetsApi.get_assets(api_conn)
     counter=1
-    for a in assets['results']:
-        print(a)
-        print(a['pk'],a['extern_asset_id'])
+    for idx, a in enumerate(assets['results']):
+        if idx!=1:
+            continue
+
         # Next step is to make sure there exist a FlexibleAsset object for this asset
+
         # And refer to callback API for dispatch messages
         success, returned_data, status_code, error_msg=FlexibilityApi.upsert_flexible_asset(api_conn, a['extern_asset_id'], callback="https://127.0.0.1")
         if success:
@@ -230,7 +232,7 @@ def register_profile_on_all_assets(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    #register_profile_on_all_assets(api_conn)
+    register_profile_on_all_assets(api_conn)
     #load_available_flexibility(api_conn)
     #show_availability(api_conn)
-    show_dispatch_schedule(api_conn)
+    #show_dispatch_schedule(api_conn)

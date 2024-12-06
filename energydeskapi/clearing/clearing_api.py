@@ -2,6 +2,7 @@ import json
 import logging
 import pandas as pd
 
+import ast
 logger = logging.getLogger(__name__)
 #  Change
 class ClearingApi:
@@ -99,13 +100,13 @@ class ClearingApi:
             return None
         all_record = []
         for rec in json_res['results']:
-            content = rec['content']
             try:
-                records = json.loads(content)
+                data=rec['content']
+                records=ast.literal_eval(data)
                 for r in records:
                     all_record.append(r)
             except Exception as e:
-                raise Exception(f"Reading the clearing report records JSON {str(content)[:200]}: {e}")
+                raise Exception(f"Reading the clearing report records JSON {str(data)[:200]}: {e}")
         return all_record
 
     @staticmethod

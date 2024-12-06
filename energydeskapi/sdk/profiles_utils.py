@@ -17,8 +17,10 @@ def is_baseload(profile):
     b3 = check_flat_profile(profile['daily_profile'])
     return b1 and b2 and b3
 
-def get_baseload_weekdays(entry_value=1.0):
+def get_baseload_weekdays(entry_value=1.0, use_names=True):
     week=get_weekdays_list()
+    if not use_names:
+        return {idx: entry_value for idx, k in enumerate(week)}
     return {k: entry_value for k in week}
 
 def get_baseload_dailyhours(entry_value=1.0):
@@ -27,13 +29,14 @@ def get_baseload_dailyhours(entry_value=1.0):
 
 # This function may be misguiding for users since identical months weights is not
 # the same as basloed on a fixed volume.   Specify BASELOAD as profile category in addition
-def get_baseload_months(entry_value=1.0):
+def get_baseload_months(entry_value=1.0, use_names=True):
     months=get_month_list()
+    if not use_names:
+        return {idx: entry_value for idx, k in enumerate(months)}
     return {k: entry_value for k in months}
 
-def get_flat_months(entry_value=1.0):
-    months=get_month_list()
-    return {k: entry_value for k in months}
+def get_flat_months(entry_value=1.0, use_names=True):
+    return get_baseload_months(entry_value, use_names)
 
 
 # Used to get a default profile that factorize months based on hours. Using 2022 as sample year
@@ -52,6 +55,13 @@ def get_baseload_profile():
     return {
         'monthly_profile': get_baseload_months(),
         'weekday_profile': get_baseload_weekdays(),
+        'daily_profile': get_baseload_dailyhours()
+    }
+
+def get_default_availability_profile():
+    return {
+        'monthly_profile': get_baseload_months(use_names=False),
+        'weekday_profile': get_baseload_weekdays(use_names=False),
         'daily_profile': get_baseload_dailyhours()
     }
 
@@ -87,7 +97,7 @@ def __stringify_dictionary(d):
 def __convert_from_named_profiles(profile):
     months=profile['monthly_profile']
 
-    monthkeys={(index+1): months[month] for index, month in enumerate(get_month_list()) if month}
+    monthkeys={(index): months[month] for index, month in enumerate(get_month_list()) if month}
     profile['monthly_profile']=monthkeys
     weekdays=profile['weekday_profile']
     weekdayskeys={(index): weekdays[month] for index, month in enumerate(get_weekdays_list()) if month}
@@ -98,6 +108,18 @@ def __convert_from_named_profiles(profile):
     profile['daily_profile']=hourlykeys
     return profile
 
+def __convert_from_strnum_profiles(profile):
+    months=profile['monthly_profile']
+    monthkeys={int(index): months[str(index)] for index in months}
+    profile['monthly_profile']=monthkeys
+    weekdays=profile['weekday_profile']
+    weekdayskeys={int(index): weekdays[str(index)]  for index in weekdays}
+    profile['weekday_profile']=weekdayskeys
+    dayshours=profile['daily_profile']
+    dayshours=__stringify_dictionary(dayshours)  # Otherwise the lookup below fails
+    hourlykeys={int(index): dayshours[str(index)] for index in list(range(24))}
+    profile['daily_profile']=hourlykeys
+    return profile
 
 def relative_profile_to_dataframe(period_from, period_until,relative_profile, active_tz=pytz.timezone("Europe/Oslo")):
 
@@ -105,19 +127,16 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
         calender_profile=__convert_from_named_profiles(relative_profile)
     except Exception as e:
         #traceback.print_exc()
-        calender_profile=relative_profile
+        calender_profile=__convert_from_strnum_profiles(relative_profile)
+
 
     monthly_weights=calender_profile['monthly_profile']
     weekly_weights = calender_profile['weekday_profile']
     daily_weights = calender_profile['daily_profile']
-
+    print(monthly_weights)
     df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
-
-
     df['timestamp'] = df.index
-
-
-    df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month], axis=1)
+    df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month-1], axis=1)
     df['weekday_weight'] = df.apply(lambda x: weekly_weights[x['timestamp'].dayofweek], axis=1)
     df['hour_weight'] = df.apply(lambda x: daily_weights[x['timestamp'].hour], axis=1)
     df['hourly_weight'] =df['monthly_weight']*df['weekday_weight']*df['hour_weight']
