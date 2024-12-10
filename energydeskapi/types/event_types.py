@@ -6,6 +6,7 @@ class KafkaQueues(Enum):
     NORDICPOWER_PRICES = "marketdata.nordicpower.prices"
     NORDICPOWER_PRODUCTS = "marketdata.nordicpower.products"
     NORDICPOWER_OWNDEALS = "marketdata.nordicpower.owndeals"
+    EXTERNAL_ERRORS = "external.errors"
     PRODUCTVIEWS = "portfolioview.productview"
     APPSERVER_CLEARED_CONTRACTS = "energydeskservices.contracts.clearedcontracts"
     APPSERVER_CONTRACTS_CHANGES = "energydeskservices.contracts.contractschanges"
@@ -17,4 +18,5 @@ class MqttTopics(Enum):
     NORDICPOWER_PRICES = "/marketdata/nordicpower/prices"
     NORDICPOWER_PRODUCTS = "/marketdata/nordicpower/products"
     NORDICPOWER_OWNDEALS = "/marketdata/nordicpower/owndeals"
+    EXTERNAL_ERRORS = "/external/errors"
     PRODUCTVIEWS = "/portfolioview/productview"
