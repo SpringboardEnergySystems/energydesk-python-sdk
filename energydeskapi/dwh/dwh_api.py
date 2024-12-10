@@ -50,6 +50,15 @@ class DwhApi:
         return json_res
 
     @staticmethod
+    def get_hedgeview_timeseries(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        json_res = api_connection.exec_get_url('/api/dwh/hedgeviewtimeseries/latest/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_grid_exposure(api_connection, parameters={}):
         """Fetches  reports
         """
