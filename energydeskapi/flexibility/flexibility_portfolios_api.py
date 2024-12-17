@@ -1,0 +1,146 @@
+import logging
+import json
+from energydeskapi.assets.assets_api import AssetsApi
+from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
+from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.assetdata.assetdata_api import AssetDataApi
+import pendulum
+from energydeskapi.assetdata.baselines_api import BaselinesApi
+from energydeskapi.types.flexibility_enum_types import ExternalMarketTypeEnums
+import pandas as pd
+from datetime import timezone, datetime, date
+import json, pendulum
+from energydeskapi.contracts.contracts_api import ContractsApi
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
+from energydeskapi.types.flexibility_enum_types import RegulationTypeEnums
+from json import JSONEncoder
+from dataclasses import dataclass
+from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder, date_hook
+from typing import List
+from dataclasses import dataclass, asdict, field
+logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class FlexAsset:
+    asset_guid_id: str
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return self.asset_guid_id#json.dumps(self.__dict__, cls=DateTimeEncoder)
+
+@dataclass(frozen=True)
+class FlexPortfolio:
+    pk: int
+    description: str
+    portfolio_id: str
+    portfolio_asset_list: List[FlexAsset] = field(default_factory=list)
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
+
+@dataclass(frozen=True)
+class FlexPortfolioStatus:
+    pk: int
+    portfolio: str # URL
+    status_type: str # URL
+    timestamp_from: datetime
+    timestamp_until: datetime
+    tiggered_by_trade: str # URL
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
+
+
+class FlexibilityPortfolioApi:
+    """ Class for flexibility and portfolios
+    """
+
+
+
+    @staticmethod
+    def get_flexible_portfolio_url(api_connection, pk):
+        """Fetches url for a contract type from enum value
+        """
+        return api_connection.get_base_url() + '/api/flexiblepower/flexibleportfolios/' + str(pk) + "/"
+
+    @staticmethod
+    def get_flexible_portfolio_status_type_url(api_connection, portfolio_status):
+        """Fetches url for a contract type from enum value
+        """
+        status_pk = portfolio_status if isinstance(portfolio_status, int) else portfolio_status.value
+        return api_connection.get_base_url() + '/api/flexiblepower/portfoliostatustypes/' + str(status_pk) + "/"
+
+    @staticmethod
+    def get_flexible_portfolios(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_flexible_portfolios_embedded(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_flexible_portfolio(api_connection, flex_portfolio: FlexPortfolio):
+        logger.debug("Upserting flex portfolio")
+        payload = json.loads(flex_portfolio.json)
+        key = int(flex_portfolio.pk)
+        logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/flexibleportfolios/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/flexibleportfolios/', payload)
+        return success, returned_data, status_code, error_msg
+
+
+    @staticmethod
+    def get_flexible_portfolios_status(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfoliostatuses/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_flexible_portfolio_status(api_connection, flex_portfolio_status: FlexPortfolioStatus):
+        logger.debug("Upserting flex portfolio status")
+        payload = json.loads(flex_portfolio_status.json)
+        key = int(flex_portfolio_status.pk)
+        logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/flexibleportfoliostatuses/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/flexibleportfoliostatuses/', payload)
+        return success, returned_data, status_code, error_msg
+
