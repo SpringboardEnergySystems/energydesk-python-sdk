@@ -60,7 +60,7 @@ def portfolio_status_type_description(x):
     return {
         PortfolioStatusTypeEnums.DISABLED: "Portfolio is not in use",
         PortfolioStatusTypeEnums.IDLE: "Portfolio is Idle",
-        PortfolioStatusTypeEnums.ARMED: "Portfolio is Armed"
+        PortfolioStatusTypeEnums.ARMED: "Portfolio is Armed",
         PortfolioStatusTypeEnums.ACTIVATED: "Portfolio is under Activation"
     }[x]
 
