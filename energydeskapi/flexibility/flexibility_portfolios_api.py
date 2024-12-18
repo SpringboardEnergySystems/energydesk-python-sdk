@@ -37,6 +37,8 @@ class FlexPortfolio:
     pk: int
     description: str
     portfolio_id: str
+    external_id: str
+    location: str
     portfolio_asset_list: List[FlexAsset] = field(default_factory=list)
     @property
     def __dict__(self):
