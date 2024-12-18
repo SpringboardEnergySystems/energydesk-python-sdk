@@ -18,5 +18,6 @@ class MqttTopics(Enum):
     NORDICPOWER_PRICES = "/marketdata/nordicpower/prices"
     NORDICPOWER_PRODUCTS = "/marketdata/nordicpower/products"
     NORDICPOWER_OWNDEALS = "/marketdata/nordicpower/owndeals"
+    APPSERVER_CLEARED_CONTRACTS = "/energydeskservices/contracts/clearedcontracts"
     EXTERNAL_ERRORS = "/external/errors"
     PRODUCTVIEWS = "/portfolioview/productview"
