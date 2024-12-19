@@ -54,6 +54,9 @@ class FlexPortfolio:
         """
         return json.dumps(self.__dict__, cls=DateTimeEncoder)
 
+
+
+
 @dataclass(frozen=True)
 class FlexPortfolioStatus:
     pk: int
@@ -62,6 +65,41 @@ class FlexPortfolioStatus:
     timestamp_from: datetime
     timestamp_until: datetime
     tiggered_by_trade: str # URL
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
+
+
+
+
+@dataclass(frozen=True)
+class FlexPortfolioOrder:
+    pk: int
+    external_order_id: str
+    portfolio: str # URL
+    regulating_direction: str # URL
+    reserves_category: str  # URL
+    area_location_id: str # URL
+    area_location_name: str  # URL
+    isp_period_from: datetime
+    isp_period_until: datetime
+    order_time: datetime
+    buy_or_sell: str
+    price_currency: str
+    quantity: str
+    quantity_type: str # URL
+    quantity_unit: str# URL
+    cancelled: bool
     @property
     def __dict__(self):
         """
@@ -161,3 +199,29 @@ class FlexibilityPortfolioApi:
                 '/api/flexiblepower/flexibleportfoliostatuses/', payload)
         return success, returned_data, status_code, error_msg
 
+
+    @staticmethod
+    def get_flexible_portfolios_orders(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolioorders/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+    @staticmethod
+    def get_flexible_portfolios_orders_embedded(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolioorders/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+    @staticmethod
+    def upsert_flexible_portfolio_order(api_connection, flex_portfolio_order: FlexPortfolioOrder):
+        logger.debug("Upserting flex portfolio status")
+        payload = json.loads(flex_portfolio_order.json)
+        key = int(flex_portfolio_order.pk)
+        logger.info("Saving flex order key= {} data= {}".format(key, payload))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/flexibleportfolioorders/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/flexibleportfolioorders/', payload)
+        return success, returned_data, status_code, error_msg

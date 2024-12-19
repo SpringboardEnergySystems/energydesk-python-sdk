@@ -82,10 +82,23 @@ class FlexibilityApi:
 
     @staticmethod
     def get_regulation_type_url(api_connection, regulation_type_enum):
-        """
-        """
         type_pk = regulation_type_enum if isinstance(regulation_type_enum, int) else regulation_type_enum.value
         return api_connection.get_base_url() + '/api/flexiblepower/regulation/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_regulation_direction_url(api_connection, etype):
+        type_pk = etype if isinstance(etype, int) else etype.value
+        return api_connection.get_base_url() + '/api/flexmarkets/regulatingdirections/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_reserves_categories_url(api_connection, etype):
+        type_pk = etype if isinstance(etype, int) else etype.value
+        return api_connection.get_base_url() + '/api/flexmarkets/reservescategories/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_reserves_types_url(api_connection, etype):
+        type_pk = etype if isinstance(etype, int) else etype.value
+        return api_connection.get_base_url() + '/api/flexmarkets/reservestypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_flexible_assets_embedded(api_connection, parameters={}):
