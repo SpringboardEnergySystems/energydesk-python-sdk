@@ -103,12 +103,27 @@ class FlexibilityPortfolioApi:
             return None
         return json_res
 
+
+
     @staticmethod
     def get_flexible_portfolios_embedded(api_connection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
+
+
+    @staticmethod
+    def get_portfolio_availability(api_connection, flex_portfolio_id, period_from, period_until):
+        param={'portfolio_id':flex_portfolio_id,
+               'period_from':period_from,
+               'period_until':period_until}
+        json_res = api_connection.exec_get_url(
+            '/api/flexiblepower/flexportfolioavailability/',param)
+        if json_res is None:
+            return None
+        return json_res
+
 
     @staticmethod
     def upsert_flexible_portfolio(api_connection, flex_portfolio: FlexPortfolio):
