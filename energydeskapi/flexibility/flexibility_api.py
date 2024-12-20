@@ -558,21 +558,25 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def register_asset_availability(api_connection, extern_asset_id,
-                                    period_from, period_until,  availability_profile,  kw_available
-                                ):
+    def register_asset_availability(api_connection, asset_id, extern_asset_id,
+                                    period_from, period_until,  availability_profile,  kw_available,
+                                minimum_price=0):
         """Simplified registration of flexible asset
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         payload={
-            "extern_asset_id":extern_asset_id,
             "period_from": period_from,
             "period_until": period_until,
             'availability_profile': availability_profile,
-            "kw_flexibility": kw_available
+            "kw_flexibility": kw_available,
+            "minimum_price": minimum_price
         }
+        if asset_id is not None:
+            payload['asset_id']=asset_id
+        if extern_asset_id is not None:
+            payload['extern_asset_id']=extern_asset_id
         print(json.dumps(payload, indent=2))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/specifyassetavailability/', payload)
         if success is False:
