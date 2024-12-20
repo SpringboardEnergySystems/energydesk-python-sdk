@@ -70,7 +70,7 @@ def reg_flex_portfolio_orders(api_conn):
                                  isp_period_from=pendulum.now(tz="Europe/Oslo").add(hours=20),
                                  isp_period_until=pendulum.now(tz="Europe/Oslo").add(hours=21),
                                  order_time=pendulum.now(tz="Europe/Oslo"),
-                                 buy_or_sell="SELL",price_currency="EUR",quantity=0.5,
+                                 buy_or_sell="SELL",price_amount=5000,price_currency="EUR",quantity=0.5,
                                  quantity_type=quantity_type,
                                  quantity_unit=quantity_unit,
                                  cancelled=False)

@@ -95,8 +95,9 @@ class FlexPortfolioOrder:
     isp_period_until: datetime
     order_time: datetime
     buy_or_sell: str
+    price_amount: float
     price_currency: str
-    quantity: str
+    quantity: float
     quantity_type: str # URL
     quantity_unit: str# URL
     cancelled: bool
