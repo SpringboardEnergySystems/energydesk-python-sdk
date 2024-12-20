@@ -100,7 +100,7 @@ class FlexPortfolioOrder:
     quantity: float
     quantity_type: str # URL
     quantity_unit: str# URL
-    cancelled: bool
+    order_status: str# URL
     @property
     def __dict__(self):
         """
@@ -121,6 +121,10 @@ class FlexibilityPortfolioApi:
     """
 
 
+    @staticmethod
+    def get_flexorder_status_url(api_connection, order_status):
+        status_pk = order_status if isinstance(order_status, int) else order_status.value
+        return api_connection.get_base_url() + '/api/flexiblepower/flexorderstatuses/' + str(status_pk) + "/"
 
     @staticmethod
     def get_flexible_portfolio_url(api_connection, pk):

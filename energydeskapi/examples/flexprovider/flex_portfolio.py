@@ -10,7 +10,7 @@ from energydeskapi.types.contract_enum_types import QuantityUnitEnum
 from energydeskapi.types.flexibility_enum_types import AssetProfileTypeEnums
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi
 from datetime import datetime
-from energydeskapi.types.flexibility_enum_types import PortfolioStatusTypeEnums, ReservesTypeEnums, RegulatingDirectionEnums, ReservesCategoryEnum
+from energydeskapi.types.flexibility_enum_types import FlexOrderStatusEnums,PortfolioStatusTypeEnums, ReservesTypeEnums, RegulatingDirectionEnums, ReservesCategoryEnum
 from energydeskapi.flexibility.flexibility_portfolios_api import FlexPortfolioOrder, FlexibilityPortfolioApi,FlexPortfolioStatus, FlexPortfolio, FlexAsset
 import pendulum
 import json
@@ -59,6 +59,7 @@ def reg_flex_portfolio_orders(api_conn):
                                                        QuantityUnitEnum.MW)
     quantity_type=ContractsApi.get_quantity_type_url(api_conn,
                                       QuantityTypeEnum.EFFECT)
+    order_status=FlexibilityPortfolioApi.get_flexorder_status_url(api_conn,FlexOrderStatusEnums.OPEN)
     for port in portos:
         port_url=FlexibilityPortfolioApi.get_flexible_portfolio_url(api_conn, port['pk'])
         flex_order_id = str(uuid.uuid4())
@@ -73,7 +74,7 @@ def reg_flex_portfolio_orders(api_conn):
                                  buy_or_sell="SELL",price_amount=5000,price_currency="EUR",quantity=0.5,
                                  quantity_type=quantity_type,
                                  quantity_unit=quantity_unit,
-                                 cancelled=False)
+                                 order_status=order_status)
 
         FlexibilityPortfolioApi.upsert_flexible_portfolio_order(api_conn, fstat)
 
