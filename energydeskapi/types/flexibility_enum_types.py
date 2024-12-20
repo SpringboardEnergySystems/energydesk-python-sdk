@@ -1,5 +1,19 @@
 from enum import Enum
 
+class FlexOrderStatusEnums(Enum):
+    OPEN = 1
+    PARTIAL_FILL = 2
+    FILLED = 3
+    DELETED = 4
+
+def flex_order_status_description(x):
+    return {
+        FlexOrderStatusEnums.OPEN: "Open Order in market",
+        FlexOrderStatusEnums.PARTIAL_FILL: "Partially filled order",
+        FlexOrderStatusEnums.FILLED: "Filled Order (should be linked to a trade)",
+        FlexOrderStatusEnums.DELETED: "Deleted Order"
+    }[x]
+
 class ReservesTypeEnums(Enum):
     mFRR = 1
     aFRR = 2
