@@ -91,7 +91,7 @@ def update_flex_portfolio_status(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #register_flex_portfolio(api_conn)
-    reg_flex_portfolio_orders(api_conn)
+    #reg_flex_portfolio_orders(api_conn)
     load_flex_portfolio_orders(api_conn)
     #load_flex_portfolios_details(api_conn)
     #load_available_flexibility(api_conn)
