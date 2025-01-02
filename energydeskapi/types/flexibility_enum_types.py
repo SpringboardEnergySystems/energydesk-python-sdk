@@ -5,13 +5,15 @@ class FlexOrderStatusEnums(Enum):
     PARTIAL_FILL = 2
     FILLED = 3
     DELETED = 4
+    EXPIRED = 5
 
 def flex_order_status_description(x):
     return {
-        FlexOrderStatusEnums.OPEN: "Open Order in market",
+        FlexOrderStatusEnums.OPEN: "Active in market",
         FlexOrderStatusEnums.PARTIAL_FILL: "Partially filled order",
-        FlexOrderStatusEnums.FILLED: "Filled Order (should be linked to a trade)",
-        FlexOrderStatusEnums.DELETED: "Deleted Order"
+        FlexOrderStatusEnums.FILLED: "Filled Order",
+        FlexOrderStatusEnums.DELETED: "Deleted Order",
+        FlexOrderStatusEnums.EXPIRED: "Expired Order"
     }[x]
 
 class ReservesTypeEnums(Enum):
