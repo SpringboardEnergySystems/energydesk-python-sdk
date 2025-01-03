@@ -1,38 +1,29 @@
-import json
-import logging
-
 import geojson
 import geopandas as gpd
-import pandas as pd
-import pendulum
-import logging
-import json
-from shapely.geometry import shape
-import geopandas as gpd
+import matplotlib  # pip install matplotlib
 import plotly.express as px
 import plotly.graph_objects as go
-import plotly.express as px
-
-import pandas as pd     # pip install pandas
-
-import numpy as np
 from matplotlib.pyplot import *
-import matplotlib
+from shapely.geometry import shape
 
-import matplotlib      # pip install matplotlib
 matplotlib.use('agg')
 matplotlib.style.use('ggplot')
-import matplotlib.pyplot as plt
-import base64
-from io import BytesIO
+import logging
+import json
+from energydeskapi.sdk.money_utils import FormattedMoney, CurrencyCode
+import pandas as pd
+from energydeskapi.contracts.contracts_api import ContractsApi
 import pendulum
+from energydeskapi.customers.customers_api import CustomersApi
+from energydeskapi.customers.users_api import UsersApi
+from energydeskapi.flexibility.capacity_contract_utils import generate_default_activation_contract
 from energydeskapi.flexibility.flexibility_api import ExternalMarketAsset
 from energydeskapi.flexibility.flexibility_api import FlexibilityApi
 from energydeskapi.grid.grid_api import GridApi
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums
-from energydeskapi.types.flexibility_enum_types import ReservesTypeEnums, ReservesCategoryEnum
+from energydeskapi.types.flexibility_enum_types import ReservesCategoryEnum
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -41,6 +32,24 @@ logging.basicConfig(level=logging.INFO,
 
 
 
+def register_flex_contract(api_conn):
+    contract=generate_default_activation_contract(api_conn)
+    print(contract)
+    comp=CustomersApi.get_company_from_registry_number(api_conn, "980489698")
+    print(comp)
+    up=UsersApi.get_user_profile(api_conn)
+    print(up)
+    today = pendulum.today("Europe/Oslo")
+    contract.counterpart = comp['pk']
+    #contract.external_contract_id = contract_type + "_" + str(contracted_asset['meter_id'])
+    contract.trader = up['pk']
+    contract.quantity = 5
+    contract.contract_profile=None
+    contract.contract_price = FormattedMoney(10, CurrencyCode.NOK)
+    contract.trade_datetime = today
+    contract.trade_date = today
+    contract.trading_book = 4
+    success, returned_data, status_code, error_msg = ContractsApi.upsert_contract(api_conn, contract)
 
 
 def register_flexible_asset(api_conn):
@@ -233,6 +242,6 @@ if __name__ == '__main__':
     api_conn=init_api()
     #register_flexible_asset(api_conn)
     #register_flex_availability(api_conn)
-    get_flexibility_products(api_conn)
+    register_flex_contract(api_conn)
 
     #load_reserves_prices(api_conn)
