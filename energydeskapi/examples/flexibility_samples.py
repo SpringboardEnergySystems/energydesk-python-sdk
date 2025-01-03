@@ -40,6 +40,8 @@ def register_flex_contract(api_conn):
     up=UsersApi.get_user_profile(api_conn)
     print(up)
     today = pendulum.today("Europe/Oslo")
+    next=pendulum.tomorrow("Europe/Oslo")
+    next2=next.add(hours=1)
     contract.counterpart = comp['pk']
     #contract.external_contract_id = contract_type + "_" + str(contracted_asset['meter_id'])
     contract.trader = up['pk']
@@ -49,6 +51,12 @@ def register_flex_contract(api_conn):
     contract.trade_datetime = today
     contract.trade_date = today
     contract.trading_book = 4
+    #contract.counterpart = counterpart_pk
+
+
+    contract.commodity_delivery_from = next
+    contract.commodity_delivery_until = next2
+    #contract.contract_sub_type = contract_type
     success, returned_data, status_code, error_msg = ContractsApi.upsert_contract(api_conn, contract)
 
 
