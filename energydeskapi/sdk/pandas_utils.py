@@ -93,6 +93,8 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
     if pandas_res is None:
         ix = pd.date_range(start=dtfrom, end=dtuntil)
     else:
+        if pandas_res=="H": # Just to get rid of warning
+            pandas_res="h"
         ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
 
     df_new = df.reindex(ix, fill_value='NaN')
