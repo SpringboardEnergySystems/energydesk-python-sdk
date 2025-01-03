@@ -173,7 +173,7 @@ class FlexibilityPortfolioApi:
         logger.debug("Upserting flex portfolio")
         payload = json.loads(flex_portfolio.json)
         key = int(flex_portfolio.pk)
-        logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
+        logger.debug("Saving regulation scheduled key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/flexiblepower/flexibleportfolios/' + str(key) + "/", payload)
@@ -195,7 +195,7 @@ class FlexibilityPortfolioApi:
         logger.debug("Upserting flex portfolio status")
         payload = json.loads(flex_portfolio_status.json)
         key = int(flex_portfolio_status.pk)
-        logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
+        logger.debug("Saving regulation scheduled key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/flexiblepower/flexibleportfoliostatuses/' + str(key) + "/", payload)
@@ -222,7 +222,7 @@ class FlexibilityPortfolioApi:
         logger.debug("Upserting flex portfolio status")
         payload = json.loads(flex_portfolio_order.json)
         key = int(flex_portfolio_order.pk)
-        logger.info("Saving flex order key= {} data= {}".format(key, payload))
+        logger.debug("Saving flex order key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/flexiblepower/flexibleportfolioorders/' + str(key) + "/", payload)
