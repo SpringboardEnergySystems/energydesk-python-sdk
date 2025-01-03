@@ -156,7 +156,7 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<210:
@@ -186,7 +186,7 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key] = extra_headers[key]
         server_url = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         result = requests.delete(server_url, headers=headers)
         if result.status_code < 210:
             if result.status_code > 200 and result.text.strip() == "":
@@ -216,7 +216,7 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.patch(server_url, json=payload,   headers=headers)
         if result.status_code<202:
