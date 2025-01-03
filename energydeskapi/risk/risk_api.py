@@ -132,14 +132,16 @@ class RiskApi:
         return dfvars
 
     @staticmethod
-    def get_rolling_products(api_connection, price_days=40):
+    def get_rolling_products(api_connection, price_days=40, ticker=None):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         logger.info("Loads rolling products")
-        param={'price_days':price_days}
-        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproducts/',param)
+        params={'price_days':price_days}
+        if ticker is not None:
+            params['ticker__icontains'] = ticker
+        print('get_rolling_products params:', params)
+        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproducts/',params)
         return json_res
-
