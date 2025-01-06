@@ -560,7 +560,7 @@ class FlexibilityApi:
     @staticmethod
     def register_asset_availability(api_connection, asset_id, extern_asset_id,
                                     period_from, period_until,  availability_profile,  kw_available,
-                                minimum_price=0):
+                                avgcost_per_unit=0):
         """Simplified registration of flexible asset
 
         :param api_connection: class with API token for use with API
@@ -571,7 +571,7 @@ class FlexibilityApi:
             "period_until": period_until,
             'availability_profile': availability_profile,
             "kw_flexibility": kw_available,
-            "minimum_price": minimum_price
+            "avgcost_per_unit": avgcost_per_unit
         }
         if asset_id is not None:
             payload['asset_id']=asset_id
