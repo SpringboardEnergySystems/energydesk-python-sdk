@@ -559,7 +559,7 @@ class FlexibilityApi:
 
     @staticmethod
     def register_asset_availability(api_connection, asset_id, extern_asset_id,
-                                    period_from, period_until,  availability_profile,  kw_available,
+                                    period_from, period_until,  active_profile, profile_changerequest, kw_available,
                                 avgcost_per_unit=0):
         """Simplified registration of flexible asset
 
@@ -569,10 +569,12 @@ class FlexibilityApi:
         payload={
             "period_from": period_from,
             "period_until": period_until,
-            'availability_profile': availability_profile,
+            'active_profile': active_profile,
             "kw_flexibility": kw_available,
             "avgcost_per_unit": avgcost_per_unit
         }
+        if profile_changerequest is not None:
+            payload['requested_profile']=profile_changerequest
         if asset_id is not None:
             payload['asset_id']=asset_id
         if extern_asset_id is not None:
