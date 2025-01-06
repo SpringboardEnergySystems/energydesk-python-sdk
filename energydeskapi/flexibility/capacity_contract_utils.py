@@ -27,7 +27,7 @@ def generate_default_activation_contract(api_conn):
     c.otc=True
     c.delivery_type=DeliveryTypeEnum.PHYSICAL
     c.buy_or_sell="BUY"
-    c.instrument_type=InstrumentTypeEnum.FWD
+    c.instrument_type=InstrumentTypeEnum.SPOT
     c.commodity_type=CommodityTypeEnum.GRID_CAPACITY
     c.market=MarketEnum.NORDIC_POWER
     c.contract_price=FormattedMoney(0, CurrencyCode.NOK)
