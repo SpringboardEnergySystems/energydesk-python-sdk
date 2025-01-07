@@ -57,12 +57,17 @@ def get_baseload_profile():
         'weekday_profile': get_baseload_weekdays(),
         'daily_profile': get_baseload_dailyhours()
     }
+def __convert_index_to_str(d:dict):
+    d2={}
+    for i in d.keys():
+        d2[str(i)]=d[i]
+    return d2
 
 def get_default_availability_profile():
     return {
-        'monthly_profile': get_baseload_months(use_names=False),
-        'weekday_profile': get_baseload_weekdays(use_names=False),
-        'daily_profile': get_baseload_dailyhours()
+        'monthly_profile': __convert_index_to_str(get_baseload_months(use_names=False)),
+        'weekday_profile': __convert_index_to_str(get_baseload_weekdays(use_names=False)),
+        'daily_profile': __convert_index_to_str(get_baseload_dailyhours())
     }
 
 def get_zero_profile():
