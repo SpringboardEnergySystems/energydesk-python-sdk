@@ -141,8 +141,8 @@ def load_asset_dispatch_schedule(api_conn, extern_asset_id):
 
 def load_available_flexibility(api_conn, extern_asset_id=None):
     param={}
-    if extern_asset_id is not None:
-        param['asset__extern_asset_id']=extern_asset_id
+    #if extern_asset_id is not None:
+    #    param['asset__extern_asset_id']=extern_asset_id
 
     data=FlexibilityApi.get_flexible_assets_embedded(api_conn, param)
     for fa in data['results']:
@@ -232,7 +232,7 @@ def register_profile_on_all_assets(api_conn):
 
 if __name__ == '__main__':
     api_conn=init_api()
-    register_profile_on_all_assets(api_conn)
-    #load_available_flexibility(api_conn)
+    #register_profile_on_all_assets(api_conn)
+    load_available_flexibility(api_conn)
     #show_availability(api_conn)
     #show_dispatch_schedule(api_conn)
