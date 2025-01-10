@@ -144,7 +144,7 @@ class GridNodeApi:
             return None
         return json_res
     @staticmethod
-    def get_grid_nodes_with_embedded(api_connection, parameters={}):
+    def get_grid_nodes_with_embedded_tenders(api_connection, parameters={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/tenders/', parameters)
         if json_res is None:
             return None
