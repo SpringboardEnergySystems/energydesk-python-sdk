@@ -147,6 +147,7 @@ class GridNodeApi:
         gn=GridNode()
         gn.pk=jdata['pk']
         gn.asset = key_from_url(jdata['asset'])
+        gn.sync_with_localmarket = jdata['sync_with_localmarket']
         gn.alternative_external_id = jdata['alternative_external_id']
         gn.alternative_external_name = jdata['alternative_external_name']
         gn.yearly_consumption = jdata['yearly_consumption']
