@@ -20,6 +20,7 @@ class GridNode:
     def __init__(self):
         self.pk = 0
         self.asset = None
+        self.sync_with_localmarket = False
         self.alternative_external_id=""
         self.alternative_external_name=""
         self.yearly_consumption=0
@@ -36,6 +37,7 @@ class GridNode:
         dict = {}
         dict['pk'] = self.pk
         if self.asset is not None: dict['asset'] = AssetsApi.get_asset_url(api_connection, self.asset)
+        if self.sync_with_localmarket is not None: dict['sync_with_localmarket'] = self.sync_with_localmarket
         if self.alternative_external_id is not None: dict['alternative_external_id'] = self.alternative_external_id
         if self.alternative_external_name is not None: dict['alternative_external_name'] = self.alternative_external_name
         if self.yearly_consumption is not None: dict['yearly_consumption'] = self.yearly_consumption
