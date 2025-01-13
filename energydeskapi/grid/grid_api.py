@@ -1,6 +1,7 @@
 import logging
 from energydeskapi.assets.assets_api import AssetsApi
 import pandas as pd
+from energydeskapi.sdk.common_utils import key_from_url
 logger = logging.getLogger(__name__)
 
 
@@ -143,8 +144,22 @@ class GridNodeApi:
     def get_grid_node_by_id(api_connection, key):
         jdata = api_connection.exec_get_url(
                 '/api/grid/gridnodes/' + str(key) + "/")
-        print(jdata)
-        return None
+        gn=GridNode()
+        gn.pk=jdata['pk']
+        gn.asset = key_from_url(jdata['asset'])
+        gn.alternative_external_id = jdata['alternative_external_id']
+        gn.alternative_external_name = jdata['alternative_external_name']
+        gn.yearly_consumption = jdata['yearly_consumption']
+        gn.customers_in_gridnode = jdata['customers_in_gridnode']
+        gn.transformer1 = jdata['transformer1']
+        gn.transformer2 = jdata['transformer2']
+        gn.transformer3 = jdata['transformer3']
+        gn.transformer4 = jdata['transformer4']
+        gn.total_capacity = jdata['total_capacity']
+        gn.n_minus_capacity = jdata['n_minus_capacity']
+        gn.peak_consumption = jdata['peak_consumption']
+
+        return gn
 
     @staticmethod
     def patch_grid_node(api_connection, key, payload):
