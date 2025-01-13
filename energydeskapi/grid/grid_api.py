@@ -140,6 +140,13 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def get_grid_node_by_id(api_connection, key):
+        jdata = api_connection.exec_get_url(
+                '/api/grid/gridnodes/' + str(key) + "/")
+        print(jdata)
+        return None
+
+    @staticmethod
     def patch_grid_node(api_connection, key, payload):
         success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/grid/gridnodes/' + str(key) + "/", payload)
