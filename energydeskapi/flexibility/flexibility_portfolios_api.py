@@ -204,6 +204,18 @@ class FlexibilityPortfolioApi:
                 '/api/flexiblepower/flexibleportfoliostatuses/', payload)
         return success, returned_data, status_code, error_msg
 
+    @staticmethod
+    def get_flexible_portfolios_trades(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfoliotrades/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+    @staticmethod
+    def get_flexible_portfolios_trades_embedded(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfoliotrades/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_flexible_portfolios_orders(api_connection,  parameters={}):

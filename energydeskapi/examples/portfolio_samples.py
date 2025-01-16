@@ -110,6 +110,49 @@ def create_portfolio(api_conn):
     print(json.dumps(pnode.get_dict(api_conn), indent=4))
     PortfoliosApi.upsert_portfolio(api_conn, pnode)
 
+
+def create_portfolio_tree(api_conn,  children=['Capacity Trades','Shortflex'],company_reg="932826194"):
+    comp = CustomersApi.get_company_from_registry_number(api_conn, company_reg)
+    if len(comp)==0:
+        return False
+    pmap = {}
+    pk=1
+    pnode = PortfolioNode()
+    pnode.description = "Root"
+    pnode.pk = 1
+    pnode.manager = comp['pk']#CustomersApi.get_company_url(api_conn, comp['pk'])
+    portfolios=[pnode]
+    pmap[pnode.description ]=pnode
+    def register_portfolio(name, idx, parent):
+        idx=idx+1
+
+        pnode = PortfolioNode()
+        pnode.description = name
+        pnode.pk = idx
+        pnode.sub_portfolios = []
+        pnode.trading_books = []
+        pnode.manager = comp['pk']#CustomersApi.get_company_url(api_conn, comp['pk'])
+        pmap[pnode.description] = pnode
+        parent.sub_portfolios.append({"portfolio_id":0, "portfolio_name":name})
+        #d = {'pk': 0, 'description': name, 'portfolio_name': name, 'trading_books': [], 'manager': CustomersApi.get_company_url(api_conn, comp['pk']),
+        #     'assets': [], 'sub_portfolios': [], 'stakeholders': []}
+        return idx, pnode
+
+
+
+    for c in children:
+        pk, pchild=register_portfolio(c, pk, pnode)
+        portfolios.append(pchild)
+    for v in pmap.values():
+        for c in v.sub_portfolios:
+            parent=pmap[c['portfolio_name']]
+            parent.parent_id= v.pk
+            parent.parent_name = v.description
+    print(portfolios)
+    for p in portfolios:
+        print(p.get_dict(api_conn))
+    success = PortfolioTreeApi.upsert_portfolio_tree(api_conn, portfolios)
+
 def create_empty(api_conn):
     pnode = PortfolioNode()
     pnode.description = "Root"
@@ -130,6 +173,7 @@ if __name__ == '__main__':
     api_conn=init_api()
     #load_tree(api_conn)
     #create_empty(api_conn)
+    create_portfolio_tree(api_conn)
     #tree=load_flat_tree(api_conn)
-    t=query_portfolios(api_conn)
-    print(t)
+    #t=query_portfolios(api_conn)
+    #print(t)
