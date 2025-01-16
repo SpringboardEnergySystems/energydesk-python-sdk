@@ -12,6 +12,9 @@ from energydeskapi.sdk.common_utils import key_from_url
 from energydeskapi.sdk.datetime_utils import convert_datetime_from_utc
 from energydeskapi.assetdata.assetdata_api import AssetDataApi, TimeSeriesAdjustments, TimeSeriesAdjustment
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
+from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
+import pendulum
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -155,10 +158,86 @@ def load_assetdata2(api_conn):
     df = AssetDataApi.get_asset_timeseries(api_conn, params)
     df = pd.DataFrame(data=eval(df))
     print(df)
-
-
-
     print(df)
+import pytz
+def load_meterdata(api_conn,period_from="2024-10-01",period_until="2024-12-01"):
+
+    period_start = datetime.strptime(period_from, '%Y-%m-%d').replace(tzinfo=pytz.timezone("Europe/Oslo"))
+    period_end = datetime.strptime(period_until, '%Y-%m-%d').replace(tzinfo=pytz.timezone("Europe/Oslo"))
+    params={'id__in': [15, 28, 35], 'time_series_type__id': 1, 'resolution': '5min'}
+    jsdata = AssetDataApi.get_asset_timeseries(api_conn, params)
+    if type(jsdata) == str:
+        jsdata = json.loads(jsdata)
+    df = pd.DataFrame(data=jsdata)
+    print(df)
+
+    df.index = df.timestamp
+    df.index = pd.to_datetime(df.index)
+    df = df.loc[(df.index >= period_start) & (df.index < period_end)]
+    df = df.drop(columns=['date', 'timestamp'])
+    df=df.tz_convert("Europe/Oslo")
+    df['day'] = df.index.dayofweek
+    df['hour'] = df.index.hour
+    df['min']=df.index.minute
+    df['effect_mean']=df['effect']
+    df['effect_max'] = df['effect']
+    df["hour"]=df["hour"].astype(str)
+    df["min"] = df["min"].astype(str)
+    df['hourmin']=df["hour"].str.zfill(2) + " " + df["min"].str.zfill(2)
+    df=df.loc[df['day']<5]
+    print(df)
+    df2=df.groupby(['hourmin']).agg({'effect_mean': 'mean', 'effect_max': 'max'})
+    print(df2)
+    print(df['day'].unique())
+    df2.to_excel("aggregated_meterdata.xlsx")
+    return
+
+    df_metergroups = df.pivot_table(index='timestamp', columns=['asset'], values='effect',
+                                              aggfunc='mean')
+    print(df_metergroups)
+    df_tmp = make_empty_timeseries_df(str(df_metergroups.index.min())[:10], str(pendulum.tomorrow())[:10], "h")
+    # df_tmp = pd.DataFrame(index=pd.date_range(str(df_metergroups.index.min())[:10], str(pendulum.tomorrow())[:10], freq='H'))
+    import numpy as np
+
+    df3 = pd.merge(df_tmp, df_metergroups, left_index=True, right_index=True, how='left')
+    df3.replace(0, np.nan, inplace=True)
+    df3 = df3.ffill()
+    df3 = df3.bfill()
+    df3['sum'] = df3.sum(axis=1)
+
+
+
+    return
+
+    def create_bins(binval):
+        x=0
+        bins=[0]
+        while x<24:
+            x=x+binval
+            bins.append(x)
+        return bins
+
+    ix = pd.bdate_range(start=period_start, end=period_end)
+    # logger.debug(str(ix[-(arg1+1):-1])) #Non buinsess days
+    df_locs = []
+    for dates in ix[-6:-1]:
+        dt1 = str(dates)[:10] + " 00:00:00"
+        dt2 = str(dates)[:10] + " 23:59:00"
+        dt1 = conv_from_pendulum(pendulum.parse(dt1, tz="Europe/Oslo"), tz="Europe/Oslo")
+        dt2 = conv_from_pendulum(pendulum.parse(dt2, tz="Europe/Oslo"), tz="Europe/Oslo")
+        mask = ((df.index >= dt1) & (df.index <= dt2))
+        df_locs.append(df.loc[mask])
+    print(df_locs)
+    df_temp = pd.concat(df_locs)
+
+    bins=create_bins(1)
+    index = pd.date_range(start=period_start, end=period_end + timedelta(hours=23), freq='h')
+    df_temp['Bin'] = pd.cut(df_temp.index.hour, bins, right=False)
+    print(df_temp)
+    grouped_values = df_temp.groupby(['Bin'])['effect'].transform('mean')
+    print(grouped_values)
+    grouped_values.to_excel("hourdata.xlsx")
+
 
 if __name__ == '__main__':
 
@@ -167,7 +246,7 @@ if __name__ == '__main__':
     #query_assetdata_types(api_conn)
     #pd.set_option('display.max_rows', None)
     #load_assetdata(api_conn)
-    load_assetdata2(api_conn)
+    load_meterdata(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
