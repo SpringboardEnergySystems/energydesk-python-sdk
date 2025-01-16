@@ -82,10 +82,23 @@ class FlexibilityApi:
 
     @staticmethod
     def get_regulation_type_url(api_connection, regulation_type_enum):
-        """
-        """
         type_pk = regulation_type_enum if isinstance(regulation_type_enum, int) else regulation_type_enum.value
         return api_connection.get_base_url() + '/api/flexiblepower/regulation/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_regulation_direction_url(api_connection, etype):
+        type_pk = etype if isinstance(etype, int) else etype.value
+        return api_connection.get_base_url() + '/api/flexmarkets/regulatingdirections/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_reserves_categories_url(api_connection, etype):
+        type_pk = etype if isinstance(etype, int) else etype.value
+        return api_connection.get_base_url() + '/api/flexmarkets/reservescategories/' + str(type_pk) + "/"
+
+    @staticmethod
+    def get_reserves_types_url(api_connection, etype):
+        type_pk = etype if isinstance(etype, int) else etype.value
+        return api_connection.get_base_url() + '/api/flexmarkets/reservestypes/' + str(type_pk) + "/"
 
     @staticmethod
     def get_flexible_assets_embedded(api_connection, parameters={}):
@@ -545,21 +558,27 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def register_asset_availability(api_connection, extern_asset_id,
-                                    period_from, period_until,  availability_profile,  kw_available
-                                ):
+    def register_asset_availability(api_connection, asset_id, extern_asset_id,
+                                    period_from, period_until,  active_profile, profile_changerequest, kw_available,
+                                avgcost_per_unit=0):
         """Simplified registration of flexible asset
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
         payload={
-            "extern_asset_id":extern_asset_id,
             "period_from": period_from,
             "period_until": period_until,
-            'availability_profile': availability_profile,
-            "kw_flexibility": kw_available
+            'active_profile': active_profile,
+            "kw_flexibility": kw_available,
+            "avgcost_per_unit": avgcost_per_unit
         }
+        if profile_changerequest is not None:
+            payload['requested_profile']=profile_changerequest
+        if asset_id is not None:
+            payload['asset_id']=asset_id
+        if extern_asset_id is not None:
+            payload['extern_asset_id']=extern_asset_id
         print(json.dumps(payload, indent=2))
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexiblepower/specifyassetavailability/', payload)
         if success is False:

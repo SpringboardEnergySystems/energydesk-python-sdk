@@ -2,7 +2,8 @@
 import json
 import logging
 import ssl
-from typing import Callable
+from dataclasses import dataclass
+from typing import Callable, Optional
 
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 import paho.mqtt.client as mqtt
@@ -39,24 +40,31 @@ class MqttException(Exception):
     def __str__(self):
         return str(self.message)
 
+class MqttSubscriber(EventSubscriber):
+    def __init__(self, topic: str, callback_function: Callable[[str, str, list[tuple[str, any]]], None], qos: int=0):
+        super(MqttSubscriber, self).__init__(topic, callback_function)
+        self.qos = qos
+
 
 class MqttClient(EventClient):
-    def __init__(self, mqtt_host, mqtt_port, username=None , password=None, certificates={}, force_transport=None, use_tls=False):
+    def __init__(self, mqtt_host: str, mqtt_port: int,
+                 username: str=None , password: str=None,
+                 certificates: dict[str, any]= {}, force_transport: Optional[str] =None, use_tls: bool=False):
         super().__init__()
         self.connected=False
         self.mqtt_host=mqtt_host
         self.mqtt_port=mqtt_port
         self.username=username
         self.password=password
-        self.ca_certificate=None if 'ca_certificate' not in certificates else certificates['ca_certificate']
-        self.client_certificate=None if 'client_certificate' not in certificates else certificates['client_certificate']
-        self.client_key=None if 'client_key' not in certificates else certificates['client_key']
+        self.ca_certificate = None if 'ca_certificate' not in certificates else certificates['ca_certificate']
+        self.client_certificate = None if 'client_certificate' not in certificates else certificates['client_certificate']
+        self.client_key = None if 'client_key' not in certificates else certificates['client_key']
         self.disconnect_callbacks = []
         #force_transport either tcp or websockets
         self.force_transport = force_transport
         self.use_tls = use_tls
 
-    def connect(self,subscriberlist, client_name="client",  log_error=True):
+    def connect(self, subscriberlist: list[MqttSubscriber], client_name: str="client",  log_error=True):
         self.client=None
 
         def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
@@ -64,11 +72,10 @@ class MqttClient(EventClient):
             logger.info("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
             #client.subscribe( topics)  # Subscribe to the topic “digitest/test1”, receive any messages published on it
 
-            paho_topics=[]
             for es in subscriberlist:
                 self.register_callback(es)
-                paho_topics.append((es.topic,2))  #Format is topic name and quality of service 1,2,3
-            if len(paho_topics)>0:
+            if len(subscriberlist)>0:
+                paho_topics = [(es.topic, es.qos) for es in subscriberlist]
                 self.client.subscribe(paho_topics)  #Only subscribe if topics given here. Some clients are *publish only*
             #self.start_listener()
         try:
@@ -114,7 +121,7 @@ class MqttClient(EventClient):
     def on_log_print(self, client, userdata, level, buf):
         logger.info(f"MQTT: {level} {buf}")
 
-    def waiting_connect(self, subscriber_list, client_name="client" ):
+    def waiting_connect(self, subscriber_list: list[MqttSubscriber], client_name: str="client" ):
         attempts = 0
         while self.connected == False:
             logger.info("Connecting to MQTT (#" + str(attempts) + ")")
@@ -129,7 +136,7 @@ class MqttClient(EventClient):
                 logger.info("Returning from connect MQTT with result code " + str(self.connected))
         return self.connected
 
-    def publish(self,topic, msg, quality_of_service=0, publish_timeout=3, retain=True):
+    def publish(self, topic: str, msg: any, quality_of_service: int = 0, publish_timeout: int=3, retain: bool=True):
         result = self.client.publish(topic, msg, qos=quality_of_service, retain=retain)
         try:
             for n in range(publish_timeout * 10):
@@ -159,7 +166,7 @@ class MqttClient(EventClient):
             callback()
 
 
-def on_my_callback(topic, data):
+def on_my_callback(topic: str, data: any):
     print("GOT CALLBACK",topic, data)
 
 import time, environ

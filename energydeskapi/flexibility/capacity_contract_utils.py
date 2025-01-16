@@ -12,6 +12,30 @@ from energydeskapi.flexibility.capacity_api import CapacityContract
 logger = logging.getLogger(__name__)
 #  Change
 
+def generate_default_activation_contract(api_conn):
+
+    c=Contract()
+    c.contract_status=ContractStatusEnum.CONFIRMED
+
+    c.certificates=[]
+    c.contract_profile={'periods':[]}
+    c.area="NO1"
+    c.quantity_unit=QuantityUnitEnum.MW
+    c.quantity_type=QuantityTypeEnum.EFFECT
+    c.profile_category=ProfileTypeEnum.PROFILE
+    c.quantity=0
+    c.otc=True
+    c.delivery_type=DeliveryTypeEnum.PHYSICAL
+    c.buy_or_sell="BUY"
+    c.instrument_type=InstrumentTypeEnum.SPOT
+    c.commodity_type=CommodityTypeEnum.GRID_CAPACITY
+    c.market=MarketEnum.NORDIC_POWER
+    c.contract_price=FormattedMoney(0, CurrencyCode.NOK)
+    c.contract_type=ContractTypeEnum.FLEX_ACTIVATION
+    c.trading_fee = FormattedMoney(0, CurrencyCode.NOK)
+    c.clearing_fee = FormattedMoney(0, CurrencyCode.NOK)
+    return c
+
 def generate_default_capacity_contract(api_conn):
 
     c=Contract()

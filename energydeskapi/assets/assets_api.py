@@ -236,7 +236,7 @@ class AssetsApi:
         :param asset: asset object
         :type asset: str, required
         """
-        logger.info(f"Upserting asset {asset.get_dict()}")
+        logger.info("Upserting asset")
         if asset.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/assets/assets/' + str(asset.pk) + "/", asset.get_dict())

@@ -57,12 +57,17 @@ def get_baseload_profile():
         'weekday_profile': get_baseload_weekdays(),
         'daily_profile': get_baseload_dailyhours()
     }
+def __convert_index_to_str(d:dict):
+    d2={}
+    for i in d.keys():
+        d2[str(i)]=d[i]
+    return d2
 
 def get_default_availability_profile():
     return {
-        'monthly_profile': get_baseload_months(use_names=False),
-        'weekday_profile': get_baseload_weekdays(use_names=False),
-        'daily_profile': get_baseload_dailyhours()
+        'monthly_profile': __convert_index_to_str(get_baseload_months(use_names=False)),
+        'weekday_profile': __convert_index_to_str(get_baseload_weekdays(use_names=False)),
+        'daily_profile': __convert_index_to_str(get_baseload_dailyhours())
     }
 
 def get_zero_profile():
@@ -134,13 +139,12 @@ def relative_profile_to_dataframe(period_from, period_until,relative_profile, ac
     weekly_weights = calender_profile['weekday_profile']
     daily_weights = calender_profile['daily_profile']
     print(monthly_weights)
-    df=make_empty_timeseries_df(period_from, period_until, "H", active_tz)
+    df=make_empty_timeseries_df(period_from, period_until, "h", active_tz)
     df['timestamp'] = df.index
     df['monthly_weight'] = df.apply(lambda x: monthly_weights[x['timestamp'].month-1], axis=1)
     df['weekday_weight'] = df.apply(lambda x: weekly_weights[x['timestamp'].dayofweek], axis=1)
     df['hour_weight'] = df.apply(lambda x: daily_weights[x['timestamp'].hour], axis=1)
     df['hourly_weight'] =df['monthly_weight']*df['weekday_weight']*df['hour_weight']
-
     return df[['timestamp','hourly_weight']]
 
 
