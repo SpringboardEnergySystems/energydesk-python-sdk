@@ -11,7 +11,7 @@ def register_asset_type(api_conn, description):
     ast.pk = 0
     ast.description = description
     success, returned_data, status_code, error_msg = AssetsApi.upsert_asset_type(api_conn, ast)
-    print("Registered", success, description)
+    logger.info("Registered", success, description)
     #print(success, returned_data, status_code, error_msg)
 
 

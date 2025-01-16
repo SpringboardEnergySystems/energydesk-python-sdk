@@ -83,13 +83,12 @@ class ApiConnection(object):
             "client_secret": auth_secret,
             "backend": backend,
             "token": token}
-        print(payload)
+        logger.debug(f"Jwt payload: {payload}")
         result = requests.post(server_url, json=payload)
         print(result)
         print(result.text)
         if result.status_code != 200:
-            print("Could not validate user with backend")
-            print(result.text)
+            logger.error(f"Could not validate user with backend: {result.text}")
             return None
         access_token = result.json()['access_token']
         return access_token
@@ -258,7 +257,7 @@ class ApiConnection(object):
         if result.status_code<202:
             try:
                 if result.headers.get('content-type')=="text/csv":
-                    print("It is CSV")
+                    logger.info("It is CSV")
                     return result.text
                 if result.headers.get('content-type') == "application/json":
                     return result.json()

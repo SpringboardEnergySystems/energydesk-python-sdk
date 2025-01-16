@@ -130,7 +130,8 @@ class ClearingApi:
         """
         logger.info("Fetching clearing reports list")
         json_res = api_connection.exec_get_url('/api/clearing/reports/', parameters)
-        print(json_res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Clearing reports data {json_res}")
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -145,7 +146,8 @@ class ClearingApi:
         """
         logger.info("Fetching embedded clearing reports list")
         json_res = api_connection.exec_get_url('/api/clearing/reports/embedded/', parameters)
-        print(json_res)
+        if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"clearing reports embedded data: {json_res}")
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)
@@ -160,7 +162,8 @@ class ClearingApi:
         """
         logger.info("Fetching clearing report types list")
         json_res = api_connection.exec_get_url('/api/clearing/reporttypes/')
-        print(json_res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Clearing report types list {json_res}")
         if json_res is None:
             return None
         df = pd.DataFrame(data=json_res)

@@ -39,7 +39,7 @@ def get_cache() -> redis.StrictRedis:
 def get_memcache_value(cache_name, cache_key):
     mc=MemCache()
     if cache_name not in mc.mem_cache:
-        print("Creating mem cache for " + cache_name)
+        logger.info(f"Creating mem cache for {cache_name}")
         mc.mem_cache[cache_name]={}
     if cache_key not in mc.mem_cache[cache_name]:
         return None
@@ -49,7 +49,7 @@ def get_memcache_value(cache_name, cache_key):
 def set_memcache_value(cache_name, cache_key, cache_value):
     mc=MemCache()
     if cache_name not in mc.mem_cache:
-        print("Creating mem cache for " + cache_name)
+        logger.info(f"Creating mem cache for {cache_name}")
         mc.mem_cache[cache_name]={}
     mc.mem_cache[cache_name][cache_key]=cache_value
 

@@ -7,7 +7,7 @@ import pytz
 from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 def check_flat_profile(vmap):
     df=pd.DataFrame.from_dict(vmap, orient='index')
-    print(df)
+    #print(df)
     df.rename(columns={0:'counts'}, inplace=True)
     return len(np.unique(df.counts)) == 1
 
