@@ -19,7 +19,7 @@ def register_new_assetgroup(api_conn, group_name, sub_assets=[]):
     a.pk = 0
     a.extern_asset_id =  str(group_name)
     a.description = a.extern_asset_id
-    print(sub['asset_category'])
+    logger.debug(f"Asset category:{sub['asset_category']}")
     atp=sub['asset_type']['pk']  #Asset type of sub asset -  Use as default for group
     a.tech_data=at
     a.asset_type=AssetsApi.get_asset_type_url(api_conn,int(atp))
@@ -41,6 +41,7 @@ def register_new_assetgroup(api_conn, group_name, sub_assets=[]):
     ag.main_asset=returned_data['pk']
     for sub in sub_assets:
         ag.sub_assets.append(sub['pk'])
-    print(ag.get_dict(api_conn))
+    if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Assetgroup crated group: {ag.get_dict(api_conn)}")
     success, returned_data, status_code, error_msg=AssetGroupApi.upsert_asset_group(api_conn, ag)
     return success, returned_data, status_code, error_msg

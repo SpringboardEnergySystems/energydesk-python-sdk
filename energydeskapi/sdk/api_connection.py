@@ -83,13 +83,12 @@ class ApiConnection(object):
             "client_secret": auth_secret,
             "backend": backend,
             "token": token}
-        print(payload)
+        logger.debug(f"Jwt payload: {payload}")
         result = requests.post(server_url, json=payload)
         print(result)
         print(result.text)
         if result.status_code != 200:
-            print("Could not validate user with backend")
-            print(result.text)
+            logger.error(f"Could not validate user with backend: {result.text}")
             return None
         access_token = result.json()['access_token']
         return access_token
@@ -167,7 +166,7 @@ class ApiConnection(object):
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
-            logger.error("Problems calling EnergyDesk API " + str(result.status_code))
+            logger.error(f"Problems calling post EnergyDesk API {server_url}: {result.status_code} {result.text}")
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
@@ -194,7 +193,7 @@ class ApiConnection(object):
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
-            logger.error("Problems calling EnergyDesk API " + str(result.status_code))
+            logger.error(f"Problems calling delete EnergyDesk API {server_url}: {result.status_code} {result.text}")
             if result.status_code == 401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
@@ -223,7 +222,7 @@ class ApiConnection(object):
             json_data = result.json()
             return True, json_data, result.status_code, None
         else:
-            logger.error("Problems calling EnergyDesk API- (patch) " + str(result) + " " )
+            logger.error(f"Problems calling patch EnergyDesk API {server_url} {result} ")
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
@@ -258,7 +257,7 @@ class ApiConnection(object):
         if result.status_code<202:
             try:
                 if result.headers.get('content-type')=="text/csv":
-                    print("It is CSV")
+                    logger.info("It is CSV")
                     return result.text
                 if result.headers.get('content-type') == "application/json":
                     return result.json()
@@ -266,7 +265,7 @@ class ApiConnection(object):
             except:
                 return None
         else:
-            logger.error("Problems calling EnergyDesk API " + str(result) )
+            logger.error(f"Problems calling get EnergyDesk API {server_url} {result} ")
             if result.status_code==401:
                 raise TokenException("Token is invalid")
             elif result.status_code==403:

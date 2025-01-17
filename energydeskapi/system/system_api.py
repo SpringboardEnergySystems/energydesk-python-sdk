@@ -120,7 +120,7 @@ class SystemApi:
             'sysadmin': system_manager_url,
             'sysowner': system_owner_url,
         }
-        print(payload)
+        logger.debug(f"Upsering system manager {payload}")
 
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/system/systemmanager/', payload)

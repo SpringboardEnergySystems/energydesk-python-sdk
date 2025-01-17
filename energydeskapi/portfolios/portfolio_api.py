@@ -134,7 +134,7 @@ class PortfoliosApi:
         payload=portfolio.get_dict(api_connection)
         stmp=json.dumps(payload)
         js=json.loads(stmp)
-        print(js)
+        logger.debug(f"Upserting portfolio data {js}")
         if portfolio.pk>0:
             success, json_res, status_code, error_msg=api_connection.exec_patch_url('/api/portfoliomanager/portfolios/' + str(portfolio.pk) + "/", js)
         else:

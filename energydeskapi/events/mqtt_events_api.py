@@ -68,7 +68,7 @@ class MqttClient(EventClient):
         self.client=None
 
         def on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
-            print("INSIDE ON CONNECT")
+            #print("INSIDE ON CONNECT")
             logger.info("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
             #client.subscribe( topics)  # Subscribe to the topic “digitest/test1”, receive any messages published on it
 
