@@ -743,7 +743,7 @@ class ContractsApi:
         :param contract_pk: personal key to a contract
         :type contract_pk: str, required
         """
-        return api_connection.get_base_url() + '/api/contracts/contract/' + str(contract_pk) + "/"
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracts/' + str(contract_pk) + "/"
 
     @staticmethod
     def list_contract_statuses(api_connection):
