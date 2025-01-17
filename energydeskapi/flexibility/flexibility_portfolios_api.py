@@ -125,7 +125,7 @@ class FlexPortfolioTrade:
     portfolio: str # URL
     regulating_direction: str # URL
     reserves_category: str  # URL
-    order: dict
+    order_data: dict
 
     @property
     def __dict__(self):
