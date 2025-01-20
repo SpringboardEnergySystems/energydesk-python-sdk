@@ -122,7 +122,7 @@ class FlexPortfolioOrder:
 class FlexPortfolioTrade:
     pk: int
     contract: str # URL
-    portfolio: str # URL
+    flexible_portfolio: str # URL
     regulating_direction: str # URL
     reserves_category: str  # URL
     order_data: dict
