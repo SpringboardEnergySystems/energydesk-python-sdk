@@ -63,11 +63,11 @@ def __convert_index_to_str(d:dict):
         d2[str(i)]=d[i]
     return d2
 
-def get_default_availability_profile():
+def get_default_availability_profile(entry_value=1):
     return {
-        'monthly_profile': __convert_index_to_str(get_baseload_months(use_names=False)),
-        'weekday_profile': __convert_index_to_str(get_baseload_weekdays(use_names=False)),
-        'daily_profile': __convert_index_to_str(get_baseload_dailyhours())
+        'monthly_profile': __convert_index_to_str(get_baseload_months(entry_value=entry_value,use_names=False)),
+        'weekday_profile': __convert_index_to_str(get_baseload_weekdays(entry_value=entry_value,use_names=False)),
+        'daily_profile': __convert_index_to_str(get_baseload_dailyhours(entry_value=entry_value))
     }
 
 def get_zero_profile():
