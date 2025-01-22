@@ -19,6 +19,7 @@ from dataclasses import dataclass
 from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder, date_hook
 from typing import List
 from dataclasses import dataclass, asdict, field
+from energydeskapi.types.contract_enum_types import FeeTypeEnum
 logger = logging.getLogger(__name__)
 
 
@@ -54,6 +55,10 @@ class FeesApi:
     """ Class for flexibility and prequalification
     """
 
+    @staticmethod
+    def get_feetype_url(api_connection, value:FeeTypeEnum):
+        value_pk = value if isinstance(value, int) else value.value
+        return api_connection.get_base_url() + '/api/portfoliomanager/feetypes/' + str(value_pk) + "/"
 
     @staticmethod
     def get_feerates_url(api_connection, value):
