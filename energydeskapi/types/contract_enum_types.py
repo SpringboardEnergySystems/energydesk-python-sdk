@@ -52,6 +52,19 @@ class ContractTypeEnum(Enum):
     FLEX_ACTIVATION = 12
 
 
+class FeeTypeEnum(Enum):
+    TRADING_FEE = 1
+    CLEARING_FEE = 2
+    BROKER_FEE = 3
+
+
+def fee_type_description(x):
+    return {
+        FeeTypeEnum.TRADING_FEE: "Trading Fee",
+        FeeTypeEnum.CLEARING_FEE: "Clearing Fee",
+        FeeTypeEnum.BROKER_FEE: "Broker Fee",
+    }[x]
+
 def quantity_type_description(x):
     return {
         QuantityTypeEnum.EFFECT: "Effect",
