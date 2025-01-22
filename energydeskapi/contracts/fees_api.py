@@ -26,10 +26,15 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class FeeRate:
     pk: int
-    dd: str # URL
-    offered_profile: dict
-    offered_capacity_mw: float
-    sample_portfolio_meterdata: dict
+    fee_type: str # URL
+    commodity_type: str # URL
+    instrument_type: str  # URL
+    market: str  # URL
+    participant: str  # URL
+    valid_from: datetime
+    valid_until: datetime
+    fee_rate: float
+    fee_rate_currency: str
     @property
     def __dict__(self):
         """
@@ -42,8 +47,6 @@ class FeeRate:
         get the json formated string
         """
         return json.dumps(self.__dict__, cls=DateTimeEncoder)
-
-
 
 
 
