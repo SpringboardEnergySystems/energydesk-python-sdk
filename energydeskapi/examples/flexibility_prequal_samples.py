@@ -157,10 +157,29 @@ def check_requests(api_conn):
         print(req['offered_capacity_mw'])
         print(req['quality_measure'])
 
+def check_prequalification_requests(token=None):
+    server_url="https://elvia.energydesk.no/appserver/api/flexibility/prequalification/bidqualitytest/embedded/"
+    headers={'Authorization': 'Bearer ' + token}
+    data = requests.get(server_url)
+    for req in data.json()['results']:
+        print("Key", req['pk']) # Key to which to update quality_measure
+        print("Main qualification request",req['prequalification'])
+        print("Profile",req['offered_profile'])
+        #print("Meterdata",req['sample_portfolio_meterdata'])
+        print("Offered capacity MW",req['offered_capacity_mw'])
+        print("Quality measure", req['quality_measure'])
+
+        # After checking the quality of the bid, report back the measured quality value
+        #server_update_url = "https://elvia.energydesk.no/appserver/api/flexibility/prequalification/bidqualitytest/" + str(req['pk']) + "/"
+        #data = requests.patch(server_update_url, {'quality_measure':3.14})
+        #print(data.status_code)
+
 if __name__ == '__main__':
     env = environ.Env()
     token=get_access_token()
     edesk_base_url = env.str('ENERGYDESK_URL')
-    api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
-    register_prequal(api_conn)
-    check_requests(api_conn)
+    #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
+    #register_prequal(api_conn)
+    #check_requests(api_conn)
+    print(token)
+    check_prequalification_requests(token)
