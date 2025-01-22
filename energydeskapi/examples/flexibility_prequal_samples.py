@@ -134,17 +134,19 @@ def register_prequal(api_conn):
     profile['weekday_profile']['4'] = 1
     profile['weekday_profile']['4'] = 1
 
+    profile['weekday_profile']['9'] = 1
+    profile['weekday_profile']['10'] = 1
     profile['weekday_profile']['11'] = 1
     profile['weekday_profile']['12'] = 1
     profile['weekday_profile']['13'] = 1
 
-    longflex_id="19803ce7-7c28-4409-83d7-b26800b67805"
+    longflex_id="49803ce7-7c28-4409-83d7-b26800b67805"
     #asset_id_list = ['GUID1', 'GUID2', 'GUID3']
     success, returned_data, status_code, error_msg=FlexibilityPrequalifyApi.make_prequalification_request(api_conn,longflex_offer_id=longflex_id,
                                                                 asset_id_list=extern_assets)
     if success:
         prequrl=FlexibilityPrequalifyApi.get_flex_prequalification_url(api_conn,returned_data['pk'])
-        fbid = FlexPrequalBidTest(0,prequrl,profile,0.15, timeseries_data)
+        fbid = FlexPrequalBidTest(0,prequrl,profile,0.25, timeseries_data)
         FlexibilityPrequalifyApi.upsert_prequal_bidquality(api_conn, fbid)
 
 
@@ -181,5 +183,5 @@ if __name__ == '__main__':
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
     #register_prequal(api_conn)
     #check_requests(api_conn)
-    print(token)
+    #print(token)
     check_prequalification_requests(token)
