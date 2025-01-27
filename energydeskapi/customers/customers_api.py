@@ -238,7 +238,8 @@ class CustomersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        parameters['page_size']=1000
+        if 'page_size' not in parameters:
+            parameters['page_size']=1000
         logger.info(f"Fetching companylist with {parameters}")
         json_res=CustomersApi.get_companies(api_connection, parameters)
         if json_res is None:
