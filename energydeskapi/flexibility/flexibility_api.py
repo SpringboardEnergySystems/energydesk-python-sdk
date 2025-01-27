@@ -536,8 +536,8 @@ class FlexibilityApi:
     @staticmethod
     def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,
                                 address, city, latitude, longitude, asset_category,asset_type,
-                                asset_owner_regnumber,asset_manager_regnumber, dso_regnumber,
-                                brp_company_regnumber, callback_url
+                                asset_owner_regnumber,asset_manager_regnumber, dso_regnumber,brp_regnumber,
+                                technical_manager_regnumber, callback_url
                                 ):
         """Simplified registration of flexible asset
 
@@ -558,7 +558,8 @@ class FlexibilityApi:
             "asset_owner_regnumber":asset_owner_regnumber,
             "asset_manager_regnumber":asset_manager_regnumber,
             "dso_regnumber":dso_regnumber,
-            "brp_company_regnumber":brp_company_regnumber,
+            "brp_regnumber": brp_regnumber,
+            "technical_manager_regnumber":technical_manager_regnumber,
             "callback_url":callback_url
         }
 
