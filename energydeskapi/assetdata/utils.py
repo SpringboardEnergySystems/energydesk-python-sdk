@@ -3,13 +3,9 @@ from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 import pandas as pd
 import pytz
 import logging
-from django.conf import settings
 from datetime import datetime
 from energydeskapi.assetdata.assetdata_api import AssetDataApi
-
 import json
-
-logging.config.dictConfig(settings.LOG_CONFIG)
 logger = logging.getLogger(__name__)
 
 def load_multiasset_data(api_connection, asset_pk_list=[], period_from:str="2024-01-01", period_until:str="2024-03-01", resolution= PeriodResolutionEnum.HOURLY.value):
