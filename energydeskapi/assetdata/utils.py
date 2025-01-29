@@ -6,7 +6,7 @@ import logging
 from django.conf import settings
 from datetime import datetime
 from energydeskapi.assetdata.assetdata_api import AssetDataApi
-from energydesk.api.api_manager import ApiManager
+
 import json
 
 logging.config.dictConfig(settings.LOG_CONFIG)
