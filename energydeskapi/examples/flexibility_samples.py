@@ -24,7 +24,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums
 from energydeskapi.types.flexibility_enum_types import ReservesCategoryEnum
-
+from energydeskapi.flexibility.flexibility_portfolios_api import FlexibilityPortfolioApi, FlexPortfolio, FlexPortfolioTrade
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -245,11 +245,26 @@ def get_flexibility_products(api_conn):
     data=FlexibilityApi.get_flexibility_products(api_conn)
     df=pd.DataFrame(data)
     print(df)
+
+def test_trade(api_conn):
+    #FlexibilityPortfolioApi, FlexPortfolio, FlexPortfolioTrade
+    reg_direction = FlexibilityApi.get_regulation_direction_url(api_conn,
+                                                                RegulatingDirectionEnums.UP)
+    res_category = FlexibilityApi.get_reserves_categories_url(api_conn,
+                                                              ReservesCategoryEnum.ACTIVATION)
+    fport=FlexPortfolio(0,"Porto","porto","porto2","-", ['1'])
+    FlexibilityPortfolioApi.upsert_flexible_portfolio(api_conn,fport)
+    contr_url=ContractsApi.get_contract_url(api_conn, 674)
+    port_url=FlexibilityPortfolioApi.get_flexible_portfolio_url(api_conn, 1)
+    reservs_url=ReservesCategoryEnum.ACTIVATION.value
+    tr=FlexPortfolioTrade(0,contr_url,port_url,reg_direction,res_category,"{}")
+    print(tr.json)
+    FlexibilityPortfolioApi.upsert_flexible_portfolio_trade(api_conn,tr)
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #register_flexible_asset(api_conn)
     #register_flex_availability(api_conn)
-    register_flex_contract(api_conn)
+    test_trade(api_conn)
 
     #load_reserves_prices(api_conn)

@@ -116,6 +116,33 @@ class FlexPortfolioOrder:
         return json.dumps(self.__dict__, cls=DateTimeEncoder)
 
 
+
+
+@dataclass(frozen=True)
+class FlexPortfolioTrade:
+    pk: int
+    contract: str # URL
+    flexible_portfolio: str # URL
+    regulating_direction: str # URL
+    reserves_category: str  # URL
+    order_data: dict
+
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
+
+
+
 class FlexibilityPortfolioApi:
     """ Class for flexibility and portfolios
     """
@@ -216,6 +243,20 @@ class FlexibilityPortfolioApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def upsert_flexible_portfolio_trade(api_connection, flex_portfolio_trade: FlexPortfolioTrade):
+        logger.debug("Upserting flex portfolio status")
+        payload = json.loads(flex_portfolio_trade.json)
+        key = int(flex_portfolio_trade.pk)
+        logger.debug("Saving flex order key= {} data= {}".format(key, payload))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/flexibleportfoliotrades/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/flexibleportfoliotrades/', payload)
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_flexible_portfolios_orders(api_connection,  parameters={}):

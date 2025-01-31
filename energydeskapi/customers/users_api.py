@@ -227,8 +227,7 @@ class UsersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Updating user profile")
-        print(payload)
+        logger.info(f"Updating user profile:{payload}")
         success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/customers/profiles/' + str(pk)  + "/", payload.get_dict())
         if success is None:
             logger.error(error_msg)
@@ -261,7 +260,7 @@ class UsersApi:
     def __extract_primary_usergroup(dict):
         output=[]
         for d in dict:
-            print(d)
+            logger.info(f"User group element:{d}")
             d['user_role']=""
             if 'usergroup_set' in d and  len(d['usergroup_set'])>0:
                 #prim_group=key_from_url(d['usergroup_set'][0])
@@ -290,7 +289,7 @@ class UsersApi:
         if json_res is not None:
             dict=json.loads(json.dumps(json_res['results']))
             dict=UsersApi.__extract_primary_usergroup(dict)
-            print(dict)
+            logger.info(f"Primary user group {dict}")
             df = pd.json_normalize(dict, max_level=1)
             return UsersApi.process_dataframe(df)
         return None
@@ -307,7 +306,7 @@ class UsersApi:
         logger.info("Registering " + str(len(users) )+ " users")
         for user in users:
             payload=user.get_dict()
-            print(payload)
+            logging.info(f"Registering user:{payload}")
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/customers/register-user', payload)
             if json_res is None:
                 logger.error("Problems registering user "  + user.username)

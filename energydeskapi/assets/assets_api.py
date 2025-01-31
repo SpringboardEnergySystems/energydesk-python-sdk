@@ -45,7 +45,7 @@ class Asset:
         self.tech_data = None
         self.grid_connection=None
         self.power_supplier=None
-        self.balance_service_provider = None
+        self.technical_manager = None
         self.asset_owner=None
         self.asset_manager=None
         self.vendor = None
@@ -71,8 +71,8 @@ class Asset:
         if 'asset_technical_data' in dict:
             at=AssetTechData()
             if "max_effect_mw" in dict['asset_technical_data']:
-                print("Found it")
-                print(dict['asset_technical_data']["max_effect_mw"])
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f"Found the asset {dict['asset_technical_data']['max_effect_mw']}")
                 at.max_effect_mw = dict['asset_technical_data']["max_effect_mw"]
             if "yearly_volume_mwh" in dict['asset_technical_data']: at.yearly_volume_mwh = dict['asset_technical_data'][
                 "yearly_volume_mwh"]
@@ -88,7 +88,7 @@ class Asset:
         if 'grid_connection' in dict: self.grid_connection = dict['grid_connection']
         if 'power_supplier' in dict: self.power_supplier = dict['power_supplier']
         if 'asset_owner' in dict: self.asset_owner = dict['asset_owner']
-        if 'balance_service_provider' in dict: self.balance_service_provider = dict['balance_service_provider']
+        if 'technical_manager' in dict: self.technical_manager = dict['technical_manager']
         if 'asset_manager' in dict: self.asset_manager = dict['asset_manager']
         if 'vendor' in dict: self.vendor = dict['vendor']
         if 'meter_id' in dict: self.meter_id = dict['meter_id']
@@ -114,7 +114,7 @@ class Asset:
         if self.tech_data is not None: dict['asset_technical_data'] = self.tech_data.get_dict()
         if self.grid_connection is not None: dict['grid_connection'] = self.grid_connection
         if self.power_supplier is not None: dict['power_supplier'] = self.power_supplier
-        if self.balance_service_provider is not None: dict['balance_service_provider'] = self.balance_service_provider
+        if self.technical_manager is not None: dict['technical_manager'] = self.technical_manager
         if self.asset_owner is not None: dict['asset_owner'] = self.asset_owner
         if self.asset_manager is not None: dict['asset_manager'] = self.asset_manager
         if self.meter_id is not None: dict['meter_id'] = self.meter_id
@@ -218,7 +218,8 @@ class AssetsApi:
         logger.info("Registering " + str(len(asset_list) )+ " assets")
         for asset in asset_list:
             payload=asset.get_dict()
-            print(payload)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"asset payload: {payload}")
 
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/assets/assets/', payload)
             if json_res is None:
@@ -279,8 +280,7 @@ class AssetsApi:
         :param asset: asset object
         :type asset: str, required
         """
-        logger.info("Upserting asset type " + str(asset_type))
-        print(asset_type.get_dict())
+        logger.info(f"Upserting asset type {asset_type}: {asset_type.get_dict()}")
         if asset_type.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/assets/assettypes/' + str(asset_type.pk) + "/", asset_type.get_dict())

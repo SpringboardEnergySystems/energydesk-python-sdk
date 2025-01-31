@@ -219,7 +219,8 @@ class Contract:
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
         if len(self.certificates) > 0:
-            print("Dicstionaries ", self.certificates)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.info(f"Certificates {self.certificates}")
             dict["certificates"] = self.certificates
 
         if len(self.capacity_parameters)>0:
@@ -388,13 +389,12 @@ class ContractsApi:
         else:
             key=contract.pk
             contract_dict=contract.get_dict(api_connection)
-        print("Key", key, contract_dict)
+        logger.debug(f"Upserting contract with Key:{key}, content:{contract_dict}")
         if key>0:
-
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/portfoliomanager/contracts/' + str(key) + "/", contract_dict)
         else:
-            print(contract_dict)
+            logger.info(f"Create contract {contract_dict}")
             #print(json.dumps(contract.get_dict(api_connection), indent=2))
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/contracts/',contract_dict)
         return success, returned_data, status_code, error_msg
@@ -595,7 +595,8 @@ class ContractsApi:
         """
         logger.info("Fetching contracts")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/query-contracts/', query_payload)
-        print(json_res)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Contracts fetched: {json_res})")
         return None
 
     @staticmethod
@@ -743,7 +744,7 @@ class ContractsApi:
         :param contract_pk: personal key to a contract
         :type contract_pk: str, required
         """
-        return api_connection.get_base_url() + '/api/contracts/contract/' + str(contract_pk) + "/"
+        return api_connection.get_base_url() + '/api/portfoliomanager/contracts/' + str(contract_pk) + "/"
 
     @staticmethod
     def list_contract_statuses(api_connection):

@@ -112,7 +112,7 @@ class CustomersApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/register-company', company)
         if json_res is None:
             return False
-        print(json_res)
+        logger.info(f"Registered company {json_res}")
         return json_res["Registration"]
     
     def register_manual_company(api_connection, company):
@@ -126,7 +126,7 @@ class CustomersApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/customers/register-manual-company', company)
         if json_res is None:
             return False
-        print(json_res)
+        logger.info(f"Registered maual company {json_res}")
         return json_res, success
 
     def register_company_from_regnumber(api_connection, registry_number: str, country: str):
@@ -238,9 +238,9 @@ class CustomersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Fetching companylist")
-        parameters['page_size']=1000
-        print(parameters)
+        if 'page_size' not in parameters:
+            parameters['page_size']=1000
+        logger.info(f"Fetching companylist with {parameters}")
         json_res=CustomersApi.get_companies(api_connection, parameters)
         if json_res is None:
             return None

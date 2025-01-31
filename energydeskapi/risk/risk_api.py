@@ -61,7 +61,7 @@ class RiskApi:
             'price_areas':price_areas
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calcvolatilities/', payload)
-        print(error_msg)
+        logger.debug(f"Calc volatilities error {error_msg}")
         return success, json_res, status_code, error_msg
 
     @staticmethod
@@ -79,13 +79,12 @@ class RiskApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Calc Covariance Var")
         payload={
             'price_days':days_back,
             'decay_factor': decay_factor,
             'portfolio_id':portfolio_id
         }
-        print(payload)
+        logger.info(f"Calc Covariance Var with {payload}")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calccovariancevar/', payload)
         #print(error_msg)
         return success, json_res, status_code, error_msg
@@ -94,7 +93,7 @@ class RiskApi:
     def calc_covariance_var_df(api_connection, portfolio_id, days_back=40, decay_factor=0.94):
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, portfolio_id, days_back, decay_factor)
         if success ==False:
-            print(error_msg)
+            logger.error(f"Covariance calculation gave error: {error_msg}")
             return None,None,None
         var_bins=json_res['var_bins']
         portfolio_mean = json_res['portfolio_mean']
@@ -110,12 +109,11 @@ class RiskApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Calc Covariance Matrix")
         payload={
             'price_days':days_back,
             'decay_factor': decay_factor,
         }
-        print(payload)
+        logger.info(f"Calc Covariance Matrix with payload {payload}")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/calccovariancematrix/', payload)
         #print(error_msg)
         return success, json_res, status_code, error_msg
@@ -125,7 +123,7 @@ class RiskApi:
     def calc_covariance_matrix_df(api_connection, days_back=40, decay_factor=0.94):
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back, decay_factor)
         if success ==False:
-            print(error_msg)
+            logger.error(f"Calculating the convariance matrix got:{error_msg}")
             return None,None,None
         dfvars=pd.DataFrame(data=json.loads(json_res['covariance_data']))
         dfvars.index=dfvars.columns.to_flat_index()

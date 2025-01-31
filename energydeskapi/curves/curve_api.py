@@ -71,7 +71,8 @@ class CurveApi:
             qry_payload['param_str_1']= param_str_1
         if param_str_2 is not None:
             qry_payload['param_str_2']= param_str_2
-        print(qry_payload)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Forward curve query payload {qry_payload}")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/generate-forwardcurve/', qry_payload)
         return success, json_res, status_code, error_msg
 
@@ -184,7 +185,8 @@ class CurveApi:
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
                                 currency_code, forward_curve_model,period_resolution,market_name)
         if success:
-            print(json_res)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"latest forward curve data: {json_res}")
             df = pd.DataFrame(data=eval(json_res))
             df.index = df['period_from']
             df=convert_dataframe_to_localtime(df)

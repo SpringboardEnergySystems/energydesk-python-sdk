@@ -160,7 +160,6 @@ class ManualCreditRiskApi:
             
         })
         qry_payload = manual_credit_params.get_dict()
-        print("QRYPAYLOAD: ")
-        print(qry_payload) 
+        logger.info(f"save_manual_credit_rating QRYPAYLOAD:{qry_payload}")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/creditrisk/manualrating/', qry_payload)
         return success, json_res, status_code, error_msg

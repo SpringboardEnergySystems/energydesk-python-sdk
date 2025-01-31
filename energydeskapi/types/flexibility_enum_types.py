@@ -95,6 +95,21 @@ def external_flexmarkets_description(x):
         ExternalMarketTypeEnums.SVK: "Swedish TSO market (Svenska Kraftnett)"
     }[x]
 
+class PrequalificationStatusEnums(Enum):
+    PENDING = 1
+    PASSED = 2
+    FAILED = 3
+    DISALLOWED = 4
+
+
+def prequal_status_description(x):
+    return {
+        PrequalificationStatusEnums.PENDING: "Pending Prequalification",
+        PrequalificationStatusEnums.PASSED: "Passed Prequalification",
+        PrequalificationStatusEnums.FAILED: "Failed initially but may retry",
+        PrequalificationStatusEnums.DISALLOWED: "Conclusion of not allowing qualification"
+    }[x]
+
 
 class AssetProfileTypeEnums(Enum):
     ABSOLUTE = 1

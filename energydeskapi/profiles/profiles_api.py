@@ -90,7 +90,7 @@ class ProfilesApi:
         :type api_connection: str, required
         """
         if profile.pk>0:
-            print("It is an existing profile")
+            logger.info(f"We are upserting an existing profile {profile.pk}")
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/profilemanager/volumeprofiles/' + str(profile.pk) + "/",profile.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/profilemanager/volumeprofiles/',profile.get_dict(api_connection))
