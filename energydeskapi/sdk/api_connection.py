@@ -43,25 +43,25 @@ class ApiConnection(object):
         #response = requests.get(self.get_base_url() + '/api/customers/profiles/',{"user__username": str(username)},
         #                        auth=HTTPBasicAuth(username, password))
         #print(response.json())
-        print("Validating", username, password)
+        logger.info(f"Validating with basic authentication {username}")
         response = requests.get(self.get_base_url() + '/api/energydesk/get-api-token/',{"user__username": str(username)},
                                 auth=HTTPBasicAuth(username, password))
         if response is None:
             return False, "Unknown Error"
         if response.status_code > 210:
-            logger.error("Problems logging in user {}".format(username))
-            return False, "Problems logging in user {}".format(username)
+            logger.error(f"Problems logging in user {username}")
+            return False, f"Problems logging in user {username}"
         if 'token' not in response.json():
             if 'detail' in response.json():
                 errmsg=response.json()['detail']
             else:
                 errmsg=response.text
-            logger.error("Failed login attempt " + str(username) + " " + errmsg)
+            logger.error(f"Failed login attempt with basic authentication {username}: {errmsg}")
             return False, errmsg
         tok=response.json()['token']
         self.set_token(tok, "Token")
-        print(self.get_authorization_header())
-        print("We are OK for basic auth, return token", tok)
+        logger.debug(f"Header: {self.get_authorization_header()}")
+        logger.info(f"We are OK for basic auth, return token {tok}")
         return True, tok
 
     @staticmethod

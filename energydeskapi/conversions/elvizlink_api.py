@@ -274,6 +274,25 @@ class ElvizLinksApi:
         response = authsess.post(server_url, headers=h, data=json.dumps(payload))
         return response.json()
 
+    @staticmethod
+    def exec_post_elvizapi_specific_ids(user_mappings, company_mappings, portfolio_mappings, owner_company_pk, contract_ids: list[int]):
+        env = environ.Env()
+        server_url = None if 'ELVIZ_PROXY' not in env else env.str('ELVIZ_PROXY') + "/elviz/api/elviztrades_specificids"
+        logger.info("Calling URL " + str(server_url))
+        payload={
+            "user_mappings": user_mappings,
+            "portfolio_mappings": portfolio_mappings,
+            "company_mappings": company_mappings,
+            "owner_company_pk": owner_company_pk,
+            "contract_ids": contract_ids
+        }
+        logger.debug("...with payload " + str(payload) )
+
+        h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
+        authsess = ElvizLinksApi.obtain_session()
+        response = authsess.post(server_url, headers=h, data=json.dumps(payload))
+        return response.json()
+
 
 
 
