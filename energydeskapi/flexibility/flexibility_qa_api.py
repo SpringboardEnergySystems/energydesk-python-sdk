@@ -45,7 +45,7 @@ class FlexibilityQaApi:
             'assets':assets
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-            '/api/flexibility/qa/loadmeterdata/', payload)
+            '/api/flexiblepower/qa/loadmeterdata/', payload)
         return success, returned_data, status_code, error_msg
 
 
