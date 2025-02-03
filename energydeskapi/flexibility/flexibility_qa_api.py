@@ -39,5 +39,14 @@ class FlexibilityQaApi:
             return None
         return json_res
 
+    @staticmethod
+    def load_meterdata(api_connection,  assets):
+        payload={
+            'assets':assets
+        }
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/flexibility/qa/loadmeterdata/', payload)
+        return success, returned_data, status_code, error_msg
+
 
 
