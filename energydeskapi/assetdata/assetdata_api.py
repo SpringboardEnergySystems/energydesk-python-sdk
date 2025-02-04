@@ -370,6 +370,20 @@ class AssetDataApi:
         if json_res is not None:
             return json_res
         return None
+
+    @staticmethod
+    def load_grouped_meterdata(api_connection, period_from, period_until, resolution, asset_pk_list=[]):
+        payload={
+            'assets':asset_pk_list,
+            'period_from': period_from,
+            'period_until': period_until,
+            'resolution': resolution
+        }
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/assetdata/loadgroupedmeterdata/', payload)
+        return success, returned_data, status_code, error_msg
+
+
     @staticmethod
     def get_assetgroup_timeseries(api_connection,assets, timseries_types=TimeSeriesTypesEnum.FORECASTS, reso=PeriodResolutionEnum.MONTHLY):
         """Fetches forecast for asset group
