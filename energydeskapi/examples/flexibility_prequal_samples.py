@@ -175,13 +175,17 @@ def check_prequalification_requests(token=None):
         #server_update_url = "https://elvia.energydesk.no/appserver/api/flexibility/prequalification/bidqualitytest/" + str(req['pk']) + "/"
         #data = requests.patch(server_update_url, {'quality_measure':3.14})
         #print(data.status_code)
+from energydeskapi.flexibility.flexibility_qa_api import FlexibilityQaApi
+def load_samples(api_conn):
+    FlexibilityQaApi.load_grouped_meterdata(api_conn, [14,15])
 
 if __name__ == '__main__':
     env = environ.Env()
-    token=get_access_token()
-    edesk_base_url = env.str('ENERGYDESK_URL')
+    #token=get_access_token()
+    #edesk_base_url = env.str('ENERGYDESK_URL')
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
     #register_prequal(api_conn)
-    #check_requests(api_conn)
+    api_conn = init_api()
+    load_samples(api_conn)
     #print(token)
-    check_prequalification_requests(token)
+    #check_prequalification_requests(token)
