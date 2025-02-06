@@ -56,6 +56,18 @@ def reconcile_trades(api_conn):  #Performs reconciliation
     result = ClearingApi.perform_reconciliation(api_conn, date)
     print(result)
 
+import pendulum
+def fetch_reconciled_contracts(api_conn):
+    from_date = pendulum.parse("2024-11-03")
+    until_date = pendulum.parse("2024-11-06")
+    param = {"clearing_date__gte": str(from_date)[:10],
+             "clearing_date__lte": str(until_date)[:10]}
+    result = ClearingApi.get_reconciled_contracts(api_conn, param)
+    print(json.dumps(result['results'], indent=2))
+
+
+
+
 def fetch_reconciled_trades(api_conn):
     from_date = datetime.today() - relativedelta(days=2)
     until_date = datetime.today()
@@ -128,7 +140,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-    fetch_embedded_clearing_reports(api_conn)
+    fetch_reconciled_contracts(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
     #fetch_reconciled_trades(api_conn)

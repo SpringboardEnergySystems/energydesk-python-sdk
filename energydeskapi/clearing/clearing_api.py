@@ -209,6 +209,35 @@ class ClearingApi:
             return None
         #df = pd.DataFrame(data=json_res)
         return json_res
+
+    # This will be tested and replace get_reconciled_trades in lats February  when we have time:-)
+    @staticmethod
+    def get_reconciled_contracts(api_connection, params={}):
+        """Fetches reconciled trades
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching reconciled contracts")
+        json_res = api_connection.exec_get_url('/api/clearing/reconciledcontracts/', params)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_embedded_reconciled_contracts(api_connection, params={}):
+        """Fetches reconciled trades
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching reconciled contracts")
+        json_res = api_connection.exec_get_url('/api/clearing/reconciledcontracts/embedded/', params)
+        if json_res is None:
+            return None
+        #df = pd.DataFrame(data=json_res)
+        return json_res
+
     @staticmethod
     def get_clearing_report_type_url(api_connection, key):
         return api_connection.get_base_url() + '/api/clearing/reporttypes/' + str(key) + "/"
