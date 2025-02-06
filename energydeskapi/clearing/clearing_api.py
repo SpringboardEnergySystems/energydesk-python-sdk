@@ -69,6 +69,8 @@ class ClearingApi:
             '/api/clearing/perform-reconciliation/', payload)
         return json_res
 
+
+
     @staticmethod
     def get_clearing_report_records(api_connection, parameters={}):
         """Fetches a list of clearing report records
@@ -168,6 +170,12 @@ class ClearingApi:
             return None
         df = pd.DataFrame(data=json_res)
         return df
+
+
+    @staticmethod
+    def approve_all_reconciled_trades(api_connection,date):
+        success, returned_data, status_code, error_msg = True, None, 201, ""#api_connection.exec_patch_url('/api/clearing/reconciledtrades/' + str(key) + "/", payload)
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def update_reconciled_trades(api_connection, key, payload={}):
