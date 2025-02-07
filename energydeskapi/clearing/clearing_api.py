@@ -174,7 +174,7 @@ class ClearingApi:
 
     @staticmethod
     def approve_all_reconciled_trades(api_connection,date):
-        success, returned_data, status_code, error_msg = True, None, 201, ""#api_connection.exec_patch_url('/api/clearing/reconciledtrades/' + str(key) + "/", payload)
+        success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/clearing/approve-manually/',{'date':date})
         return success, returned_data, status_code, error_msg
 
     @staticmethod
