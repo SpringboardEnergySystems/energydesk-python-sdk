@@ -148,21 +148,21 @@ class RiskApi:
     def post_marketestimators(api_connection, payload):
         """posts market estimators to database"""
         logger.info("Posting market estimators")
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/markestimators/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketestimators/', payload)
         return success, json_res, status_code, error_msg
     
     @staticmethod
     def get_marketestimators(api_connection):
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
-        json_res = api_connection.exec_get_url('/api/riskmanager/markestimators/')
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
         return json_res
     
     @staticmethod
     def get_marketestimators_dict(api_connection) -> dict:
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
-        json_res = api_connection.exec_get_url('/api/riskmanager/markestimators/')
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
         
         record = json_res[0] if json_res else {}
         # Retrieve the stored fields. They are assumed to be JSON-encoded strings.
