@@ -168,8 +168,9 @@ class RiskApi:
         # Retrieve the stored fields. They are assumed to be JSON-encoded strings.
         vol_str = record.get("volatility_data")
         corr_str = record.get("correlation_data")
+        discount_str = record.get("discount_factor_data")
         data = {}
-        # Convert JSON strings to Python objects (lists) if needed.
+        # Convert JSON strings to Python objects (lists)
         try:
             volatility_list = json.loads(vol_str) if isinstance(vol_str, str) else vol_str
         except Exception as e:
@@ -177,7 +178,6 @@ class RiskApi:
             volatility_list = []
         df_volatility = pd.DataFrame(volatility_list)
         data['volatility'] = df_volatility
-            
         try:
             correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
         except Exception as e:
@@ -185,4 +185,11 @@ class RiskApi:
             correlation_list = []
         df_correlation = pd.DataFrame(correlation_list)
         data['correlation'] = df_correlation
+        try:
+            discount_list = json.loads(discount_str) if isinstance(discount_str, str) else discount_str
+        except Exception as e:
+            print(f"Error decoding discount_factor: {e}")
+            discount_list = []
+        df_discount = pd.DataFrame(discount_list)
+        data['discount_factor'] = df_discount
         return data
