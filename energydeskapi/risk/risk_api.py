@@ -159,7 +159,7 @@ class RiskApi:
         return json_res
     
     @staticmethod
-    def get_marketestimators_dict(api_connection):
+    def get_marketestimators_dict(api_connection) -> dict:
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         json_res = api_connection.exec_get_url('/api/riskmanager/markestimators/')
@@ -168,34 +168,21 @@ class RiskApi:
         # Retrieve the stored fields. They are assumed to be JSON-encoded strings.
         vol_str = record.get("volatility_data")
         corr_str = record.get("correlation_data")
-        
+        data = {}
         # Convert JSON strings to Python objects (lists) if needed.
         try:
             volatility_list = json.loads(vol_str) if isinstance(vol_str, str) else vol_str
+            df_volatility = pd.DataFrame(volatility_list)
+            data['volatility'] = df_volatility
         except Exception as e:
             print(f"Error decoding volatility_data: {e}")
             volatility_list = []
             
         try:
             correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
+            df_correlation = pd.DataFrame(correlation_list)
+            data['correlation'] = df_correlation
         except Exception as e:
             print(f"Error decoding correlation_data: {e}")
             correlation_list = []
-        
-        # Since discount_factor is not stored in the model, we create an empty list.
-        discount_factor_list = []
-        
-        # Convert the lists to pandas DataFrames.
-        df_volatility = pd.DataFrame(volatility_list)
-        df_correlation = pd.DataFrame(correlation_list)
-        df_discount_factor = pd.DataFrame(discount_factor_list)
-        
-        # Build the output dictionary in the same format as load_dummy_data_from_json.
-        data = {
-            'volatility': df_volatility,
-            'correlation': df_correlation,
-            'discount_factor': df_discount_factor,
-        }
-        
-        print("Data retrieved and converted to DataFrames successfully!")
         return data
