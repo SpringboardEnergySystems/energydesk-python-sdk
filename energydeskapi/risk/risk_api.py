@@ -172,17 +172,17 @@ class RiskApi:
         # Convert JSON strings to Python objects (lists) if needed.
         try:
             volatility_list = json.loads(vol_str) if isinstance(vol_str, str) else vol_str
-            df_volatility = pd.DataFrame(volatility_list)
-            data['volatility'] = df_volatility
         except Exception as e:
             print(f"Error decoding volatility_data: {e}")
             volatility_list = []
+        df_volatility = pd.DataFrame(volatility_list)
+        data['volatility'] = df_volatility
             
         try:
             correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
-            df_correlation = pd.DataFrame(correlation_list)
-            data['correlation'] = df_correlation
         except Exception as e:
             print(f"Error decoding correlation_data: {e}")
             correlation_list = []
+        df_correlation = pd.DataFrame(correlation_list)
+        data['correlation'] = df_correlation
         return data
