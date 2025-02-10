@@ -61,10 +61,10 @@ class FlexibilityQaApi:
         logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/flexiblepower/qa/loadmeterdata/' + str(key) + "/", payload)
+                '/api/flexiblepower/qa/flexassetmeterdata/' + str(key) + "/", payload)
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/flexiblepower/qa/loadmeterdata/', payload)
+                '/api/flexiblepower/qa/flexassetmeterdata/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
