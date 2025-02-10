@@ -45,6 +45,29 @@ class FlexibilityQaApi:
         return json_res
 
     @staticmethod
+    def get_meterdata(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flexassetmeterdata/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def upsert_meterdata(api_connection, key,asset_id, df_meter_data_ams, df_meter_data_submeter):
+        payload = {
+            'asset_id': asset_id,
+            'meter_data_ams': None if df_meter_data_ams is None else json.loads(df_meter_data_ams.to_json(orient='records', date_format='iso')),
+            'meter_data_submeter': None if df_meter_data_submeter is None else json.loads(df_meter_data_submeter.to_json(orient='records', date_format='iso')),
+        }
+        logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
+        if key > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/flexiblepower/qa/loadmeterdata/' + str(key) + "/", payload)
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexiblepower/qa/loadmeterdata/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def load_meterdata(api_connection,  assets):
         payload={
             'assets':assets
