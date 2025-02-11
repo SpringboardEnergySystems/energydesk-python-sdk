@@ -84,6 +84,7 @@ class FlexibilityQaApi:
             'resolution': resolution,
             'use_sub_meter':use_sub_meter
         }
+        print(payload)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/flexiblepower/qa/loadgroupedmeterdata/', payload)
         return success, returned_data, status_code, error_msg
