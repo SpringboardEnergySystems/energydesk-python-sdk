@@ -85,8 +85,7 @@ class ApiConnection(object):
             "token": token}
         logger.debug(f"Jwt payload: {payload}")
         result = requests.post(server_url, json=payload)
-        print(result)
-        print(result.text)
+        logger.debug(f"Result for {server_url} : {result} with text {result.text}")
         if result.status_code != 200:
             logger.error(f"Could not validate user with backend: {result.text}")
             return None
