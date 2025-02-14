@@ -84,6 +84,30 @@ def resolution_to_pandas_freq(resolution_enum):
         return "YS"
     return "D"  #Default
 
+# This is not accurate for months and higher
+def period_resolution_hours(resolution_enum):
+    if resolution_enum==PeriodResolutionEnum.MINUTES:
+        return 1/60
+    elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
+        return 5/60
+    elif resolution_enum==PeriodResolutionEnum.FIFTEENMIN:
+        return 15/60
+    elif resolution_enum==PeriodResolutionEnum.HOURLY:
+        return 1
+    elif resolution_enum==PeriodResolutionEnum.DAILY:
+        return 24
+    elif resolution_enum==PeriodResolutionEnum.WEEKLY:
+        return 7*24
+    elif resolution_enum==PeriodResolutionEnum.MONTHLY:
+        return 30*24
+    elif resolution_enum==PeriodResolutionEnum.SEMI_MONTHLY:
+        return 60*24
+    elif resolution_enum==PeriodResolutionEnum.QUARTERLY:
+        return 90*24
+    elif resolution_enum==PeriodResolutionEnum.YEARLY:
+        return 365*24
+    return 1
+
 # Server gets Monthly, Hourly etc as input, and needs this conversion
 def resolution_str_to_pandas_freq(resolution_str):
     return resolution_to_pandas_freq(PeriodResolutionEnum(resolution_str))

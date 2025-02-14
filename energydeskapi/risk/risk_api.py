@@ -143,3 +143,53 @@ class RiskApi:
         print('get_rolling_products params:', params)
         json_res = api_connection.exec_get_url('/api/riskmanager/rollingproducts/',params)
         return json_res
+
+    @staticmethod
+    def post_marketestimators(api_connection, payload):
+        """posts market estimators to database"""
+        logger.info("Posting market estimators")
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketestimators/', payload)
+        return success, json_res, status_code, error_msg
+    
+    @staticmethod
+    def get_marketestimators(api_connection):
+        """Fetches market estimators from the database"""
+        logger.info("Fetching market estimators")
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
+        return json_res
+    
+    @staticmethod
+    def get_marketestimators_dict(api_connection) -> dict:
+        """Fetches market estimators from the database"""
+        logger.info("Fetching market estimators")
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
+        
+        record = json_res[0] if json_res else {}
+        # Retrieve the stored fields. They are assumed to be JSON-encoded strings.
+        vol_str = record.get("volatility_data")
+        corr_str = record.get("correlation_data")
+        discount_str = record.get("discount_factor_data")
+        data = {}
+        # Convert JSON strings to Python objects (lists)
+        try:
+            volatility_list = json.loads(vol_str) if isinstance(vol_str, str) else vol_str
+        except Exception as e:
+            print(f"Error decoding volatility_data: {e}")
+            volatility_list = []
+        df_volatility = pd.DataFrame(volatility_list)
+        data['volatility'] = df_volatility
+        try:
+            correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
+        except Exception as e:
+            print(f"Error decoding correlation_data: {e}")
+            correlation_list = []
+        df_correlation = pd.DataFrame(correlation_list)
+        data['correlation'] = df_correlation
+        try:
+            discount_list = json.loads(discount_str) if isinstance(discount_str, str) else discount_str
+        except Exception as e:
+            print(f"Error decoding discount_factor: {e}")
+            discount_list = []
+        df_discount = pd.DataFrame(discount_list)
+        data['discount_factor'] = df_discount
+        return data

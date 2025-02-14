@@ -69,6 +69,8 @@ class ClearingApi:
             '/api/clearing/perform-reconciliation/', payload)
         return json_res
 
+
+
     @staticmethod
     def get_clearing_report_records(api_connection, parameters={}):
         """Fetches a list of clearing report records
@@ -169,6 +171,12 @@ class ClearingApi:
         df = pd.DataFrame(data=json_res)
         return df
 
+
+    @staticmethod
+    def approve_all_reconciled_trades(api_connection,date):
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/clearing/approve-reconciled-contracts/',{'date':date})
+        return success, returned_data, status_code, error_msg
+
     @staticmethod
     def update_reconciled_trades(api_connection, key, payload={}):
         success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
@@ -201,6 +209,35 @@ class ClearingApi:
             return None
         #df = pd.DataFrame(data=json_res)
         return json_res
+
+    # This will be tested and replace get_reconciled_trades in lats February  when we have time:-)
+    @staticmethod
+    def get_reconciled_contracts(api_connection, params={}):
+        """Fetches reconciled trades
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching reconciled contracts")
+        json_res = api_connection.exec_get_url('/api/clearing/reconciledcontracts/', params)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_embedded_reconciled_contracts(api_connection, params={}):
+        """Fetches reconciled trades
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching reconciled contracts")
+        json_res = api_connection.exec_get_url('/api/clearing/reconciledcontracts/embedded/', params)
+        if json_res is None:
+            return None
+        #df = pd.DataFrame(data=json_res)
+        return json_res
+
     @staticmethod
     def get_clearing_report_type_url(api_connection, key):
         return api_connection.get_base_url() + '/api/clearing/reporttypes/' + str(key) + "/"
