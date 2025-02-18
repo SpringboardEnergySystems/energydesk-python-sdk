@@ -83,10 +83,11 @@ class FlexibilityQaApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_meterdata(api_connection, resolution, assets):
+    def load_meterdata(api_connection, resolution, assets, longflex_origination=False):
         payload={
             'assets':assets,
-            'resolution': resolution
+            'resolution': resolution,
+            'longflex_origination':longflex_origination
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/flexiblepower/qa/loadmeterdata/', payload)
