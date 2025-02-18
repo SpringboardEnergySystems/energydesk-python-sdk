@@ -83,22 +83,23 @@ class FlexibilityQaApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_meterdata(api_connection, resolution, assets, longflex_origination=False):
+    def load_meterdata(api_connection, resolution, assets):
         payload={
             'assets':assets,
             'resolution': resolution,
-            'longflex_origination':longflex_origination
+
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/flexiblepower/qa/loadmeterdata/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_grouped_meterdata(api_connection, resolution,  assets, use_sub_meter=False):
+    def load_grouped_meterdata(api_connection, resolution,  assets, use_sub_meter=False,  longflex_origination=False):
         payload={
             'assets':assets,
             'resolution': resolution,
-            'use_sub_meter':use_sub_meter
+            'use_sub_meter':use_sub_meter,
+            'longflex_origination': longflex_origination
         }
         print(payload)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
