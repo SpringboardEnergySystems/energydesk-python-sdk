@@ -31,6 +31,7 @@ class FlexibilityQaApi:
         if json_res is None:
             return None
         return json_res
+
     @staticmethod
     def get_shortflexassets_embedded(api_connection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flextradeassets/embedded/', parameters)
@@ -40,6 +41,20 @@ class FlexibilityQaApi:
     @staticmethod
     def get_shortflextransactions(api_connection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flextrades/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_longflex_offers_embedded(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexroffers/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_longflex_assets_embedded(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexassets/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
@@ -68,21 +83,24 @@ class FlexibilityQaApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_meterdata(api_connection, resolution, assets):
+    def load_meterdata(api_connection, resolution, assets,  use_sub_meter=False,  longflex_origination=False):
         payload={
             'assets':assets,
-            'resolution': resolution
+            'resolution': resolution,
+            'use_sub_meter': use_sub_meter,
+            'longflex_origination': longflex_origination
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/flexiblepower/qa/loadmeterdata/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_grouped_meterdata(api_connection, resolution,  assets, use_sub_meter=False):
+    def load_grouped_meterdata(api_connection, resolution,  assets, use_sub_meter=False,  longflex_origination=False):
         payload={
             'assets':assets,
             'resolution': resolution,
-            'use_sub_meter':use_sub_meter
+            'use_sub_meter':use_sub_meter,
+            'longflex_origination': longflex_origination
         }
         print(payload)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
