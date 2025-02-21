@@ -10,6 +10,7 @@ from energydeskapi.contracts.contracts_api import ContractsApi
 from energydeskapi.conversions.elvizlink_api import ElvizLinksApi
 from energydeskapi.marketdata.products_api import ProductsApi
 from energydeskapi.marketdata.derivatives_api import DerivativesApi
+from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.types.market_enum_types import MarketPlaceEnum, MarketEnum
 
 import pendulum
@@ -67,4 +68,10 @@ class EnergyDeskinksApi:
         products=EnergyDeskinksApi.get_latest_energydesk_prices(other_edesk_api_connection, days_back)
         #print(products)
         return products
+
+    @staticmethod
+    def store_nasdaq_trade_data(api_connection: ApiConnection, nasdaq_trade_data: list[dict[str, any]]):
+        success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/elvizmapping/nasdaqtradedata/', nasdaq_trade_data)
+        if status_code >= 300:
+            raise Exception(f"Storing the nasdaq trade data got status {status_code} with error {error_msg}")
 
