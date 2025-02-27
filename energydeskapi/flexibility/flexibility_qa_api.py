@@ -70,9 +70,11 @@ class FlexibilityQaApi:
     def upsert_meterdata(api_connection, key,asset_id, df_meter_data_ams, df_meter_data_submeter):
         payload = {
             'asset_id': asset_id,
-            'meter_data_ams': None if df_meter_data_ams is None else json.loads(df_meter_data_ams.to_json(orient='records', date_format='iso')),
-            'meter_data_submeter': None if df_meter_data_submeter is None else json.loads(df_meter_data_submeter.to_json(orient='records', date_format='iso')),
-        }
+         }
+        if df_meter_data_ams is not None:
+            payload['meter_data_ams']=json.loads(df_meter_data_ams.to_json(orient='records', date_format='iso'))
+        if df_meter_data_submeter is not None:
+            payload['meter_data_submeter']=json.loads(df_meter_data_submeter.to_json(orient='records', date_format='iso'))
         logger.info("Saving regulation scheduled key= {} data= {}".format(key, payload))
         if key > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
