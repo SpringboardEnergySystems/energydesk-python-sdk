@@ -7,6 +7,7 @@ from energydeskapi.types.clearing_enum_types import ReconciliationStatusEnum
 from dateutil import parser
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.clearing.clearing_api import ClearingApi
+from energydeskapi.clearing.nasdaq_api import NasdaqApi
 from energydeskapi.types.clearing_enum_types import ClearingReportTypeEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -19,6 +20,11 @@ def test_clearing_data(api_conn):
 
 def fetch_clearing_report_records2(api_conn):
     df = ClearingApi.get_clearing_report_records(api_conn)
+    print(df)
+
+
+def get_clearing_traderecords(api_conn):
+    df = NasdaqApi.get_traderecords(api_conn)
     print(df)
 
 def fetch_clearing_report_records(api_conn, report_type_enum, days_back):
@@ -140,7 +146,7 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-    fetch_reconciled_contracts(api_conn)
+    get_clearing_traderecords(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
     #fetch_reconciled_trades(api_conn)
