@@ -112,6 +112,9 @@ def period_resolution_hours(resolution_enum):
 def resolution_str_to_pandas_freq(resolution_str):
     return resolution_to_pandas_freq(PeriodResolutionEnum(resolution_str))
 
+# Server gets Monthly, Hourly etc as input, and needs this conversion
+def resolution_str_to_period_hours(resolution_str):
+    return period_resolution_hours(PeriodResolutionEnum(resolution_str))
 
 """
 PANDAS FREQUENCIES
