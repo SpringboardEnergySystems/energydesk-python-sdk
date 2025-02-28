@@ -38,6 +38,14 @@ class FlexibilityQaApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_flexassets(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flexassets/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
     @staticmethod
     def get_shortflextransactions(api_connection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flextrades/', parameters)
