@@ -26,6 +26,13 @@ def check_convert_datetime(d, timezone=None):
         d = d.astimezone(pytz.UTC)
         return d
 
+# Can take any column and convert datetime regardless of index .
+# Usage df['report_date'] = df.apply(convert_date_column, axis=1, args=("report_date",))
+def convert_date_column(row, column:str, target_zone:pytz.timezone=pytz.timezone("Europe/Oslo")):
+    dt1=row[column]
+    t1=pendulum.parse(str(dt1))
+    return conv_from_pendulum(t1.in_tz(target_zone))
+
 def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=pytz.timezone("UTC"), predefined_columns=[]):
     period_from = pendulum.parse(str(period_from))
     period_to = pendulum.parse(str(period_to))
