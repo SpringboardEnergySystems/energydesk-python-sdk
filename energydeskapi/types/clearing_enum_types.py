@@ -102,16 +102,19 @@ class ClearingReportTypeEnum(Enum):
             23: 'SPAN_PARAM_TRAILERLIST',
         }.get(x.value, '')
 
-
+# Need another level if server does not auto approve, only reconcile as a suggestion.
+# It is the same as portal showing yellow marker when user manually prepares for approval
 class ReconciliationStatusEnum(Enum):
     SUCCESS = 1
     ERROR = 2
+    PENDING = 3
 
     @staticmethod
     def reconciliation_status_code(x):
         return {
             1: 'SUCCESS',
             2: 'ERROR',
+            3: 'PENDING',
         }.get(x.value, '')
 
 
