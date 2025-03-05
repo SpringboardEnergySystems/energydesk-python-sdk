@@ -108,6 +108,7 @@ class ReconciliationStatusEnum(Enum):
     SUCCESS = 1
     ERROR = 2
     PENDING = 3
+    EMPTY=4  # Not active anymore. Trades have been moved into another "bucket" for manual reconciliation. Will not show in UI
 
     @staticmethod
     def reconciliation_status_code(x):
@@ -115,6 +116,7 @@ class ReconciliationStatusEnum(Enum):
             1: 'SUCCESS',
             2: 'ERROR',
             3: 'PENDING',
+            4: 'EMPTY',
         }.get(x.value, '')
 
 

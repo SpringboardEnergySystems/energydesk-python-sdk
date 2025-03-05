@@ -20,12 +20,20 @@ def test_clearing_data(api_conn):
 
 def fetch_clearing_report_records2(api_conn):
     df = ClearingApi.get_clearing_report_records(api_conn)
-    print(df)
+
+
+def update_clearing_traderecords(api_conn):
+    df=pd.read_csv("./nasdaq.csv")
+    for index, row in df.iterrows():
+        NasdaqApi.update_traderecord(api_conn, row['contract_id'],
+                                       row['deal_number'], row['trade_id'], row['trade_report_type'], row['trade_datetime'], row['external_contract_id'] )
+
 
 
 def get_clearing_traderecords(api_conn):
     df = NasdaqApi.get_traderecords(api_conn)
     print(df)
+    df.to_csv("./nasdaq.csv")
 
 def fetch_clearing_report_records(api_conn, report_type_enum, days_back):
     from_date = datetime.today() - relativedelta(days=days_back)
@@ -146,7 +154,8 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-    get_clearing_traderecords(api_conn)
+   #get_clearing_traderecords(api_conn)
+    update_clearing_traderecords(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
     #fetch_reconciled_trades(api_conn)
