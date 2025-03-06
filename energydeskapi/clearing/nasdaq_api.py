@@ -27,4 +27,16 @@ class NasdaqApi:
         print(df)
         return df
 
+    @staticmethod
+    def update_traderecord(api_connection, contract_id, deal_number, trade_id, trade_report_type,trade_datetime,external_contract_id):
+        """Fetches a list of embedded clearing report records
 
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        payload={ 'contract_id':contract_id, 'deal_number':deal_number,
+                  'trade_id':trade_id, 'trade_report_type':trade_report_type, 'trade_datetime':trade_datetime, 'external_contract_id':external_contract_id}
+        print(payload)
+
+        success, json_res, status_code, error_msg  = a = api_connection.exec_post_url('/api/elvizmapping/nasdaqtradedata/', payload)
+        print(status_code)
