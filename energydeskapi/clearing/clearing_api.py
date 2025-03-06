@@ -248,7 +248,7 @@ class ClearingApi:
 
     @staticmethod
     def update_reconciled_contract(api_connection, payload):
-        success, json_res, status_code, error_msg  = a = api_connection.exec_patch_url('/api/clearing/reconciledcontracts/'+ payload['pk'] + "/", payload)
+        success, json_res, status_code, error_msg  = a = api_connection.exec_patch_url('/api/clearing/reconciledcontracts/'+ str(payload['pk']) + "/", payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
