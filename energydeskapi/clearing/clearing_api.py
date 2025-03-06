@@ -224,6 +224,14 @@ class ClearingApi:
             return None
         return json_res
 
+    # Fetch records to put on trades
+    @staticmethod
+    def get_external_cleared_contracts(api_connection, params={}):
+        json_res = api_connection.exec_get_url('/api/clearing/externalcontracts/', params)
+        if json_res is None:
+            return None
+        return json_res
+
     @staticmethod
     def get_embedded_reconciled_contracts(api_connection, params={}):
         """Fetches reconciled trades
@@ -237,6 +245,14 @@ class ClearingApi:
             return None
         #df = pd.DataFrame(data=json_res)
         return json_res
+
+    @staticmethod
+    def get_reconciliation_status_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/reconciliationstatus/' + str(key) + "/"
+
+    @staticmethod
+    def get_external_contract_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/externalcontracts/' + str(key) + "/"
 
     @staticmethod
     def get_clearing_report_type_url(api_connection, key):
