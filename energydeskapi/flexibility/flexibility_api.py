@@ -527,8 +527,6 @@ class FlexibilityApi:
             'data': convert_series(df_readings),
             'last_updated': str(pendulum.now('Europe/Oslo')),
         }
-        print(json.dumps(payload, indent=2))
-        return
         success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
         if success is False:
             logger.warning(error_msg)
