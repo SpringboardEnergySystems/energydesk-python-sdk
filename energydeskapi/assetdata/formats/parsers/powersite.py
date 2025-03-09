@@ -24,4 +24,4 @@ def parse_timeseries(content:str):
     df['datetime'] = df.index
     df['consumption'] = pd.to_numeric(df['consumption'], errors='coerce')
     df = df.dropna()
-    print(df)
+    return df
