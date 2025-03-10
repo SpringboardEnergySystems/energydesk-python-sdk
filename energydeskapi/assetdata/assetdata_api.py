@@ -393,7 +393,7 @@ class AssetDataApi:
             'destination':destination
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-            '/api/assetdata/loadgroupedmeterdata/', payload)
+            '/api/assetdata/exportgroupedmeterdata/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
