@@ -14,7 +14,13 @@ from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 import pendulum
 from energydeskapi.types.asset_enum_types import AssetForecastAdjustEnum, AssetForecastAdjustDenomEnum
 from energydeskapi.assets.assets_api import AssetsApi
+from enum import Enum
 logger = logging.getLogger(__name__)
+
+
+class ExportDestinationsEnum(Enum):
+    EMAIL = "Email"
+    NODES = "NODES Market"
 
 
 class TimeSeriesEntry:
@@ -384,13 +390,14 @@ class AssetDataApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def export_grouped_meterdata(api_connection, period_from, period_until, resolution, destination:str, asset_pk_list=[]):
+    def export_grouped_meterdata(api_connection, period_from, period_until, resolution, destination_type:ExportDestinationsEnum, destination_address:str,asset_pk_list=[]):
         payload={
             'assets':asset_pk_list,
             'period_from': period_from,
             'period_until': period_until,
             'resolution': resolution,
-            'destination':destination
+            'destination_type': destination_type.name,
+            'destination_address':destination_address
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/assetdata/exportgroupedmeterdata/', payload)
