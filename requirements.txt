@@ -14,3 +14,4 @@ rauth
 py-moneyed
 flask
 croniter
+PyYAML
