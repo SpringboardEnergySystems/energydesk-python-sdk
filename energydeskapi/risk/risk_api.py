@@ -193,3 +193,32 @@ class RiskApi:
         df_discount = pd.DataFrame(discount_list)
         data['discount_factor'] = df_discount
         return data
+    
+    @staticmethod
+    def get_market_areas(api_connection):
+        """Fetches market areas from the database"""
+        logger.info("Fetching market areas")
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/')
+        return json_res
+    
+    @staticmethod
+    def get_market_areas_filtered(api_connection, areas:list[str]):
+        """Fetches market areas from the database"""
+        logger.info("Fetching market areas")
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/', {'name__in': areas})
+        return json_res
+    
+    @staticmethod
+    def post_market_area(api_connection, payload):
+        """posts market areas to database"""
+        logger.info("Posting market areas")
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/', payload)
+        return success, json_res, status_code, error_msg
+    
+    @staticmethod
+    def bulk_post_market_areas(api_connection, payload):
+        """posts market areas to database"""
+        logger.info("Bulk posting market areas")
+        # The endpoint for bulk insertion is appended with the action's name 'bulk_create'
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/bulk_create/', payload)
+        return success, json_res, status_code, error_msg
