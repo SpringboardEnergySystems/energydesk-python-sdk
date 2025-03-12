@@ -44,7 +44,10 @@ class DwhApi:
     def get_periodview_timeseries(api_connection, parameters={}):
         """Fetches  reports
         """
-        json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/latest/', parameters)
+        if 'report_date' in parameters:
+            json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/', parameters)
+        else:
+            json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/latest/', parameters)
         if json_res is None:
             return None
         return json_res
