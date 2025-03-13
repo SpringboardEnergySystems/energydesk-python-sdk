@@ -222,3 +222,22 @@ class RiskApi:
         # The endpoint for bulk insertion is appended with the action's name 'bulk_create'
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/bulk_create/', payload)
         return success, json_res, status_code, error_msg
+    
+    @staticmethod
+    def post_batch_simulation(api_connection, payload):
+        """posts batch simulation to database"""
+        logger.info("Posting batch simulation")
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/simpricebatch', payload)
+        return success, json_res, status_code, error_msg
+    
+    @staticmethod
+    def get_simulation_batches(api_connection, report_id, page=1, page_size=50):
+        """Fetches a page of simulation batches for a given simulation report id"""
+        logger.info(f"Fetching simulation batches for report id: {report_id}, page: {page}, page_size: {page_size}")
+        params = {
+            'report': report_id,
+            'page': page,
+            'page_size': page_size
+        }
+        json_res = api_connection.exec_get_url('/api/riskmanager/simpricebatch/', params)
+        return json_res
