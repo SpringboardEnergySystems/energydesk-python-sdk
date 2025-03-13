@@ -231,7 +231,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
     
     @staticmethod
-    def get_simulation_batches(api_connection, report_id, page=1, page_size=50):
+    def get_simulation_batches(api_connection, report_id, page=1, page_size=1):
         """Fetches a page of simulation batches for a given simulation report id"""
         logger.info(f"Fetching simulation batches for report id: {report_id}, page: {page}, page_size: {page_size}")
         params = {
