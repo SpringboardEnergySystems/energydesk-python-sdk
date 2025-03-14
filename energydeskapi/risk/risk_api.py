@@ -183,9 +183,11 @@ class RiskApi:
         corr_str = record.get("correlation_data")
         discount_str = record.get("discount_factor_data")
         column_order = record.get("column_order")
+        estimator_id = record.get("id")
         data = {}
         # Convert JSON strings to Python objects (lists)
-        if corr_str and discount_str and column_order:
+        if corr_str and discount_str and column_order and estimator_id:
+            data['id'] = estimator_id
             try:
                 correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
             except Exception as e:
@@ -208,6 +210,7 @@ class RiskApi:
             data['discount_factor'] = discount
             return data
         return None
+    
     
     @staticmethod
     def get_market_areas(api_connection):
