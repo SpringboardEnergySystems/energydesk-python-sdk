@@ -167,7 +167,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def get_marketestimators_dict(api_connection, latest=True) -> Union[Dict[str, pd.DataFrame], None]:
+    def get_marketestimators_dict(api_connection, latest=True) -> Union[Dict[str, Union[pd.DataFrame, list]], None]:
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         if latest:
@@ -203,8 +203,8 @@ class RiskApi:
         except Exception as e:
             print(f"Error decoding discount_factor: {e}")
             discount_list = []
-        df_discount = pd.DataFrame(discount_list)
-        data['discount_factor'] = df_discount
+        discount = list(discount_list)
+        data['discount_factor'] = discount
         return data
     
     @staticmethod
