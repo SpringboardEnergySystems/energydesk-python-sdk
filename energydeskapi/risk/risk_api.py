@@ -167,7 +167,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def get_marketestimators_dict(api_connection, latest=True) -> Union[Dict[str, Union[pd.DataFrame, list]], None]:
+    def get_marketestimators_dict(api_connection, latest=True) -> Dict[str, pd.DataFrame | list] | None:
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         if latest:
@@ -177,35 +177,37 @@ class RiskApi:
         json_res = api_connection.exec_get_url(url)
         
         record = json_res[0] if isinstance(json_res, list) and len(json_res) > 0 else json_res
-        if record is None:
-            return {}
+        if not record:
+            return None
         # Retrieve the stored fields. They are assumed to be JSON-encoded strings.
         corr_str = record.get("correlation_data")
         discount_str = record.get("discount_factor_data")
         column_order = record.get("column_order")
         data = {}
         # Convert JSON strings to Python objects (lists)
-        try:
-            correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
-        except Exception as e:
-            print(f"Error decoding correlation_data: {e}")
-            correlation_list = []
-        df_correlation = pd.DataFrame(correlation_list)
-        if len(column_order) == df_correlation.shape[0] == df_correlation.shape[1]:
-            df_correlation.columns = column_order
-            df_correlation.index = column_order
-        else:
-            logger.error("Column order does not match the correlation matrix dimensions")
-            return None
-        data['correlation'] = df_correlation
-        try:
-            discount_list = json.loads(discount_str) if isinstance(discount_str, str) else discount_str
-        except Exception as e:
-            print(f"Error decoding discount_factor: {e}")
-            discount_list = []
-        discount = list(discount_list)
-        data['discount_factor'] = discount
-        return data
+        if corr_str and discount_str and column_order:
+            try:
+                correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
+            except Exception as e:
+                print(f"Error decoding correlation_data: {e}")
+                correlation_list = []
+            df_correlation = pd.DataFrame(correlation_list)
+            if len(column_order) == df_correlation.shape[0] == df_correlation.shape[1]:
+                df_correlation.columns = column_order
+                df_correlation.index = column_order
+            else:
+                logger.error("Column order does not match the correlation matrix dimensions")
+                return None
+            data['correlation'] = df_correlation
+            try:
+                discount_list = json.loads(discount_str) if isinstance(discount_str, str) else discount_str
+            except Exception as e:
+                print(f"Error decoding discount_factor: {e}")
+                discount_list = []
+            discount = list(discount_list)
+            data['discount_factor'] = discount
+            return data
+        return None
     
     @staticmethod
     def get_market_areas(api_connection):
