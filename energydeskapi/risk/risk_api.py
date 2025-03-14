@@ -211,6 +211,13 @@ class RiskApi:
             return data
         return None
     
+    @staticmethod
+    def get_create_report(api_connection, payload):
+        """updates or creates a simprice report"""
+        logger.info("Posting simprice report")
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/simpricereportdata/', payload)
+        return success, json_res, status_code, error_msg
+    
     
     @staticmethod
     def get_market_areas(api_connection):
