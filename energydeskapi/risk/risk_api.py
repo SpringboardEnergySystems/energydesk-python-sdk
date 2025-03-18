@@ -1,7 +1,40 @@
 import logging
 import pandas as pd
 import json
+from json import JSONEncoder
+from dataclasses import dataclass
+from energydeskapi.assetdata.assetdata_api import DateTimeEncoder
+from datetime import datetime, timedelta
+from dataclasses import dataclass, asdict, field
+from datetime import timezone, datetime, date
 logger = logging.getLogger(__name__)
+
+@dataclass
+class RollingProduct:
+    pk : int
+    ticker : str
+    original_ticker: str
+    trading_date: datetime
+    size: int
+    currency: str
+    denomination: str
+    delivery_from: datetime
+    delivery_until: datetime
+    price: float
+    prev_price: float
+    log_returns: float
+    market: str # URL
+    commodity_type: str # URL
+
+
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+
+
 
 class RiskParameters:
 
@@ -130,19 +163,20 @@ class RiskApi:
         return dfvars
 
     @staticmethod
-    def get_rolling_products(api_connection, price_days=40, ticker=None):
-        """Lists the types of commodities
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
+    def get_rolling_products(api_connection, params={})->list[RollingProduct]:
+        """Lists rolling products
         """
         logger.info("Loads rolling products")
-        params={'price_days':price_days}
-        if ticker is not None:
-            params['ticker__icontains'] = ticker
-        print('get_rolling_products params:', params)
-        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproducts/',params)
+        json_res = api_connection.exec_get_url('/api/markets/rollingproducts/',params)
         return json_res
+
+    @staticmethod
+    def upsert_rolling_product(api_connection, product: RollingProduct):
+
+        logger.info("Upserting rolling product")
+        payload=product.__dict__
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/rollingproducts/', payload)
+        return success, json_res, status_code, error_msg
 
     @staticmethod
     def post_marketestimators(api_connection, payload):
