@@ -1,6 +1,8 @@
 import json
 import logging
 import geopandas as gpd
+from pandas.core.interchange import column
+
 from energydeskapi.system.default_asset_types import initialize_default_etrm_assettypes
 from energydeskapi.audit.audit_log_api import AuditLogApi
 from energydeskapi.sdk.common_utils import init_api
@@ -13,17 +15,22 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 
 
-
+import pytz, pendulum
+from energydeskapi.sdk.pandas_utils import convert_date_column
 def get_contracts(api_conn):
     jsondata = DwhApi.get_contract_dimension( api_conn, {})
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
     print(df)
 def get_reports(api_conn):
-    jsondata = DwhApi.get_report_dimension( api_conn, {})
+    jsondata = DwhApi.get_report_dimension( api_conn, {"currency":"NOK","report_type":"MONTHLY_PNL"})
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
-    print(df)
+    df['report_date'] = df.apply(convert_date_column, axis=1, args=("report_date",))
+    report_dates=[str(d)[:10] for d in df['report_date'].unique()]
+    print(report_dates)
+
+
 def get_contract_timeseries(api_conn):
     jsondata = DwhApi.get_contract_timeseries( api_conn, {})
     #print(json.dumps(jsondata, indent=2))
@@ -77,5 +84,5 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #get_report_types(api_conn)
-    get_gridexposure(api_conn)
+    get_reports(api_conn)
 

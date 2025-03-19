@@ -509,22 +509,23 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def register_asset_readings(api_connection, asset_pk, df_readings):
-        def convert_series(df):
-            df.index=df['datetime']
-            df['date'] = pd.to_datetime(df.index)
-            df['timestamp'] = df['datetime'].dt.strftime('%Y-%m-%dT%H:%M:%S+01:00')  # Asssuming Norw timezone
-            df['date'] = df['date'].dt.strftime('%Y-%m-%d')
-            df = df.rename(columns={"consumption": "value"})
-            df=df[['timestamp', 'date', 'value']]
-            return json.loads(df.to_json(orient='records'))
+    def convert_series_to_json(df):
+        df.index=df['datetime']
+        df['date'] = pd.to_datetime(df.index)
+        df['timestamp'] = df['datetime'].dt.strftime('%Y-%m-%dT%H:%M:%S+01:00')  # Asssuming Norw timezone
+        df['date'] = df['date'].dt.strftime('%Y-%m-%d')
+        df = df.rename(columns={"consumption": "value"})
+        df=df[['timestamp', 'date', 'value']]
+        return json.loads(df.to_json(orient='records'))
 
+    @staticmethod
+    def register_asset_readings(api_connection, asset_pk, df_readings):
         payload = {
             'asset': AssetsApi.get_asset_url(api_connection, asset_pk),
             'time_series_type': AssetDataApi.get_timeseries_type_url(api_connection, TimeSeriesTypesEnum.METERREADINGS),
             'quantity_unit': AssetDataApi.get_timeseries_value_unit_url(api_connection, QuantityUnitEnum.KW),
             'quantity_type': AssetDataApi.get_timeseries_value_type_url(api_connection, QuantityTypeEnum.EFFECT),
-            'data': convert_series(df_readings),
+            'data': FlexibilityApi.convert_series_to_json(df_readings),
             'last_updated': str(pendulum.now('Europe/Oslo')),
         }
         success, json_res, status_code, error_msg = AssetDataApi.upsert_timeseries(api_connection, payload)
@@ -580,12 +581,16 @@ class FlexibilityApi:
         :type api_connection: str, required
         """
         payload={
+            "profile_type": FlexibilityApi.get_asset_profile_type_url(api_connection, 1),
             "period_from": period_from,
             "period_until": period_until,
-            'active_profile': active_profile,
-            "kw_flexibility": kw_available,
             "avgcost_per_unit": avgcost_per_unit
         }
+
+        if kw_available is not None:
+            payload['kw_flexibility'] = kw_available
+        if active_profile is not None:
+            payload['active_profile'] = active_profile
         if profile_changerequest is not None:
             payload['requested_profile']=profile_changerequest
         if asset_id is not None:

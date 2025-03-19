@@ -126,9 +126,7 @@ class ProductsApi:
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
         if json_res is None:
             return None
-        for res in json_res['results']:
-            pass
-        return None
+        return json_res['results']
 
     @staticmethod
     def get_product_prices(api_connection, parameters={}):

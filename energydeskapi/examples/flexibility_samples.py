@@ -10,6 +10,7 @@ matplotlib.use('agg')
 matplotlib.style.use('ggplot')
 import logging
 import json
+from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 from energydeskapi.sdk.money_utils import FormattedMoney, CurrencyCode
 import pandas as pd
 from energydeskapi.contracts.contracts_api import ContractsApi
@@ -84,13 +85,23 @@ def register_flexible_asset(api_conn):
 
 
 def register_flex_availability(api_conn):
-    t1="2024-02-01 00:00:00+02:00"
-    t2="2024-03-01 00:00:00+02:00"
-    crontab="0 11-13 * * 1-5"   # 11 12 and 13 monday-friday
+    t1="2025-03-13 12:00:00+01:00"
+    t2="2025-03-14 00:00:00+01:00"
+    df = make_empty_timeseries_df(t1, t2, "H", "Europe/Oslo")
+    df=df.tz_convert("Europe/Oslo")
+    df['timestamp']=df.index
+    df['value'] = 100
+    df['date'] = df.index.date
+    print(df)
+    print(json.loads(df.to_json(orient='records')))
 
-    outdata=FlexibilityApi.register_asset_availability(api_conn,extern_asset_id="67Varanger",
-                                               period_from=t1, period_until=t2,
-                                               crontab=crontab, kw_available=200)
+    prof={'absolute_profile':json.loads(df.to_json(orient='records', date_format='iso'))}
+    for a in prof['absolute_profile']:
+        a['date']=a['date'][:10]
+    outdata=FlexibilityApi.register_asset_availability(api_conn,asset_id=None, extern_asset_id="Skur 88",
+                                               period_from=t1, period_until=t2,active_profile=None,profile_changerequest=prof,kw_available=None,avgcost_per_unit=0)
+
+
     print(outdata)
 
 def check_schedule(api_conn):
@@ -264,7 +275,7 @@ if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #register_flexible_asset(api_conn)
-    #register_flex_availability(api_conn)
-    test_trade(api_conn)
+    register_flex_availability(api_conn)
+    #test_trade(api_conn)
 
     #load_reserves_prices(api_conn)
