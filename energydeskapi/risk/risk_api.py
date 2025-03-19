@@ -166,11 +166,19 @@ class RiskApi:
         return dfvars
 
     @staticmethod
-    def get_rolling_products(api_connection, params={})->list[RollingProduct]:
+    def get_rolling_products(api_connection, params={})->dict:
         """Lists rolling products
         """
         logger.info("Loads rolling products")
         json_res = api_connection.exec_get_url('/api/markets/rollingproducts/',params)
+        return json_res
+
+    @staticmethod
+    def get_rolling_products_embedded(api_connection, params={})->dict:
+        """Lists rolling products
+        """
+        logger.info("Loads rolling products")
+        json_res = api_connection.exec_get_url('/api/markets/rollingproducts/embedded/',params)
         return json_res
 
     @staticmethod
@@ -205,6 +213,39 @@ class RiskApi:
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varproductreturns/', payload)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_product_returns(api_connection, params={})->dict:
+        """Lists product returns
+        """
+        logger.info("Loads product returns")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varproductreturns/',params)
+        return json_res
+
+    @staticmethod
+    def get_product_returns_embedded(api_connection, params={})->dict:
+        """Lists product returns
+        """
+        logger.info("Loads product returns")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varproductreturns/embedded/',params)
+        return json_res
+
+
+    @staticmethod
+    def get_covariance_data(api_connection, params={})->dict:
+        """Lists product returns
+        """
+        logger.info("Loads product returns")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varcovariances/',params)
+        return json_res
+
+    @staticmethod
+    def get_covariance_data_embedded(api_connection, params={})->dict:
+        """Lists product returns
+        """
+        logger.info("Loads product returns")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varcovariances/embedded/',params)
+        return json_res
 
     @staticmethod
     def upsert_varcalculation(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
