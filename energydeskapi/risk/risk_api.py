@@ -181,11 +181,13 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_covariance_data(api_connection,  trading_date:pendulum,timestamp:pendulum, covariance_data: dict, correlation_data:dict):
+    def upsert_covariance_data(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float, covariance_data: dict, correlation_data:dict):
         logger.info("Upserting covariance data product")
         payload = {
             'trading_date': str(trading_date)[:10],
             'timestamp': str(timestamp),
+            'days_history': days_history,
+            'decay_factor': decay_factor,
             'covariance_data': covariance_data,
             'correlation_data': correlation_data
         }
