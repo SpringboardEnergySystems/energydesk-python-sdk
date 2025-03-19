@@ -180,6 +180,31 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
+    def upsert_covariance_data(api_connection,  trading_date:datetime,timestamp:datetime, covariance_data: dict, correlation_data:dict):
+        logger.info("Upserting covariance data product")
+        payload = {
+            'trading_date': trading_date.strftime('%Y-%m-%d'),
+            'timestamp': timestamp,
+            'covariance_data': covariance_data,
+            'correlation_data': correlation_data
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varcovariances/', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def upsert_productreturns_data(api_connection, trading_date:datetime,timestamp:datetime,days_history:int,decay_factor:float, returns_data: dict):
+        logger.info("Upserting product returns")
+        payload={
+            'trading_date':trading_date.strftime('%Y-%m-%d'),
+            'timestamp':timestamp,
+            'days_history':days_history,
+            'decay_factor':decay_factor,
+            'returns_data':returns_data
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varproductreturns/', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
     def post_marketestimators(api_connection, payload):
         """posts market estimators to database"""
         logger.info("Posting market estimators")
