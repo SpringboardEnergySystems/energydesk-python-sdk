@@ -8,6 +8,7 @@ from energydeskapi.assetdata.assetdata_api import DateTimeEncoder
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict, field
 from datetime import timezone, datetime, date
+import pendulum
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -180,11 +181,11 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_covariance_data(api_connection,  trading_date:datetime,timestamp:datetime, covariance_data: dict, correlation_data:dict):
+    def upsert_covariance_data(api_connection,  trading_date:pendulum,timestamp:pendulum, covariance_data: dict, correlation_data:dict):
         logger.info("Upserting covariance data product")
         payload = {
-            'trading_date': trading_date.strftime('%Y-%m-%d'),
-            'timestamp': timestamp,
+            'trading_date': str(trading_date)[:10],
+            'timestamp': str(timestamp),
             'covariance_data': covariance_data,
             'correlation_data': correlation_data
         }
@@ -192,11 +193,11 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_productreturns_data(api_connection, trading_date:datetime,timestamp:datetime,days_history:int,decay_factor:float, returns_data: dict):
+    def upsert_productreturns_data(api_connection, trading_date:pendulum,timestamp:pendulum,days_history:int,decay_factor:float, returns_data: dict):
         logger.info("Upserting product returns")
         payload={
-            'trading_date':trading_date.strftime('%Y-%m-%d'),
-            'timestamp':timestamp,
+            'trading_date': str(trading_date)[:10],
+            'timestamp': str(timestamp),
             'days_history':days_history,
             'decay_factor':decay_factor,
             'returns_data':returns_data
