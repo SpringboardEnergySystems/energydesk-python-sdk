@@ -258,15 +258,17 @@ class UsersApi:
         return json_res
     @staticmethod
     def __extract_primary_usergroup(dict):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"User group elements:{dict}")
         output=[]
         for d in dict:
-            logger.info(f"User group element:{d}")
             d['user_role']=""
             if 'usergroup_set' in d and  len(d['usergroup_set'])>0:
                 #prim_group=key_from_url(d['usergroup_set'][0])
                 d['user_role'] = d['usergroup_set'][0]['description']
             output.append(d)
         return output
+
     @staticmethod
     def get_users_df2(api_connection, parameters={}):
         """Fetches user profiles
