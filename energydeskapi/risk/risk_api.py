@@ -208,6 +208,21 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
+    def upsert_varcalculation(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
+                              portfolio_id:int, var95:float, var99:float, port_mean:float, port_stdev:float, var_data:dict):
+        logger.info("Upserting VaR calculation")
+        payload = {
+            'trading_date': str(trading_date)[:10],
+            'timestamp': str(timestamp),
+            'days_history': days_history,
+            'decay_factor': decay_factor,
+            'portfolio_id': portfolio_id,
+            'var95': var95,'var99': var99,'port_mean': port_mean,'port_stdev': port_stdev,'var_data': var_data
+        }
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varcalculations/', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
     def post_marketestimators(api_connection, payload):
         """posts market estimators to database"""
         logger.info("Posting market estimators")
