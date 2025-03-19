@@ -218,7 +218,7 @@ class RiskApi:
             'days_history': days_history,
             'decay_factor': round(decay_factor,6),
             'portfolio': PortfoliosApi.get_portfolio_url(api_connection, portfolio_id),
-            'var95': round(var95,6),'var99': round(var99,6),'port_mean': round(port_mean,6),'port_stdev': round(port_stdev,6),'var_data': var_data
+            'var95': round(var95,6),'var99': round(var99,6),'portfolio_mean': round(port_mean,6),'portfolio_stdev': round(port_stdev,6),'var_data': var_data
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varcalculations/', payload)
         return success, json_res, status_code, error_msg
