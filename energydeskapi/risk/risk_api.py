@@ -175,8 +175,6 @@ class RiskApi:
 
     @staticmethod
     def upsert_rolling_product(api_connection, product: RollingProduct):
-
-        logger.info("Upserting rolling product")
         payload=product.__dict__
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/rollingproducts/', payload)
         return success, json_res, status_code, error_msg
