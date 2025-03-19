@@ -5,6 +5,7 @@ import json
 from json import JSONEncoder
 from dataclasses import dataclass
 from energydeskapi.assetdata.assetdata_api import DateTimeEncoder
+from energydeskapi.portfolios.portfolio_api import PortfoliosApi
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict, field
 from datetime import timezone, datetime, date
@@ -216,7 +217,7 @@ class RiskApi:
             'timestamp': str(timestamp),
             'days_history': days_history,
             'decay_factor': decay_factor,
-            'portfolio_id': portfolio_id,
+            'portfolio': PortfoliosApi.get_portfolio_url(api_connection, portfolio_id),
             'var95': var95,'var99': var99,'port_mean': port_mean,'port_stdev': port_stdev,'var_data': var_data
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varcalculations/', payload)
