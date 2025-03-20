@@ -147,7 +147,7 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<210:
