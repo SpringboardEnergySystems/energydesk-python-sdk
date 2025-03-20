@@ -274,6 +274,9 @@ class ApiConnection(object):
     def __init__(self, base_url, bearer_token=None):
         self.api_connection=_api_connection(base_url, bearer_token)
 
+    def get_authorization_header(self):
+        return self.api_connection.get_authorization_header()
+
     def get_base_url(self):
         return self.api_connection.get_base_url()
 
