@@ -123,6 +123,7 @@ class _api_connection:
         """Returns the authorization header
         """
         if self.token is None or self.token=="":
+            print("Asking for aut header {} {}".format(self.base_url, self.token))
             return {}
         return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
