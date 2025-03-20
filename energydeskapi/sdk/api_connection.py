@@ -34,6 +34,9 @@ class _api_connection:
     def set_base_url(self, base_url):
         self.base_url=base_url
 
+    def get_token(self):
+        return self.token
+
     def validate_via_basic_auth(self, username, password):
         # Making a get request
         #response = requests.get(self.get_base_url() + '/api/customers/profiles/',{"user__username": str(username)},
@@ -294,6 +297,9 @@ class ApiConnection(object):
         return self.api_connection.validate_token(token, backend)
     def set_token(self, token, token_type="Bearer"):
         return self.api_connection.set_token(token, token_type)
+    def get_token(self):
+        return self.api_connection.get_token()
+
     @staticmethod
     def validate_jwt_token( base_url, token, backend="google-oauth2"):
         return _api_connection.validate_jwt_token( base_url, token, backend)
@@ -329,6 +335,9 @@ class ApiTempConnection:
 
     def set_token(self, token, token_type="Bearer"):
         return self.api_connection.set_token(token, token_type)
+
+    def get_token(self):
+        return self.api_connection.get_token()
 
     def set_base_url(self, base_url):
         self.api_connection.set_base_url(base_url)
