@@ -240,7 +240,7 @@ class _api_connection:
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
 
         logger.info("Calling URL " + str(server_url))
-        logger.debug("...with payload " + " and headers " + str(headers))
+        logger.info("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
         else:
