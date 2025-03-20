@@ -79,3 +79,21 @@ class DwhApi:
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def get_report_dates(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        json_res = api_connection.exec_get_url('/api/dwh/reportdates/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_portfolios(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        json_res = api_connection.exec_get_url('/api/dwh/reportportfolios/', parameters)
+        if json_res is None:
+            return None
+        return json_res
