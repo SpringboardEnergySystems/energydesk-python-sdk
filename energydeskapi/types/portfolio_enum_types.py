@@ -45,7 +45,6 @@ class ParametersEnum(Enum):
     unrealized = {"internal": "unrealized", "formatting": "float", "display": "Unrealized"}
     realized = {"internal": "realized", "formatting": "float", "display": "Realized"}
     unreal = {"internal": "unreal", "formatting": "float", "display": "M2M"}
-    m2m = {"internal": "m2m", "formatting": "float", "display": "M2M"}
     pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
     pnlmonth = {"internal": "pnlmonth", "formatting": "float", "display": "PnL Month"}
     pnlyear = {"internal": "pnlyear", "formatting": "float", "display": "PnL Year"}
