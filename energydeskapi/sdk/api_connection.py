@@ -20,6 +20,7 @@ class _api_connection:
     def __init__(self, base_url, bearer_token=None):
         self.base_url = base_url
         self.token_type=None
+        logger.info("Setting token in method constructor {} {}".format(base_url, bearer_token))
         if bearer_token is None:
             self.set_token("", "Token")
         else:
@@ -102,6 +103,7 @@ class _api_connection:
         :param token_type: bearer or token
         :type token_type: str, required
         """
+        logger.info("Setting token in method set_token {} {}".format(token_type, token))
         if token!="" and token_type=="Bearer":
             self.token_type=token_type
             self.token=token
