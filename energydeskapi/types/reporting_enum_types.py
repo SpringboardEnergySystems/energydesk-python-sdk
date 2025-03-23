@@ -6,6 +6,7 @@ class ReportTypeEnum(Enum):
     CONTRACT_TIME_SERIES = 3
     VAR = 4
     HEDGE_RATIO = 5
+    FLEXIBILITY_DELIVERY = 6
 
 def reporttype_description(x):
     return {
@@ -14,6 +15,7 @@ def reporttype_description(x):
         ReportTypeEnum.CONTRACT_TIME_SERIES: "Contract Time Series",
         ReportTypeEnum.VAR: "Value at Risk",
         ReportTypeEnum.HEDGE_RATIO: "Hedge Ratio",
+        ReportTypeEnum.FLEXIBILITY_DELIVERY:"Flexibility Delivery",
     }[x]
 
 
