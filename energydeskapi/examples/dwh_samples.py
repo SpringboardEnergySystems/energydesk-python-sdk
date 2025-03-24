@@ -80,9 +80,15 @@ def load_reports(api_conn):
     df_netpowerexpo = load_specific_reports(api_conn, 'NET_POWER_EXPOSURE', 14)
     print(df_netpowerexpo)
 
+def get_flex_reports(api_conn):
+
+    param={'report_type':'FLEXIBILITY_ACTIVATION_DELIVERY'}
+    jsondata = DwhApi.get_flexibility_activations( api_conn, param)
+    df=pd.DataFrame(jsondata)
+    print(df)
 if __name__ == '__main__':
 
     api_conn = init_api()
     #get_report_types(api_conn)
-    get_reports(api_conn)
+    get_flex_reports(api_conn)
 
