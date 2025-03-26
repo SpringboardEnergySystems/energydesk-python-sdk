@@ -81,11 +81,12 @@ def load_reports(api_conn):
     print(df_netpowerexpo)
 
 def get_flex_reports(api_conn):
-
     param={'report_type':'FLEXIBILITY_ACTIVATION_DELIVERY'}
     jsondata = DwhApi.get_flexibility_activations( api_conn, param)
     df=pd.DataFrame(jsondata)
     print(df)
+    df.to_excel("./flexhandler.xlsx")
+
 if __name__ == '__main__':
 
     api_conn = init_api()
