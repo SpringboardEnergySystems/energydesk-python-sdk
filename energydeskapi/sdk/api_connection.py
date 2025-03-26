@@ -30,6 +30,11 @@ class _api_connection:
         """
         return self.base_url
 
+    def set_base_url(self, base_url):
+        self.base_url=base_url
+
+    def get_token(self):
+        return self.token
 
     def validate_via_basic_auth(self, username, password):
         # Making a get request
@@ -238,8 +243,7 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
@@ -273,16 +277,20 @@ class ApiConnection(object):
       """
     def __init__(self, base_url, bearer_token=None):
         self.api_connection=_api_connection(base_url, bearer_token)
-
+    def get_authorization_header(self):
+        return self.api_connection.get_authorization_header()
     def get_base_url(self):
         return self.api_connection.get_base_url()
-
+    def set_base_url(self, base_url):
+        self.api_connection.set_base_url(base_url)
     def validate_via_basic_auth(self, username, password):
         return self.api_connection.validate_via_basic_auth(username, password)
     def validate_token(self, token, backend="google-oauth2"):
         return self.api_connection.validate_token(token, backend)
     def set_token(self, token, token_type="Bearer"):
         return self.api_connection.set_token(token, token_type)
+    def get_token(self):
+        return self.api_connection.get_token()
     @staticmethod
     def validate_jwt_token( base_url, token, backend="google-oauth2"):
         return _api_connection.validate_jwt_token( base_url, token, backend)
@@ -307,28 +315,28 @@ class ApiTempConnection:
     def __init__(self, base_url, bearer_token=None):
         self.api_connection = _api_connection(base_url, bearer_token)
 
+    def get_authorization_header(self):
+        return self.api_connection.get_authorization_header()
     def get_base_url(self):
         return self.api_connection.get_base_url()
-
     def validate_via_basic_auth(self, username, password):
         return self.api_connection.validate_via_basic_auth(username, password)
-
     def validate_token(self, token, backend="google-oauth2"):
         return self.api_connection.validate_token(token, backend)
-
     def set_token(self, token, token_type="Bearer"):
         return self.api_connection.set_token(token, token_type)
+    def get_token(self):
+        return self.api_connection.get_token()
+    def set_base_url(self, base_url):
+        self.api_connection.set_base_url(base_url)
 
     @staticmethod
     def validate_jwt_token(base_url, token, backend="google-oauth2"):
         return _api_connection.validate_jwt_token(base_url, token, backend)
-
     def exec_get_url(self, trailing_url: str, parameters={}, extra_headers={}):
         return self.api_connection.exec_get_url(trailing_url, parameters, extra_headers)
-
     def exec_post_url(self, trailing_url, payload, extra_headers={}):
         return self.api_connection.exec_post_url(trailing_url, payload, extra_headers)
-
     def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
         return self.api_connection.exec_post_url_binary(trailing_url, payload, extra_headers)
 

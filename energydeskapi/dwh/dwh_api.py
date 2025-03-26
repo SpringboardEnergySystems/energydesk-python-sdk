@@ -53,6 +53,18 @@ class DwhApi:
         return json_res
 
     @staticmethod
+    def get_flexibility_activations(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        if 'report_date' in parameters:
+            json_res = api_connection.exec_get_url('/api/dwh/flexibilityactivations/', parameters)
+        else:
+            json_res = api_connection.exec_get_url('/api/dwh/flexibilityactivations/latest/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_hedgeview_timeseries(api_connection, parameters={}):
         """Fetches  reports
         """
@@ -76,6 +88,24 @@ class DwhApi:
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/reporttypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_report_dates(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        json_res = api_connection.exec_get_url('/api/dwh/reportdates/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
+    def get_portfolios(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        json_res = api_connection.exec_get_url('/api/dwh/reportportfolios/', parameters)
         if json_res is None:
             return None
         return json_res

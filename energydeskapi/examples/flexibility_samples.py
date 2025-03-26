@@ -25,6 +25,7 @@ from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.types.flexibility_enum_types import RegulatingDirectionEnums
 from energydeskapi.types.flexibility_enum_types import ReservesCategoryEnum
+from energydeskapi.flexibility.flexibility_qa_api import FlexibilityQaApi
 from energydeskapi.flexibility.flexibility_portfolios_api import FlexibilityPortfolioApi, FlexPortfolio, FlexPortfolioTrade
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -271,11 +272,68 @@ def test_trade(api_conn):
     tr=FlexPortfolioTrade(0,contr_url,port_url,reg_direction,res_category,"{}")
     print(tr.json)
     FlexibilityPortfolioApi.upsert_flexible_portfolio_trade(api_conn,tr)
+
+def get_qa_data(api_conn):
+    # data=FlexibilityQaApi.get_flexassets(api_conn, {'page_size': 900})
+    # df=pd.DataFrame(data['results'])
+    # print(df.columns)
+    # df=df[['asset_id', 'registration_date','description', 'grid_node', 'fsp', 'asset_type','installed_effect']]
+    #
+    # df['installed_effect']=df['installed_effect'].fillna(0)
+    # df['installed_effect'] = df['installed_effect'].astype('Float64')
+    # print(df)
+    # d2f=df.groupby(['grid_node','fsp']).agg({'installed_effect':'sum'})
+    # #print(d2f)
+    # #print(df)
+    # return
+
+    contracts=FlexibilityQaApi.get_longflexcontracts_embedded(api_conn, {'page_size': 900})
+    energy_profile={}
+    contract_summary=[]
+    df_tot=None
+    for c in contracts['results']:
+        cs={}
+        cs['trade_datetime']=c['trade_datetime']
+        cs['participant'] = c['participant_name']
+        cs['period_from'] = c['period_from']
+        cs['period_until'] = c['period_until']
+        cs['price'] = c['price_amount']
+        cs['quantity'] = c['quantity']
+        cs['grid_nodee'] = c['grid_node_name']
+        prof=json.loads(c['profile'])
+        dfprof=pd.DataFrame(prof)
+        dfprof.index=dfprof['hour']
+        dfprof.index = pd.to_datetime(dfprof.index)
+        dfprof['fsp']=c['participant_name']
+        dfprof['grid'] = c['grid_node_name']
+        dfprof2=dfprof.resample('MS').agg({'effect':'sum', 'grid':'first','fsp':'first'})
+        if df_tot is None:
+            df_tot=dfprof2
+        else:
+            df_tot=pd.concat([df_tot,dfprof2])
+        contract_summary.append(cs)
+    df=pd.DataFrame(contract_summary)
+
+    print(df)
+    print(df.columns)
+    print(df_tot)
+    df_tot.index.names = ['index']
+    df_tot['hour']=df_tot.index
+    df_tot2=df_tot.groupby(['hour', 'fsp']).agg({'effect':'sum'})
+
+    print(df_tot2)
+    df_tot2 = df_tot.groupby(['hour', 'grid']).agg({'effect': 'sum'})
+    print(df_tot2)
+    #df_tot2 = df.open.resample('W').mean()
+    #print(df_tot2)
+
+
+
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #register_flexible_asset(api_conn)
-    register_flex_availability(api_conn)
+    get_qa_data(api_conn)
     #test_trade(api_conn)
 
     #load_reserves_prices(api_conn)
