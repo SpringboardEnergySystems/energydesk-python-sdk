@@ -51,6 +51,17 @@ class DwhApi:
         if json_res is None:
             return None
         return json_res
+    @staticmethod
+    def get_productview_timeseries(api_connection, parameters={}):
+        """Fetches  reports
+        """
+        if 'report_date' in parameters:
+            json_res = api_connection.exec_get_url('/api/dwh/productviewtimeseries/', parameters)
+        else:
+            json_res = api_connection.exec_get_url('/api/dwh/productviewtimeseries/latest/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def get_flexibility_activations(api_connection, parameters={}):
