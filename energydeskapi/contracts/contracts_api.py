@@ -44,7 +44,8 @@ class Contract:
                  quentity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  contract_type=ContractTypeEnum.NASDAQ.value,
-                 asset_link=None
+                 asset_link=None,
+                 broker_fee=None
                  ):
         self.pk=0
         self.external_contract_id=external_contract_id
@@ -67,6 +68,7 @@ class Contract:
         self.buy_or_sell=buy_or_sell
         self.counterpart=counterpart
         self.broker = None
+        self.broker_fee = broker_fee
         self.contract_owner = None
         self.market=market
         self.trader=trader
@@ -160,6 +162,7 @@ class Contract:
         c.contract_sub_type=c.contract_type if not 'contract_sub_type' in d else d['contract_sub_type']
         c.contract_status_comment=""  if not 'contract_status_comment' in d else d['contract_status_comment']
         c.broker = d['broker'] if 'broker' in d else None
+        c.broker_fee = gen_money_from_json(d['broker_fee'])
         return c
 
     def get_simple_dict(self):
@@ -232,6 +235,7 @@ class Contract:
         if self.contract_sub_type is not None: dict["contract_sub_type"]=self.contract_sub_type
         if self.contract_status_comment is not None: dict["contract_status_comment"] = self.contract_status_comment
         if self.asset_link is not None: dict['asset_link']=self.asset_link
+        if self.broker_fee is not None: dict['broker_fee'] = gen_json_money(self.broker_fee)
         return dict
 
 
@@ -288,6 +292,7 @@ class Contract:
         if self.contract_owner is not None: dict['contract_owner'] = CustomersApi.get_company_url(api_conn, self.contract_owner)
         if self.counterpart is not None: dict['counterpart'] = CustomersApi.get_company_url(api_conn, self.counterpart)
         if self.broker is not None: dict['broker'] = CustomersApi.get_company_url(api_conn, self.broker)
+        if self.broker_fee is not None: dict['broker_fee'] = gen_json_money(self.broker_fee)
         if self.trader is not None: dict['trader'] = UsersApi.get_user_url(api_conn, self.trader)
         if self.marketplace_product==0:
             self.marketplace_product=ProductHelper().resolve_ticker(api_conn, self.product_code)
