@@ -28,6 +28,7 @@ class Contract:
                  contract_qty=None,
                  trading_fee=None,
                  clearing_fee=None,
+                 broker_fee=None,
                  trade_date=None,
                  trade_datetime=None,
                  commodity_type=None,
@@ -54,6 +55,7 @@ class Contract:
         self.quantity = contract_qty
         self.trading_fee=trading_fee
         self.clearing_fee=clearing_fee
+        self.broker_fee = broker_fee
         self.trade_date=trade_date
         self.trade_datetime=trade_datetime
         self.quantity_unit=quantity_unit
@@ -148,6 +150,7 @@ class Contract:
         c.contract_type=ContractTypeEnum.NASDAQ.value if not 'contract_type' in d else d['contract_type']
         c.trading_fee = gen_money_from_json(d['trading_fee'])
         c.clearing_fee = gen_money_from_json(d['clearing_fee'])
+        c.broker_fee = gen_money_from_json(d['broker_fee'])
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
@@ -200,6 +203,7 @@ class Contract:
         if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit.value
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
+        if self.broker_fee is not None: dict['broker_fee'] = gen_json_money(self.broker_fee)
         if self.contract_type is not None: dict['contract_type'] = self.contract_type.value
         if self.contract_status is not None: dict['contract_status'] = self.contract_status.value
 
@@ -280,6 +284,7 @@ class Contract:
                                                                                                             self.quantity_type)
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
+        if self.broker_fee is not None: dict['broker_fee'] = gen_json_money(self.broker_fee)
         if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
         if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn,
                                                                                                             self.contract_status)
