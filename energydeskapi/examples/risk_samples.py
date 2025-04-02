@@ -57,6 +57,27 @@ def test_update_riskparams(api_conn):
     rp.volatlity=0.33
     RiskApi.upsert_global_risk_parameters(api_conn, rp)
 
+def load_var_data(api_conn):
+
+    data=RiskApi.get_var_portfolios(api_conn, {'trading_date':'2025-04-01'})
+    print(data)
+    return
+
+    data = RiskApi.get_var_dates(api_conn, {'portfolio__id':122})
+    print(data)
+    data = RiskApi.get_var_portfolios_calculated(api_conn, {'trading_date':'2025-04-02'})
+    print(data)
+    # In this case a period is natural to look at
+    params={'trading_date':'2025-04-02', 'portfolio__id':122}
+    data=RiskApi.get_var_calculations(api_conn, params)
+    print(data)
+    data=RiskApi.get_var_calculations_compact(api_conn, params)
+    print(data)
+    data=RiskApi.get_var_calculations_embedded(api_conn, params)
+    print(data)
+
+
+
 def load_risk_data(api_conn):
     # In this case a period is natural to look at
     params={'trading_date__gte':'2025-02-10','trading_date__lt':'2025-02-11'}
@@ -84,6 +105,6 @@ def load_risk_data(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    load_risk_data(api_conn)
-    #calc_covariance_var(api_conn)
+    #load_risk_data(api_conn)
+    load_var_data(api_conn)
 

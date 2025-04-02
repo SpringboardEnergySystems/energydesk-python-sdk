@@ -256,7 +256,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def upsert_varcalculation(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
+    def upsert_var_calculation(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
                               portfolio_id:int, var95:float, var99:float, port_mean:float, port_stdev:float, var_data:dict):
         logger.info("Upserting VaR calculation")
         payload = {
@@ -269,6 +269,42 @@ class RiskApi:
         }
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/varcalculations/', payload)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_var_calculations(api_connection, params={})->dict:
+        """Lists VaR calculations
+        """
+        logger.info("Loads VaR calculations")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varcalculations/',params)
+        return json_res
+    @staticmethod
+    def get_var_calculations_compact(api_connection, params={})->dict:
+        """Lists VaR calculations
+        """
+        logger.info("Loads VaR calculations")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varcalculations/compact/',params)
+        return json_res
+    @staticmethod
+    def get_var_calculations_embedded(api_connection, params={})->dict:
+        """Lists VaR calculations
+        """
+        logger.info("Loads VaR calculations")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varcalculations/embedded/',params)
+        return json_res
+    @staticmethod
+    def get_var_dates(api_connection, params={})->dict:
+        """Lists VaR calculations
+        """
+        logger.info("Loads VaR dates in DB")
+        json_res = api_connection.exec_get_url('/api/riskmanager/vardates/',params)
+        return json_res
+    @staticmethod
+    def get_var_portfolios_calculated(api_connection, params={})->dict:
+        """Lists VaR portfolios that have been calculated. May filter on date
+        """
+        logger.info("Loads VaR portfolios in DB")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varportfolioscalculated/',params)
+        return json_res
 
     @staticmethod
     def post_marketestimators(api_connection, payload):
