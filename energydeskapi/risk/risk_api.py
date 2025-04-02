@@ -223,6 +223,14 @@ class RiskApi:
         return json_res
 
     @staticmethod
+    def get_var_portfolios(api_connection, params={})->dict:
+        """Lists VaR portfolios
+        """
+        logger.info("Loads current var portfolios")
+        json_res = api_connection.exec_get_url('/api/riskmanager/varportfolios/',params)
+        return json_res
+
+    @staticmethod
     def get_product_returns_embedded(api_connection, params={})->dict:
         """Lists product returns
         """
