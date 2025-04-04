@@ -9,6 +9,19 @@ from shapely.geometry import shape
 matplotlib.use('agg')
 matplotlib.style.use('ggplot')
 import logging
+from django.urls import reverse
+from django.shortcuts import render
+from bokeh.resources import INLINE
+import requests
+import pendulum
+import json
+from energydeskapi.types.flexibility_enum_types import RegulationTypeEnums
+from django.shortcuts import redirect
+
+import pandas as pd
+from energydeskapi.flexibility.flexibility_api import FlexibilityApi, AssetScheduledRegulation
+from energydeskapi.assets.asset_groups_api import AssetGroupApi, AssetGroup
+from energydeskapi.assets.assets_api import AssetsApi
 import json
 from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 from energydeskapi.sdk.money_utils import FormattedMoney, CurrencyCode
@@ -108,9 +121,32 @@ def register_flex_availability(api_conn):
 def check_schedule(api_conn):
     t1="2024-02-01"
     t2="2024-02-03"
-    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="67Varanger",
+    outdata=FlexibilityApi.get_availability_schedule(api_conn,extern_asset_id="Kalnes VGS",
                                                      period_from=t1,period_until=t2)
     print(outdata)
+
+
+def create_dispatch(api_conn):
+    asset=681
+    regulation =600
+
+    d1=pendulum.tomorrow(tz="Europe/Oslo").in_timezone("UTC")
+    d2=d1.add(hours=1)
+
+    rec=AssetsApi.get_asset_by_key(api_conn, asset)
+    param = {}
+    if rec is not None:
+        print(rec)
+        param['asset__id']=asset
+    print(param)
+    outdata=FlexibilityApi.get_flexible_assets_embedded(api_conn, param)
+    print(outdata['results'])
+    print(outdata['results'])
+    extern_asset_id = outdata['results'][0]['asset']['extern_asset_id']
+    asr=AssetScheduledRegulation(outdata['results'][0]['pk'], float(regulation), d1 , d2, extern_asset_id)
+    asr.regulation_type = RegulationTypeEnums.REGULATE_UP.value
+
+    FlexibilityApi.upsert_scheduled_regulation(api_conn, asr)
 
 
 def draw_map(node_polygons, valuemap):
@@ -333,7 +369,8 @@ if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     #register_flexible_asset(api_conn)
-    get_qa_data(api_conn)
-    #test_trade(api_conn)
+    #get_qa_data(api_conn)
+    create_dispatch(api_conn)
+    #check_schedule(api_conn)
 
     #load_reserves_prices(api_conn)
