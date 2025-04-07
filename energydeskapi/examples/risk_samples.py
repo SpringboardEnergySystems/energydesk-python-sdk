@@ -76,8 +76,11 @@ def load_var_data(api_conn):
     data=RiskApi.get_var_calculations_embedded(api_conn, params)
     print(data)
 
-
-
+def load_rolling_products(api_conn):
+    data=RiskApi.get_rolling_tickers(api_conn)
+    print(data)
+    data=RiskApi.get_rolling_products_returns(api_conn, {'rolling_ticker':'NORDIC_POWER_MONTH_03'})
+    print(data)
 def load_risk_data(api_conn):
     # In this case a period is natural to look at
     params={'trading_date__gte':'2025-02-10','trading_date__lt':'2025-02-11'}
@@ -106,5 +109,5 @@ if __name__ == '__main__':
 
     api_conn=init_api()
     #load_risk_data(api_conn)
-    load_var_data(api_conn)
+    load_rolling_products(api_conn)
 

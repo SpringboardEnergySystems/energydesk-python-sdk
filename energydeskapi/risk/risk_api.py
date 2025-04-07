@@ -222,6 +222,24 @@ class RiskApi:
         json_res = api_connection.exec_get_url('/api/riskmanager/varproductreturns/',params)
         return json_res
 
+
+    @staticmethod
+    def get_rolling_tickers(api_connection, params={})->dict:
+        """Lists product returns
+        """
+        logger.info("Loads product returns tickers")
+        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproductreturns/rollingtickers/',params)
+        return json_res
+
+    @staticmethod
+    def get_rolling_products_returns(api_connection, params={})->dict:
+        """Lists product returns
+        """
+        logger.info("Loads product returns tickers")
+        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproductreturns/',params)
+        return json_res
+
+
     @staticmethod
     def get_var_portfolios(api_connection, params={})->dict:
         """Lists VaR portfolios
