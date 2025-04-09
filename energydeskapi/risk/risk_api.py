@@ -330,14 +330,14 @@ class RiskApi:
         logger.info("Posting market estimators")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketestimators/', payload)
         return success, json_res, status_code, error_msg
-    
+
     @staticmethod
     def get_marketestimators(api_connection):
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
         return json_res
-    
+
     @staticmethod
     def get_marketestimators_latest(api_connection):
         """Fetches market estimators from the database"""
@@ -354,7 +354,7 @@ class RiskApi:
         else:
             url = '/api/riskmanager/marketestimators/'
         json_res = api_connection.exec_get_url(url)
-        
+
         record = json_res[0] if isinstance(json_res, list) and len(json_res) > 0 else json_res
         if not record:
             return None
@@ -389,36 +389,28 @@ class RiskApi:
             data['discount_factor'] = discount
             return data
         return None
-    
-    @staticmethod
-    def get_create_report(api_connection, payload):
-        """updates or creates a simprice report"""
-        logger.info("Posting simprice report")
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/simpricereportdata/', payload)
-        return success, json_res, status_code, error_msg
-    
-    
+
     @staticmethod
     def get_market_areas(api_connection):
         """Fetches market areas from the database"""
         logger.info("Fetching market areas")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/')
         return json_res
-    
+
     @staticmethod
     def get_market_areas_filtered(api_connection, areas:list[str]):
         """Fetches market areas from the database"""
         logger.info("Fetching market areas")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/', {'name__in': areas})
         return json_res
-    
+
     @staticmethod
     def post_market_area(api_connection, payload):
         """posts market areas to database"""
         logger.info("Posting market areas")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/', payload)
         return success, json_res, status_code, error_msg
-    
+
     @staticmethod
     def bulk_post_market_areas(api_connection, payload):
         """posts market areas to database"""
@@ -426,22 +418,28 @@ class RiskApi:
         # The endpoint for bulk insertion is appended with the action's name 'bulk_create'
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/bulk_create/', payload)
         return success, json_res, status_code, error_msg
-    
+
     @staticmethod
-    def post_batch_simulation(api_connection, payload):
-        """posts batch simulation to database"""
-        logger.info("Posting batch simulation")
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/simpricebatch', payload)
+    def get_pfe_reports(api_connection, params=None):
+        """Fetches PFE report from the database"""
+        if params is None:
+            params = {}
+        logger.info("Fetching PFE report")
+        json_res = api_connection.exec_get_url('/api/riskmanager/pfereport/', params)
+        return json_res
+
+    @staticmethod
+    def post_pfe_report(api_connection, payload):
+        """posts PFE report to database"""
+        logger.info("Posting PFE report")
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/pfereport/', payload)
         return success, json_res, status_code, error_msg
-    
+
     @staticmethod
-    def get_simulation_batches(api_connection, report_id, page=1, page_size=1):
-        """Fetches a page of simulation batches for a given simulation report id"""
-        logger.info(f"Fetching simulation batches for report id: {report_id}, page: {page}, page_size: {page_size}")
-        params = {
-            'report': report_id,
-            'page': page,
-            'page_size': page_size
-        }
-        json_res = api_connection.exec_get_url('/api/riskmanager/simpricebatch/', params)
+    def get_latest_pfe_report(api_connection, params=None):
+        """Fetches latest PFE report for a given portfolio and company"""
+        if params is None:
+            params = {}
+        logger.info("Fetching latest PFE report")
+        json_res = api_connection.exec_get_url('/api/riskmanager/pfereport/latest/', params)
         return json_res
