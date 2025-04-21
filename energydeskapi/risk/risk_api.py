@@ -228,7 +228,7 @@ class RiskApi:
         """Lists product returns
         """
         logger.info("Loads product returns tickers")
-        json_res = api_connection.exec_get_url('/api/riskmanager/rollingproductreturns/rollingtickers/',params)
+        json_res = api_connection.exec_get_url('/api/markets/rollingproducts/tickers/',params)
         return json_res
 
     @staticmethod

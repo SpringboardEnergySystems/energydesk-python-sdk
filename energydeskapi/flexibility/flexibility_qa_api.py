@@ -67,11 +67,20 @@ class FlexibilityQaApi:
         return json_res
 
     @staticmethod
+    def get_shortflexsettlements(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flexsettlements/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_longflex_offers_embedded(api_connection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexroffers/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
+
+
 
     @staticmethod
     def get_longflex_assets_embedded(api_connection,  parameters={}):
