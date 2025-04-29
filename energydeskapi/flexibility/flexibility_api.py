@@ -581,10 +581,10 @@ class FlexibilityApi:
         :type api_connection: str, required
         """
         payload={
-            "profile_type": FlexibilityApi.get_asset_profile_type_url(api_connection, 1),
+            #"profile_type": FlexibilityApi.get_asset_profile_type_url(api_connection, 1),
             "period_from": period_from,
             "period_until": period_until,
-            "avgcost_per_unit": avgcost_per_unit
+            #"avgcost_per_unit": avgcost_per_unit
         }
 
         if kw_available is not None:

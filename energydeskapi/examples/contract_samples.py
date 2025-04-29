@@ -41,6 +41,12 @@ def get_contract_filter_pk(api_conn):
     json_contractfilter = ContractsApi.get_contract_filter_by_key(api_conn, pk)
     print(json_contractfilter)
 
+def get_contract_counterparts(api_conn):
+    pk = 1
+    json_contractfilter = ContractsApi.get_current_counterparts(api_conn)
+    print(json_contractfilter)
+
+
 def get_contracts(api_conn, trading_book=None):
     filter={"portfolio":2}#"pk": [1,3]}
     json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
@@ -244,7 +250,7 @@ def get_fixedprice_contracts(api_conn):
             print(json.dumps(rec, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    load_contracts(api_conn)
+    get_contract_counterparts(api_conn)
     #load_contracts_csv(api_conn)
     #cancel_contract(api_conn)
     #get_contract_filters(api_conn)

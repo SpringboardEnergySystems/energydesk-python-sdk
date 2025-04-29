@@ -712,6 +712,13 @@ class ContractsApi:
         logger.info("Listing contracts compact")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/compact/', parameters)
         return json_res
+
+    @staticmethod
+    def get_current_counterparts(api_connection, parameters={}):
+        logger.info("Listing contracts counterparts")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/counterparts/', parameters)
+        return json_res
+
     @staticmethod
     def list_contracts_df(api_connection, parameters={}):
         """Lists contracts and displays in a dataframe
