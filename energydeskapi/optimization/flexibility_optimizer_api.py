@@ -25,3 +25,12 @@ class FlexibilityOptimizationApi:
         else:
             logger.info("Assets optimized")
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def optimize_armed_availability(api_connection, parameters):
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexoptimizer/armedavailability/', parameters)
+        if json_res is None:
+            logger.error("Problems optimizing availability " + str(error_msg))
+        else:
+            logger.info("Optimized availability")
+        return success, json_res, status_code, error_msg
