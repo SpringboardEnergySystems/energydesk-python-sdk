@@ -9,6 +9,7 @@ import pendulum
 import pandas as pd
 import pytz
 import json
+from energydeskapi.weather.weather_api import WeatherApi
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -95,8 +96,8 @@ def optimize_armed_availability(api_conn):
     param['basic_premiums'] = [50, 55, 65, 70]
     param['temperature_triggers'] = [10, 15, 20]
     param['include_real_capacity_prices'] = False
-
-    success, data, status_code, error_msg=FlexibilityOptimizationApi.optimize_armed_availability(api_conn, param)
+    success, data, status_code, error_msg=WeatherApi.generate_weather_scenarios(api_conn, param)
+    #success, data, status_code, error_msg=FlexibilityOptimizationApi.optimize_armed_availability(api_conn, param)
     print(data)
 
 
