@@ -402,7 +402,7 @@ class RiskApi:
     def get_market_areas(api_connection):
         """Fetches market areas from the database"""
         logger.info("Fetching market areas")
-        json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/')
+        json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/list/')
         return json_res
     
     @staticmethod
