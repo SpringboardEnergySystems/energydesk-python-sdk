@@ -47,8 +47,8 @@ class _api_connection:
         if response is None:
             return False, "Unknown Error"
         if response.status_code > 210:
-            logger.error(f"Problems logging in user {username}")
-            return False, f"Problems logging in user {username}"
+            logger.error(f"Logging in user {username} in appserver (api-get-token) got {response.status_code}. {'Wrong password' if response.status_code == 401 else ''}")
+            return False, f"Problems logging in user {username}. {'Wrong password' if response.status_code == 401 else ''}"
         if 'token' not in response.json():
             if 'detail' in response.json():
                 errmsg=response.json()['detail']
