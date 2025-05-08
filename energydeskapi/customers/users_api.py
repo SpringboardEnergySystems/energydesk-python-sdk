@@ -258,8 +258,8 @@ class UsersApi:
         return json_res
     @staticmethod
     def __extract_primary_usergroup(dict):
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f"User group elements:{dict}")
+        #if logger.isEnabledFor(logging.DEBUG):
+        #    logger.debug(f"User group elements:{dict}")
         output=[]
         for d in dict:
             d['user_role']=""
