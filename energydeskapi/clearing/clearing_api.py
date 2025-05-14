@@ -60,7 +60,7 @@ class ClearingApi:
 
     @staticmethod
     def upsert_position_external_reconciliation(api_connection, reconciliation_link, ticker, clearing_account, avgprice, netpos, buypos, sellpos, matched):
-        logger.info("Storing clearing reconciliation (internal product view  reconciliation)")
+        logger.info("Storing clearing reconciliation (clearinglist)")
         payload = {"clearing_reconciliation_positions": reconciliation_link,
                    "ticker": ticker,
                    "clearing_account": clearing_account,
