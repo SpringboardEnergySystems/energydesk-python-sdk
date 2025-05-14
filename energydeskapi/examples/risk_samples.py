@@ -57,9 +57,61 @@ def test_update_riskparams(api_conn):
     rp.volatlity=0.33
     RiskApi.upsert_global_risk_parameters(api_conn, rp)
 
+def load_var_data(api_conn):
+
+    data=RiskApi.get_var_portfolios(api_conn, {'trading_date':'2025-04-01'})
+    print(data)
+    return
+
+    data = RiskApi.get_var_dates(api_conn, {'portfolio__id':122})
+    print(data)
+    data = RiskApi.get_var_portfolios_calculated(api_conn, {'trading_date':'2025-04-02'})
+    print(data)
+    # In this case a period is natural to look at
+    params={'trading_date':'2025-04-02', 'portfolio__id':122}
+    data=RiskApi.get_var_calculations(api_conn, params)
+    print(data)
+    data=RiskApi.get_var_calculations_compact(api_conn, params)
+    print(data)
+    data=RiskApi.get_var_calculations_embedded(api_conn, params)
+    print(data)
+
+def load_rolling_products(api_conn):
+    data=RiskApi.get_rolling_tickers(api_conn, {'trading_date__gte':"2024-11-01"})
+    print(data)
+
+    data=RiskApi.get_rolling_products(api_conn,{'ticker':'NORDIC_POWER_MONTH_01', 'page_size':100})
+    #data=RiskApi.get_rolling_products_returns(api_conn, {'ticker':'NORDIC_POWER_MONTH_03'})
+    print(data)
+
+
+def load_risk_data(api_conn):
+    # In this case a period is natural to look at
+    params={'trading_date__gte':'2025-02-10','trading_date__lt':'2025-02-11'}
+    data=RiskApi.get_rolling_products_embedded(api_conn, params)
+    #print(data)
+
+    # In portal may require user to specify a date here so a full list is not returned - since they look at data per day for this API
+    params={}
+    data=RiskApi.get_product_returns(api_conn, params)
+    #print(data)
+
+    for rec in data['results']:
+        returnsframe=pd.DataFrame(rec['returns_data'])
+        print("Product returns for date {} df {} ".format(rec['trading_date'], returnsframe))
+
+    # In portal may require user to specify a date here so a full list is not returned - since they look at data per day for this API
+    params={'trading_date':'2025-03-19'}
+    data=RiskApi.get_covariance_data(api_conn, params)
+    for rec in data['results']:
+        returnsframe=pd.DataFrame(rec['covariance_data'])
+        print("Covariance data for date {} df {} ".format(rec['trading_date'], returnsframe))
+        returnsframe=pd.DataFrame(rec['correlation_data'])
+        print("Correlation data  for date {} df {} ".format(rec['trading_date'], returnsframe))
+
 if __name__ == '__main__':
 
     api_conn=init_api()
-    rolling_products()
-    #calc_covariance_var(api_conn)
+    #load_risk_data(api_conn)
+    load_rolling_products(api_conn)
 

@@ -1,6 +1,7 @@
 import pandas as pd
 import pendulum
 import pytz, io, logging
+from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 logger = logging.getLogger(__name__)
 def parse_timeseries(content:str):
     print("Parser for Eviny Powersite export")
@@ -12,7 +13,9 @@ def parse_timeseries(content:str):
         std = str(row["datetime"])
         if std.startswith("Asset Offline"):
             return None
-        row["datetime"] = pendulum.parse(std)
+        pt = pendulum.parse(std, tz="Europe/Oslo") # Assuming normal time as input
+        pt = conv_from_pendulum(pt)
+        row["datetime"]=pt
         row["consumption"] = float(row["consumption"].replace(",", "."))
         return row
     df = df.apply(process_datetime, axis=1)

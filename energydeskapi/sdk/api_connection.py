@@ -16,14 +16,7 @@ class AuthorizationFailedException(Exception):
 class TokenException(Exception):
     pass
 
-class ApiConnection(object):
-    """This is a class for holding tokens used during login to Energy Desk REST API
-
-      :param base_url: the prefix of the URL (examples: https://api-test.energydesk.no, http://127.0.0.1:(0000)
-      :type base_url: str:
-
-      """
-
+class _api_connection:
     def __init__(self, base_url, bearer_token=None):
         self.base_url = base_url
         self.token_type=None
@@ -37,6 +30,11 @@ class ApiConnection(object):
         """
         return self.base_url
 
+    def set_base_url(self, base_url):
+        self.base_url=base_url
+
+    def get_token(self):
+        return self.token
 
     def validate_via_basic_auth(self, username, password):
         # Making a get request
@@ -49,8 +47,8 @@ class ApiConnection(object):
         if response is None:
             return False, "Unknown Error"
         if response.status_code > 210:
-            logger.error(f"Problems logging in user {username}")
-            return False, f"Problems logging in user {username}"
+            logger.error(f"Logging in user {username} in appserver (api-get-token) got {response.status_code}. {'Wrong password' if response.status_code == 401 else ''}")
+            return False, f"Problems logging in user {username}. {'Wrong password' if response.status_code == 401 else ''}"
         if 'token' not in response.json():
             if 'detail' in response.json():
                 errmsg=response.json()['detail']
@@ -94,10 +92,10 @@ class ApiConnection(object):
 
     @staticmethod
     def validate_jwt_token( base_url, token, backend="google-oauth2"):
-        return ApiConnection.__exec_impl_jwt_conversion( base_url, token, backend)
+        return _api_connection.__exec_impl_jwt_conversion( base_url, token, backend)
 
     def validate_token(self, token, backend="google-oauth2"):
-        access_token=ApiConnection.__exec_impl_jwt_conversion(self.get_base_url(), token, backend)
+        access_token=_api_connection.__exec_impl_jwt_conversion(self.get_base_url(), token, backend)
         self.set_token(access_token, "Bearer")
         return True
 
@@ -154,7 +152,7 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<210:
@@ -245,8 +243,7 @@ class ApiConnection(object):
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-
-        logger.info("Calling URL " + str(server_url))
+        logger.debug("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
             result = requests.get(server_url,  headers=headers, params=parameters)
@@ -271,6 +268,83 @@ class ApiConnection(object):
                 raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return None
 
+
+class ApiConnection(object):
+    """This is a class for holding tokens used during login to Energy Desk REST API
+
+      :param base_url: the prefix of the URL (examples: https://api-test.energydesk.no, http://127.0.0.1:(0000)
+      :type base_url: str:
+      """
+    def __init__(self, base_url, bearer_token=None):
+        self.api_connection=_api_connection(base_url, bearer_token)
+    def get_authorization_header(self):
+        return self.api_connection.get_authorization_header()
+    def get_base_url(self):
+        return self.api_connection.get_base_url()
+    def set_base_url(self, base_url):
+        self.api_connection.set_base_url(base_url)
+    def validate_via_basic_auth(self, username, password):
+        return self.api_connection.validate_via_basic_auth(username, password)
+    def validate_token(self, token, backend="google-oauth2"):
+        return self.api_connection.validate_token(token, backend)
+    def set_token(self, token, token_type="Bearer"):
+        return self.api_connection.set_token(token, token_type)
+    def get_token(self):
+        return self.api_connection.get_token()
+    @staticmethod
+    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+        return _api_connection.validate_jwt_token( base_url, token, backend)
+
+    def exec_get_url(self, trailing_url: str, parameters={}, extra_headers={}):
+        return self.api_connection.exec_get_url(trailing_url, parameters, extra_headers)
+    def exec_post_url(self, trailing_url, payload, extra_headers={}):
+        return self.api_connection.exec_post_url(trailing_url, payload, extra_headers)
+    def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
+        return self.api_connection.exec_post_url_binary(trailing_url, payload, extra_headers)
+    def exec_patch_url(self, trailing_url, payload, extra_headers={}):
+        return self.api_connection.exec_patch_url(trailing_url, payload, extra_headers)
+    def exec_delete_url(self, trailing_url,extra_headers={}):
+        return self.api_connection.exec_delete_url(trailing_url, extra_headers)
+
+
+class ApiTempConnection:
+    """ A variant of ApiConnection that is not singleton and can be created without affecting the tokens etc in the singleton
+    SOmetimes we
+      """
+
+    def __init__(self, base_url, bearer_token=None):
+        self.api_connection = _api_connection(base_url, bearer_token)
+
+    def get_authorization_header(self):
+        return self.api_connection.get_authorization_header()
+    def get_base_url(self):
+        return self.api_connection.get_base_url()
+    def validate_via_basic_auth(self, username, password):
+        return self.api_connection.validate_via_basic_auth(username, password)
+    def validate_token(self, token, backend="google-oauth2"):
+        return self.api_connection.validate_token(token, backend)
+    def set_token(self, token, token_type="Bearer"):
+        return self.api_connection.set_token(token, token_type)
+    def get_token(self):
+        return self.api_connection.get_token()
+    def set_base_url(self, base_url):
+        self.api_connection.set_base_url(base_url)
+
+    @staticmethod
+    def validate_jwt_token(base_url, token, backend="google-oauth2"):
+        return _api_connection.validate_jwt_token(base_url, token, backend)
+    def exec_get_url(self, trailing_url: str, parameters={}, extra_headers={}):
+        return self.api_connection.exec_get_url(trailing_url, parameters, extra_headers)
+    def exec_post_url(self, trailing_url, payload, extra_headers={}):
+        return self.api_connection.exec_post_url(trailing_url, payload, extra_headers)
+    def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
+        return self.api_connection.exec_post_url_binary(trailing_url, payload, extra_headers)
+
+    def exec_patch_url(self, trailing_url, payload, extra_headers={}):
+        return self.api_connection.exec_patch_url(trailing_url, payload, extra_headers)
+
+    def exec_delete_url(self, trailing_url, extra_headers={}):
+        return self.api_connection.exec_delete_url(trailing_url, extra_headers)
 
 class Borg:
     _shared_state = {}

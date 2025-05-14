@@ -9,6 +9,7 @@ import pendulum
 import pandas as pd
 import pytz
 import json
+from energydeskapi.weather.weather_api import WeatherApi
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -81,9 +82,27 @@ def optimize_battery(api_conn):
     print(json.dumps(d, indent=2))
 
 
+def optimize_armed_availability(api_conn):
+    param={}
+    param['period_from']=str(pendulum.parse("2025-06-01",tz="Europe/Oslo"))
+    param['period_until']=str(pendulum.parse("2025-06-10",tz="Europe/Oslo"))
+    #param['assets']=[74,75]
+    param['address'] = "Øra, Fredrikstad"
+    param['weather_scenario_count'] = 500
+    param['effect_kw'] = 1000
+    param['hours_of_day'] = [7, 8, 9, 10, 15, 16, 17, 18, 19]
+    param['days_of_week'] = [0,1,2,3,4]
+    param['armed_premiums'] =  [200,400, 600]
+    param['basic_premiums'] = [50, 55, 65, 70]
+    param['temperature_triggers'] = [10, 15, 20]
+    param['include_real_capacity_prices'] = False
+    success, data, status_code, error_msg=WeatherApi.generate_weather_scenarios(api_conn, param)
+    #success, data, status_code, error_msg=FlexibilityOptimizationApi.optimize_armed_availability(api_conn, param)
+    print(data)
 
 
 if __name__ == '__main__':
 
     api_conn=init_api()
-    optimize_maxusage(api_conn)
+    #optimize_maxusage(api_conn)
+    optimize_armed_availability(api_conn)

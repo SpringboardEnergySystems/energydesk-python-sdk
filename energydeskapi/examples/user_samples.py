@@ -188,6 +188,7 @@ if __name__ == '__main__':
     #list_users_in_user_group_embedded(api_conn)
     #remove_user_user_group(api_conn)
     #add_user_user_group(api_conn)
+    #list_users_df(api_conn)
     #create_user_feature_access(api_conn)
-    create_user(api_conn, "steinar.eriksen@hafslund.no", "Steinar", last_name="Eriksen", company_reg="976542622")
+    create_user(api_conn, "68aa8439-c6ea-462d-8f3a-54ce1832f2b5", "IFS", last_name="Client", company_reg="976542622")
     #del_user_feature_access(api_conn)

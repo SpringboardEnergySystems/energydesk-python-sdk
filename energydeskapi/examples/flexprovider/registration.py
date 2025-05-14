@@ -19,7 +19,31 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
 
+def register_availability(api_conn, external_id):
+    absprofile=[
+        {
+            "timestamp": "2025-04-26T12:00:00+01:00",
+            "value": 100
+        },
+        {
+            "timestamp": "2025-04-26T13:00:00+01:00",
+            "value": 90
+        },
+        {
+            "timestamp": "2025-04-26T14:00:00+01:00",
+            "value": 90
+        }
+    ]
+    type_url=FlexibilityApi.get_asset_profile_type_url(api_conn, AssetProfileTypeEnums.ABSOLUTE)
+    profile_def = {'profile':absprofile, 'profile_type':AssetProfileTypeEnums.ABSOLUTE.value, 'profile_name':"Demo profile"}
 
+    outdata = FlexibilityApi.register_asset_availability(api_conn, asset_id=None, extern_asset_id=external_id,
+                                                         period_from="2025-04-26T12:00:00+01:00", period_until="2025-04-26T14:00:00+01:00", active_profile=profile_def,
+                                                         profile_changerequest=None, kw_available=None,
+                                                         avgcost_per_unit=0)
+
+
+    print(outdata)
 
 
 def register_meterdata_for_asset(api_conn, mpid, df):
@@ -233,6 +257,6 @@ def register_profile_on_all_assets(api_conn):
 if __name__ == '__main__':
     api_conn=init_api()
     #register_profile_on_all_assets(api_conn)
-    load_available_flexibility(api_conn)
+    register_availability(api_conn, "BH-2022-003")
     #show_availability(api_conn)
     #show_dispatch_schedule(api_conn)
