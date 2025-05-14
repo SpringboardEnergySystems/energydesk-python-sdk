@@ -70,6 +70,11 @@ class ClearingApi:
         data = api_connection.exec_get_url('/api/clearing/reconciliation/positionexternal', params)
         return data
 
+
+    @staticmethod
+    def get_positions_reconciliation_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/reconciliation/positions' + str(key) + "/"
+
     @staticmethod
     def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
         """Queries clearing data between a set time
