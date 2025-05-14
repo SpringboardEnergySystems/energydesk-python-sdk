@@ -13,9 +13,7 @@ class ClearingApi:
 
     @staticmethod
     def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
-
         logger.info("Storing clearing report")
-
         payload = {"clearing_house": clearing_house,
                    "clearing_report_type": clearing_report_type,
                    "clearing_report_format": clearing_report_format,
@@ -24,6 +22,52 @@ class ClearingApi:
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reports', payload)
         return True
 
+    @staticmethod
+    def upsert_positions_reconciliation(api_connection, clearing_house, clearing_date, reconciliation_status, comment):
+        logger.info("Storing clearing reconciliation")
+        payload = {"clearing_house": clearing_house,
+                   "reconciliation_status": reconciliation_status,
+                   "clearing_date": clearing_date,
+                   "comment": comment}
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positions', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_positions_reconciliations(api_connection, params={}):
+        logger.info("Fetching reconciled positions")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positions', params)
+        return data
+
+    @staticmethod
+    def upsert_position_internal_reconciliation(api_connection, clearing_house, clearing_date, reconciliation_status, comment):
+        logger.info("Storing clearing reconciliation (internal product view  reconciliation)")
+        payload = {"clearing_house": clearing_house,
+                   "reconciliation_status": reconciliation_status,
+                   "clearing_date": clearing_date,
+                   "comment": comment}
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positioninternal', payload)
+        return success, json_res, status_code, error_msg
+    @staticmethod
+    def get_position_internal_reconciliations(api_connection, params={}):
+        logger.info("Fetching reconciled positions internal product view")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positioninternal', params)
+        return data
+
+    @staticmethod
+    def upsert_position_external_reconciliation(api_connection, clearing_house, clearing_date, reconciliation_status, comment):
+        logger.info("Storing clearing reconciliation (external clearing list)")
+        payload = {"clearing_house": clearing_house,
+                   "reconciliation_status": reconciliation_status,
+                   "clearing_date": clearing_date,
+                   "comment": comment}
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positionexternal', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_position_external_reconciliations(api_connection, params={}):
+        logger.info("Fetching reconciled positions (external clearing list)")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positionexternal', params)
+        return data
 
     @staticmethod
     def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
