@@ -47,6 +47,7 @@ class ClearingApi:
                    "trading_books_ids": trading_books_ids,
                    "should_match_clearing_account": should_match_clearing_account,
                    "avgprice": avgprice, "netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
+        logger.info(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positioninternal', payload)
         return success, json_res, status_code, error_msg
 
@@ -64,6 +65,7 @@ class ClearingApi:
                    "ticker": ticker,
                    "clearing_account": clearing_account,
                    "avgprice": avgprice, "netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
+        logger.info(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positionexternal', payload)
         return success, json_res, status_code, error_msg
 
