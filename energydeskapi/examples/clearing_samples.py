@@ -27,7 +27,11 @@ def update_clearing_traderecords(api_conn):
     for index, row in df.iterrows():
         NasdaqApi.update_traderecord(api_conn, row['contract_id'],
                                        row['deal_number'], row['trade_id'], row['trade_report_type'], row['trade_datetime'], row['external_contract_id'] )
-
+def get_positions_reconciliations_embedded(api_conn):
+    data = ClearingApi.get_positions_reconciliations_embedded(api_conn)
+    print(json.dumps(data['results'], indent=4))
+    df=pd.DataFrame(data['results'])
+    #print(df)
 
 
 def get_clearing_traderecords(api_conn):
@@ -154,9 +158,9 @@ if __name__ == '__main__':
 
     api_conn=init_api()
 
-   #get_clearing_traderecords(api_conn)
-    update_clearing_traderecords(api_conn)
+    #get_clearing_traderecords(api_conn)
+    #update_clearing_traderecords(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
-    #fetch_reconciled_trades(api_conn)
+    get_positions_reconciliations_embedded(api_conn)
 

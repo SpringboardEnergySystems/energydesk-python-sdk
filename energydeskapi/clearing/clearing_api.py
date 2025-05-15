@@ -38,6 +38,11 @@ class ClearingApi:
         logger.info("Fetching reconciled positions")
         data = api_connection.exec_get_url('/api/clearing/reconciliation/positions', params)
         return data
+    @staticmethod
+    def get_positions_reconciliations_embedded(api_connection, params={}):
+        logger.info("Fetching reconciled positions")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positions/embedded/', params)
+        return data
 
     @staticmethod
     def upsert_position_internal_reconciliation(api_connection, reconciliation_link, ticker, trading_books_ids, should_match_clearing_account, avgprice, netpos, buypos, sellpos, matched):
