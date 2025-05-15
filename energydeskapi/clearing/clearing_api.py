@@ -13,9 +13,7 @@ class ClearingApi:
 
     @staticmethod
     def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
-
         logger.info("Storing clearing report")
-
         payload = {"clearing_house": clearing_house,
                    "clearing_report_type": clearing_report_type,
                    "clearing_report_format": clearing_report_format,
@@ -24,6 +22,68 @@ class ClearingApi:
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reports', payload)
         return True
 
+    @staticmethod
+    def upsert_positions_reconciliation(api_connection, clearing_house, clearing_date, reconciliation_status, comment):
+        logger.info("Storing clearing reconciliation")
+        payload = {"clearing_house": clearing_house,
+                   "reconciliation_status": reconciliation_status,
+                   "clearing_date": clearing_date}
+        if comment is not None and len(comment) > 0:
+            payload['comment'] = comment
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positions', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_positions_reconciliations(api_connection, params={}):
+        logger.info("Fetching reconciled positions")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positions', params)
+        return data
+    @staticmethod
+    def get_positions_reconciliations_embedded(api_connection, params={}):
+        logger.info("Fetching reconciled positions")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positions/embedded/', params)
+        return data
+
+    @staticmethod
+    def upsert_position_internal_reconciliation(api_connection, reconciliation_link, ticker, trading_books_ids, should_match_clearing_account, avgprice, netpos, buypos, sellpos, matched):
+        logger.info("Storing clearing reconciliation (internal product view  reconciliation)")
+        payload = {"clearing_reconciliation_positions": reconciliation_link,
+                   "ticker": ticker,
+                   "trading_books_ids": trading_books_ids,
+                   "should_match_clearing_account": should_match_clearing_account,
+                   "avgprice": avgprice, "netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
+        logger.info(payload)
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positioninternal', payload)
+        return success, json_res, status_code, error_msg
+
+
+    @staticmethod
+    def get_position_internal_reconciliations(api_connection, params={}):
+        logger.info("Fetching reconciled positions internal product view")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positioninternal', params)
+        return data
+
+    @staticmethod
+    def upsert_position_external_reconciliation(api_connection, reconciliation_link, ticker, clearing_account, avgprice, netpos, buypos, sellpos, matched):
+        logger.info("Storing clearing reconciliation (clearinglist)")
+        payload = {"clearing_reconciliation_positions": reconciliation_link,
+                   "ticker": ticker,
+                   "clearing_account": clearing_account,
+                   "avgprice": avgprice, "netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
+        logger.info(payload)
+        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positionexternal', payload)
+        return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def get_position_external_reconciliations(api_connection, params={}):
+        logger.info("Fetching reconciled positions (external clearing list)")
+        data = api_connection.exec_get_url('/api/clearing/reconciliation/positionexternal', params)
+        return data
+
+
+    @staticmethod
+    def get_positions_reconciliation_url(api_connection, key):
+        return api_connection.get_base_url() + '/api/clearing/reconciliation/positions/' + str(key) + "/"
 
     @staticmethod
     def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
