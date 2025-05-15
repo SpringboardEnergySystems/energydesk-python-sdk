@@ -351,7 +351,7 @@ def convert_embedded_tree_to_jstree(embedded_tree):
         for tb in node['trading_books']:
             tbnode={
                 "id": "pkt"+str(node_ids['tradingook_node_id']),
-                "text": tb['description'],
+                "text": f"{tb['description']} ({tb['pk']})",
                 "type": "trading_books",
                 "data": [{'tradingbook_id': tb['pk']}],
                 "parent":current_portfolio_parent
