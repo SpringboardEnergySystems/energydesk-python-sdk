@@ -48,14 +48,17 @@ class ClearingApi:
     def upsert_position_reconciliation_details(api_connection, reconciliation_link,position_owner, ticker, trading_books_ids, market_value, hours, avgprice, netpos, buypos, sellpos, matched):
         logger.info("Storing clearing reconciliation (internal product view  reconciliation)")
         payload = {"clearing_reconciliation_positions": reconciliation_link,'position_owner':position_owner,
-                   "ticker": ticker,
-                   "trading_books_ids": trading_books_ids,"netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
+                   "ticker": ticker,"netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
+
         if market_value is not None:
             payload['market_value']=market_value
         if hours is not None:
             payload['hours']=hours
         if avgprice is not None:
             payload['avgprice']=avgprice
+        if trading_books_ids is not None:
+            payload['trading_books_ids'] = trading_books_ids
+
         logger.info(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positiondetails', payload)
         return success, json_res, status_code, error_msg
