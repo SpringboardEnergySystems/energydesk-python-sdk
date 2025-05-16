@@ -23,9 +23,9 @@ class ClearingApi:
         return True
 
     @staticmethod
-    def upsert_positions_reconciliation(api_connection, clearing_house, clearing_date, reconciliation_status, comment):
+    def upsert_positions_reconciliation(api_connection, clearing_house, clearing_account,  clearing_date, reconciliation_status, comment):
         logger.info("Storing clearing reconciliation")
-        payload = {"clearing_house": clearing_house,
+        payload = {"clearing_house": clearing_house,'clearing_account':clearing_account,
                    "reconciliation_status": reconciliation_status,
                    "clearing_date": clearing_date}
         if comment is not None and len(comment) > 0:
@@ -45,12 +45,11 @@ class ClearingApi:
         return data
 
     @staticmethod
-    def upsert_position_internal_reconciliation(api_connection, reconciliation_link, ticker, trading_books_ids, should_match_clearing_account, avgprice, netpos, buypos, sellpos, matched):
+    def upsert_position_internal_reconciliation(api_connection, reconciliation_link, ticker, trading_books_ids,  avgprice, netpos, buypos, sellpos, matched):
         logger.info("Storing clearing reconciliation (internal product view  reconciliation)")
         payload = {"clearing_reconciliation_positions": reconciliation_link,
                    "ticker": ticker,
                    "trading_books_ids": trading_books_ids,
-                   "should_match_clearing_account": should_match_clearing_account,
                    "avgprice": avgprice, "netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
         logger.info(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positioninternal', payload)
@@ -64,11 +63,10 @@ class ClearingApi:
         return data
 
     @staticmethod
-    def upsert_position_external_reconciliation(api_connection, reconciliation_link, ticker, clearing_account, avgprice, netpos, buypos, sellpos, matched):
+    def upsert_position_external_reconciliation(api_connection, reconciliation_link, ticker, avgprice, netpos, buypos, sellpos, matched):
         logger.info("Storing clearing reconciliation (clearinglist)")
         payload = {"clearing_reconciliation_positions": reconciliation_link,
                    "ticker": ticker,
-                   "clearing_account": clearing_account,
                    "avgprice": avgprice, "netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
         logger.info(payload)
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positionexternal', payload)
