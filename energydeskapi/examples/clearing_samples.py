@@ -34,10 +34,13 @@ def get_positions_reconciliations_embedded(api_conn):
     #print(df)
 
 def approve_position(api_conn, clearing_account, clearing_date, comment=None):
-    data=ClearingApi.get_positions_reconciliations(api_conn, {'clearing_account':clearing_account, 'clearing_date':clearing_date})
+    par={'page_size':1000, 'clearing_date__gte':clearing_date, 'clearing_date__lte':clearing_date}
+    data=ClearingApi.get_positions_reconciliations(api_conn, par)
     for res in data['results']:
-        approved_status=ClearingApi.get_reconciliation_status_url(api_conn, ReconciliationStatusEnum.SUCCESS.value)
-        ClearingApi.upsert_positions_reconciliation(api_conn, res['clearing_house'],clearing_account,clearing_date,approved_status, comment)
+        print("Got it", res['clearing_account'])
+        approved_status=ClearingApi.get_reconciliation_status_url(api_conn, ReconciliationStatusEnum.ERROR.value)
+        ClearingApi.upsert_positions_reconciliation(api_conn, res['pk'], res['clearing_house'], res['clearing_account'],clearing_date,approved_status, comment)
+
 def get_clearing_traderecords(api_conn):
     df = NasdaqApi.get_traderecords(api_conn)
     print(df)

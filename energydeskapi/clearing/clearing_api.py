@@ -23,14 +23,18 @@ class ClearingApi:
         return True
 
     @staticmethod
-    def upsert_positions_reconciliation(api_connection, clearing_house, clearing_account,  clearing_date, reconciliation_status, comment):
+    def upsert_positions_reconciliation(api_connection, pk, clearing_house, clearing_account,  clearing_date, reconciliation_status, comment):
         logger.info("Storing clearing reconciliation")
         payload = {"clearing_house": clearing_house,'clearing_account':clearing_account,
                    "reconciliation_status": reconciliation_status,
                    "clearing_date": clearing_date}
         if comment is not None and len(comment) > 0:
             payload['comment'] = comment
-        success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positions', payload)
+        if pk is not None or pk >0:
+            success, json_res, status_code, error_msg  = api_connection.exec_patch_url('/api/clearing/reconciliation/positions/' + str(pk) + "/", payload)
+        else:
+            success, json_res, status_code, error_msg = api_connection.exec_post_url(
+                '/api/clearing/reconciliation/positions', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
