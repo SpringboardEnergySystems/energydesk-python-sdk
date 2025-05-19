@@ -30,7 +30,7 @@ class ClearingApi:
                    "clearing_date": clearing_date}
         if comment is not None and len(comment) > 0:
             payload['comment'] = comment
-        if pk is not None or pk >0:
+        if pk is not None and  pk >0:
             success, json_res, status_code, error_msg  = api_connection.exec_patch_url('/api/clearing/reconciliation/positions/' + str(pk) + "/", payload)
         else:
             success, json_res, status_code, error_msg = api_connection.exec_post_url(
