@@ -33,6 +33,13 @@ def get_positions_reconciliations_embedded(api_conn):
     df=pd.DataFrame(data['results'])
     #print(df)
 
+def approve_position(api_conn, clearing_account, clearing_date, comment=None):
+    par={'page_size':1000, 'clearing_date__gte':clearing_date, 'clearing_date__lte':clearing_date}
+    data=ClearingApi.get_positions_reconciliations(api_conn, par)
+    for res in data['results']:
+        print("Got it", res['clearing_account'])
+        approved_status=ClearingApi.get_reconciliation_status_url(api_conn, ReconciliationStatusEnum.ERROR.value)
+        ClearingApi.upsert_positions_reconciliation(api_conn, res['pk'], res['clearing_house'], res['clearing_account'],clearing_date,approved_status, comment)
 
 def get_clearing_traderecords(api_conn):
     df = NasdaqApi.get_traderecords(api_conn)
@@ -162,5 +169,6 @@ if __name__ == '__main__':
     #update_clearing_traderecords(api_conn)
     #fetch_clearing_report_records(api_conn, ClearingReportTypeEnum.TRANSACTIONS, 12)
 
-    get_positions_reconciliations_embedded(api_conn)
+    #get_positions_reconciliations_embedded(api_conn)
+    approve_position(api_conn, "NC ECO ECOTIP", "2025-05-02")
 
