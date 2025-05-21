@@ -17,7 +17,7 @@ class MontelApi:
         logger.info(f"Calling montel service URL {server_url}")
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
-        response = authsess.get(server_url, headers=h)
+        response = authsess.post(server_url, headers=h)
         return response.text
 
 
