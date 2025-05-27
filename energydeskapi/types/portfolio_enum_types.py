@@ -48,10 +48,10 @@ class ParametersEnum(Enum):
     pnlday = {"internal": "pnlday", "formatting": "float", "display": "PnL Day"}
     pnlmonth = {"internal": "pnlmonth", "formatting": "float", "display": "PnL Month"}
     pnlyear = {"internal": "pnlyear", "formatting": "float", "display": "PnL Year"}
-    prevunrealday = {"internal": "prevunrealday", "formatting": "float", "display": "Prev Day"}
-    prevunrealmonth = {"internal": "prevunrealmonth", "formatting": "float", "display": "Prev Month"}
-    prevunrealyear = {"internal": "prevunrealyear", "formatting": "float", "display": "Prev Year"}
-    prevrealday = {"internal": "prevrealday", "formatting": "float", "display": "Prev Day"}
-    prevrealmonth = {"internal": "prevrealmonth", "formatting": "float", "display": "Prev Month"}
-    prevrealyear = {"internal": "prevrealyear", "formatting": "float", "display": "Prev Year"}
+    prevunrealday = {"internal": "prevunrealday", "formatting": "float", "display": "Prev Unreal Day"}
+    prevunrealmonth = {"internal": "prevunrealmonth", "formatting": "float", "display": "Prev Unreal Month"}
+    prevunrealyear = {"internal": "prevunrealyear", "formatting": "float", "display": "Prev Unreal Year"}
+    prevrealday = {"internal": "prevrealday", "formatting": "float", "display": "Prev Real Day"}
+    prevrealmonth = {"internal": "prevrealmonth", "formatting": "float", "display": "Prev Real Month"}
+    prevrealyear = {"internal": "prevrealyear", "formatting": "float", "display": "Prev Real Year"}
 
