@@ -81,26 +81,36 @@ def optimize_battery(api_conn):
 
     print(json.dumps(d, indent=2))
 
-
+import plotly.express as px
 def optimize_armed_availability(api_conn):
     param={}
     param['period_from']=str(pendulum.parse("2025-06-01",tz="Europe/Oslo"))
-    param['period_until']=str(pendulum.parse("2025-06-10",tz="Europe/Oslo"))
+    param['period_until']=str(pendulum.parse("2025-08-10",tz="Europe/Oslo"))
     #param['assets']=[74,75]
     param['address'] = "Øra, Fredrikstad"
-    param['weather_scenario_count'] = 500
+    param['weather_scenario_count'] = 1000
     param['effect_kw'] = 1000
-    param['hours_of_day'] = [7, 8, 9, 10, 15, 16, 17, 18, 19]
+    param['hours_of_day'] = [6, 7, 8, 9, 10, 11,12,13,14,15, 16, 17, 18, 19, 20,21]
     param['days_of_week'] = [0,1,2,3,4]
     param['armed_premiums'] =  [200,400, 600]
-    param['basic_premiums'] = [50, 55, 65, 70]
+    param['basic_premiums'] = [50, 75, 100]
     param['temperature_triggers'] = [10, 15, 20]
     param['include_real_capacity_prices'] = False
-    success, data, status_code, error_msg=WeatherApi.generate_weather_scenarios(api_conn, param)
-    #success, data, status_code, error_msg=FlexibilityOptimizationApi.optimize_armed_availability(api_conn, param)
-    print(data)
-
-
+    #success, data, status_code, error_msg=WeatherApi.generate_weather_scenarios(api_conn, param)
+    success, data, status_code, error_msg=FlexibilityOptimizationApi.optimize_armed_availability(api_conn, param)
+    scenarios=data['df_main_scenarios']
+    df=pd.DataFrame(scenarios)
+    df=df.rename(columns={'cost': 'Total Cost'})
+    df['temp_trigger'] = 'Temp ' + df['temp_trigger'].astype(str)
+    df['basic_premium'] = 'Passiv Tilgj ' + df['basic_premium'].astype(str)
+    df['armed_premium'] = 'Armert Tilgj ' + df['armed_premium'].astype(str)
+    print(df)
+    fig = px.sunburst(df, path=['temp_trigger', 'basic_premium', 'armed_premium'], values='Total Cost',
+                      color='Total Cost',color_continuous_scale=["green", "red"], range_color=[df['Total Cost'].min(),df['Total Cost'].max()])
+    fig.show()
+    #historical_df=pd.DataFrame(data=data['historical_weather'])
+    #print(historical_df)
+    #print(data['forecast_scenarios'])
 if __name__ == '__main__':
 
     api_conn=init_api()

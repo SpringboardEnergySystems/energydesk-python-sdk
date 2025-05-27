@@ -1,7 +1,7 @@
-import logging
-
 import environ
 import requests
+import logging, pendulum
+import os
 from matplotlib.pyplot import *
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 from energydeskapi.flexibility.flexibility_prequalify_api import FlexibilityPrequalifyApi
@@ -14,7 +14,6 @@ from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 import pandas as pd
 import json, pytz
 from datetime import datetime
-import logging
 from energydeskapi.sdk.pandas_utils import make_empty_timeseries_df
 from energydeskapi.sdk.profiles_utils import get_default_availability_profile
 from datetime import datetime, timedelta
@@ -64,7 +63,6 @@ def load_multiasset_data(apiconn, asset_pk_list=[], period_from:str="2024-10-01"
     return df_metering
 
 def get_access_token():
-    init_api()
     env = environ.Env()
     client_id = env.str('OAUTH_CLIENT_ID')
     client_secret = env.str('OAUTH_CLIENT_SECRET')
@@ -81,6 +79,114 @@ def get_access_token():
     response = requests.request("POST", token_endpoint, data=body, headers=headers)
     token_json = response.json()
     return token_json["access_token_jwt"]
+
+def load_sample_metervalues():
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__), "sampledata"))
+    meters={}
+    def fix_timestamp(row):
+        t=row['Fra']
+        dt=pendulum.parse(t[6:10]+"-"+t[3:5]+"-"+t[0:2] + "T" + t[11:13] + ":00:00", tz="Europe/Oslo")
+        return str(dt.in_tz("UTC"))
+    for f in os.listdir(__location__):
+        mpid=f.split("-")[2]
+        if mpid not in meters:
+            meters[mpid]=[]
+        df=pd.read_csv(__location__+"/"+f, sep=";")
+        df['timestamp']=df.apply(fix_timestamp, axis=1)
+        df.index=pd.to_datetime(df['timestamp'])
+        df=df.rename(columns={'KWH 60 Forbruk': 'effect'})
+        df['effect'] = [x.replace(',', '.') for x in df['effect']]
+        df['effect'] = df['effect'].astype(float)
+        meters[mpid].append(df)
+        print(df.columns)
+    for idx, key in enumerate(meters):
+        meters[key]=pd.concat(meters[key]).sort_index()[['effect']].reset_index()
+        anonymous_meter_id = key[:6] + "-ANLEGG-" + str(idx+1)
+        meters[key].rename(columns={'effect':anonymous_meter_id}, inplace=True)
+    df_portfolio = list(meters.values())[0]
+    for d in list(meters.values())[1:]:
+        df_portfolio = df_portfolio.merge(d, on='timestamp', how='outer')
+    df_portfolio.index=df_portfolio.timestamp
+    df_portfolio['timestamp']=pd.to_datetime(df_portfolio['timestamp'])
+    df_portfolio['Portfolio']=df_portfolio.sum(axis=1, numeric_only=True)
+    df_portfolio=df_portfolio.tz_convert("Europe/Oslo")
+    df_portfolio['timestamp']=df_portfolio.index
+    print(df_portfolio)
+    dataexport=[]
+    for index, row in df_portfolio.iterrows():
+        t=pendulum.parse(str(row['timestamp']), tz="Europe/Oslo")
+        dataexport.append({"timestamp":t.in_tz("UTC").to_iso8601_string(),
+                           'type': 'Power','value': row['Portfolio']})
+    return list(meters.keys()),df_portfolio
+    f=open(os.path.join(os.getcwd(), os.path.dirname(__file__), "meterdata.json"),"w")
+    f.write(json.dumps(dataexport, indent=4))
+    f.close()
+
+    # Plotting....
+    week_df = df_portfolio.groupby([df_portfolio['timestamp'], df_portfolio['timestamp'].dt.day_name(), df_portfolio['timestamp'].dt.hour]).max(numeric_only=True)
+    week_df['hour']=week_df.index.get_level_values(2)
+    week_df['weekday'] = week_df.index.get_level_values(1)
+    print(week_df)
+    week_df=week_df.loc[(week_df['weekday']!="Sunday") & (week_df['weekday']!="Saturday")]
+    #week_df=week_df.loc[week_df['hour']<4]
+    import plotly.graph_objects as go
+    df_individual=week_df[[i for i in list(week_df.columns) if i not in ['weekday']]]
+    fig = go.Figure()
+    for col in df_individual.columns:
+        if col=="hour":
+            continue
+        fig.add_trace(go.Box(
+            y=df_individual[col],
+            x=df_individual['hour'],
+            name=col,
+        ))
+    fig.update_layout(
+        plot_bgcolor='white',
+        boxmode='group'
+    )
+    fig.update_xaxes(
+        mirror=True,
+        ticks='outside',
+        showline=True,
+        linecolor='black',
+        gridcolor='lightgrey'
+    )
+    fig.update_yaxes(
+        mirror=True,
+        ticks='outside',
+        showline=True,
+        linecolor='black',
+        gridcolor='lightgrey'
+    )
+    fig.update_layout(
+        title=dict(
+            text="Gjennomsnittlig forbruk pr time i døgnet"
+        ),
+        xaxis=dict(
+            title=dict(
+                text="Timen på dagen"
+            )
+        ),
+        yaxis=dict(
+            title=dict(
+                text="kW"
+            )
+        ),
+        legend=dict(
+            title=dict(
+                text="Serier"
+            )
+        ),
+        font=dict(
+            family="Courier New, monospace",
+            size=14,
+            color="RebeccaPurple"
+        )
+    )
+    fig.show()
+
+
 
 def register_prequal(api_conn):
     df_assets = AssetsApi.get_assets_df(api_conn,
@@ -159,6 +265,34 @@ def check_requests(api_conn):
         print(req['offered_capacity_mw'])
         print(req['quality_measure'])
 
+def check_prequalification(token=None):
+
+    server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
+    headers={'Authorization': 'Bearer ' + token}
+    data = requests.get(server_url,headers=headers)
+    print(data.status_code)
+    if data.status_code<300:
+        print(json.dumps(data.json(), indent=2))
+
+def make_prequalification_request(token=None):
+    asset_list, df_portfolio=load_sample_metervalues()
+    def prepare_meterdata():
+        dataexport = []
+        for index, row in df_portfolio.iterrows():
+            t = pendulum.parse(str(row['timestamp']), tz="Europe/Oslo")
+            dataexport.append({"timestamp": t.in_tz("UTC").to_iso8601_string(),
+                               'type': 'Power', 'value': row['Portfolio']})
+        return dataexport
+
+    server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
+    headers={'Authorization': 'Bearer ' + token}
+    payload={'product_offer_id':"49803ce7-7c28-4409-83d7-b26800b67805",
+             'asset_list':asset_list,'meter_data':prepare_meterdata()}
+    data = requests.post(server_url,headers=headers, json=payload)
+    print(data.status_code)
+    if data.status_code<300:
+        print(json.dumps(data.json(), indent=2))
+
 def check_prequalification_requests(token=None):
     server_url="https://elvia.energydesk.no/appserver/api/flexibility/prequalification/bidqualitytest/embedded/"
     headers={'Authorization': 'Bearer ' + token}
@@ -180,12 +314,15 @@ def load_samples(api_conn):
     FlexibilityQaApi.load_grouped_meterdata(api_conn, [14,15])
 
 if __name__ == '__main__':
+    init_api()
     env = environ.Env()
-    #token=get_access_token()
+    token=get_access_token()
+    #make_prequalification_request(token)
+    check_prequalification(token)
     #edesk_base_url = env.str('ENERGYDESK_URL')
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
     #register_prequal(api_conn)
-    api_conn = init_api()
-    load_samples(api_conn)
+    #api_conn = init_api()
+    #load_samples(api_conn)
     #print(token)
     #check_prequalification_requests(token)

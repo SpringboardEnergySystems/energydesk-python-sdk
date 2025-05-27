@@ -1,26 +1,35 @@
-import logging
 import json
-from energydeskapi.assets.assets_api import AssetsApi
-from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
-from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
-from energydeskapi.assetdata.assetdata_api import AssetDataApi
+import logging
 import pendulum
-from energydeskapi.assetdata.baselines_api import BaselinesApi
-from energydeskapi.types.flexibility_enum_types import ExternalMarketTypeEnums
-import pandas as pd
-from datetime import timezone, datetime, date
-import json, pendulum
-from energydeskapi.contracts.contracts_api import ContractsApi
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
-from energydeskapi.types.flexibility_enum_types import RegulationTypeEnums
-from json import JSONEncoder
+from dataclasses import asdict
 from dataclasses import dataclass
-from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder, date_hook
-from typing import List
-from dataclasses import dataclass, asdict, field
+
+from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder
+
 logger = logging.getLogger(__name__)
 
+
+
+@dataclass(frozen=True)
+class FlexMarketOffer:
+    pk: int
+    external_id: str # URL
+    description: str  # URL
+    seller_name: str # URL
+    grid_node_name: str # URL
+    offered_flexibility: dict
+    @property
+    def __dict__(self):
+        """
+        get a python dictionary
+        """
+        return asdict(self)
+    @property
+    def json(self):
+        """
+        get the json formated string
+        """
+        return json.dumps(self.__dict__, cls=DateTimeEncoder)
 
 
 @dataclass(frozen=True)
@@ -73,6 +82,13 @@ class FlexibilityPrequalifyApi:
             return None
         return json_res
 
+    @staticmethod
+    def upsert_offers(api_connection, data: FlexMarketOffer):
+        logger.debug("Upserting flex offer ")
+        payload = json.loads(data.json)
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexibility/prequalification/productoffers/', payload)
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def upsert_prequal_bidquality(api_connection, data: FlexPrequalBidTest):
