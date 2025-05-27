@@ -51,4 +51,7 @@ class ParametersEnum(Enum):
     prevunrealday = {"internal": "prevunrealday", "formatting": "float", "display": "Prev Day"}
     prevunrealmonth = {"internal": "prevunrealmonth", "formatting": "float", "display": "Prev Month"}
     prevunrealyear = {"internal": "prevunrealyear", "formatting": "float", "display": "Prev Year"}
+    prevrealday = {"internal": "prevrealday", "formatting": "float", "display": "Prev Day"}
+    prevrealmonth = {"internal": "prevrealmonth", "formatting": "float", "display": "Prev Month"}
+    prevrealyear = {"internal": "prevrealyear", "formatting": "float", "display": "Prev Year"}
 
