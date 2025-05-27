@@ -19,3 +19,10 @@ def get_prevunreal_param_name(e:PnlPeriodEnums):
         PnlPeriodEnums.MONTH: "prevunrealmonth",
         PnlPeriodEnums.YEAR: "prevunrealyear",
     }[e]
+
+def get_prevreal_param_name(e:PnlPeriodEnums):
+    return {
+        PnlPeriodEnums.DAY: "prevrealday",
+        PnlPeriodEnums.MONTH: "prevrealmonth",
+        PnlPeriodEnums.YEAR: "prevrealyear",
+    }[e]
