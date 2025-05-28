@@ -28,7 +28,9 @@ class MontelApi:
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
         response = authsess.get(server_url, headers=h)
-        return response.json()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Response: {response}")
+        return response.text
 
     @staticmethod
     def _build_server_url(path: str) -> Optional[str]:
