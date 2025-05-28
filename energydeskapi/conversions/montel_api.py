@@ -1,6 +1,7 @@
 import json
 import logging
 from dataclasses import dataclass
+from datetime import date
 from typing import Optional
 
 import environ
@@ -21,8 +22,8 @@ class MontelApi:
         return response.text
 
     @staticmethod
-    def exec_get_historical() -> dict:
-        server_url = MontelApi._build_server_url("historical")
+    def exec_get_historical(period_from: date, period_until: date, max_size: int) -> dict:
+        server_url = MontelApi._build_server_url(f"historical?from={period_from.isoformat()}&until={period_until.isoformat()}&max_size={max_size}")
         logger.info(f"Calling montel service URL {server_url}")
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
