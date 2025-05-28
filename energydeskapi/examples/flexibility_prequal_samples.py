@@ -286,12 +286,19 @@ def make_prequalification_request(token=None):
 
     server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
     headers={'Authorization': 'Bearer ' + token}
-    payload={'product_offer_id':"49803ce7-7c28-4409-83d7-b26800b67805",
+    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-b2e4007aa523",
              'asset_list':asset_list,'meter_data':prepare_meterdata()}
     data = requests.post(server_url,headers=headers, json=payload)
     print(data.status_code)
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
+
+def process_offer(api_conn):
+    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-b2e4007aa523",}
+    success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+        '/api/flexibility/prequalification/processoffer/', payload)
+
+
 
 def check_prequalification_requests(token=None):
     server_url="https://elvia.energydesk.no/appserver/api/flexibility/prequalification/bidqualitytest/embedded/"
@@ -317,10 +324,12 @@ if __name__ == '__main__':
     init_api()
     env = environ.Env()
     token=get_access_token()
-    #make_prequalification_request(token)
-    check_prequalification(token)
-    #edesk_base_url = env.str('ENERGYDESK_URL')
-    #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
+    make_prequalification_request(token)
+
+    #check_prequalification(token)
+    edesk_base_url = env.str('ENERGYDESK_URL')
+    api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
+    process_offer(api_conn)
     #register_prequal(api_conn)
     #api_conn = init_api()
     #load_samples(api_conn)
