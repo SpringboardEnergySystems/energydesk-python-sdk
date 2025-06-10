@@ -187,7 +187,7 @@ class AssetDataApi:
         :param parameters: dictionary of filters to query
         :type parameters: dict, required
         """
-        print(adjustments.get_dict(api_connection))
+        logger.debug(f"timeseries api_connection: {adjustments.get_dict(api_connection)}")
         if adjustments.pk > 0:
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/assetdata/timeseriesadjustments/' + str(adjustments.pk) + "/", adjustments.get_dict(api_connection))
@@ -230,7 +230,7 @@ class AssetDataApi:
         :param company_type_enum: type of company
         :type company_type_enum: str, required
         """
-        print("Demon type", denomination_type)
+        logger.debug(f"Getting time series with denomination type {denomination_type}")
         # Will accept both integers of the actual enum type
         type_pk = denomination_type if isinstance(denomination_type, int) else denomination_type.value
         return api_connection.get_base_url() + '/api/assetdata/timeseriesdenominations/' + str(type_pk) + "/"
@@ -355,7 +355,7 @@ class AssetDataApi:
 
     @staticmethod
     def get_asset_timeseries(api_connection, params={}):
-        print(params)
+        logger.debug(f"Getting time series with params {params}")
         json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/latest/', params)
         if json_res is not None:
             return json_res
@@ -371,7 +371,7 @@ class AssetDataApi:
 
     @staticmethod
     def get_aggregated_timeseries(api_connection, params={}):
-        print(params)
+        logger.debug(f"Getting aggregated time series with params {params}")
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', params)
         if json_res is not None:
             return json_res

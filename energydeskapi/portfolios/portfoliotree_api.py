@@ -50,7 +50,7 @@ class PortfolioTreeApi:
 
   @staticmethod
   def upsert_portfolio_tree(api_connection, portfolio_nodes):
-    print("SAVING TREE (upsert_portfolio_tree)")
+    logger.info("SAVING TREE (upsert_portfolio_tree)")
     list=[]
     for p in portfolio_nodes:
         list.append(p.get_simple_dict(api_connection))
