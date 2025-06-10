@@ -58,23 +58,31 @@ def test_update_riskparams(api_conn):
     RiskApi.upsert_global_risk_parameters(api_conn, rp)
 
 def load_var_data(api_conn):
+    #Getting list of dates for when VaR was calculated and stored
+    data1 = RiskApi.get_var_dates(api_conn, {})
+    # Getting list of portfolios for which VaR was calculated and stored (on a certain date. this can be empty)
+    data2 = RiskApi.get_var_portfolios_calculated(api_conn, {'trading_date':'2025-06-02'})
+    for date in data1:
+        for port in data2:
+            print("Getting VaR calculations for date {} and portfolio {}".format(date['trading_date'], port['portfolio']))
+            # In this case a period is natural to look at
+            params={'trading_date':date['trading_date'], 'portfolio__id':port['portfolio']}
 
-    data=RiskApi.get_var_portfolios(api_conn, {'trading_date':'2025-04-01'})
-    print(data)
-    return
+            # Lists full VaR data for given date/portfolio including all percentiles
+            #data=RiskApi.get_var_calculations(api_conn, params)
+            #print(data)
 
-    data = RiskApi.get_var_dates(api_conn, {'portfolio__id':122})
-    print(data)
-    data = RiskApi.get_var_portfolios_calculated(api_conn, {'trading_date':'2025-04-02'})
-    print(data)
-    # In this case a period is natural to look at
-    params={'trading_date':'2025-04-02', 'portfolio__id':122}
-    data=RiskApi.get_var_calculations(api_conn, params)
-    print(data)
-    data=RiskApi.get_var_calculations_compact(api_conn, params)
-    print(data)
-    data=RiskApi.get_var_calculations_embedded(api_conn, params)
-    print(data)
+            # A compact info of VaR 95 and  99 for portfolio. Can be shown in product view
+            data=RiskApi.get_var_calculations_compact(api_conn, params)
+            print(data)
+
+            # A very detailed set of information.
+            #data=RiskApi.get_var_calculations_embedded(api_conn, params)
+            #print(data)
+
+    # To list a history of VaR data for a given portfolio use. This will list 95 and 99 Var for all dates it has been calclated
+    #RiskApi.get_var_calculations_compact(api_conn, {'portfolio':'111'})
+
 
 def load_rolling_products(api_conn):
     data=RiskApi.get_rolling_tickers(api_conn, {'trading_date__gte':"2024-11-01"})
@@ -115,6 +123,6 @@ def load_risk_data(api_conn):
 if __name__ == '__main__':
 
     api_conn=init_api()
-    load_risk_data(api_conn)
+    load_var_data(api_conn)
     #load_rolling_products(api_conn)
 
