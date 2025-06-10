@@ -243,9 +243,12 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug("Calling URL " + str(server_url))
+        logger.info("Calling URL " + str(server_url))
         logger.debug("...with payload " + " and headers " + str(headers))
         if len(parameters.keys())>0:
+            req = requests.Request('GET', server_url, headers=headers, params=parameters)
+            prepared = req.prepare()
+            print(prepared.url)
             result = requests.get(server_url,  headers=headers, params=parameters)
         else:
             result = requests.get(server_url, headers=headers)

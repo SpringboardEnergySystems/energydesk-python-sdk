@@ -378,12 +378,13 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def load_grouped_meterdata(api_connection, period_from, period_until, resolution, asset_pk_list=[]):
+    def load_grouped_meterdata(api_connection, period_from, period_until, resolution, asset_pk_list=[], profile_usage=False):
         payload={
             'assets':asset_pk_list,
             'period_from': period_from,
             'period_until': period_until,
-            'resolution': resolution
+            'resolution': resolution,
+            'profile_usage': profile_usage
         }
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/assetdata/loadgroupedmeterdata/', payload)

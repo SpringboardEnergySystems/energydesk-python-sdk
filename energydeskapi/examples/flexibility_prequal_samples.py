@@ -77,6 +77,7 @@ def get_access_token():
         "Cache-Control": "no-cache"
     }
     response = requests.request("POST", token_endpoint, data=body, headers=headers)
+    print(response.text)
     token_json = response.json()
     return token_json["access_token_jwt"]
 
@@ -266,13 +267,34 @@ def check_requests(api_conn):
         print(req['quality_measure'])
 
 def check_prequalification(token=None):
-
-    server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
+    server_url = "https://elvia.energydesk.no/appserver/api/flexibility/prequalification/requests/embedded/"
+    #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
     headers={'Authorization': 'Bearer ' + token}
+    print(headers)
+    print(server_url)
     data = requests.get(server_url,headers=headers)
     print(data.status_code)
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
+
+
+# Token not used in this sample as the gneerateprofile API is open
+def generate_profile(token=None):
+    asset_list, df_portfolio=load_sample_metervalues()
+    def prepare_meterdata():
+        dataexport = []
+        for index, row in df_portfolio.iterrows():
+            t = pendulum.parse(str(row['timestamp']), tz="Europe/Oslo")
+            dataexport.append({"timestamp": t.in_tz("UTC").to_iso8601_string(),
+                               'type': 'Power', 'value': row['Portfolio']})
+        return dataexport
+    server_url="https://elvia.energydesk.no/api/flexibility/prequalification/generateprofile/"
+    headers={}  # No need to authenticate on this API
+    payload={'meter_data':prepare_meterdata()}
+    data = requests.post(server_url, headers=headers, json=payload)
+    df=pd.DataFrame(data.json())
+    print(df)
+
 
 def make_prequalification_request(token=None):
     asset_list, df_portfolio=load_sample_metervalues()
@@ -286,7 +308,7 @@ def make_prequalification_request(token=None):
 
     server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
     headers={'Authorization': 'Bearer ' + token}
-    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-b2e4007aa523",
+    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-b2e4007aa523_",
              'asset_list':asset_list,'meter_data':prepare_meterdata()}
     data = requests.post(server_url,headers=headers, json=payload)
     print(data.status_code)
@@ -324,12 +346,12 @@ if __name__ == '__main__':
     init_api()
     env = environ.Env()
     token=get_access_token()
-    make_prequalification_request(token)
-
-    #check_prequalification(token)
+    #make_prequalification_request(token)
+    #generate_profile(token)
+    check_prequalification(token)
     edesk_base_url = env.str('ENERGYDESK_URL')
     api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
-    process_offer(api_conn)
+    #process_offer(api_conn)
     #register_prequal(api_conn)
     #api_conn = init_api()
     #load_samples(api_conn)
