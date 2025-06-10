@@ -105,7 +105,7 @@ def make_empty_timeseries_df(period_from, period_to, pandas_res, timezone=pytz.t
         ix = pd.date_range(start=dtfrom, end=dtuntil, freq=pandas_res)
 
     df_new = df.reindex(ix, fill_value='NaN')
-    df_new = df_new.tz_localize(generation_timezone,nonexistent='shift_forward')
+    df_new = df_new.tz_localize(generation_timezone,nonexistent='shift_forward', ambiguous='infer',ambiguous_error='default_first')
     if pandas_res == "H":
         df_new = df_new.tz_convert(timezone)
     if pandas_res is None:  #No resolution, so only return first line defininig the full period
