@@ -151,7 +151,7 @@ class ProductsApi:
     def generate_market_product_from_ticker(api_connection, market, market_ticker):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
                                                 {'market_ticker':market_ticker, 'market':market})
-        print(status_code, json_res)
+        logger.debug(f"Generating market product from ticker. Status:{status_code}, Result:{json_res}")
         return success, json_res, status_code, error_msg
 
     @staticmethod
@@ -167,7 +167,7 @@ class ProductsApi:
         success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/commoditydefinitions/', commodity_definition)
         if json_res is None:
             return 0
-        print(json_res)
+        logger.debug(f"Registering commodity. Result:{json_res}")
         return json_res['pk']
     @staticmethod
     def register_products(api_connection, product_list):
@@ -188,7 +188,7 @@ class ProductsApi:
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/markets/marketproducts/', payload)
             if json_res is None:
                 return False
-            print(json_res)
+            logger.debug(f"Registering products. Result: {json_res}")
     @staticmethod
     def get_products(api_connection, market_enum):
         """Fetches products from markets
@@ -199,7 +199,7 @@ class ProductsApi:
         :type market_enum: str, required
         """
         mapi=MarketsApi.get_market_obj(api_connection, market_enum)
-        print(mapi)
+        logger.debug(f"Market api {mapi}")
         logger.info("Fetching products in market " +mapi['name'])
         qry_payload = {
             #"market_place": None,

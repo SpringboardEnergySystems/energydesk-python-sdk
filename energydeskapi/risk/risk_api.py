@@ -65,9 +65,9 @@ class RiskApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        print(risk_params.get_dict(api_connection))
+        logger.debug(f"Api connection: {risk_params.get_dict(api_connection)}")
         if risk_params.pk>0:
-            print("It is an existing configuration")
+            logger.info("It is an existing configuration")
             success, returned_data, status_code, error_msg = api_connection.exec_patch_url('/api/riskmanager/globalriskparameters/' + str(risk_params.pk) + "/",risk_params.get_dict(api_connection))
         else:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/globalriskparameters/',risk_params.get_dict(api_connection))
@@ -370,7 +370,7 @@ class RiskApi:
             try:
                 correlation_list = json.loads(corr_str) if isinstance(corr_str, str) else corr_str
             except Exception as e:
-                print(f"Error decoding correlation_data: {e}")
+                logger.error(f"Error decoding correlation_data: {e}")
                 correlation_list = []
             df_correlation = pd.DataFrame(correlation_list)
             if len(column_order) == df_correlation.shape[0] == df_correlation.shape[1]:
@@ -383,7 +383,7 @@ class RiskApi:
             try:
                 discount_list = json.loads(discount_str) if isinstance(discount_str, str) else discount_str
             except Exception as e:
-                print(f"Error decoding discount_factor: {e}")
+                logger.error(f"Error decoding discount_factor: {e}")
                 discount_list = []
             discount = list(discount_list)
             data['discount_factor'] = discount
