@@ -78,6 +78,15 @@ def key_from_url(url):
     except:
         return 0
 
+def finalpart_from_url(url):
+    if url is None:
+        return ""
+    cols=url.split("/")
+    try:
+        return cols[-2:-1][0]
+    except:
+        return ""
+
 def safe_prepare_json(json_input):  #If type is json string load as json
     import jsonfield
     if type(json_input)==str or type(json_input)==jsonfield.json.JSONString:
