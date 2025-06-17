@@ -142,6 +142,13 @@ class FlexibilityApi:
         if json_res is None:
             return None
         return json_res
+    @staticmethod
+    def get_reserves_prices_analyzed(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/analyzed/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
 
     @staticmethod
     def get_localflexibility_prices(api_connection, parameters={}):
@@ -150,6 +157,12 @@ class FlexibilityApi:
             return None
         return json_res
 
+    @staticmethod
+    def get_localflex_capacity_prices(api_connection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexmarkets/localcapacityprices/embedded/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def remove_asset_flexibility(api_connection, extern_asset_id):

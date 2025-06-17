@@ -15,6 +15,7 @@ from bokeh.resources import INLINE
 import requests
 import pendulum
 import json
+from energydeskapi.flexibility.reserves_prices_utils import plot_comparison_local_capacity_prices, group_reserves_prices, plot_prices, plot_comparison_prices, plot_boxplot_prices
 from energydeskapi.types.flexibility_enum_types import RegulationTypeEnums
 from django.shortcuts import redirect
 
@@ -276,13 +277,67 @@ def plot_price(type_name, df):
             tickfont_size=12,
         ))
     return fig
+from energydeskapi.sdk.crontab_utils import generate_dataframe
 
 def load_reserves_prices(api_conn):
-    data=FlexibilityApi.get_reserves_prices(api_conn,
-                                            {'regulating_direction__code': RegulatingDirectionEnums.UP.name,
-                                             'reserves_category__code':ReservesCategoryEnum.CAPACITY.name})
-    df=pd.DataFrame(data)
+    def load_local_prices():
+        company=['Fagne','Glitre Nett Sør', 'Tensio', 'Elvia']
+        jsondata=FlexibilityApi.get_localflex_capacity_prices(api_conn, {'gridcompany__in':company,'reserves_category__code':'CAPACITY'})
+        df=pd.DataFrame(jsondata)
+        df.index=pd.to_datetime(df['period_from'])
+        df['timestamp']=df.index
+        df['reserves_type'] = df['gridcompany']
+        df['area'] = df['gridnode']
+        gr=group_reserves_prices(df)
+        comps=df['gridcompany'].unique()
+        print(comps)
+        plot_comparison_local_capacity_prices(gr, comps)
 
+    def load_statnett_prices():
+        plot_product = "mFRR"
+        def load_speciic(t:ReservesCategoryEnum):
+            data=FlexibilityApi.get_reserves_prices(api_conn,
+                                                    {'regulating_direction__code': RegulatingDirectionEnums.UP.name,
+                                                     'reserves_category__code':t.name})
+            df=pd.DataFrame(data)
+            df=df.fillna(0)
+            df.index=pd.to_datetime(df['timestamp'])
+            df.drop(columns=['timestamp'],inplace=True)
+            df_subset = df.loc[df.reserves_type == plot_product]
+            return df_subset
+
+
+        df_cap=load_speciic(ReservesCategoryEnum.CAPACITY)
+        df_act = load_speciic(ReservesCategoryEnum.ACTIVATION)
+        grouped_cap = group_reserves_prices(df_cap)
+        grouped_act = group_reserves_prices(df_act)
+        grouped_cap[plot_product].rename(columns={'mean': 'capacity'}, inplace=True)
+        grouped_act[plot_product].rename(columns={'mean': 'activation'}, inplace=True)
+        grouped_cap[plot_product]['activation']=grouped_act[plot_product]['activation']
+
+        df=grouped_cap[plot_product]
+        df['relation']=df['capacity']/df['activation']
+        plot_comparison_prices(df)
+
+    load_local_prices()
+    from plotly.subplots import make_subplots
+    # fig = make_subplots(shared_yaxes=True, shared_xaxes=True)
+    # fig.add_bar(x=df['hour'], y=df['activation'], opacity=0.6, width=0.7, name='Activation',
+    #             hovertemplate='%{y}')
+    # fig.add_bar(x=df['hour'], y=df['capacity'], width=0.5, name='Capacity', text=df['relation'],
+    #             textposition='outside')
+    # fig.show()
+
+    #grouped_cap=pd.melt(grouped_cap, id_vars=['timestamp'], var_name='reserves_type', value_name='price')
+    #plot_boxplot_prices(plot_product, df_cap, df_act)
+    #df=df.loc[df.index>'2025-01-01']
+    return
+    data=group_reserves_prices(df)
+    for key in data.keys():
+        print(key)
+        if key=="mFRR":
+            plot_prices("aFRR", data[key])
+    return
     df['timestamp']=pd.to_datetime(df["timestamp"])
     df=df.loc[df.timestamp>pendulum.today(tz="UTC").add(days=-5)]
     df3=df.groupby(["reserves_type",'timestamp']).agg({'area':'max','regulating_direction':'max','reserves_category':'max','price':'sum'})
@@ -370,7 +425,7 @@ if __name__ == '__main__':
     api_conn=init_api()
     #register_flexible_asset(api_conn)
     #get_qa_data(api_conn)
-    create_dispatch(api_conn)
+    #create_dispatch(api_conn)
     #check_schedule(api_conn)
 
-    #load_reserves_prices(api_conn)
+    load_reserves_prices(api_conn)
