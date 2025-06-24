@@ -90,7 +90,7 @@ class KafkaClient(EventClient):
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)
             logger.info("Checking subscribers")
-            self.connecnt_subscribers(self.kafka_topics,poll_interval=16000 )
+            self.connecnt_subscribers(self.kafka_topics,poll_interval=1600 )
             while not self._stop_listener:
                 try:
                     logger.info("Checking consumer " + str(self.consumer))
@@ -102,7 +102,7 @@ class KafkaClient(EventClient):
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
-                    self.connecnt_subscribers(self.kafka_topics)
+                    self.connecnt_subscribers(self.kafka_topics, poll_interval=1600)
         except Exception as e:
             logger.error("Error in subscriber " + str(e))
             traceback.print_exc()
