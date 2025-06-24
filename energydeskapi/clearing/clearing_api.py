@@ -232,7 +232,7 @@ class ClearingApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def approve_all_reconciled_contracts_in_multileg(api_connection,date: str, internal_ids: list[int]):
+    def approve_all_reconciled_contracts_in_multileg(api_connection, date: str, internal_ids: list[int]):
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/clearing/approve-reconciled-contracts-in-multileg/',{'date':date, 'internal_ids': internal_ids})
         return success, returned_data, status_code, error_msg
 
