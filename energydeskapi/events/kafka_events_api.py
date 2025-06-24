@@ -61,7 +61,8 @@ class KafkaClient(EventClient):
                                   max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=self.API_VERSION)
             logger.info("Subscribing Kafka to topics " + str(topics))
-            self.consumer.subscribe(topics)
+            for t in topics:
+                self.consumer.subscribe(pattern=t)
             return True
         except Exception as e:
             logger.error("Error refreshing connection " + str(e))
