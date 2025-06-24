@@ -28,7 +28,8 @@ class KafkaClient(EventClient):
         super().__init__()
         self.kafka_host=kafka_host
         self.kafka_port=kafka_port
-        self.client = None
+        self.producer = None
+        self.consumer = None
 
 
     def connect_producer(self, log_error=True):
@@ -75,23 +76,39 @@ class KafkaClient(EventClient):
             self.kafka_topics.append(es.topic)  # Format is topic name and quality of service 1,2,3
         return self.connecnt_subscribers(self.kafka_topics)
 
+    def disconnect(self):
+        logger.info("Closing consumer and producer.")
+        if self.consumer is not None:
+            logger.info("Closing consumer and Unsubscribing from topics:")
+            self._stop_listener=True
+        if self.producer is not None:
+            logger.info("Closing producer connection and waiting for it to close..")
+            self.producer.close()
+
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
+        logger.info("********** In listener **********")
+        self._stop_listener = False
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)
-            logger.info("Checking subscribers")
+            logger.info("Entering listener loop. Connecting subscribers.")
             self.connecnt_subscribers(self.kafka_topics)
-            while True:
+            while not self._stop_listener:
                 try:
-                    logger.info("Checking consumer " + str(self.consumer))
-                    for message in self.consumer:
-                        msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
-                        content, decoded_headers = decode_message(message)
-                        logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
-                        self.handle_callback(message.topic, content, decoded_headers)
+                    # Changed to non blocking making thread management more robust when shutting down gracefulley
+                    records = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
+                    for topic_partition, messages in records.items():
+                        for message in messages:
+                            msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
+                            content, decoded_headers = decode_message(message)
+                            logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
+                            self.handle_callback(message.topic, content, decoded_headers)
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
-                    self.connecnt_subscribers(self.kafka_topics)
+                    self.connecnt_subscribers(self.kafka_topics,)
+            logger.warning("********** Exiting listener **********")
+            self.consumer.unsubscribe()
+            self.consumer.close()
         except Exception as e:
             logger.error("Error in subscriber " + str(e))
             traceback.print_exc()

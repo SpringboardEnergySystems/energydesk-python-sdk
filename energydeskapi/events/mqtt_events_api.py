@@ -64,6 +64,9 @@ class MqttClient(EventClient):
         self.force_transport = force_transport
         self.use_tls = use_tls
 
+    def disconnect(self):
+        logger.info("Disconnecting MQTT") # TO be implemented
+
     def connect(self, subscriberlist: list[MqttSubscriber], client_name: str="client",  log_error=True):
         self.client=None
 

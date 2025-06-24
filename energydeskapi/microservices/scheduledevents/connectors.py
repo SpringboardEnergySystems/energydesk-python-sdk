@@ -5,10 +5,10 @@ import environ
 from energydeskapi.events.kafka_events_authenticated import KafkaClientAuthenticated
 from energydeskapi.events.mqtt_events_api import MqttClient
 from energydeskapi.events.kafka_events_api import KafkaClient
-
+from threading import Thread
 logger = logging.getLogger(__name__)
 
-def connect_to_mqtt(client_id, subscribers=[]):
+def connect_to_mqtt(client_id, subscribers=[],  async_listening=False):
     global env, ok, bm
     mqtt_client=None
     env = environ.Env()
@@ -39,7 +39,7 @@ def connect_to_mqtt(client_id, subscribers=[]):
     return mqtt_client
 
 
-def connect_to_kafka(client_id, subscribers=[]):
+def connect_to_kafka(client_id, subscribers=[], async_listening=False):
     env = environ.Env()
     global ok
     kafka_client = None
@@ -52,12 +52,17 @@ def connect_to_kafka(client_id, subscribers=[]):
         ok = kafkacli.connect(subscribers, consumer_group=client_id)
     else:
         kafkacli = KafkaClientAuthenticated(kafka_broker, kafka_port, kafka_user, kafka_password)
-        ok = kafkacli.connect(subscribers, "Scheduler Kafka producer")
+        ok = kafkacli.connect(subscribers, consumer_group=client_id)
     if ok == True:
-        logger.info("Connected to Kafka")
+        logger.info("Connected to Kafka with async modus {}".format(async_listening))
         kafka_client = kafkacli
-        kafkacli.start_listener()
+        if async_listening:
+            t=Thread(target=kafkacli.start_listener)
+            t.start()
+        else:
+            kafkacli.start_listener()
     else:
         logger.error("Could not connect to Kafka.  Scheduler *may* need a reconfiguration/restart")
         os._exit(1)
+    logger.info("Returning from connect Kafka with result code " + str(ok) + "")
     return kafka_client
