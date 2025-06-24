@@ -94,7 +94,8 @@ class KafkaClient(EventClient):
             while not self._stop_listener:
                 try:
                     logger.info("Checking consumer " + str(self.consumer))
-                    for message in self.consumer:
+                    messages = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
+                    for message in messages:
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
                         content, decoded_headers = decode_message(message)
                         logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
