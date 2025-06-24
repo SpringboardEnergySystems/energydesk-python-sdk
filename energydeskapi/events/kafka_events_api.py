@@ -79,17 +79,19 @@ class KafkaClient(EventClient):
         logger.info("Closing consumer and producer.")
         if self.consumer is not None:
             logger.info("Unsubscribing from topics:")
+            self.consumer._stop_listener=True
             self.consumer.unsubscribe()
             self.consumer.close()
         #self.client.close()
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         logger.info("********** In listener **********")
+        self._stop_listener = False
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)
             logger.info("Checking subscribers")
-            self.connecnt_subscribers(self.kafka_topics)
-            while True:
+            self.connecnt_subscribers(self.kafka_topics,poll_interval=16000 )
+            while not self._stop_listener:
                 try:
                     logger.info("Checking consumer " + str(self.consumer))
                     for message in self.consumer:
