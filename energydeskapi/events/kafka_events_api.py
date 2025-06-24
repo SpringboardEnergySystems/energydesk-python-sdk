@@ -2,7 +2,7 @@
 import json
 import logging
 from typing import Optional
-import re
+
 # Confluent Kafka is more tricky to install on Windows; hence using Apache version
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
@@ -57,13 +57,11 @@ class KafkaClient(EventClient):
                                   max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=self.API_VERSION)
             else:
-
                 self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
                                   max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=self.API_VERSION)
             logger.info("Subscribing Kafka to topics " + str(topics))
-            for t in topics:
-                self.consumer.subscribe(pattern=t)
+            self.consumer.subscribe(topics)
             return True
         except Exception as e:
             logger.error("Error refreshing connection " + str(e))
