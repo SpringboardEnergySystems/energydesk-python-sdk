@@ -97,6 +97,8 @@ class KafkaClient(EventClient):
                     # Changed to non blocking making thread management more robust when shutting down gracefulley
                     messages = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
                     for message in messages:
+                        print(message)
+                        print(type(message))
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
                         content, decoded_headers = decode_message(message)
                         logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
