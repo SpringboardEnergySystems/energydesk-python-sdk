@@ -30,6 +30,7 @@ class EventHandler:
             for v in queues_callback:
                 self.subscribers.append(EventSubscriber(v[0], v[1]))
             self.kafkacli=connect_to_kafka(self.id, self.subscribers)
+            logger.info("Connected to Kafka with client {}".format(self.kafkacli))
         except Exception as e:
             logger.error("Error when reconnecting", e)
             return None
