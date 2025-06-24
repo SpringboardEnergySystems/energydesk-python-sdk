@@ -95,14 +95,13 @@ class KafkaClient(EventClient):
             while not self._stop_listener:
                 try:
                     # Changed to non blocking making thread management more robust when shutting down gracefulley
-                    messages = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
-                    for message in messages:
-                        print(message)
-                        print(type(message))
-                        msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
-                        content, decoded_headers = decode_message(message)
-                        logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
-                        self.handle_callback(message.topic, content, decoded_headers)
+                    records = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
+                    for topic_partition, messages in records.items():
+                        for message in messages:
+                            msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
+                            content, decoded_headers = decode_message(message)
+                            logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
+                            self.handle_callback(message.topic, content, decoded_headers)
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
