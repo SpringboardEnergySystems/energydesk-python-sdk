@@ -58,6 +58,7 @@ def connect_to_kafka(client_id, subscribers=[], async_listening=False):
         kafka_client = kafkacli
         if async_listening:
             t=Thread(target=kafkacli.start_listener)
+            t.start()
         else:
             kafkacli.start_listener()
     else:
