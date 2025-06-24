@@ -79,7 +79,7 @@ class KafkaClient(EventClient):
         logger.info("Closing consumer and producer.")
         if self.consumer is not None:
             logger.info("Unsubscribing from topics:")
-            self.consumer._stop_listener=True
+            self._stop_listener=True
 
             #self.consumer.unsubscribe()
             #self.consumer.close()
@@ -108,6 +108,8 @@ class KafkaClient(EventClient):
                     time.sleep(30)
                     self.connecnt_subscribers(self.kafka_topics,)
             logger.warning("********** Exiting listener **********")
+            self.consumer.unsubscribe()
+            self.consumer.stop()
         except Exception as e:
             logger.error("Error in subscriber " + str(e))
             traceback.print_exc()
