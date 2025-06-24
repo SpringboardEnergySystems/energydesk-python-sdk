@@ -94,7 +94,9 @@ class KafkaClientAuthenticated(EventClient):
             return False
 
     def disconnect(self):
-        self.client.close()
+        logger.info("Closing consumer and producer.")
+        if self.consumer is not None:
+            self.consumer.close()
 
     def connect(self, subscriberlist,  consumer_group="default producer", log_error=True):
         self.consumer_group = consumer_group

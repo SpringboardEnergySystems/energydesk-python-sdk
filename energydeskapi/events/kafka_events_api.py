@@ -76,7 +76,10 @@ class KafkaClient(EventClient):
         return self.connecnt_subscribers(self.kafka_topics)
 
     def disconnect(self):
-        self.client.close()
+        logger.info("Closing consumer and producer.")
+        if self.consumer is not None:
+            self.consumer.close()
+        #self.client.close()
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         try:
