@@ -75,6 +75,9 @@ class KafkaClient(EventClient):
             self.kafka_topics.append(es.topic)  # Format is topic name and quality of service 1,2,3
         return self.connecnt_subscribers(self.kafka_topics)
 
+    def disconnect(self):
+        self.client.close()
+
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)

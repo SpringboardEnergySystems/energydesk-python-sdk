@@ -93,6 +93,9 @@ class KafkaClientAuthenticated(EventClient):
             logger.error("Error refreshing connection " + str(e))
             return False
 
+    def disconnect(self):
+        self.client.close()
+
     def connect(self, subscriberlist,  consumer_group="default producer", log_error=True):
         self.consumer_group = consumer_group
         if self.connect_producer():

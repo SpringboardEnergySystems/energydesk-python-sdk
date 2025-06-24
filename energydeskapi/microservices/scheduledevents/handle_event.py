@@ -34,6 +34,13 @@ class EventHandler:
             logger.error("Error when reconnecting", e)
             return None
 
+    def disconnect(self):
+        try:
+            self.kafkacli.disconnect()
+        except Exception as e:
+            logger.error("Error when disconnecting", e)
+            return None
+
     def _disconnected(self):
         logger.info("Disconnected from Kafka")
 
