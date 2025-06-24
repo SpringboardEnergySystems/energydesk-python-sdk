@@ -80,9 +80,10 @@ class KafkaClient(EventClient):
         if self.consumer is not None:
             logger.info("Unsubscribing from topics:")
             self.consumer._stop_listener=True
-            self.consumer.unsubscribe()
-            self.consumer.close()
-        #self.client.close()
+
+            #self.consumer.unsubscribe()
+            #self.consumer.close()
+        self.client.close()
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         logger.info("********** In listener **********")
@@ -90,7 +91,7 @@ class KafkaClient(EventClient):
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)
             logger.info("Checking subscribers")
-            self.connecnt_subscribers(self.kafka_topics,poll_interval=1600 )
+            self.connecnt_subscribers(self.kafka_topics)
             while not self._stop_listener:
                 try:
                     logger.info("Checking consumer " + str(self.consumer))
@@ -103,7 +104,8 @@ class KafkaClient(EventClient):
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
-                    self.connecnt_subscribers(self.kafka_topics, poll_interval=1600)
+                    self.connecnt_subscribers(self.kafka_topics,)
+            logger.warning("********** Exiting listener **********")
         except Exception as e:
             logger.error("Error in subscriber " + str(e))
             traceback.print_exc()
