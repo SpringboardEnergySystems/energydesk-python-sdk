@@ -78,6 +78,8 @@ class KafkaClient(EventClient):
     def disconnect(self):
         logger.info("Closing consumer and producer.")
         if self.consumer is not None:
+            logger.info("Unsubscribing from topics:")
+            self.consumer.unsubscribe()
             self.consumer.close()
         #self.client.close()
 
