@@ -96,7 +96,11 @@ class KafkaClientAuthenticated(EventClient):
     def disconnect(self):
         logger.info("Closing consumer and producer.")
         if self.consumer is not None:
-            self.consumer.close()
+            logger.info("Closing consumer and Unsubscribing from topics:")
+            self._stop_listener=True
+        if self.producer is not None:
+            logger.info("Closing producer connection and waiting for it to close..")
+            self.producer.close()
 
     def connect(self, subscriberlist,  consumer_group="default producer", log_error=True):
         self.consumer_group = consumer_group
@@ -112,15 +116,19 @@ class KafkaClientAuthenticated(EventClient):
         else:
             return False
 
+
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
+        logger.info("********** In listener **********")
+        self._stop_listener = False
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)
-            logger.info("Checking subscribers")
+            logger.info("Entering listener loop. Connecting subscribers.")
             self.connecnt_subscribers(self.kafka_topics)
-            while True:
+            while not self._stop_listener:
                 try:
-                    logger.info("Checking consumer " + str(self.consumer))
-                    for message in self.consumer:
+                    # Changed to non blocking making thread management more robust when shutting down gracefulley
+                    messages = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
+                    for message in messages:
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
                         content, decoded_headers = decode_message(message)
                         logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
@@ -128,10 +136,15 @@ class KafkaClientAuthenticated(EventClient):
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
-                    self.connecnt_subscribers(self.kafka_topics)
+                    self.connecnt_subscribers(self.kafka_topics,)
+            logger.warning("********** Exiting listener **********")
+            self.consumer.unsubscribe()
+            self.consumer.close()
         except Exception as e:
             logger.error("Error in subscriber " + str(e))
             traceback.print_exc()
+
+
 
 
 def on_test_callback(topic, data):

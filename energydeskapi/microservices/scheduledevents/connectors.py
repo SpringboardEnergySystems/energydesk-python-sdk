@@ -8,7 +8,7 @@ from energydeskapi.events.kafka_events_api import KafkaClient
 from threading import Thread
 logger = logging.getLogger(__name__)
 
-def connect_to_mqtt(client_id, subscribers=[]):
+def connect_to_mqtt(client_id, subscribers=[],  async_listening=False):
     global env, ok, bm
     mqtt_client=None
     env = environ.Env()

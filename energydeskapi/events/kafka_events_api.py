@@ -90,11 +90,11 @@ class KafkaClient(EventClient):
         self._stop_listener = False
         try:
             pool = ThreadPoolExecutor(max_workers=handler_pool_size)
-            logger.info("Checking subscribers")
+            logger.info("Entering listener loop. Connecting subscribers.")
             self.connecnt_subscribers(self.kafka_topics)
             while not self._stop_listener:
                 try:
-                    logger.info("Checking consumer " + str(self.consumer))
+                    # Changed to non blocking making thread management more robust when shutting down gracefulley
                     messages = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
                     for message in messages:
                         msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
