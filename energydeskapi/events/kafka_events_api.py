@@ -83,7 +83,9 @@ class KafkaClient(EventClient):
 
             #self.consumer.unsubscribe()
             #self.consumer.close()
-        self.client.close()
+        if self.client is not None:
+            logger.info("CLosing connection to Kafka server.")
+            self.client.close()
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         logger.info("********** In listener **********")

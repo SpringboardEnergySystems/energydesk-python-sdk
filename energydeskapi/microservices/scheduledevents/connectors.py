@@ -52,9 +52,9 @@ def connect_to_kafka(client_id, subscribers=[], async_listening=False):
         ok = kafkacli.connect(subscribers, consumer_group=client_id)
     else:
         kafkacli = KafkaClientAuthenticated(kafka_broker, kafka_port, kafka_user, kafka_password)
-        ok = kafkacli.connect(subscribers, "Scheduler Kafka producer")
+        ok = kafkacli.connect(subscribers, consumer_group=client_id)
     if ok == True:
-        logger.info("Connected to Kafka")
+        logger.info("Connected to Kafka with async modus {}".format(async_listening))
         kafka_client = kafkacli
         if async_listening:
             t=Thread(target=kafkacli.start_listener)

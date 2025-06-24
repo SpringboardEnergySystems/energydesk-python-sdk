@@ -37,7 +37,10 @@ class EventHandler:
 
     def disconnect(self):
         try:
-            self.kafkacli.disconnect()
+            if self.kafkacli is not None:
+                self.kafkacli.disconnect()
+            else:
+                logger.warning("Kafka client is None when disconnecting")
         except Exception as e:
             logger.error("Error when disconnecting", e)
             return None
