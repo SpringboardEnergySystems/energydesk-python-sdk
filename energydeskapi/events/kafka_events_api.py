@@ -28,7 +28,8 @@ class KafkaClient(EventClient):
         super().__init__()
         self.kafka_host=kafka_host
         self.kafka_port=kafka_port
-        self.client = None
+        self.producer = None
+        self.consumer = None
 
 
     def connect_producer(self, log_error=True):
@@ -78,14 +79,11 @@ class KafkaClient(EventClient):
     def disconnect(self):
         logger.info("Closing consumer and producer.")
         if self.consumer is not None:
-            logger.info("Unsubscribing from topics:")
+            logger.info("Closing consumer and Unsubscribing from topics:")
             self._stop_listener=True
-
-            #self.consumer.unsubscribe()
-            #self.consumer.close()
-        if self.client is not None:
-            logger.info("CLosing connection to Kafka server.")
-            self.client.close()
+        if self.producer is not None:
+            logger.info("Closing producer connection and waiting for it to close..")
+            self.producer.close()
 
     def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
         logger.info("********** In listener **********")
@@ -109,7 +107,7 @@ class KafkaClient(EventClient):
                     self.connecnt_subscribers(self.kafka_topics,)
             logger.warning("********** Exiting listener **********")
             self.consumer.unsubscribe()
-            self.consumer.stop()
+            self.consumer.close()
         except Exception as e:
             logger.error("Error in subscriber " + str(e))
             traceback.print_exc()
