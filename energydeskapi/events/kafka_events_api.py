@@ -105,7 +105,7 @@ class KafkaClient(EventClient):
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
-                    self.connecnt_subscribers(self.kafka_topics,)
+                    self.connecnt_subscribers(self.kafka_topics)
             logger.warning("********** Exiting listener **********")
             self.consumer.unsubscribe()
             self.consumer.close()
