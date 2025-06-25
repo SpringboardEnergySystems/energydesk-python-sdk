@@ -61,9 +61,8 @@ class KafkaClient(EventClient):
                                   max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=self.API_VERSION)
             logger.info("Subscribing Kafka to topics " + str(topics))
-            #for t in topics:
-            #   self.consumer.subscribe()
-            #self.consumer.subscribe(topics)
+            # NB KafkaConsumer does not work with consumer.subscribe([list]). This will only subscribe to the last item in the list
+            # I found that a list can be based by converting the list to arguments *list in the constructor instead. This subscribes to all
             return True
         except Exception as e:
             logger.error("Error refreshing connection " + str(e))
