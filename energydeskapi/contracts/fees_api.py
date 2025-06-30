@@ -61,6 +61,14 @@ class FeesApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/feetypes/' + str(value_pk) + "/"
 
     @staticmethod
+    def get_feetypes(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/feetypes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+
+    @staticmethod
     def get_feerates_url(api_connection, value):
         value_pk = value if isinstance(value, int) else value.value
         return api_connection.get_base_url() + '/api/portfoliomanager/feerates/' + str(value_pk) + "/"

@@ -14,12 +14,33 @@ logging.basicConfig(level=logging.INFO,
 
 
 def query_companies(api_conn):
-    param = {'name': 'Lyse Strøm AS',
-             "page_size": 1000}
+    param = {'company_roles': CompanyRoleEnum.OPERATOR.value,
+             "page_size": 50}
     json_companies = CustomersApi.get_companies(api_conn, param)
     df=pd.DataFrame(data=json_companies['results'])
     print(df)
 
+def query_exchanges(api_conn):
+    param = {'company_roles': CompanyRoleEnum.OPERATOR.value,
+             "page_size": 50}
+    json_companies = CustomersApi.get_companies(api_conn, param)
+    df=pd.DataFrame(data=json_companies['results'])
+    print(df)
+
+def query_clearing_houses(api_conn):
+    param = {'company_roles': CompanyRoleEnum.CLEARING_HOUSE.value,
+             "page_size": 50}
+    json_companies = CustomersApi.get_companies(api_conn, param)
+    df=pd.DataFrame(data=json_companies['results'])
+    print(df)
+
+
+def query_brokers(api_conn):
+    param = {'company_roles': CompanyRoleEnum.BROKER.value,
+             "page_size": 50}
+    json_companies = CustomersApi.get_companies(api_conn, param)
+    df=pd.DataFrame(data=json_companies['results'])
+    print(df)
 
 def query_company_types(api_conn):
     df = CustomersApi.get_company_types_df(api_conn)
@@ -101,7 +122,7 @@ if __name__ == '__main__':
     # list_users(api_conn)
     # register_companies(api_conn)
     # create_company(api_conn)
-    query_companies(api_conn)
+    query_brokers(api_conn)
     # query_company_by_pk(api_conn)
     # load_company_from_regnumber(api_conn)
     # query_company_pk_by_name(api_conn)
