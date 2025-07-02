@@ -69,4 +69,4 @@ def setup_service_logging(servicetag, file_level=logging.WARNING, console_level=
     formatter_console = logging.Formatter(get_consolelog_format())
     console.setFormatter(formatter_console)
     console.setLevel(console_level)
-    #root_logger.addHandler(console)
+    root_logger.addHandler(console)
