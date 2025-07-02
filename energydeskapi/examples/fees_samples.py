@@ -16,12 +16,8 @@ logging.basicConfig(level=logging.INFO,
 
 def get_fees(api_conn):
 
-
-    feerates = FeesApi.get_feerates(api_conn)
-    print(feerates)
-    feerates = FeesApi.get_feerates_embedded(api_conn)
-    print(feerates)
-
+    types = FeesApi.get_feetypes(api_conn)
+    print(types)
 if __name__ == '__main__':
 
     api_conn = init_api()

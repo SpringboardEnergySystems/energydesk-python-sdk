@@ -53,15 +53,16 @@ class KafkaClient(EventClient):
         try:
             logger.info("Refreshing subscriber with max poll interval " + str(poll_interval))
             if poll_interval>1800000:
-                self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
+                self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
                                   max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=self.API_VERSION)
             else:
-                self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
+                self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
                                   max_partition_fetch_bytes=1024*1024*1024,bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                    api_version=self.API_VERSION)
             logger.info("Subscribing Kafka to topics " + str(topics))
-            self.consumer.subscribe(topics)
+            # NB KafkaConsumer does not work with consumer.subscribe([list]). This will only subscribe to the last item in the list
+            # I found that a list can be based by converting the list to arguments *list in the constructor instead. This subscribes to all
             return True
         except Exception as e:
             logger.error("Error refreshing connection " + str(e))
@@ -105,7 +106,7 @@ class KafkaClient(EventClient):
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)
-                    self.connecnt_subscribers(self.kafka_topics,)
+                    self.connecnt_subscribers(self.kafka_topics)
             logger.warning("********** Exiting listener **********")
             self.consumer.unsubscribe()
             self.consumer.close()

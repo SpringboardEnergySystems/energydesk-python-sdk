@@ -71,7 +71,7 @@ class KafkaClientAuthenticated(EventClient):
         try:
             logger.info("Refreshing subscriber with max poll interval " + str(poll_interval))
             if poll_interval>1800000:
-                self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
+                self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
                                   bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                   security_protocol=self.SECURITY_PROTOCOL,
                                   sasl_mechanism=self.SASL_MECHANISM,
@@ -79,7 +79,7 @@ class KafkaClientAuthenticated(EventClient):
                                   sasl_plain_password=self.kafka_password,
                                   api_version=self.API_VERSION)
             else:
-                self.consumer = KafkaConsumer(group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
+                self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
                                   bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                   security_protocol=self.SECURITY_PROTOCOL,
                                   sasl_mechanism=self.SASL_MECHANISM,
@@ -87,7 +87,8 @@ class KafkaClientAuthenticated(EventClient):
                                   sasl_plain_password=self.kafka_password,
                                   api_version=self.API_VERSION)
             logger.info("Subscribing Kafka to topics " + str(topics))
-            self.consumer.subscribe(topics)
+            # NB KafkaConsumer does not work with consumer.subscribe([list]). This will only subscribe to the last item in the list
+            # I found that a list can be based by converting the list to arguments *list in the constructor instead. This subscribes to all
             return True
         except Exception as e:
             logger.error("Error refreshing connection " + str(e))
