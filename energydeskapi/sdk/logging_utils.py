@@ -72,7 +72,7 @@ def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_l
     console_handler = create_console_handler()
     print(f"file_handler: {file_handler}")
     print(f"console_handler: {console_handler}")
-    logging.basicConfig(force=True, handlers=[console_handler, file_handler])
+    logging.basicConfig(force=True, level=min(console_level, file_level),  handlers=[console_handler, file_handler])
 
 
 
