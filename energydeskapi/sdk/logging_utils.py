@@ -46,13 +46,10 @@ def get_loglevel_to_str(level):
         return "ERROR"
     return "INFO"
 
-def setup_service_logging(servicetag, file_level=logging.WARNING, console_level=logging.INFO):
+def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_level=logging.INFO):
     console_level=get_loglevel_from_str(get_environment_value("OVERRIDE_CONSOLE_LOGLEVEL", get_loglevel_to_str(console_level)))
     file_level=get_loglevel_from_str(get_environment_value("OVERRIDE_FILE_LOGLEVEL", get_loglevel_to_str(file_level)))
     smallest_level=console_level if console_level<file_level else file_level
-    logging.basicConfig(level=smallest_level, format=get_consolelog_format())
-
-    root_logger = logging.getLogger("")
     try:
         os.mkdir("./logs")
     except:
@@ -61,7 +58,6 @@ def setup_service_logging(servicetag, file_level=logging.WARNING, console_level=
     filelogger.setLevel(file_level)
     formatter_file = logging.Formatter(get_logfile_format(servicetag))
     filelogger.setFormatter(formatter_file)
-    root_logger.addHandler(filelogger)
     # set up logging to console
     console = logging.StreamHandler()
 
@@ -69,4 +65,4 @@ def setup_service_logging(servicetag, file_level=logging.WARNING, console_level=
     formatter_console = logging.Formatter(get_consolelog_format())
     console.setFormatter(formatter_console)
     console.setLevel(console_level)
-    root_logger.addHandler(console)
+    logging.basicConfig(level=smallest_level, format=get_consolelog_format(), handlers=[console, filelogger])
