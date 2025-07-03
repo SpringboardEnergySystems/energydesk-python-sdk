@@ -268,7 +268,7 @@ def check_requests(api_conn):
 
 def check_prequalification(token=None):
     server_url = "https://elvia.energydesk.no/appserver/api/flexibility/prequalification/requests/embedded/"
-    #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
+    server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
     headers={'Authorization': 'Bearer ' + token}
     print(headers)
     print(server_url)
@@ -277,6 +277,16 @@ def check_prequalification(token=None):
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
 
+def check_prequalification_from_key(token=None, key=0):
+    server_url = f"http://127.0.0.1:8001/api/flexibility/prequalification/requests/{key}/"
+    #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
+    headers={'Authorization': 'Bearer ' + token}
+    print(headers)
+    print(server_url)
+    data = requests.get(server_url,headers=headers)
+    print(data.status_code)
+    if data.status_code<300:
+        print(json.dumps(data.json(), indent=2))
 
 # Token not used in this sample as the gneerateprofile API is open
 def generate_profile(token=None):
@@ -302,13 +312,13 @@ def make_prequalification_request(token=None):
         dataexport = []
         for index, row in df_portfolio.iterrows():
             t = pendulum.parse(str(row['timestamp']), tz="Europe/Oslo")
-            dataexport.append({"timestamp": t.in_tz("UTC").to_iso8601_string(),
+            dataexport.append({"period_from": t.in_tz("UTC").to_iso8601_string(),
                                'type': 'Power', 'value': row['Portfolio']})
         return dataexport
 
     server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
     headers={'Authorization': 'Bearer ' + token}
-    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-b2e4007aa523_",
+    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-sdfsfdsfs_",
              'asset_list':asset_list,'meter_data':prepare_meterdata()}
     data = requests.post(server_url,headers=headers, json=payload)
     print(data.status_code)
@@ -316,7 +326,7 @@ def make_prequalification_request(token=None):
         print(json.dumps(data.json(), indent=2))
 
 def process_offer(api_conn):
-    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-b2e4007aa523",}
+    payload={'product_offer_id':"e522e465-98f2-4f86-8ab1-b30e00840464",}
     success, returned_data, status_code, error_msg = api_conn.exec_post_url(
         '/api/flexibility/prequalification/processoffer/', payload)
 
@@ -343,15 +353,16 @@ def load_samples(api_conn):
     FlexibilityQaApi.load_grouped_meterdata(api_conn, [14,15])
 
 if __name__ == '__main__':
-    init_api()
+    api_conn_basic=init_api()
     env = environ.Env()
     token=get_access_token()
     #make_prequalification_request(token)
     #generate_profile(token)
-    check_prequalification(token)
+    #check_prequalification(token)
+    #check_prequalification_from_key(token, 1)
     edesk_base_url = env.str('ENERGYDESK_URL')
-    api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
-    #process_offer(api_conn)
+    #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
+    process_offer(api_conn_basic)
     #register_prequal(api_conn)
     #api_conn = init_api()
     #load_samples(api_conn)

@@ -100,6 +100,7 @@ class PrequalificationStatusEnums(Enum):
     PASSED = 2
     FAILED = 3
     DISALLOWED = 4
+    REMOVED = 5
 
 
 def prequal_status_description(x):
@@ -107,7 +108,8 @@ def prequal_status_description(x):
         PrequalificationStatusEnums.PENDING: "Pending Prequalification",
         PrequalificationStatusEnums.PASSED: "Passed Prequalification",
         PrequalificationStatusEnums.FAILED: "Failed initially but may retry",
-        PrequalificationStatusEnums.DISALLOWED: "Conclusion of not allowing qualification"
+        PrequalificationStatusEnums.DISALLOWED: "Conclusion of not allowing qualification",
+        PrequalificationStatusEnums.REMOVED: "Entry that has been removed"
     }[x]
 
 
