@@ -182,8 +182,8 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def upsert_rolling_product(api_connection, product: RollingProduct):
-        payload=product.__dict__
+    def upsert_rolling_product(api_connection, products: RollingProduct | list[RollingProduct]):
+        payload = products.__dict__ if isinstance(products, RollingProduct) else [product.__dict__ for product in products]
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/rollingproducts/', payload)
         return success, json_res, status_code, error_msg
 
