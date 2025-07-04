@@ -21,7 +21,7 @@ class TradingDayCheck:
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"Holidays: {self._holidays_set}")
 
-    def is_non_trading_day(self, target_date: date, market_place: MarketPlaceEnum, market: MarketEnum) -> bool:
+    def is_non_trading_day(self, target_date: date, market_place: MarketPlaceEnum, market: Optional[MarketEnum]) -> bool:
         return TradingDayCheck._is_weekend(target_date) or HolidayKey(market_place, market, target_date) in self._holidays_set  or HolidayKey(market_place, None, target_date) in self._holidays_set
 
     @staticmethod
