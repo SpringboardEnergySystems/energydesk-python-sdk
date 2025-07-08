@@ -103,6 +103,13 @@ class FlexibilityPrequalifyApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def buy_prequalified_offers(api_conn, product_offer_id):
+        payload = {'product_offer_id': product_offer_id }
+        success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+            '/api/flexibility/prequalification/buyprequalifiedoffers/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def upsert_prequal_bidquality(api_connection, data: FlexPrequalBidTest):
         logger.debug("Upserting flex prequalif")
         payload = json.loads(data.json)
