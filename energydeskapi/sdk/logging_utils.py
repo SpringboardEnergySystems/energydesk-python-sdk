@@ -1,6 +1,7 @@
 import environ
 import logging
 import os
+import environ
 from dataclasses import dataclass
 from logging.handlers import TimedRotatingFileHandler
 #from logstash_async.handler import AsynchronousLogstashHandler
@@ -15,6 +16,7 @@ class LogstashConfig:
     port : int
     appname: str = "pod1"
     environment: str = "dev"
+
 
 
 def get_environment_value(parameter, default):
@@ -103,5 +105,14 @@ def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_l
 
 
 
-
+# Just to make setup simpler with some standardized env names
+def create_logstash_from_environment():
+    env=environ.Env()
+    host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
+    port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")
+    app = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
+    e = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
+    if host or port is None:
+        return None
+    return LogstashConfig(host, port, app, e)
 
