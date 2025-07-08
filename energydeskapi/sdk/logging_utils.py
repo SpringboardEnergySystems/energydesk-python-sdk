@@ -2,13 +2,12 @@ import environ
 import logging
 import os
 import environ
-from dataclasses import dataclass
 from logging.handlers import TimedRotatingFileHandler
-#from logstash_async.handler import AsynchronousLogstashHandler
-#from logstash_async.formatter import LogstashFormatter
+from dataclasses import dataclass
 from energydeskapi.sdk.common_utils import load_class_from_string
 logger = logging.getLogger(__name__)
 
+import socket
 
 @dataclass(frozen=True)
 class LogstashConfig:
@@ -28,6 +27,10 @@ def get_environment_value(parameter, default):
 
 def get_logfile_format(servicetag):
     format="%(asctime)s srv_" + servicetag + " %(name)-12s %(levelname)-8s %(message)s"
+    return format
+
+def get_logstash_format():
+    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
     return format
 
 def get_consolelog_format():
@@ -56,7 +59,7 @@ def get_loglevel_to_str(level):
         return "ERROR"
     return "INFO"
 
-def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_level=logging.INFO, enable_logstash_conf:LogstashConfig=None):
+def setup_service_logging(servicetag: str, file_level=logging.INFO, console_level=logging.INFO, enable_logstash_conf:LogstashConfig=None):
     console_level=get_loglevel_from_str(get_environment_value("OVERRIDE_CONSOLE_LOGLEVEL", get_loglevel_to_str(console_level)))
     file_level=get_loglevel_from_str(get_environment_value("OVERRIDE_FILE_LOGLEVEL", get_loglevel_to_str(file_level)))
 
@@ -66,6 +69,12 @@ def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_l
         console.setFormatter(formatter_console)
         console.setLevel(console_level)
         return console
+
+    def create_tcp_handler(host, port):
+        handler_class = load_class_from_string("logstash.TCPLogstashHandler")
+        handler=handler_class(host, port, version=1)
+        handler.setLevel(console_level)
+        return handler
 
     def create_file_handler() -> TimedRotatingFileHandler:
         try:
@@ -77,37 +86,19 @@ def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_l
         formatter_file = logging.Formatter(get_logfile_format(servicetag))
         filelogger.setFormatter(formatter_file)
         return filelogger
-
     file_handler = create_file_handler()
     console_handler = create_console_handler()
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
     print(f"file_handler: {file_handler}")
     print(f"console_handler: {console_handler}")
-    handlers=[file_handler, console_handler]
-
-    # Must install logstash with pip before setting this
-    if False:#enable_logstash_conf is not None:
-        # Configure Logstash handler
-        host = enable_logstash_conf.host  # Your Logstash host
-        port = enable_logstash_conf.port  # The port Logstash is listening on
-        c1=load_class_from_string("logstash_async.handler.AsynchronousLogstashHandler")
-        logstash_handler = c1(host, port, database_path='logstash_events.db')
-        c2=load_class_from_string("logstash_async.formatter.LogstashFormatter")
-        # Optional: Configure a Logstash formatter for structured logging
-        logstash_formatter = c2(
-            message_type='python-logstash',
-            extra_prefix='dev',
-            extra=dict(application=enable_logstash_conf.appname, environment=enable_logstash_conf.environment)
-        )
-        logstash_handler.setFormatter(logstash_formatter)
-        handlers.append(logstash_handler)
     if enable_logstash_conf is not None:
-        # Configure Logstash handler
-        host = enable_logstash_conf.host  # Your Logstash host
-        port = enable_logstash_conf.port  # The port Logstash is listening on
-        c1=load_class_from_string("llogstash.TCPLogstashHandler")
-        handlers.append(c1(host, port, version=1))
-    logging.basicConfig(force=True, level=min(console_level, file_level),  handlers=handlers)
-
+        tcp_handler = create_tcp_handler(enable_logstash_conf.host, enable_logstash_conf.port)
+        print(f"tcp_handler: {tcp_handler}")
+        logger.addHandler(tcp_handler)
 
 
 # Just to make setup simpler with some standardized env names
