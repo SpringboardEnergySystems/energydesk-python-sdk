@@ -17,6 +17,9 @@ class FlexMarketOffer:
     description: str  # URL
     seller_name: str # URL
     grid_node_name: str # URL
+    period_from:str
+    period_until:str
+    availability_price:float
     offered_flexibility: dict
     @property
     def __dict__(self):
