@@ -72,7 +72,7 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
 
     def create_tcp_handler(host, port):
         handler_class = load_class_from_string("logstash.TCPLogstashHandler")
-        handler=handler_class(host, port, version=1)
+        handler=handler_class(host, port, version=1, tags= [enable_logstash_conf.appname,enable_logstash_conf.environment],)
         handler.setLevel(console_level)
         return handler
 
