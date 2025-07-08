@@ -85,7 +85,7 @@ def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_l
     handlers=[file_handler, console_handler]
 
     # Must install logstash with pip before setting this
-    if enable_logstash_conf is not None:
+    if False:#enable_logstash_conf is not None:
         # Configure Logstash handler
         host = enable_logstash_conf.host  # Your Logstash host
         port = enable_logstash_conf.port  # The port Logstash is listening on
@@ -100,7 +100,12 @@ def setup_service_logging(servicetag: str, file_level=logging.WARNING, console_l
         )
         logstash_handler.setFormatter(logstash_formatter)
         handlers.append(logstash_handler)
-
+    if enable_logstash_conf is not None:
+        # Configure Logstash handler
+        host = enable_logstash_conf.host  # Your Logstash host
+        port = enable_logstash_conf.port  # The port Logstash is listening on
+        c1=load_class_from_string("llogstash.TCPLogstashHandler")
+        handlers.append(c1(host, port, version=1))
     logging.basicConfig(force=True, level=min(console_level, file_level),  handlers=handlers)
 
 
