@@ -112,7 +112,7 @@ def create_logstash_from_environment():
     port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")
     app = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
     e = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
-    if host or port is None:
+    if host is None or port is None:
         return None
     return LogstashConfig(host, port, app, e)
 
