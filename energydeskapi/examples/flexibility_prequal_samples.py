@@ -267,8 +267,8 @@ def check_requests(api_conn):
         print(req['quality_measure'])
 
 def check_prequalification(token=None):
-    server_url = "https://elvia.energydesk.no/appserver/api/flexibility/prequalification/requests/embedded/"
-    server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
+    server_url = "https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/requests/embedded/"
+    #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
     headers={'Authorization': 'Bearer ' + token}
     print(headers)
     print(server_url)
@@ -312,13 +312,14 @@ def make_prequalification_request(token=None):
         dataexport = []
         for index, row in df_portfolio.iterrows():
             t = pendulum.parse(str(row['timestamp']), tz="Europe/Oslo")
-            dataexport.append({"period_from": t.in_tz("UTC").to_iso8601_string(),
+            dataexport.append({"periodFrom": t.in_tz("UTC").to_iso8601_string(),
                                'type': 'Power', 'value': row['Portfolio']})
         return dataexport
 
     server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
+    server_url = "https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/makerequest/"
     headers={'Authorization': 'Bearer ' + token}
-    payload={'product_offer_id':"bcf1c4ff-7fdd-40c9-9d71-sdfsfdsfs_",
+    payload={'product_offer_id':"456rr-7fdd-40c9-9d71-sdfsfdsfs_",
              'asset_list':asset_list,'meter_data':prepare_meterdata()}
     data = requests.post(server_url,headers=headers, json=payload)
     print(data.status_code)
@@ -356,13 +357,13 @@ if __name__ == '__main__':
     api_conn_basic=init_api()
     env = environ.Env()
     token=get_access_token()
-    #make_prequalification_request(token)
+    make_prequalification_request(token)
     #generate_profile(token)
     #check_prequalification(token)
-    #check_prequalification_from_key(token, 1)
+    #check_prequalification_from_key(token, 7)
     edesk_base_url = env.str('ENERGYDESK_URL')
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
-    process_offer(api_conn_basic)
+    #process_offer(api_conn_basic)
     #register_prequal(api_conn)
     #api_conn = init_api()
     #load_samples(api_conn)

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class FlexOrderStatusEnums(Enum):
     OPEN = 1
     PARTIAL_FILL = 2
