@@ -103,8 +103,8 @@ class FlexibilityPrequalifyApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def buy_prequalified_offers(api_conn, product_offer_id):
-        payload = {'product_offer_id': product_offer_id }
+    def buy_prequalified_offers(api_conn):
+        payload = {}
         success, returned_data, status_code, error_msg = api_conn.exec_post_url(
             '/api/flexibility/prequalification/buyprequalifiedoffers/', payload)
         return success, returned_data, status_code, error_msg
