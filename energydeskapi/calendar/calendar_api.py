@@ -24,7 +24,7 @@ def holiday_hook(json_dict):
         elif key in ["market_place"]:
             return MarketPlaceEnum(value)
         elif key in ["market"]:
-            return MarketEnum(value)
+            return MarketEnum(value) if value is not None else None
         else:
             return value
     return {key: convert_item(key, value) for (key, value) in json_dict.items()}
