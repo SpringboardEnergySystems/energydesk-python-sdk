@@ -1,13 +1,16 @@
 
 from energydeskapi.sdk.logging_utils import create_logstash_from_environment, LogstashConfig, setup_service_logging
 import logging
-
+import environ
+logger = logging.getLogger(__name__)
 
 
 
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
-    cf=LogstashConfig("elk.energydesk.no", 5000, "energydesk", "dev")
-    setup_service_logging("heinz",enable_logstash_conf= cf)
-    logger = logging.getLogger("heinz")
-    logger.info("Hei på deg")
+    env = environ.Env()
+    cf=create_logstash_from_environment()
+    setup_service_logging(__name__,enable_logstash_conf= cf)
+
+    logger.info("Test output")
+    logger.info("Enda en test")
