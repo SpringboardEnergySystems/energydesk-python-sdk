@@ -1,6 +1,5 @@
 from typing import Union
 
-from kafka.protocol.message import Message
 from kafka.record.abc import ABCRecord
 
 
