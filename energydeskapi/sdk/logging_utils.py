@@ -75,7 +75,7 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
     def create_tcp_handler(host, port):
         env = environ.Env()
         loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
-        handler_class = load_class_from_string("logstash.TCPLogstashHandler")
+        handler_class = load_class_from_string("logstash.TCPLogstashHandler") #pip install python-logstash before enabling this
         handler=handler_class(host, port, version=1, tags= [enable_logstash_conf.customer,enable_logstash_conf.environment, enable_logstash_conf.appname],)
         handler.setLevel(get_loglevel_from_str(loglev))
         return handler
