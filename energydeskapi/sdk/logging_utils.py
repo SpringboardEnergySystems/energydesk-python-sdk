@@ -62,7 +62,6 @@ def get_loglevel_to_str(level):
     return "INFO"
 
 def setup_service_logging(servicetag: str, file_level=logging.INFO, console_level=logging.INFO, enable_logstash_conf:LogstashConfig=None):
-    print("SETTING UP SERVICE LOGGING",servicetag, enable_logstash_conf)
     console_level=get_loglevel_from_str(get_environment_value("OVERRIDE_CONSOLE_LOGLEVEL", get_loglevel_to_str(console_level)))
     file_level=get_loglevel_from_str(get_environment_value("OVERRIDE_FILE_LOGLEVEL", get_loglevel_to_str(file_level)))
 
