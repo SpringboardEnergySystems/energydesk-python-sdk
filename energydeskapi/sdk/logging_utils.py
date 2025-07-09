@@ -108,12 +108,16 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
 # Just to make setup simpler with some standardized env names
 def create_logstash_from_environment():
     env=environ.Env()
+    enabled = False if "LOGSTASH_ENABLED" not in env else env.bool("LOGSTASH_ENABLED")
     host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
     port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")
     cust_name = "" if "LOGSTASH_CLIENT_CUSTOMER" not in env else env.str("LOGSTASH_CLIENT_CUSTOMER")
     app_name = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
     env_name = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
     if host is None or port is None:
+        return None
+    # Even if host and port is set, one may still disable certain deployments temporatily
+    if not enabled:
         return None
     return LogstashConfig(host, port, cust_name, env_name, app_name)
 
