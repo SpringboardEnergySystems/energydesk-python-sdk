@@ -1,3 +1,5 @@
+from typing import Optional
+
 import environ
 import logging
 import os
@@ -90,20 +92,17 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
         formatter_file = logging.Formatter(get_logfile_format(servicetag))
         filelogger.setFormatter(formatter_file)
         return filelogger
+
+    def valid_handlers(handlers_with_possible_none: list[Optional[logging.Handler]]) -> list[logging.Handler]:
+        return [h for h in handlers_with_possible_none if h is not None]
+
     file_handler = create_file_handler()
     console_handler = create_console_handler()
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-
+    tcp_handler = create_tcp_handler(enable_logstash_conf.host, enable_logstash_conf.port) if enable_logstash_conf is not None else None
     print(f"file_handler: {file_handler}")
     print(f"console_handler: {console_handler}")
-    if enable_logstash_conf is not None:
-        tcp_handler = create_tcp_handler(enable_logstash_conf.host, enable_logstash_conf.port)
-        print(f"tcp_handler: {tcp_handler}")
-        logger.addHandler(tcp_handler)
-
+    print(f"tcp_handler: {tcp_handler}")
+    logging.basicConfig(force=True, level=min(console_level, file_level), handlers=valid_handlers([console_handler, file_handler, tcp_handler]))
 
 # Just to make setup simpler with some standardized env names
 def create_logstash_from_environment():
