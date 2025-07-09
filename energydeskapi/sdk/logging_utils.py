@@ -13,8 +13,10 @@ import socket
 class LogstashConfig:
     host: str
     port : int
+    customer: str= "cust1"
+    environment: str = "dev1"
     appname: str = "pod1"
-    environment: str = "dev"
+
 
 
 
@@ -71,9 +73,11 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
         return console
 
     def create_tcp_handler(host, port):
+        env = environ.Env()
+        loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
         handler_class = load_class_from_string("logstash.TCPLogstashHandler")
-        handler=handler_class(host, port, version=1, tags= [enable_logstash_conf.appname,enable_logstash_conf.environment],)
-        handler.setLevel(console_level)
+        handler=handler_class(host, port, version=1, tags= [enable_logstash_conf.customer,enable_logstash_conf.environment, enable_logstash_conf.appname],)
+        handler.setLevel(get_loglevel_from_str(loglev))
         return handler
 
     def create_file_handler() -> TimedRotatingFileHandler:
@@ -106,9 +110,10 @@ def create_logstash_from_environment():
     env=environ.Env()
     host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
     port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")
-    app = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
-    e = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
+    cust_name = "" if "LOGSTASH_CLIENT_CUSTOMER" not in env else env.str("LOGSTASH_CLIENT_CUSTOMER")
+    app_name = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
+    env_name = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
     if host is None or port is None:
         return None
-    return LogstashConfig(host, port, app, e)
+    return LogstashConfig(host, port, cust_name, env_name, app_name)
 
