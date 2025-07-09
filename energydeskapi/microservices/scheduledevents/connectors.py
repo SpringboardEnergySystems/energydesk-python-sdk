@@ -57,10 +57,10 @@ def connect_to_kafka(client_id, subscribers=[], async_listening=False):
         logger.info("Connected to Kafka with async modus {}".format(async_listening))
         kafka_client = kafkacli
         if async_listening:
-            t=Thread(target=kafkacli.start_listener)
+            t=Thread(target=kafkacli.start_listener, args=(5, 1800000, async_listening,))
             t.start()
         else:
-            kafkacli.start_listener()
+            kafkacli.start_listener(handler_pool_size=5, max_poll_interval_ms=1800000, async_listening=async_listening)
     else:
         logger.error("Could not connect to Kafka.  Scheduler *may* need a reconfiguration/restart")
         os._exit(1)
