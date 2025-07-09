@@ -86,23 +86,33 @@ class KafkaClient(EventClient):
             logger.info("Closing producer connection and waiting for it to close..")
             self.producer.close()
 
-    def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000):
+    def start_listener(self,handler_pool_size=5, max_poll_interval_ms=1800000, async_listening=False):
         logger.info("********** In listener **********")
         self._stop_listener = False
         try:
-            pool = ThreadPoolExecutor(max_workers=handler_pool_size)
             logger.info("Entering listener loop. Connecting subscribers.")
-            self.connecnt_subscribers(self.kafka_topics)
+            self.connecnt_subscribers(self.kafka_topics, poll_interval=max_poll_interval_ms)
+            if async_listening:
+                logger.info("Reading messages from polling " + str(self.consumer))
             while not self._stop_listener:
                 try:
-                    # Changed to non blocking making thread management more robust when shutting down gracefulley
-                    records = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
-                    for topic_partition, messages in records.items():
-                        for message in messages:
+                    if async_listening:
+                        # Changed to non blocking making thread management more robust when shutting down gracefulley
+                        records = self.consumer.poll(timeout_ms=100)  # Non-blocking call with a timeout
+                        for topic_partition, messages in records.items():
+                            for message in messages:
+                                msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
+                                content, decoded_headers = decode_message(message)
+                                logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
+                                self.handle_callback(message.topic, content, decoded_headers)
+                    else:
+                        logger.info("**************. Reading messages from blocking " + str(self.consumer))
+                        for message in self.consumer:
                             msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
                             content, decoded_headers = decode_message(message)
                             logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
                             self.handle_callback(message.topic, content, decoded_headers)
+
                 except Exception as e:
                     logger.warning("Error in subscriber " + str(e))
                     time.sleep(30)

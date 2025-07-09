@@ -106,3 +106,19 @@ def dict_compare(d1, d2, ignore_fields=[]):
     same = set(o for o in shared_keys if d1[o] == d2[o])
     return added, removed, modified, same
 
+
+import importlib
+
+def load_class_from_string(full_class_string):
+    """
+    Dynamically loads a class from a string representation.
+    e.g., "my_package.my_module.MyClass"
+    """
+    try:
+        module_path, class_name = full_class_string.rsplit('.', 1)
+        module = importlib.import_module(module_path)
+        class_obj = getattr(module, class_name)
+        return class_obj
+    except (ImportError, AttributeError) as e:
+        print(f"Error loading class '{full_class_string}': {e}")
+        return None

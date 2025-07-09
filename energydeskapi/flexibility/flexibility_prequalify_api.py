@@ -17,6 +17,9 @@ class FlexMarketOffer:
     description: str  # URL
     seller_name: str # URL
     grid_node_name: str # URL
+    period_from:str
+    period_until:str
+    availability_price:float
     offered_flexibility: dict
     @property
     def __dict__(self):
@@ -100,6 +103,22 @@ class FlexibilityPrequalifyApi:
         payload = {'product_offer_id': product_offer_id }
         success, returned_data, status_code, error_msg = api_conn.exec_post_url(
             '/api/flexibility/prequalification/processoffer/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def update_signed_contract(api_conn, product_offer_id):
+        payload = {'product_offer_id': product_offer_id }
+        success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+            '/api/flexibility/prequalification/signedcontract/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def buy_prequalified_offers(api_conn, specific_offer_id=None):
+        payload = {}
+        if specific_offer_id is not None:
+            payload['product_offer_id'] = specific_offer_id
+        success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+            '/api/flexibility/prequalification/buyprequalifiedoffers/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
