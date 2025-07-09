@@ -106,7 +106,7 @@ class KafkaClient(EventClient):
                                 logger.debug(f"Received content on {message.topic} with headers {decoded_headers}")
                                 self.handle_callback(message.topic, content, decoded_headers)
                     else:
-                        logger.info("Reading messages from blocking " + str(self.consumer))
+                        logger.info("**************. Reading messages from blocking " + str(self.consumer))
                         for message in self.consumer:
                             msg_timestamp = datetime.fromtimestamp(message.timestamp / 1e3)
                             content, decoded_headers = decode_message(message)
