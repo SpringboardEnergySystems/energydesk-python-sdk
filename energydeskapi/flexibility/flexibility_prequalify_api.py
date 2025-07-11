@@ -89,6 +89,12 @@ class FlexibilityPrequalifyApi:
         if json_res is None:
             return None
         return json_res
+    @staticmethod
+    def get_prequal_offers_embedded(api_connection,  parameters={}):
+        json_res = api_connection.exec_get_url('/api/flexibility/prequalification/productoffers/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def upsert_offers(api_connection, data: FlexMarketOffer):

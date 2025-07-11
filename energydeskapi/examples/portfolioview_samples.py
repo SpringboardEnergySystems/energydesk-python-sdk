@@ -8,6 +8,7 @@ from energydeskapi.portfolios.portfolio_api import PortfoliosApi
 import pandas as pd
 from energydeskapi.types.market_enum_types import CommodityTypeEnum
 from energydeskapi.types.contract_enum_types import ContractTypeEnum
+import json
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -34,6 +35,28 @@ def get_period_view(api_conn):
     #df['GWh'] = df['netvol'] / 1000
     print(df)
     #print(df['asset'].unique().tolist())
+
+def get_position_view(api_conn):
+    groupby=PortfolioViewsApi.get_position_view_groupby_fields(api_conn)
+    print(groupby)
+
+    parameters=\
+        {'portfolio': "36",
+         "view_currency":"EUR",
+         "groupby__in": ['counterpart','blocksize_category','instrument'],
+         }
+    print(parameters)
+    res=PortfolioViewsApi.get_position_view(api_conn, parameters)
+
+    for row in res:
+        print(json.dumps(row, indent=2))
+
+    return
+
+    v, df = PortfolioViewsApi.get_period_view_df(api_conn, parameters)
+    #jsondata=PortfolioViewsApi.get_position_view(api_conn, parameters)
+    print(df)
+
 
 def get_period_view_test(api_conn):
     ut=PortfoliosApi.get_portfolios_embedded(api_conn)
@@ -62,4 +85,4 @@ def get_product_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_product_view(api_conn)
+    get_position_view(api_conn)
