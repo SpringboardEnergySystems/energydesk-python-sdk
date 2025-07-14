@@ -111,7 +111,7 @@ def dict_compare(d1, d2, ignore_fields=[]):
 
 import importlib
 
-def load_class_from_string(full_class_string):
+def load_class_from_string(full_class_string: str) -> Any:
     """
     Dynamically loads a class from a string representation.
     e.g., "my_package.my_module.MyClass"
