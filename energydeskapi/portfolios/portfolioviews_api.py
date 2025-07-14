@@ -31,6 +31,23 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
+    def get_position_view(api_connection, parameters={}):
+        logger.info("Fetching position view" +  str(parameters))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/positionview/', parameters)
+        if json_res is None:
+            return None
+        view_data = json_res['view_data']
+        return  view_data
+
+    @staticmethod
+    def get_position_view_groupby_fields(api_connection, parameters={}):
+        logger.info("Fetching position view" +  str(parameters))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/positionview/groupbyfields/', parameters)
+        if json_res is None:
+            return None
+        return  json_res
+
+    @staticmethod
     def get_product_view_df(api_connection, parameters={}):
         """Fetches specific product view
 

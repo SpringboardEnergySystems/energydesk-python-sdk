@@ -2,6 +2,7 @@ import environ
 import requests
 import logging, pendulum
 import os
+from os.path import join, dirname
 from matplotlib.pyplot import *
 from energydeskapi.types.asset_enum_types import AssetCategoryEnum
 from energydeskapi.flexibility.flexibility_prequalify_api import FlexibilityPrequalifyApi
@@ -315,11 +316,15 @@ def make_prequalification_request(token=None):
             dataexport.append({"periodFrom": t.in_tz("UTC").to_iso8601_string(),
                                'type': 'Power', 'value': row['Portfolio']})
         return dataexport
-
+    current_dir=dirname(__file__)
+    docpath = join(current_dir, 'hflex.csv')
+    data=open(docpath,"r").read()
+    print(data)
+    return []
     server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
     server_url = "https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/makerequest/"
     headers={'Authorization': 'Bearer ' + token}
-    payload={'product_offer_id':"456rr-7fdd-40c9-9d71-sdfsfdsfs_",
+    payload={'product_offer_id':"Abildsø-275 for Oct25-Mar26_chunk_1",
              'asset_list':asset_list,'meter_data':prepare_meterdata()}
     data = requests.post(server_url,headers=headers, json=payload)
     print(data.status_code)
@@ -351,15 +356,25 @@ def check_prequalification_requests(token=None):
         #print(data.status_code)
 from energydeskapi.flexibility.flexibility_qa_api import FlexibilityQaApi
 def load_samples(api_conn):
-    FlexibilityQaApi.load_grouped_meterdata(api_conn, [14,15])
+    FlexibilityPrequalifyApi.load_grouped_meterdata(api_conn, [14,15])
+
+def load_offer(api_conn):
+    res=FlexibilityPrequalifyApi.get_prequal_requests_embedded(api_conn, {'status':'FAILED'})
+    #print(res)
+    d=res['results']
+    for det in d:
+        print(det['prequalification_bidquality'][0].keys())
 
 if __name__ == '__main__':
     api_conn_basic=init_api()
-    env = environ.Env()
+    #load_offer(api_conn_basic)
+
+    #env = environ.Env()
     token=get_access_token()
     make_prequalification_request(token)
     #generate_profile(token)
-    #check_prequalification(token)
+    check_prequalification(token)
+    sys.exit(0)
     #check_prequalification_from_key(token, 7)
     edesk_base_url = env.str('ENERGYDESK_URL')
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
