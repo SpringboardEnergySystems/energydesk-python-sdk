@@ -1,5 +1,7 @@
 import logging
 from os.path import join, dirname
+from typing import Optional, TypeVar
+
 from dotenv import load_dotenv
 import environ
 import json
@@ -122,3 +124,7 @@ def load_class_from_string(full_class_string):
     except (ImportError, AttributeError) as e:
         print(f"Error loading class '{full_class_string}': {e}")
         return None
+
+T = TypeVar('T')
+def optional_to_list(optional: Optional[T]) -> list[T]:
+    return [optional] if optional is not None else []
