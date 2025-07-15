@@ -54,7 +54,7 @@ class ClearingApi:
         return data
 
     @staticmethod
-    def upsert_position_reconciliation_details(api_connection: ApiConnection, reconciliation_link: str ,position_owner: str,
+    def upsert_position_reconciliation_details(api_connection: ApiConnection, reconciliation_link: str, position_owner: str,
                                                ticker: str, trading_books_ids: Optional[str],
                                                market_value: Optional[float], hours: Optional[float], avgprice: Optional[float],
                                                netpos: float, buypos: float, sellpos: float, netvol: float, matched: bool):
