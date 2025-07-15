@@ -1,8 +1,13 @@
 import json
 import logging
+from typing import Optional
+
 import pandas as pd
 
 import ast
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 #  Change
 class ClearingApi:
@@ -49,11 +54,13 @@ class ClearingApi:
         return data
 
     @staticmethod
-    def upsert_position_reconciliation_details(api_connection, reconciliation_link,position_owner, ticker, trading_books_ids, market_value, hours, avgprice, netpos, buypos, sellpos, matched):
+    def upsert_position_reconciliation_details(api_connection: ApiConnection, reconciliation_link: str ,position_owner: str,
+                                               ticker: str, trading_books_ids: Optional[str],
+                                               market_value: Optional[float], hours: Optional[float], avgprice: Optional[float],
+                                               netpos: float, buypos: float, sellpos: float, netvol: float, matched: bool):
         logger.info("Storing clearing reconciliation (internal product view  reconciliation)")
         payload = {"clearing_reconciliation_positions": reconciliation_link,'position_owner':position_owner,
-                   "ticker": ticker,"netpos": netpos, "buypos": buypos, "sellpos": sellpos, "matched": matched}
-
+                   "ticker": ticker,"netpos": netpos, "buypos": buypos, "sellpos": sellpos, "netvol": netvol, "matched": matched}
         if market_value is not None:
             payload['market_value']=market_value
         if hours is not None:
@@ -62,8 +69,7 @@ class ClearingApi:
             payload['avgprice']=avgprice
         if trading_books_ids is not None:
             payload['trading_books_ids'] = trading_books_ids
-
-        logger.info(payload)
+        logger.info(f"Upserting position reconciliation details {payload}")
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/reconciliation/positiondetails', payload)
         return success, json_res, status_code, error_msg
 
