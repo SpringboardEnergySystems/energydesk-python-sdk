@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+
+from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
@@ -869,7 +871,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
 
-    def generate_second_leg_contract(api_connection, contract, external_tb):
+    def generate_second_leg_contract(api_connection: ApiConnection, contract, external_tb):
         """Generate a second leg contract for internal trades
         
         :param api_connection: class with API token for use with API
@@ -888,7 +890,7 @@ class ContractsApi:
         json_res = api_connection.exec_post_url('/api/portfoliomanager/contract-secondleg/', contract_dict)
         return json_res
     
-    def generate_position_transfer_contract(api_connection, contract, exchange):
+    def generate_position_transfer_contract(api_connection: ApiConnection, contract, exchange):
         """Generate a position transfer contract
         
         :param api_connection: class with API token for use with API
@@ -899,7 +901,7 @@ class ContractsApi:
         logger.info("Generating position transfer contract")
         contract_dict=contract.get_dict(api_connection)
         try:
-            logger.debug(api_connection.get_current_token())
+            logger.debug(api_connection.get_token())
         except Exception:
             logger.debug(api_connection, "No token")
         contract_dict['exchange']= exchange
