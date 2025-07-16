@@ -216,12 +216,7 @@ class Contract:
         if self.trader is not None: dict['trader'] = self.trader
         if self.marketplace_product is not None: dict[
             'marketplace_product'] = 0
-
-        taglist = []
-        for c in self.contract_tags:
-            d = c.get_dict()
-            taglist.append(d)
-        dict['contract_tags'] = taglist
+        dict['contract_tags'] = [c.get_dict() for c in self.contract_tags]
         if len(self.otc_multi_delivery_periods) > 0:
             dict["periods"] = self.otc_multi_delivery_periods
         if len(self.certificates) > 0:
