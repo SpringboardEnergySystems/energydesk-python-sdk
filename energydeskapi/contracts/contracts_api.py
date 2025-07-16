@@ -885,7 +885,7 @@ class ContractsApi:
         json_res = api_connection.exec_post_url('/api/portfoliomanager/contract-secondleg/', contract_dict)
         return json_res
     
-    def generate_position_transfer_contract(api_connection: ApiConnection, contract, exchange):
+    def generate_position_transfer_contract(api_connection: ApiConnection, contract: Contract, exchange: int):
         """Generate a position transfer contract
         
         :param api_connection: class with API token for use with API
