@@ -1,4 +1,7 @@
 import logging
+from typing import Optional
+
+from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.customers.users_api import UsersApi, User, UserGroup, UserFeatureAccess
 from energydeskapi.customers.customers_api import CustomersApi
@@ -108,7 +111,7 @@ def del_user_feature_access(api_conn):
     result = UsersApi.delete_user_feature_access(api_conn, pk)
     print(result)
 
-def create_user(api_conn, email, first_name, last_name,company_reg):
+def create_user(api_conn: ApiConnection, email: str, first_name: str, last_name: str,company_reg: str, authentication_type: Optional[str] = None):
     u = User()
     u.username = email
     u.email = email
@@ -116,6 +119,7 @@ def create_user(api_conn, email, first_name, last_name,company_reg):
     u.last_name = last_name
     u.user_role=UserRoleEnum.RISKMANAGER.value
     u.company_registry_number=company_reg
+    u.authentication_type=authentication_type
     print(u.get_dict())
     UsersApi.create_users(api_conn, [u])
 
@@ -190,5 +194,5 @@ if __name__ == '__main__':
     #add_user_user_group(api_conn)
     #list_users_df(api_conn)
     #create_user_feature_access(api_conn)
-    create_user(api_conn, "68aa8439-c6ea-462d-8f3a-54ce1832f2b5", "IFS", last_name="Client", company_reg="976542622")
+    create_user(api_conn, "68aa8439-c6ea-462d-8f3a-54ce1832f2b5", "IFS", last_name="Client", company_reg="976542622", authentication_type="J")
     #del_user_feature_access(api_conn)
