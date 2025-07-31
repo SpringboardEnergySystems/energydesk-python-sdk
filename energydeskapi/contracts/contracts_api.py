@@ -437,7 +437,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def upsert_contract_filters(api_connection, filter):
+    def upsert_contract_filters(api_connection: ApiConnection, filter: ContractFilter) -> tuple[bool, dict, int, str]:
         """Registers/Updates contract filters
 
         :param api_connection: class with API token for use with API
@@ -456,7 +456,21 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def bulk_insert_contracts(api_connection,
+    def delete_contract_filter(api_connection: ApiConnection, pk: int) -> tuple[bool, dict, int, str]:
+        """Deletes a contract filter
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: contract filter id
+        :type pk: int
+        """
+        logger.info(f"Deleting  contract filter {pk}")
+        success, returned_data, status_code, error_msg = api_connection.exec_delete_url(
+            f"/api/portfoliomanager/contractfilters/{pk}/")
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def bulk_insert_contracts(api_connection: ApiConnection,
                           contract_list: list[Contract]):
         """Registers multiple contracts in a list. REST API does not return contracts, reducing bandwidth
 
