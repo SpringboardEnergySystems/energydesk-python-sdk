@@ -119,6 +119,20 @@ class FlexibilityPrequalifyApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def reload_portfolio_profile(api_conn, product_offer_id):
+        payload = {'product_offer_id': product_offer_id }
+        success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+            '/api/flexibility/prequalification/reloadportfolioprofile/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def recheck_offer(api_conn, product_offer_id):
+        payload = {'product_offer_id': product_offer_id }
+        success, returned_data, status_code, error_msg = api_conn.exec_post_url(
+            '/api/flexibility/prequalification/recheckoffer/', payload)
+        return success, returned_data, status_code, error_msg
+
+    @staticmethod
     def buy_prequalified_offers(api_conn, specific_offer_id=None):
         payload = {}
         if specific_offer_id is not None:
