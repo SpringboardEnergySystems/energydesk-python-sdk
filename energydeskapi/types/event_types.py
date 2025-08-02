@@ -13,6 +13,7 @@ class KafkaQueues(Enum):
     PRODUCTVIEWS_SINGLEROW = "portfolioview.productviewsinglerow"  # User directed events on single changes
     SCHEDULER_EVENTS = "system.schedulerevent"  # General Internal Event . Payload with more info
     FLEXIBILITY_SERVICES_EVENTS = "flexibility.service.events"  # General Internal Event . Payload with more info
+    PFEUPDATES = "energydeskservices.risk.varserver_pfe"
 
 class MqttTopics(Enum):
     NORDICPOWER_PRICES = "/marketdata/nordicpower/prices"
@@ -21,3 +22,5 @@ class MqttTopics(Enum):
     APPSERVER_CLEARED_CONTRACTS = "/energydeskservices/contracts/clearedcontracts"
     EXTERNAL_ERRORS = "/external/errors"
     PRODUCTVIEWS = "/portfolioview/productview"
+    PFEUPDATES = "/pfe/pfeupdates"
+  

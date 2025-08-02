@@ -1,5 +1,9 @@
 import logging
+from typing import Optional
+
 import pandas as pd
+
+from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import parse_enum_type
 import json
 from energydeskapi.sdk.common_utils import key_from_url
@@ -8,17 +12,18 @@ logger = logging.getLogger(__name__)
 
 class User:
     def __init__(self):
-        self.pk=0
-        self.username=None
-        self.email=None
-        self.first_name=None
-        self.last_name=None
-        self.alias=None
-        self.user_role = None
-        self.is_super_user=False
-        self.company=None
-        self.company_registry_number=None
-        self.password=None
+        self.pk: int =0
+        self.username: Optional[str]=None
+        self.email: Optional[str]=None
+        self.first_name: Optional[str]=None
+        self.last_name: Optional[str]=None
+        self.alias: Optional[str]=None
+        self.user_role: Optional[int] = None
+        self.is_super_user: bool=False
+        self.company: Optional[str]=None
+        self.company_registry_number: Optional[str]=None
+        self.password: Optional[str]=None
+        self.authentication_type: Optional[str]=None
 
     def get_dict(self):
         dict = {}
@@ -40,6 +45,7 @@ class User:
         if self.company is not None: dict['company'] = self.company
         if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
+        if self.authentication_type is not None: dict['authentication_type'] = self.authentication_type
         return dict
 
 class UserGroup:
@@ -297,7 +303,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def create_users(api_connection, users):
+    def create_users(api_connection: ApiConnection, users: list[User]) -> tuple[bool, dict, int, str]:
         """Creates users from payload
 
         :param api_connection: class with API token for use with API
@@ -308,7 +314,7 @@ class UsersApi:
         logger.info("Registering " + str(len(users) )+ " users")
         for user in users:
             payload=user.get_dict()
-            logging.info(f"Registering user:{payload}")
+            logging.info(f"Registering user: {payload}")
             success, json_res, status_code, error_msg=api_connection.exec_post_url('/api/customers/register-user', payload)
             if json_res is None:
                 logger.error("Problems registering user "  + user.username)

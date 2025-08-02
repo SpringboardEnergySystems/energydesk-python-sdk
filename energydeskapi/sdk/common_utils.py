@@ -1,5 +1,7 @@
 import logging
 from os.path import join, dirname
+from typing import Optional, TypeVar, Any
+
 from dotenv import load_dotenv
 import environ
 import json
@@ -109,7 +111,7 @@ def dict_compare(d1, d2, ignore_fields=[]):
 
 import importlib
 
-def load_class_from_string(full_class_string):
+def load_class_from_string(full_class_string: str) -> Any:
     """
     Dynamically loads a class from a string representation.
     e.g., "my_package.my_module.MyClass"
@@ -122,3 +124,7 @@ def load_class_from_string(full_class_string):
     except (ImportError, AttributeError) as e:
         print(f"Error loading class '{full_class_string}': {e}")
         return None
+
+T = TypeVar('T')
+def optional_to_list(optional: Optional[T]) -> list[T]:
+    return [optional] if optional is not None else []
