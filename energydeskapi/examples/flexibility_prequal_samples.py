@@ -336,8 +336,11 @@ def process_offer(api_conn):
     success, returned_data, status_code, error_msg = api_conn.exec_post_url(
         '/api/flexibility/prequalification/processoffer/', payload)
 
-
-
+def reload_portfolio_profile(api_conn,product_offer_id):
+    #payload={'product_offer_id':product_offer_id,}
+    success, returned_data, status_code, error_msg=FlexibilityPrequalifyApi.reload_portfolio_profile(api_conn,product_offer_id)
+    print(status_code)
+    print(json.dumps(returned_data, indent=2))
 def check_prequalification_requests(token=None):
     server_url="https://elvia.energydesk.no/appserver/api/flexibility/prequalification/bidqualitytest/embedded/"
     headers={'Authorization': 'Bearer ' + token}
@@ -368,7 +371,8 @@ def load_offer(api_conn):
 if __name__ == '__main__':
     api_conn_basic=init_api()
     #load_offer(api_conn_basic)
-
+    reload_portfolio_profile(api_conn_basic,"5bc8e5d4-049a-4364-8d76-b306007d8940")
+    sys.exit(0)
     #env = environ.Env()
     token=get_access_token()
     make_prequalification_request(token)
