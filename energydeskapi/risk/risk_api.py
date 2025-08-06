@@ -430,5 +430,5 @@ class RiskApi:
     @staticmethod
     def get_pfe_reports(api_connection, payload):
         logger.info("Retrieving PFE Reports")
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/pfereport/', payload)
-        return success, json_res, status_code, error_msg
+        json_result = api_connection.exec_get_url('/api/riskmanager/pfereport/latest/', payload)
+        return json_result
