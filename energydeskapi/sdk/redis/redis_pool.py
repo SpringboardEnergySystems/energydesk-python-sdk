@@ -57,7 +57,7 @@ class RedisPool:
         """
         Grab a slot (block or raise RuntimeError) and yield.
         Always frees the slot in finally block.
-        if block is set to false -> tries once and raises error if not pool is not free
+        if block is set to false -> tries once and raises error if pool is not free
         """
         token = uuid.uuid4().hex
         expiry = time.time() + self.ttl
