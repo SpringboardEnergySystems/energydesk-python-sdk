@@ -10,10 +10,8 @@ def summarize_failures(
     max_trace_chars: int = 300,
 ) -> Dict[str, Any]:
     """
-    Turn a list of cpactor failure events into a compact summary for notifications/logs.
-
+    Turn a list of failure events into a compact summary for notifications.
     Each failure dict may contain: 'job_id', 'error_type', 'error_msg', 'traceback', 'params_hash', 'attempt'
-    The function is defensive against missing keys.
     """
     total = len(failures)
     by_type_bucket: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
@@ -74,7 +72,7 @@ def _format_human_text(digest: str, by_type: List[Dict[str, Any]]) -> str:
         if t.get("sample_job_ids"):
             samples.append(f"job_ids: {', '.join(map(str, t['sample_job_ids']))}")
         if t.get("example_messages"):
-            # include only first 1–2 example messages for brevity
+            # include only first 2 example messages
             ex = t["example_messages"][:2]
             samples.append("examples: " + " | ".join(ex))
         if samples:
