@@ -37,7 +37,7 @@ class RedisPool:
     Counting pool stored in Redis.
 
     Each holder writes a member with score = expiry_ts and value = uuid token.
-    Crashed holders disappear automatically after `ttl` seconds.
+    Crashed holders disappear automatically after ttl seconds.
     """
 
     def __init__(self, name: str, limit: int, ttl: int = 60 * 30):
@@ -56,7 +56,7 @@ class RedisPool:
     def acquire(self, block: bool = True, poll: float = 1.0):
         """
         Grab a slot (`block` or raise RuntimeError) and yield.
-        Always frees the slot in the `finally` block.
+        Always frees the slot in finally block.
         """
         token = uuid.uuid4().hex
         expiry = time.time() + self.ttl
