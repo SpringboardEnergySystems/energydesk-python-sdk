@@ -77,7 +77,7 @@ def load_var_data(api_conn):
             print(data)
 
             # A very detailed set of information.
-            #data=RiskApi.get_var_calculations_embedded(api_conn, params)
+            data=RiskApi.get_var_calculations_embedded(api_conn, params)
             #print(data)
 
     # To list a history of VaR data for a given portfolio use. This will list 95 and 99 Var for all dates it has been calclated

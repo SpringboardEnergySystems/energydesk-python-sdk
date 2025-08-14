@@ -141,6 +141,15 @@ class FlexibilityPrequalifyApi:
             '/api/flexibility/prequalification/buyprequalifiedoffers/', payload)
         return success, returned_data, status_code, error_msg
 
+
+    @staticmethod
+    def upsert_longflex_requests(api_connection, gridnode_name,requested_flexiblity:dict):
+        payload={'grid_node_name':gridnode_name,
+               'requested_flexiblity':requested_flexiblity}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/flexibility/prequalification/productrequests/', payload)
+        return success, returned_data, status_code, error_msg
+
     @staticmethod
     def upsert_prequal_bidquality(api_connection, data: FlexPrequalBidTest):
         logger.debug("Upserting flex prequalif")
