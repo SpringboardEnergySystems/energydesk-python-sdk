@@ -143,6 +143,14 @@ class FlexibilityPrequalifyApi:
 
 
     @staticmethod
+    def check_gridnode_status(api_connection, gridnode_name):
+        payload={'grid_node_name':gridnode_name}
+        success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            '/api/flexibility/prequalification/gridnodestatus/', payload)
+        return success, returned_data, status_code, error_msg
+
+
+    @staticmethod
     def upsert_longflex_requests(api_connection, gridnode_name,requested_flexiblity:dict):
         payload={'grid_node_name':gridnode_name,
                'requested_flexiblity':requested_flexiblity}

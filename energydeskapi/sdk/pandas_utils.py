@@ -37,7 +37,7 @@ def make_empty_timeseries_df_new(period_from, period_to, pandas_res, timezone=py
     period_from = pendulum.parse(str(period_from))
     period_to = pendulum.parse(str(period_to))
 
-    generation_timezone = timezone if pandas_res != "H" else pytz('UTC')
+    generation_timezone = timezone if pandas_res != "H" else pytz.timezone("UTC")
     period_from = period_from.in_tz(generation_timezone)
     period_to = period_to.in_tz(generation_timezone)
 

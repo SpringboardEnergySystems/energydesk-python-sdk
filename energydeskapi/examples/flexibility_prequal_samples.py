@@ -278,6 +278,12 @@ def check_prequalification(token=None):
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
 
+def check_gridnode_status(api_conn, grid_node_name="Bagn"):
+    success, returned_data, status_code, error_msg=FlexibilityPrequalifyApi.check_gridnode_status(api_conn, grid_node_name)
+    print(success, status_code)
+    df=pd.DataFrame(returned_data['grid_node_status'])
+    print(df)
+
 def check_prequalification_from_key(token=None, key=0):
     server_url = f"http://127.0.0.1:8001/api/flexibility/prequalification/requests/{key}/"
     #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
@@ -371,13 +377,15 @@ def load_offer(api_conn):
 if __name__ == '__main__':
     api_conn_basic=init_api()
     #load_offer(api_conn_basic)
-    reload_portfolio_profile(api_conn_basic,"5bc8e5d4-049a-4364-8d76-b306007d8940")
+    #reload_portfolio_profile(api_conn_basic,"5bc8e5d4-049a-4364-8d76-b306007d8940")
+    #process_offer(api_conn_basic)
+    check_gridnode_status(api_conn_basic, "Dal")
     sys.exit(0)
     #env = environ.Env()
     token=get_access_token()
-    make_prequalification_request(token)
+    #make_prequalification_request(token)
     #generate_profile(token)
-    check_prequalification(token)
+    #check_prequalification(token)
     sys.exit(0)
     #check_prequalification_from_key(token, 7)
     edesk_base_url = env.str('ENERGYDESK_URL')
