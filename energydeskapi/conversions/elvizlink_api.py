@@ -15,7 +15,7 @@ class ElvizLinksApi:
 
     """
     @staticmethod
-    def get_company_mappings(api_connection):
+    def get_company_mappings(api_connection: ApiConnection):
         """Fetches company mappings
 
         :param api_connection: class with API token for use with API
@@ -74,7 +74,7 @@ class ElvizLinksApi:
         return True
 
     @staticmethod
-    def get_user_mappings(api_connection):
+    def get_user_mappings(api_connection: ApiConnection):
         """Fetches user mappings
 
         :param api_connection: class with API token for use with API
@@ -152,7 +152,7 @@ class ElvizLinksApi:
 
 
     @staticmethod
-    def get_portfolio_mappings(api_connection):
+    def get_portfolio_mappings(api_connection: ApiConnection):
         """Fetches portfolio mappings
 
         :param api_connection: class with API token for use with API

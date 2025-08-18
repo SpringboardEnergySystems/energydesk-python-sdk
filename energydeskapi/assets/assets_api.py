@@ -261,7 +261,7 @@ class AssetsApi:
         return df
 
     @staticmethod
-    def get_asset_categories(api_connection):
+    def get_asset_categories(api_connection: ApiConnection):
         """Fetches the categories of all assets
 
         :param api_connection: class with API token for use with API
@@ -407,7 +407,7 @@ class AssetsApi:
         return df
 
     @staticmethod
-    def get_asset_subtypes(api_connection):
+    def get_asset_subtypes(api_connection: ApiConnection):
         """Fetches asset subtypes
 
         :param api_connection: class with API token for use with API

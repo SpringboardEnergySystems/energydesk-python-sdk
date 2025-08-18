@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class LoadStaticMatrices:
     
     @staticmethod
-    def get_matrices(api_connection):
+    def get_matrices(api_connection: ApiConnection):
         logger.info("Fetching matrices")
         json_res=api_connection.exec_get_url('/api/creditrisk/staticmatrix/')
         if json_res is not None:
@@ -42,7 +42,7 @@ class MatrixApi:
             return True
 
     @staticmethod
-    def get_matrices(api_connection):
+    def get_matrices(api_connection: ApiConnection):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API

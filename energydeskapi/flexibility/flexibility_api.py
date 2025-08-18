@@ -267,7 +267,7 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_lonflex_agreements(api_connection):  # NODES contracts
+    def load_lonflex_agreements(api_connection: ApiConnection):  # NODES contracts
         logger.info("Lookup flexibility potential")
         parameters = {}
         json_res = api_connection.exec_get_url('/api/flexiblepower/longflexagreements/', parameters)
@@ -436,7 +436,7 @@ class FlexibilityApi:
         return market_offerings
 
     @staticmethod
-    def get_empty_dispatch_schedule(api_connection):
+    def get_empty_dispatch_schedule(api_connection: ApiConnection):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API

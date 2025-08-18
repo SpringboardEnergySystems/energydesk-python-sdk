@@ -147,7 +147,7 @@ class CustomersApi:
         return json_res, success
 
     @staticmethod
-    def get_company_types(api_connection):
+    def get_company_types(api_connection: ApiConnection):
         """Fetches all company types in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API
@@ -158,7 +158,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_company_types_df(api_connection):
+    def get_company_types_df(api_connection: ApiConnection):
         """Fetches all company types in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API
@@ -220,7 +220,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_company_roles_df(api_connection):
+    def get_company_roles_df(api_connection: ApiConnection):
         """Fetches all company roles in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API

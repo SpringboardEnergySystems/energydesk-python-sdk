@@ -12,7 +12,7 @@ class TreasuryApi:
     """
 
     @staticmethod
-    def get_treasury_banks(api_connection):
+    def get_treasury_banks(api_connection: ApiConnection):
         """Fetches all treasury banks
 
         :param api_connection: class with API token for use with API

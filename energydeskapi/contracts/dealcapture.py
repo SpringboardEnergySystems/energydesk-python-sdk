@@ -66,7 +66,7 @@ def bilateral_dealcapture(api_conn):
         c.commodity_profile="BASELOAD"
         ContractsApi.upsert_contract(api_conn,c)
 
-def get_dealcapture_config(api_connection):
+def get_dealcapture_config(api_connection: ApiConnection):
     """Fetches dealcapture
 
     :param api_connection: class with API token for use with API

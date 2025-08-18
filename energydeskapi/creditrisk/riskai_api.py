@@ -14,7 +14,7 @@ class RiskAiApi:
     """
 
     @staticmethod
-    def get_accounts_columns(api_connection):
+    def get_accounts_columns(api_connection: ApiConnection):
         """Updates crea
 
         :param api_connection: class with API token for use with API

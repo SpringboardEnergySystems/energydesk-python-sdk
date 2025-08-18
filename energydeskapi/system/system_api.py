@@ -12,7 +12,7 @@ class SystemApi:
     """
 
     @staticmethod
-    def get_system_features(api_connection):
+    def get_system_features(api_connection: ApiConnection):
         """Fetches system features
 
         :param api_connection: class with API token for use with API
@@ -51,7 +51,7 @@ class SystemApi:
         return api_connection.get_base_url() + '/api/system/systemfeatures/' + str(pk) + "/"
 
     @staticmethod
-    def get_system_access_types(api_connection):
+    def get_system_access_types(api_connection: ApiConnection):
         """Fetches system access types
 
         :param api_connection: class with API token for use with API
@@ -94,7 +94,7 @@ class SystemApi:
 
 
     @staticmethod
-    def get_system_manager(api_connection):
+    def get_system_manager(api_connection: ApiConnection):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API

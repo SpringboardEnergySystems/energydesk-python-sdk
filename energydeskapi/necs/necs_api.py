@@ -101,7 +101,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_production_device_versions(api_connection):
+    def get_necs_production_device_versions(api_connection: ApiConnection):
         """Fetches NECS transaction bundle from pk
 
         :param api_connection: class with API token for use with API

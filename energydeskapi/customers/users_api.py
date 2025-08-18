@@ -114,7 +114,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_api_token(api_connection):
+    def get_api_token(api_connection: ApiConnection):
         """Fetches API token
 
         :param api_connection: class with API token for use with API
@@ -323,7 +323,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_user_roles_df(api_connection):
+    def get_user_roles_df(api_connection: ApiConnection):
         """Fetches all user roles and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -337,7 +337,7 @@ class UsersApi:
         return df
 
     @staticmethod
-    def get_user_groups(api_connection):
+    def get_user_groups(api_connection: ApiConnection):
         """Fetches user groups
 
         :param api_connection: class with API token for use with API
@@ -350,7 +350,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_groups_df(api_connection):
+    def get_user_groups_df(api_connection: ApiConnection):
         """Fetches user groups and displays in a dataframe
 
         :param api_connection: class with API token for use with API

@@ -457,7 +457,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def get_market_status(api_connection):
+    def get_market_status(api_connection: ApiConnection):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API

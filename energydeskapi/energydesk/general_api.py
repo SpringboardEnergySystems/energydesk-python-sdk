@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -7,7 +10,7 @@ class GeneralApi:
 
     """
     @staticmethod
-    def get_ticker_text(api_connection):
+    def get_ticker_text(api_connection: ApiConnection):
         """Fetches ticker text to flash on the front portal. This could be general price info or users custom params
 
         :param api_connection: class with API token for use with API

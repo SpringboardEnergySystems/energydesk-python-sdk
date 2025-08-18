@@ -770,7 +770,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contracts/' + str(contract_pk) + "/"
 
     @staticmethod
-    def list_contract_statuses(api_connection):
+    def list_contract_statuses(api_connection: ApiConnection):
         """Lists the statuses of contracts
 
         :param api_connection: class with API token for use with API
@@ -820,7 +820,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def list_contract_types(api_connection):
+    def list_contract_types(api_connection: ApiConnection):
         """Lists the types of contracts
 
         :param api_connection: class with API token for use with API
@@ -832,7 +832,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def list_commodity_types(api_connection):
+    def list_commodity_types(api_connection: ApiConnection):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -844,7 +844,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def list_instrument_types(api_connection):
+    def list_instrument_types(api_connection: ApiConnection):
         """Lists the types of instruments
 
         :param api_connection: class with API token for use with API

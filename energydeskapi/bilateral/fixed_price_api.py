@@ -71,7 +71,7 @@ class FixedPriceApi:
         return None
 
     @staticmethod
-    def get_avaiable_fixprice_periods(api_connection):
+    def get_avaiable_fixprice_periods(api_connection: ApiConnection):
         """Fetches pricing configurations
 
         :param api_connection: class with API token for use with API

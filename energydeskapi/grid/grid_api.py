@@ -106,7 +106,7 @@ class GridApi:
 
 
     @staticmethod
-    def get_capacity_coverage(api_connection):
+    def get_capacity_coverage(api_connection: ApiConnection):
         """Registers/Updates asset
 
         :param api_connection: class with API token for use with API

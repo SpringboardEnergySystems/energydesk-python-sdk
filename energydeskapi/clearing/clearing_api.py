@@ -216,7 +216,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_report_types(api_connection):
+    def get_clearing_report_types(api_connection: ApiConnection):
         """Fetches a list of clearing report types
 
         :param api_connection: class with API token for use with API

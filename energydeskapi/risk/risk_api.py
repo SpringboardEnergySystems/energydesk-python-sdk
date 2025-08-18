@@ -335,14 +335,14 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_marketestimators(api_connection):
+    def get_marketestimators(api_connection: ApiConnection):
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
         return json_res
 
     @staticmethod
-    def get_marketestimators_latest(api_connection):
+    def get_marketestimators_latest(api_connection: ApiConnection):
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/latest/')
@@ -402,7 +402,7 @@ class RiskApi:
 
 
     @staticmethod
-    def get_market_areas(api_connection):
+    def get_market_areas(api_connection: ApiConnection):
         """Fetches market areas from the database"""
         logger.info("Fetching market areas")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/')

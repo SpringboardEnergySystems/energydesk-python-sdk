@@ -32,7 +32,7 @@ class LocationApi:
 
     """
     @staticmethod
-    def get_main_production_area(api_connection):
+    def get_main_production_area(api_connection: ApiConnection):
         """Fetches main area of company
 
         :param api_connection: class with API token for use with API
@@ -45,7 +45,7 @@ class LocationApi:
         return None
 
     @staticmethod
-    def get_default_zones(api_connection):
+    def get_default_zones(api_connection: ApiConnection):
         """Fetches main area of company
 
         :param api_connection: class with API token for use with API
@@ -176,7 +176,7 @@ class LocationApi:
         return None if json_res is None else pd.DataFrame(data=json_res)
 
     @staticmethod
-    def get_location_types(api_connection):
+    def get_location_types(api_connection: ApiConnection):
         """Fetches all location types
 
         :param api_connection: class with API token for use with API
@@ -190,7 +190,7 @@ class LocationApi:
 
 
     @staticmethod
-    def get_location_types_df(api_connection):
+    def get_location_types_df(api_connection: ApiConnection):
         """Fetches all location types and displays in a dataframe
 
         :param api_connection: class with API token for use with API

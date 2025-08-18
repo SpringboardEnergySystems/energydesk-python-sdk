@@ -31,7 +31,7 @@ class AnnualAccountsApi:
             return True
 
     @staticmethod
-    def get_annual_accounts(api_connection):
+    def get_annual_accounts(api_connection: ApiConnection):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
@@ -95,7 +95,7 @@ class RatingApi:
             return True
 
     @staticmethod
-    def get_ratings(api_connection):
+    def get_ratings(api_connection: ApiConnection):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
@@ -158,7 +158,7 @@ class CompanyRatingApi:
             return True
 
     @staticmethod
-    def get_ratings(api_connection):
+    def get_ratings(api_connection: ApiConnection):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API

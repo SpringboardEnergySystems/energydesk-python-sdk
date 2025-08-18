@@ -16,7 +16,7 @@ class CurveApi:
     """
 
     @staticmethod
-    def get_curve_models(api_connection):
+    def get_curve_models(api_connection: ApiConnection):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -26,7 +26,7 @@ class CurveApi:
         json_res = api_connection.exec_get_url('/api/curvemanager/forwardcurvemodels/')
         return json_res
     @staticmethod
-    def get_curve_models_df(api_connection):
+    def get_curve_models_df(api_connection: ApiConnection):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
