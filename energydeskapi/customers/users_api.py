@@ -20,7 +20,7 @@ class User:
         self.alias: Optional[str]=None
         self.user_role: Optional[int] = None
         self.is_super_user: bool=False
-        self.company: Optional[str]=None
+        self.company: Optional[int]=None
         self.company_registry_number: Optional[str]=None
         self.password: Optional[str]=None
         self.authentication_type: Optional[str]=None
@@ -84,7 +84,7 @@ class UsersApi:
     """
 
     @staticmethod
-    def update_userprofile(api_connection, user):
+    def update_userprofile(api_connection: ApiConnection, user: User):
         """Updates user profiles
 
         :param api_connection: class with API token for use with API
@@ -101,7 +101,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_user_profile(api_connection):
+    def get_user_profile(api_connection: ApiConnection):
         """Fetches user profile
 
         :param api_connection: class with API token for use with API
@@ -127,7 +127,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_users_by_role(api_connection, user_role_enum):
+    def get_users_by_role(api_connection: ApiConnection, user_role_enum):
         """Fetches users from roles
 
         :param api_connection: class with API token for use with API
@@ -139,7 +139,7 @@ class UsersApi:
         return UsersApi.get_users(api_connection, {"user_role__pk": parse_enum_type(user_role_enum)})
 
     @staticmethod
-    def get_users_by_role_df(api_connection, user_role_enum):
+    def get_users_by_role_df(api_connection: ApiConnection, user_role_enum):
         """Fetches users from roles and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -151,7 +151,7 @@ class UsersApi:
 
 
     @staticmethod
-    def get_profile_by_username(api_connection, username):
+    def get_profile_by_username(api_connection: ApiConnection, username: str):
         """Fetches profile from username
 
         :param api_connection: class with API token for use with API
