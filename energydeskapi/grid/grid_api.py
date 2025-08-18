@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 import pandas as pd
 from energydeskapi.sdk.common_utils import key_from_url
@@ -60,7 +63,7 @@ class GridApi:
     """
 
     @staticmethod
-    def get_grid_map_url(api_connection, gridmap_pk):
+    def get_grid_map_url(api_connection: ApiConnection, gridmap_pk):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -72,7 +75,7 @@ class GridApi:
         return api_connection.get_base_url() + '/api/grid/gridmap/' + str(gridmap_pk) + "/"
 
     @staticmethod
-    def get_gridmaps(api_connection, parameters={}):
+    def get_gridmaps(api_connection: ApiConnection, parameters={}):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -84,7 +87,7 @@ class GridApi:
         json_res = api_connection.exec_get_url('/api/grid/gridmap', parameters)
         return json_res
     @staticmethod
-    def upsert_gridmap(api_connection, gridmap):
+    def upsert_gridmap(api_connection: ApiConnection, gridmap):
         """Registers/Updates asset
 
         :param api_connection: class with API token for use with API
@@ -120,16 +123,16 @@ class GridNodeApi:
     """
 
     @staticmethod
-    def get_grid_node_url(api_connection, gridnode_pk):
+    def get_grid_node_url(api_connection: ApiConnection, gridnode_pk):
         return api_connection.get_base_url() + '/api/grid/gridnodes/' + str(gridnode_pk) + "/"
 
     @staticmethod
-    def register_grid_node(api_connection, grid_node):
+    def register_grid_node(api_connection: ApiConnection, grid_node):
         asset_pk=AssetsApi.upsert_asset(api_connection, grid_node.asset)
 
         #return api_connection.get_base_url() + '/api/flexibility/gridnode/' + str(gridnode_pk) + "/"
     @staticmethod
-    def upsert_grid_node(api_connection, grid_node):
+    def upsert_grid_node(api_connection: ApiConnection, grid_node):
 
         logger.info("Upserting Gridnode")
         if grid_node.pk > 0:
@@ -141,7 +144,7 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_grid_node_by_id(api_connection, key):
+    def get_grid_node_by_id(api_connection: ApiConnection, key):
         jdata = api_connection.exec_get_url(
                 '/api/grid/gridnodes/' + str(key) + "/")
         gn=GridNode()
@@ -163,26 +166,26 @@ class GridNodeApi:
         return gn
 
     @staticmethod
-    def patch_grid_node(api_connection, key, payload):
+    def patch_grid_node(api_connection: ApiConnection, key, payload):
         success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
                 '/api/grid/gridnodes/' + str(key) + "/", payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_grid_nodes_embedded(api_connection, parameters={}):
+    def get_grid_nodes_embedded(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_grid_nodes_with_embedded_tenders(api_connection, parameters={}):
+    def get_grid_nodes_with_embedded_tenders(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/tenders/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_grid_nodes(api_connection, parameters={}):
+    def get_grid_nodes(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/', parameters)
         if json_res is None:
             return None

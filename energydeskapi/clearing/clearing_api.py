@@ -17,7 +17,7 @@ class ClearingApi:
 
 
     @staticmethod
-    def upsert_clearing_report(api_connection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
+    def upsert_clearing_report(api_connection: ApiConnection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
         logger.info("Storing clearing report")
         payload = {"clearing_house": clearing_house,
                    "clearing_report_type": clearing_report_type,
@@ -28,7 +28,7 @@ class ClearingApi:
         return True
 
     @staticmethod
-    def upsert_positions_reconciliation(api_connection, pk, clearing_house, clearing_account,  clearing_date, reconciliation_status, comment):
+    def upsert_positions_reconciliation(api_connection: ApiConnection, pk, clearing_house, clearing_account,  clearing_date, reconciliation_status, comment):
         logger.info("Storing clearing reconciliation")
         payload = {"clearing_house": clearing_house,'clearing_account':clearing_account,
                    "reconciliation_status": reconciliation_status,
@@ -43,12 +43,12 @@ class ClearingApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_positions_reconciliations(api_connection, params={}):
+    def get_positions_reconciliations(api_connection: ApiConnection, params={}):
         logger.info("Fetching reconciled positions")
         data = api_connection.exec_get_url('/api/clearing/reconciliation/positions', params)
         return data
     @staticmethod
-    def get_positions_reconciliations_embedded(api_connection, params={}):
+    def get_positions_reconciliations_embedded(api_connection: ApiConnection, params={}):
         logger.info("Fetching reconciled positions")
         data = api_connection.exec_get_url('/api/clearing/reconciliation/positions/embedded/', params)
         return data
@@ -75,18 +75,18 @@ class ClearingApi:
 
 
     @staticmethod
-    def get_position_internal_reconciliations(api_connection, params={}):
+    def get_position_internal_reconciliations(api_connection: ApiConnection, params={}):
         logger.info("Fetching reconciled positions internal product view")
         data = api_connection.exec_get_url('/api/clearing/reconciliation/positiondetails', params)
         return data
 
 
     @staticmethod
-    def get_positions_reconciliation_url(api_connection, key):
+    def get_positions_reconciliation_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/reconciliation/positions/' + str(key) + "/"
 
     @staticmethod
-    def query_clearing_report_data(api_connection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
+    def query_clearing_report_data(api_connection: ApiConnection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
         """Queries clearing data between a set time
 
         :param api_connection: class with API token for use with API
@@ -112,12 +112,12 @@ class ClearingApi:
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
         return True
     @staticmethod
-    def get_reconciliation_status_url(api_connection, reconciliation_status_enum):
+    def get_reconciliation_status_url(api_connection: ApiConnection, reconciliation_status_enum):
         type_pk = reconciliation_status_enum if isinstance(reconciliation_status_enum, int) else reconciliation_status_enum.value
         return api_connection.get_base_url() + '/api/clearing/reconciliationstatus/' + str(type_pk) + "/"
 
     @staticmethod
-    def perform_reconciliation(api_connection, date):
+    def perform_reconciliation(api_connection: ApiConnection, date):
         """Reconcile internal and external contracts for a given date
 
         :param api_connection: class with API token for use with API
@@ -132,7 +132,7 @@ class ClearingApi:
 
 
     @staticmethod
-    def get_clearing_report_records(api_connection, parameters={}):
+    def get_clearing_report_records(api_connection: ApiConnection, parameters={}):
         """Fetches a list of clearing report records
 
         :param api_connection: class with API token for use with API
@@ -150,7 +150,7 @@ class ClearingApi:
         return all_record
 
     @staticmethod
-    def get_clearing_report_records_embedded(api_connection, parameters={}):
+    def get_clearing_report_records_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -172,7 +172,7 @@ class ClearingApi:
         return all_record
 
     @staticmethod
-    def get_clearing_report_records_df(api_connection, parameters={}):
+    def get_clearing_report_records_df(api_connection: ApiConnection, parameters={}):
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -184,7 +184,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_reports(api_connection, parameters={}):
+    def get_clearing_reports(api_connection: ApiConnection, parameters={}):
         """Fetches a list of clearing reports
 
         :param api_connection: class with API token for use with API
@@ -200,7 +200,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_reports_embedded(api_connection, parameters={}):
+    def get_clearing_reports_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches a list of embedded clearing reports
 
         :param api_connection: class with API token for use with API
@@ -238,18 +238,18 @@ class ClearingApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def approve_all_reconciled_contracts_in_multileg(api_connection, date: str, internal_ids: list[int]):
+    def approve_all_reconciled_contracts_in_multileg(api_connection: ApiConnection, date: str, internal_ids: list[int]):
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/clearing/approve-reconciled-contracts-in-multileg/',{'date':date, 'internal_ids': internal_ids})
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def update_reconciled_trades(api_connection, key, payload={}):
+    def update_reconciled_trades(api_connection: ApiConnection, key, payload={}):
         success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
             '/api/clearing/reconciledtrades/' + str(key) + "/", payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_reconciled_trades(api_connection, params={}):
+    def get_reconciled_trades(api_connection: ApiConnection, params={}):
         """Fetches reconciled trades
 
         :param api_connection: class with API token for use with API
@@ -262,7 +262,7 @@ class ClearingApi:
         return json_res
 
     @staticmethod
-    def get_embedded_reconciled_trades(api_connection, params={}):
+    def get_embedded_reconciled_trades(api_connection: ApiConnection, params={}):
         """Fetches reconciled trades
 
         :param api_connection: class with API token for use with API
@@ -277,7 +277,7 @@ class ClearingApi:
 
     # This will be tested and replace get_reconciled_trades in lats February  when we have time:-)
     @staticmethod
-    def get_reconciled_contracts(api_connection, params={}):
+    def get_reconciled_contracts(api_connection: ApiConnection, params={}):
         """Fetches reconciled trades
 
         :param api_connection: class with API token for use with API
@@ -291,14 +291,14 @@ class ClearingApi:
 
     # Fetch records to put on trades
     @staticmethod
-    def get_external_cleared_contracts(api_connection, params={}):
+    def get_external_cleared_contracts(api_connection: ApiConnection, params={}):
         json_res = api_connection.exec_get_url('/api/clearing/externalcontracts/', params)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_embedded_reconciled_contracts(api_connection, params={}):
+    def get_embedded_reconciled_contracts(api_connection: ApiConnection, params={}):
         """Fetches reconciled trades
 
         :param api_connection: class with API token for use with API
@@ -312,24 +312,24 @@ class ClearingApi:
         return json_res
 
     @staticmethod
-    def update_reconciled_contract(api_connection, payload):
+    def update_reconciled_contract(api_connection: ApiConnection, payload):
         success, json_res, status_code, error_msg  = a = api_connection.exec_patch_url('/api/clearing/reconciledcontracts/'+ str(payload['pk']) + "/", payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_reconciliation_status_url(api_connection, key):
+    def get_reconciliation_status_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/reconciliationstatus/' + str(key) + "/"
 
     @staticmethod
-    def get_external_contract_url(api_connection, key):
+    def get_external_contract_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/externalcontracts/' + str(key) + "/"
 
     @staticmethod
-    def get_clearing_report_type_url(api_connection, key):
+    def get_clearing_report_type_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/reporttypes/' + str(key) + "/"
     @staticmethod
-    def get_clearing_report_format_url(api_connection, key):
+    def get_clearing_report_format_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/reportformats/' + str(key) + "/"
     @staticmethod
-    def get_clearing_report_house_url(api_connection, key):
+    def get_clearing_report_house_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/reporthouse/' + str(key) + "/"

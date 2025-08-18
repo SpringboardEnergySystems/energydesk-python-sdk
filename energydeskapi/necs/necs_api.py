@@ -1,5 +1,7 @@
 import logging
 
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -9,7 +11,7 @@ class NecsApi:
     """
 
     @staticmethod
-    def get_necs_certificates(api_connection, parameters={}):
+    def get_necs_certificates(api_connection: ApiConnection, parameters={}):
         """Fetches NECS certificates
 
         :param api_connection: class with API token for use with API
@@ -23,7 +25,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_certificate_by_key(api_connection, pk):
+    def get_necs_certificate_by_key(api_connection: ApiConnection, pk):
         """Fetches NECS certificate from pk
 
         :param api_connection: class with API token for use with API
@@ -39,7 +41,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_transactions(api_connection, parameters={}):
+    def get_necs_transactions(api_connection: ApiConnection, parameters={}):
         """Fetches NECS transactions
 
         :param api_connection: class with API token for use with API
@@ -53,7 +55,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_transaction_by_key(api_connection, pk):
+    def get_necs_transaction_by_key(api_connection: ApiConnection, pk):
         """Fetches NECS transaction from pk
 
         :param api_connection: class with API token for use with API
@@ -69,7 +71,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_transaction_bundles(api_connection, parameters={}):
+    def get_necs_transaction_bundles(api_connection: ApiConnection, parameters={}):
         """Fetches NECS transaction bundles
 
         :param api_connection: class with API token for use with API
@@ -83,7 +85,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_transaction_bundle_by_key(api_connection, pk):
+    def get_necs_transaction_bundle_by_key(api_connection: ApiConnection, pk):
         """Fetches NECS transaction bundle from pk
 
         :param api_connection: class with API token for use with API

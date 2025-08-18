@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.sdk.common_utils import check_fix_date2str
 logger = logging.getLogger(__name__)
 
@@ -8,7 +11,7 @@ class PricingApi:
     """
 
     @staticmethod
-    def calc_collars(api_connection, price_area, currency, price_min, price_max,
+    def calc_collars(api_connection: ApiConnection, price_area, currency, price_min, price_max,
                                                   date_from, number_of_months, interest_rate,
                                                   volatility):
         """Lists the types of commodities

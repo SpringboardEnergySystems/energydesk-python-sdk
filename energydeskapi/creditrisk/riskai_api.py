@@ -3,6 +3,8 @@ import pandas as pd
 # from energydeskapi.sdk.common_utils import parse_enum_type
 import json
 
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +31,7 @@ class RiskAiApi:
 
     @staticmethod
 
-    def query_riskgpt_accounts(api_connection, question, columns):
+    def query_riskgpt_accounts(api_connection: ApiConnection, question, columns):
         """Updates crea
 
         :param api_connection: class with API token for use with API

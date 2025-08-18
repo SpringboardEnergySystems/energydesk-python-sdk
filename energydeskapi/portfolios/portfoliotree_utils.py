@@ -1,5 +1,8 @@
 import json
 import copy
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.customers.customers_api import CustomersApi
 #from energydeskapi.assets.assets_api import AssetsApi
 #from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
@@ -209,7 +212,7 @@ def create_embedded_tree_recursive(flat_tree):
     return new_roots
 
 
-def convert_nodes_from_jstree(api_connection, portfolio_nodes):
+def convert_nodes_from_jstree(api_connection: ApiConnection, portfolio_nodes):
 
     portfolio_map={}
     parentmap={}

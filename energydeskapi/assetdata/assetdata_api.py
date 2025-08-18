@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict, field
 from datetime import timezone, datetime, date
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from json import JSONEncoder
 from dataclasses import dataclass
@@ -162,7 +165,7 @@ class AssetDataApi:
     """
 
     @staticmethod
-    def get_timeseries_adjustments(api_connection,  parameters={}):
+    def get_timeseries_adjustments(api_connection: ApiConnection,  parameters={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -179,7 +182,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def upsert_timeseries_adjustments(api_connection,  adjustments):
+    def upsert_timeseries_adjustments(api_connection: ApiConnection,  adjustments):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -197,7 +200,7 @@ class AssetDataApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_timeseries_adjustment_types(api_connection,  parameters={}):
+    def get_timeseries_adjustment_types(api_connection: ApiConnection,  parameters={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -209,7 +212,7 @@ class AssetDataApi:
         return atype_list
 
     @staticmethod
-    def get_timeseries_adjustment_denominations(api_connection,  parameters={}):
+    def get_timeseries_adjustment_denominations(api_connection: ApiConnection,  parameters={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -222,7 +225,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def get_timeseries_adjustment_denomination_type_url(api_connection, denomination_type):
+    def get_timeseries_adjustment_denomination_type_url(api_connection: ApiConnection, denomination_type):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
@@ -236,7 +239,7 @@ class AssetDataApi:
         return api_connection.get_base_url() + '/api/assetdata/timeseriesdenominations/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_timeseries_adjustment_type_url(api_connection, adjustment_type):
+    def get_timeseries_adjustment_type_url(api_connection: ApiConnection, adjustment_type):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
@@ -257,7 +260,7 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def get_timeseries_type_url(api_connection, timeseries_type):
+    def get_timeseries_type_url(api_connection: ApiConnection, timeseries_type):
         """
         """
         # Will accept both integers of the actual enum type
@@ -266,7 +269,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def get_timeseries_value_type_url(api_connection, timeseries_value_type):
+    def get_timeseries_value_type_url(api_connection: ApiConnection, timeseries_value_type):
         """
         """
         # Will accept both integers of the actual enum type
@@ -274,7 +277,7 @@ class AssetDataApi:
         return api_connection.get_base_url() + '/api/assetdata/timeseriesvaluetypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_timeseries_value_unit_url(api_connection, timeseries_value_unit):
+    def get_timeseries_value_unit_url(api_connection: ApiConnection, timeseries_value_unit):
         """
         """
         # Will accept both integers of the actual enum type
@@ -283,7 +286,7 @@ class AssetDataApi:
 
 
     @staticmethod
-    def get_forecast_adjustment(api_connection, assets):
+    def get_forecast_adjustment(api_connection: ApiConnection, assets):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -305,7 +308,7 @@ class AssetDataApi:
         return json_res
 
     @staticmethod
-    def get_latest_forecast(api_connection, parameters={}):
+    def get_latest_forecast(api_connection: ApiConnection, parameters={}):
         logger.info("Retrieve previously stored forecasts")
 
         json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/latest/', parameters)
@@ -314,7 +317,7 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def upsert_timeseries(api_connection, payload={}):
+    def upsert_timeseries(api_connection: ApiConnection, payload={}):
         logger.info("Upload and merge timeseries")
         #payload={
         #    'asset':AssetsApi.get_asset_url(api_connection, asset_pk),
@@ -339,7 +342,7 @@ class AssetDataApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_assetgroup_forecast(api_connection, parameters={}):
+    def get_assetgroup_forecast(api_connection: ApiConnection, parameters={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API
@@ -354,14 +357,14 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def get_asset_timeseries(api_connection, params={}):
+    def get_asset_timeseries(api_connection: ApiConnection, params={}):
         logger.debug(f"Getting time series with params {params}")
         json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/latest/', params)
         if json_res is not None:
             return json_res
         return None
     @staticmethod
-    def calculate_maxupeak(api_connection, parameters):
+    def calculate_maxupeak(api_connection: ApiConnection, parameters):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/maxpeak/', parameters)
         if json_res is None:
             logger.error("Problems retrieving max usage " + str(error_msg))
@@ -370,7 +373,7 @@ class AssetDataApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_aggregated_timeseries(api_connection, params={}):
+    def get_aggregated_timeseries(api_connection: ApiConnection, params={}):
         logger.debug(f"Getting aggregated time series with params {params}")
         json_res = api_connection.exec_get_url('/api/assetdata/summedtimeseriesdata/', params)
         if json_res is not None:
@@ -378,7 +381,7 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def load_grouped_meterdata(api_connection, period_from, period_until, resolution, asset_pk_list=[], profile_usage=False):
+    def load_grouped_meterdata(api_connection: ApiConnection, period_from, period_until, resolution, asset_pk_list=[], profile_usage=False):
         payload={
             'assets':asset_pk_list,
             'period_from': period_from,
@@ -391,7 +394,7 @@ class AssetDataApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def export_grouped_meterdata(api_connection, period_from, period_until, resolution, destination_type:ExportDestinationsEnum, destination_address:str,asset_pk_list=[]):
+    def export_grouped_meterdata(api_connection: ApiConnection, period_from, period_until, resolution, destination_type:ExportDestinationsEnum, destination_address:str,asset_pk_list=[]):
         payload={
             'assets':asset_pk_list,
             'period_from': period_from,
@@ -424,7 +427,7 @@ class AssetDataApi:
         return None
 
     @staticmethod
-    def get_assetgroup_forecast_df(api_connection, assets, reso=PeriodResolutionEnum.MONTHLY):
+    def get_assetgroup_forecast_df(api_connection: ApiConnection, assets, reso=PeriodResolutionEnum.MONTHLY):
         """Fetches forecast for asset group and displays in a dataframe
 
         :param api_connection: class with API token for use with API

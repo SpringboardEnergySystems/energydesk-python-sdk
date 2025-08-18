@@ -1,5 +1,8 @@
 import logging
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
@@ -149,25 +152,25 @@ class FlexibilityPortfolioApi:
 
 
     @staticmethod
-    def get_flexorder_status_url(api_connection, order_status):
+    def get_flexorder_status_url(api_connection: ApiConnection, order_status):
         status_pk = order_status if isinstance(order_status, int) else order_status.value
         return api_connection.get_base_url() + '/api/flexiblepower/flexorderstatuses/' + str(status_pk) + "/"
 
     @staticmethod
-    def get_flexible_portfolio_url(api_connection, pk):
+    def get_flexible_portfolio_url(api_connection: ApiConnection, pk):
         """Fetches url for a contract type from enum value
         """
         return api_connection.get_base_url() + '/api/flexiblepower/flexibleportfolios/' + str(pk) + "/"
 
     @staticmethod
-    def get_flexible_portfolio_status_type_url(api_connection, portfolio_status):
+    def get_flexible_portfolio_status_type_url(api_connection: ApiConnection, portfolio_status):
         """Fetches url for a contract type from enum value
         """
         status_pk = portfolio_status if isinstance(portfolio_status, int) else portfolio_status.value
         return api_connection.get_base_url() + '/api/flexiblepower/portfoliostatustypes/' + str(status_pk) + "/"
 
     @staticmethod
-    def get_flexible_portfolios(api_connection,  parameters={}):
+    def get_flexible_portfolios(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/', parameters)
         if json_res is None:
             return None
@@ -176,7 +179,7 @@ class FlexibilityPortfolioApi:
 
 
     @staticmethod
-    def get_flexible_portfolios_embedded(api_connection,  parameters={}):
+    def get_flexible_portfolios_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolios/embedded/', parameters)
         if json_res is None:
             return None
@@ -184,7 +187,7 @@ class FlexibilityPortfolioApi:
 
 
     @staticmethod
-    def get_portfolio_availability(api_connection, flex_portfolio_id, period_from, period_until):
+    def get_portfolio_availability(api_connection: ApiConnection, flex_portfolio_id, period_from, period_until):
         param={'portfolio_id':flex_portfolio_id,
                'period_from':period_from,
                'period_until':period_until}
@@ -196,7 +199,7 @@ class FlexibilityPortfolioApi:
 
 
     @staticmethod
-    def upsert_flexible_portfolio(api_connection, flex_portfolio: FlexPortfolio):
+    def upsert_flexible_portfolio(api_connection: ApiConnection, flex_portfolio: FlexPortfolio):
         logger.debug("Upserting flex portfolio")
         payload = json.loads(flex_portfolio.json)
         key = int(flex_portfolio.pk)
@@ -211,14 +214,14 @@ class FlexibilityPortfolioApi:
 
 
     @staticmethod
-    def get_flexible_portfolios_status(api_connection,  parameters={}):
+    def get_flexible_portfolios_status(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfoliostatuses/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def upsert_flexible_portfolio_status(api_connection, flex_portfolio_status: FlexPortfolioStatus):
+    def upsert_flexible_portfolio_status(api_connection: ApiConnection, flex_portfolio_status: FlexPortfolioStatus):
         logger.debug("Upserting flex portfolio status")
         payload = json.loads(flex_portfolio_status.json)
         key = int(flex_portfolio_status.pk)
@@ -232,20 +235,20 @@ class FlexibilityPortfolioApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_flexible_portfolios_trades(api_connection,  parameters={}):
+    def get_flexible_portfolios_trades(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfoliotrades/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_flexible_portfolios_trades_embedded(api_connection,  parameters={}):
+    def get_flexible_portfolios_trades_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfoliotrades/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def upsert_flexible_portfolio_trade(api_connection, flex_portfolio_trade: FlexPortfolioTrade):
+    def upsert_flexible_portfolio_trade(api_connection: ApiConnection, flex_portfolio_trade: FlexPortfolioTrade):
         logger.debug("Upserting flex portfolio status")
         payload = json.loads(flex_portfolio_trade.json)
         key = int(flex_portfolio_trade.pk)
@@ -259,19 +262,19 @@ class FlexibilityPortfolioApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_flexible_portfolios_orders(api_connection,  parameters={}):
+    def get_flexible_portfolios_orders(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolioorders/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_flexible_portfolios_orders_embedded(api_connection,  parameters={}):
+    def get_flexible_portfolios_orders_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/flexibleportfolioorders/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def upsert_flexible_portfolio_order(api_connection, flex_portfolio_order: FlexPortfolioOrder):
+    def upsert_flexible_portfolio_order(api_connection: ApiConnection, flex_portfolio_order: FlexPortfolioOrder):
         logger.debug("Upserting flex portfolio status")
         payload = json.loads(flex_portfolio_order.json)
         key = int(flex_portfolio_order.pk)

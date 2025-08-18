@@ -36,7 +36,7 @@ class EnergyDeskinksApi:
         return None
 
     @staticmethod
-    def get_latest_energydesk_prices(api_connection, days_back=1):
+    def get_latest_energydesk_prices(api_connection: ApiConnection, days_back=1):
         t2=pendulum.today("Europe/Paris")
         t1=t2.add(days=-days_back)
         #ProductsApi.
@@ -52,7 +52,7 @@ class EnergyDeskinksApi:
         return None
 
     @staticmethod
-    def get_latest_energydesk_products(api_connection, days_back=1):
+    def get_latest_energydesk_products(api_connection: ApiConnection, days_back=1):
         #ProductsApi.
         prods=ProductsApi.get_market_products_embedded(api_connection)
         print(prods)
@@ -60,7 +60,7 @@ class EnergyDeskinksApi:
         return None
 
     @staticmethod
-    def get_latest_energydesk_trades(api_connection, other_edesk_api_connection, days_back=1):
+    def get_latest_energydesk_trades(api_connection: ApiConnection, other_edesk_api_connection, days_back=1):
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)

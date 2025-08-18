@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class CounterPartsApi:
     """
 
     @staticmethod
-    def upsert_credit_rating(api_connection, credit_rating):
+    def upsert_credit_rating(api_connection: ApiConnection, credit_rating):
         """Creates/Updates credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -95,7 +95,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_credit_ratings(api_connection, parameters={}):
+    def get_credit_ratings(api_connection: ApiConnection, parameters={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -107,7 +107,7 @@ class CounterPartsApi:
             return json_res
         return None
     @staticmethod
-    def get_credit_ratings_df(api_connection, parameters={}):
+    def get_credit_ratings_df(api_connection: ApiConnection, parameters={}):
         """Fetches credit ratings for counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -119,7 +119,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_counterparts(api_connection, parameters={}):
+    def get_counterparts(api_connection: ApiConnection, parameters={}):
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -132,7 +132,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart(api_connection, counterpart_pk):
+    def get_counterpart(api_connection: ApiConnection, counterpart_pk):
         """Fetches counterpart from pk
 
         :param api_connection: class with API token for use with API
@@ -147,7 +147,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterparts_df(api_connection, parameters={}):
+    def get_counterparts_df(api_connection: ApiConnection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -175,7 +175,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def upsert_counterparts(api_connection, payload):
+    def upsert_counterparts(api_connection: ApiConnection, payload):
         """Registers counterparts
 
         :param api_connection: class with API token for use with API
@@ -188,7 +188,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_counterpart_limits(api_connection, parameters={}):
+    def get_counterpart_limits(api_connection: ApiConnection, parameters={}):
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -201,7 +201,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_limits_by_key(api_connection, counterpartlimit_pk):
+    def get_counterpart_limits_by_key(api_connection: ApiConnection, counterpartlimit_pk):
         """Fetches counterpart limit from pk
 
         :param api_connection: class with API token for use with API
@@ -216,7 +216,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def upsert_counterpart_limits(api_connection, counterpartlimit):
+    def upsert_counterpart_limits(api_connection: ApiConnection, counterpartlimit):
         logger.info("Registering counterpart limit")
         payload = counterpartlimit.get_dict(api_connection)
 
@@ -226,7 +226,7 @@ class CounterPartsApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
         return success, returned_data, status_code, error_msg
     @staticmethod
-    def get_counterpart_allowances(api_connection, parameters={}) -> list[dict]:
+    def get_counterpart_allowances(api_connection: ApiConnection, parameters={}) -> list[dict]:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -239,7 +239,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_allowances_embedded(api_connection, parameters={}) -> dict:
+    def get_counterpart_allowances_embedded(api_connection: ApiConnection, parameters={}) -> dict:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -252,7 +252,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_allowances_by_key(api_connection, counterpartallowance_pk) -> dict:
+    def get_counterpart_allowances_by_key(api_connection: ApiConnection, counterpartallowance_pk) -> dict:
         """Fetches counterpart limit from pk
 
         :param api_connection: class with API token for use with API
@@ -267,7 +267,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def upsert_counterpart_allowances(api_connection, counterpartallowance: CounterPartAllowance):
+    def upsert_counterpart_allowances(api_connection: ApiConnection, counterpartallowance: CounterPartAllowance):
         logger.info("Registering counterpart allowance")
         payload = counterpartallowance.get_dict(api_connection)
 
@@ -278,7 +278,7 @@ class CounterPartsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def delete_counterpart_allowances(api_connection, counterpartallowance_pk):
+    def delete_counterpart_allowances(api_connection: ApiConnection, counterpartallowance_pk):
         """Deletes a counterpart allowance
 
         :param api_connection: class with API token for use with API
@@ -288,7 +288,7 @@ class CounterPartsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_counterpart_types(api_connection, parameters={}) -> list[dict]:
+    def get_counterpart_types(api_connection: ApiConnection, parameters={}) -> list[dict]:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -301,7 +301,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_type_url(api_connection, counterpart_type_enum):
+    def get_counterpart_type_url(api_connection: ApiConnection, counterpart_type_enum):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API

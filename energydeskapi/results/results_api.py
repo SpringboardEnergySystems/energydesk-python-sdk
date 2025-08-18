@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.sdk.common_utils import check_fix_date2str
 from energydeskapi.profiles.profiles import GenericProfile
 logger = logging.getLogger(__name__)
@@ -33,7 +36,7 @@ class ResultsApi:
     """
 
     @staticmethod
-    def get_stored_results(api_connection, parameters={}):
+    def get_stored_results(api_connection: ApiConnection, parameters={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -46,7 +49,7 @@ class ResultsApi:
 
 
     @staticmethod
-    def calculate_results(api_connection, results_params):
+    def calculate_results(api_connection: ApiConnection, results_params):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 class DsoApi:
@@ -8,7 +10,7 @@ class DsoApi:
     """
 
     @staticmethod
-    def simulate_dsr_value(api_connection, years=10,
+    def simulate_dsr_value(api_connection: ApiConnection, years=10,
                            capacity=25,current_level=20, max_change=2, invest_grid_mva=5, invest_grid_cost=5000,
                            max_dsr_mva=2,
                            invest_dsr_cost_low=2, invest_dsr_cost_med=5, invest_dsr_cost_high=10,

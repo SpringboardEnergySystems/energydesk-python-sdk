@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 class AssetOwnersApi:
@@ -9,7 +11,7 @@ class AssetOwnersApi:
 
     # Create a json file from NetworkX DiGraph defining ownerships
     @staticmethod
-    def save_ownerships(api_connection, asset_manager_pk, ownership_graph_jsonstr):
+    def save_ownerships(api_connection: ApiConnection, asset_manager_pk, ownership_graph_jsonstr):
         """Saves ownership of asset
 
         :param api_connection: class with API token for use with API

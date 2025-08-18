@@ -1,3 +1,5 @@
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -75,7 +77,7 @@ def get_dealcapture_config(api_connection):
         return None
     return json_res
 
-def set_dealcapture_config(api_connection, payload):
+def set_dealcapture_config(api_connection: ApiConnection, payload):
     """Sets dealcapture
 
     :param api_connection: class with API token for use with API

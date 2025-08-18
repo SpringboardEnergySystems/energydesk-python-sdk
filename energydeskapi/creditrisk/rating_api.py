@@ -2,6 +2,9 @@ import logging
 import pandas as pd
 #from energydeskapi.sdk.common_utils import parse_enum_type
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 class AnnualAccountsApi:
@@ -10,7 +13,7 @@ class AnnualAccountsApi:
     """
 
     @staticmethod
-    def update_annual_accounts(api_connection, company, payload):
+    def update_annual_accounts(api_connection: ApiConnection, company, payload):
         """Updates crea
 
         :param api_connection: class with API token for use with API
@@ -41,7 +44,7 @@ class AnnualAccountsApi:
         return None
 
     @staticmethod
-    def get_annual_accounts_of_company(api_connection, company_pk):
+    def get_annual_accounts_of_company(api_connection: ApiConnection, company_pk):
         """Fetches rated company
 
         :param api_connection: class with API token for use with API
@@ -54,14 +57,14 @@ class AnnualAccountsApi:
         return None
     
     @staticmethod
-    def post_annual_accounts(api_connection, payload):
+    def post_annual_accounts(api_connection: ApiConnection, payload):
         logger.info("Fetching company with id " + str(id))
         json_res=api_connection.exec_post_url('/api/creditrisk/companyaccounts/', payload)
         if json_res is not None:
             return json_res
         return None
     
-    def post_manual_annual_accounts(api_connection, payload):
+    def post_manual_annual_accounts(api_connection: ApiConnection, payload):
         logger.info("Fetching company with id " + str(id))
         json_res=api_connection.exec_post_url('/api/creditrisk/manualinput/', payload)
         if json_res is not None:
@@ -74,7 +77,7 @@ class RatingApi:
     """
     #
     @staticmethod
-    def update_rating(api_connection, rating_pk, payload):
+    def update_rating(api_connection: ApiConnection, rating_pk, payload):
         """Updates crea
 
         :param api_connection: class with API token for use with API
@@ -106,7 +109,7 @@ class RatingApi:
 
 
     @staticmethod
-    def get_rating(api_connection, pk):
+    def get_rating(api_connection: ApiConnection, pk):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -119,7 +122,7 @@ class RatingApi:
         return None
     
     @staticmethod
-    def get_embedded_rating(api_connection, pk):
+    def get_embedded_rating(api_connection: ApiConnection, pk):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -137,7 +140,7 @@ class CompanyRatingApi:
     """
     #
     @staticmethod
-    def update_rating(api_connection, rating_pk, payload):
+    def update_rating(api_connection: ApiConnection, rating_pk, payload):
         """Updates crea
 
         :param api_connection: class with API token for use with API
@@ -168,7 +171,7 @@ class CompanyRatingApi:
         return None
 
     @staticmethod
-    def get_rating_from_company_pk(api_connection, company_pk):
+    def get_rating_from_company_pk(api_connection: ApiConnection, company_pk):
         logger.info("Fetching rated companny with key " + str(company_pk))
         json_res=api_connection.exec_get_url('/api/creditrisk/companyratings/', parameters={'company__id': str(company_pk)})
         if json_res is not None:
@@ -176,7 +179,7 @@ class CompanyRatingApi:
         return None
 
     @staticmethod
-    def get_rating(api_connection, pk):
+    def get_rating(api_connection: ApiConnection, pk):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -189,7 +192,7 @@ class CompanyRatingApi:
         return None
     
     @staticmethod
-    def get_embedded_rating(api_connection, pk):
+    def get_embedded_rating(api_connection: ApiConnection, pk):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -202,7 +205,7 @@ class CompanyRatingApi:
         return None
 
     @staticmethod
-    def post_calculate_rating(api_connection, payload):
+    def post_calculate_rating(api_connection: ApiConnection, payload):
         logger.info("Calculating rating")
         json_res=api_connection.exec_post_url_nojson('/api/creditrisk/calculaterating/', payload)
         if json_res is not None:

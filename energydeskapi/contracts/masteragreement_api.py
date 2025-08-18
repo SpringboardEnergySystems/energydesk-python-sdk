@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class MasterAgreementApi:
     """
 
     @staticmethod
-    def get_master_agreements(api_connection, parameters={}):
+    def get_master_agreements(api_connection: ApiConnection, parameters={}):
         """Fetches master contract agreements
 
         :param api_connection: class with API token for use with API
@@ -62,7 +62,7 @@ class MasterAgreementApi:
         return None
 
     @staticmethod
-    def get_master_agreements_embedded(api_connection, parameters={}):
+    def get_master_agreements_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches master contract agreements
 
         :param api_connection: class with API token for use with API
@@ -76,7 +76,7 @@ class MasterAgreementApi:
         return None
 
     @staticmethod
-    def get_master_agreements_by_key(api_connection, masteragreement_pk):
+    def get_master_agreements_by_key(api_connection: ApiConnection, masteragreement_pk):
         """Fetches master contract agreement from pk
 
         :param api_connection: class with API token for use with API
@@ -93,7 +93,7 @@ class MasterAgreementApi:
         return json_res
 
     @staticmethod
-    def upsert_master_agreement(api_connection, master_agreement):
+    def upsert_master_agreement(api_connection: ApiConnection, master_agreement):
         """Creates/Updates master contract agreements
 
         :param api_connection: class with API token for use with API

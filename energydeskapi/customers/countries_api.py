@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -8,7 +10,7 @@ class CountriesApi:
 
     """
     @staticmethod
-    def get_countries(api_connection, parameters={}):
+    def get_countries(api_connection: ApiConnection, parameters={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API

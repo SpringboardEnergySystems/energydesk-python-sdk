@@ -402,7 +402,7 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_contract_tag(api_connection, tag):
+    def upsert_contract_tag(api_connection: ApiConnection, tag):
         """Registers contracts
 
         :param api_connection: class with API token for use with API
@@ -488,7 +488,7 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_contract_type_url(api_connection, contract_type_enum):
+    def get_contract_type_url(api_connection: ApiConnection, contract_type_enum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -499,7 +499,7 @@ class ContractsApi:
         type_pk = contract_type_enum if isinstance(contract_type_enum, int) else contract_type_enum.value
         return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(type_pk) + "/"
     @staticmethod
-    def get_quantity_type_url(api_connection, quantity_type_enum):
+    def get_quantity_type_url(api_connection: ApiConnection, quantity_type_enum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -511,7 +511,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/quantitytypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_quantity_unit_url(api_connection, quantity_unit_enum):
+    def get_quantity_unit_url(api_connection: ApiConnection, quantity_unit_enum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -524,7 +524,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def get_contract_types(api_connection, parameters={}):
+    def get_contract_types(api_connection: ApiConnection, parameters={}):
         """Fetches all quantity types
 
         :param api_connection: class with API token for use with API
@@ -537,7 +537,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_quantity_units(api_connection, parameters={}):
+    def get_quantity_units(api_connection: ApiConnection, parameters={}):
         """Fetches all quantity units
 
         :param api_connection: class with API token for use with API
@@ -550,7 +550,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_quantity_types(api_connection, parameters={}):
+    def get_quantity_types(api_connection: ApiConnection, parameters={}):
         """Fetches all quantity types
 
         :param api_connection: class with API token for use with API
@@ -563,7 +563,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_type_url(api_connection, contract_type_enum):
+    def get_contract_type_url(api_connection: ApiConnection, contract_type_enum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -574,7 +574,7 @@ class ContractsApi:
         type_pk = contract_type_enum if isinstance(contract_type_enum, int) else contract_type_enum.value
         return api_connection.get_base_url() + '/api/portfoliomanager/contracttypes/' + str(type_pk) + "/"
     @staticmethod
-    def get_contract_status_url(api_connection, contract_status_enum):
+    def get_contract_status_url(api_connection: ApiConnection, contract_status_enum):
         """Fetches url for contract status from enum value
 
         :param api_connection: class with API token for use with API
@@ -585,7 +585,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(contract_status_enum)) + "/"
 
     @staticmethod
-    def load_tradingbook_by_pk(api_connection, pk):
+    def load_tradingbook_by_pk(api_connection: ApiConnection, pk):
         """Fetches tradingbooks from pk
 
         :param api_connection: class with API token for use with API
@@ -601,7 +601,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def query_contracts(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
+    def query_contracts(api_connection: ApiConnection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
         """Queries contracts
 
         :param api_connection: class with API token for use with API
@@ -616,7 +616,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def query_contracts_df(api_connection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
+    def query_contracts_df(api_connection: ApiConnection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
         """Queries contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -630,7 +630,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def get_contract(api_connection, contract_pk):
+    def get_contract(api_connection: ApiConnection, contract_pk):
         """Fetches contract from pk
 
         :param api_connection: class with API token for use with API
@@ -644,7 +644,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def get_contract_tag(api_connection, pk):
+    def get_contract_tag(api_connection: ApiConnection, pk):
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
@@ -654,7 +654,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_tags(api_connection, parameters={}):
+    def get_contract_tags(api_connection: ApiConnection, parameters={}):
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
@@ -664,7 +664,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def list_contracts(api_connection, parameters={}):
+    def list_contracts(api_connection: ApiConnection, parameters={}):
         """Lists contracts
 
         :param api_connection: class with API token for use with API
@@ -676,7 +676,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts', parameters)
         return json_res
     @staticmethod
-    def list_contracts_embedded(api_connection, parameters={}):
+    def list_contracts_embedded(api_connection: ApiConnection, parameters={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -688,19 +688,19 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
         return json_res
     @staticmethod
-    def list_contracts_csv(api_connection, parameters={}):
+    def list_contracts_csv(api_connection: ApiConnection, parameters={}):
         logger.info("Listing contracts as CSV")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/csv/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_emir(api_connection, parameters={}):
+    def list_contracts_emir(api_connection: ApiConnection, parameters={}):
         logger.info("Listing contracts on format for EMIR reporting")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/emir/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_xml(api_connection, parameters={}):
+    def list_contracts_xml(api_connection: ApiConnection, parameters={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -712,7 +712,7 @@ class ContractsApi:
         xmlres = api_connection.exec_get_url('/api/portfoliomanager/contracts/xmlelviz/', parameters)
         return xmlres
     @staticmethod
-    def list_contracts_compact(api_connection, parameters={}):
+    def list_contracts_compact(api_connection: ApiConnection, parameters={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -725,13 +725,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_current_counterparts(api_connection, parameters={}):
+    def get_current_counterparts(api_connection: ApiConnection, parameters={}):
         logger.info("Listing contracts counterparts")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/counterparts/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_df(api_connection, parameters={}):
+    def list_contracts_df(api_connection: ApiConnection, parameters={}):
         """Lists contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -747,7 +747,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def get_commodity_type_url(api_connection, commodity_type_enum):
+    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum):
         """Fetches url for a commodity type from enum value
 
         :param api_connection: class with API token for use with API
@@ -759,7 +759,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(commodity_type_enum)) + "/"
 
     @staticmethod
-    def get_contract_url(api_connection, contract_pk):
+    def get_contract_url(api_connection: ApiConnection, contract_pk):
         """Fetches url for contracts from pk
 
         :param api_connection: class with API token for use with API
@@ -782,7 +782,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def get_contract_status(api_connection, enum):
+    def get_contract_status(api_connection: ApiConnection, enum):
         """Gets contract status from enum
 
         :param api_connection: class with API token for use with API
@@ -795,7 +795,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_filters(api_connection, parameters={}):
+    def get_contract_filters(api_connection: ApiConnection, parameters={}):
         """Fetches contract filters
 
         :param api_connection: class with API token for use with API
@@ -807,7 +807,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_filter_by_key(api_connection, filter_pk):
+    def get_contract_filter_by_key(api_connection: ApiConnection, filter_pk):
         """Fetches contract filter from pk
 
         :param api_connection: class with API token for use with API
@@ -855,7 +855,7 @@ class ContractsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
-    def fetch_standard_contract(api_connection, contract_pk):
+    def fetch_standard_contract(api_connection: ApiConnection, contract_pk):
         """Fetches standard contracts
 
         :param api_connection: class with API token for use with API
@@ -868,7 +868,7 @@ class ContractsApi:
 
         return json_res
 
-    def fetch_bilateral_contract(api_connection, contract_pk):
+    def fetch_bilateral_contract(api_connection: ApiConnection, contract_pk):
         """Fetches bilateral contracts
 
         :param api_connection: class with API token for use with API

@@ -2,6 +2,9 @@ import requests
 import logging
 import pandas as pd
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 logger = logging.getLogger(__name__)
 #  Change
@@ -11,7 +14,7 @@ class DerivativesApi:
     """
 
     @staticmethod
-    def fetch_markets(api_connection, market_place=MarketPlaceEnum.NASDAQ_OMX.name):
+    def fetch_markets(api_connection: ApiConnection, market_place=MarketPlaceEnum.NASDAQ_OMX.name):
         """Fetches markets
 
         :param api_connection: class with API token for use with API
@@ -37,7 +40,7 @@ class DerivativesApi:
         return markets
 
     @staticmethod
-    def get_products_df(api_connection, market_place, market_name, traded_from_date):
+    def get_products_df(api_connection: ApiConnection, market_place, market_name, traded_from_date):
         """Fetches products within a specified date
 
         :param api_connection: class with API token for use with API
@@ -95,14 +98,14 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def get_prices_flatlist(api_connection, parameters={}):
+    def get_prices_flatlist(api_connection: ApiConnection, parameters={}):
         jsondata= api_connection.exec_get_url('/api/markets/productprices/flatlist/', parameters)
         if jsondata is None:
             return None
         return jsondata
 
     @staticmethod
-    def upsert_prices_flatlist(api_connection, snapshot):
+    def upsert_prices_flatlist(api_connection: ApiConnection, snapshot):
         payload={"snapshot":snapshot}
         logger.info("Saving product price snapshot")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/productprices/flatlist/', payload)
@@ -112,14 +115,14 @@ class DerivativesApi:
         return json_res
 
     @staticmethod
-    def get_prices_embedded_json(api_connection, parameters={}):
+    def get_prices_embedded_json(api_connection: ApiConnection, parameters={}):
         jsondata= api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if jsondata is None:
             return None
         return jsondata
 
     @staticmethod
-    def fetch_daily_prices(api_connection, market_place, market_name, area=None):
+    def fetch_daily_prices(api_connection: ApiConnection, market_place, market_name, area=None):
         """Fetches daily prices
 
         :param base_url: prefix of the URL
@@ -154,7 +157,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def fetch_prices_in_period(api_connection, market_place, market_name, ticker, period_from, period_until):
+    def fetch_prices_in_period(api_connection: ApiConnection, market_place, market_name, ticker, period_from, period_until):
         """Fetches price for selected product
 
         :param base_url: prefix of the URL
@@ -198,7 +201,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def update_intraday_price(api_connection, market, price_date, df):
+    def update_intraday_price(api_connection: ApiConnection, market, price_date, df):
         """Fetches price for selected product
 
         :param base_url: prefix of the URL

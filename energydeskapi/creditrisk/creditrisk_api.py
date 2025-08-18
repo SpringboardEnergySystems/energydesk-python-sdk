@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.creditrisk_enum_types import DiversificationEnums,FinancialPolicyEnums,\
 LiquidityEnums, ComparableRatingsEnums,ManagmentGovernanceEnums,CapStructEnums,GovernmentInfluenceEnums, \
 CompetitivePosEnums
@@ -68,7 +70,7 @@ class CreditRiskApi:
     """
 
     @staticmethod
-    def calculate_credit_rating(api_connection, company_regnumber, country="NO", credit_calc_parans=CreditCalculation(), commodity=None):
+    def calculate_credit_rating(api_connection: ApiConnection, company_regnumber, country="NO", credit_calc_parans=CreditCalculation(), commodity=None):
         qry_payload = credit_calc_parans.get_dict()
         qry_payload['country']=country
         qry_payload['company_regnumber'] = company_regnumber
@@ -78,7 +80,7 @@ class CreditRiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def save_credit_rating(api_connection, company_regnumber, country="NO", credit_calc_parans=CreditCalculation(), commodity=None):
+    def save_credit_rating(api_connection: ApiConnection, company_regnumber, country="NO", credit_calc_parans=CreditCalculation(), commodity=None):
         qry_payload = credit_calc_parans.get_dict()
         qry_payload['country']=country
         qry_payload['company_regnumber'] = company_regnumber
@@ -88,7 +90,7 @@ class CreditRiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_ratings(api_connection, params={}):
+    def get_ratings(api_connection: ApiConnection, params={}):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
@@ -102,7 +104,7 @@ class CreditRiskApi:
 
     # Only latest per company is retudned
     @staticmethod
-    def get_distinct_ratings(api_connection, params={}):
+    def get_distinct_ratings(api_connection: ApiConnection, params={}):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
@@ -115,7 +117,7 @@ class CreditRiskApi:
         return None
 
     @staticmethod
-    def get_accounts(api_connection, params={}):
+    def get_accounts(api_connection: ApiConnection, params={}):
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
@@ -144,7 +146,7 @@ class ManualCreditRiskApi:
 
     """
     @staticmethod
-    def save_manual_credit_rating(api_connection, payload):
+    def save_manual_credit_rating(api_connection: ApiConnection, payload):
         try:
             company_pk = payload['company_pk']
             rating_datetime = payload['rating_datetime']

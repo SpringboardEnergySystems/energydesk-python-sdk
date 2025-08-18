@@ -1,5 +1,8 @@
 import logging
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
@@ -26,62 +29,62 @@ class FlexibilityQaApi:
     """ Class for flexibility and prequalification
     """
     @staticmethod
-    def get_shortflextransactions_embedded(api_connection,  parameters={}):
+    def get_shortflextransactions_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flextrades/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_longflexcontracts_embedded(api_connection,  parameters={}):
+    def get_longflexcontracts_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexcontracts/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_longflexcontracts(api_connection,  parameters={}):
+    def get_longflexcontracts(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexcontracts/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_shortflexassets_embedded(api_connection,  parameters={}):
+    def get_shortflexassets_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flextradeassets/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_flexassets(api_connection,  parameters={}):
+    def get_flexassets(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flexassets/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_shortflextransactions(api_connection,  parameters={}):
+    def get_shortflextransactions(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flextrades/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_shortflexsettlements(api_connection,  parameters={}):
+    def get_shortflexsettlements(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flexsettlements/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_longflexsettlements(api_connection,  parameters={}):
+    def get_longflexsettlements(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexsettlements/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_longflex_offers_embedded(api_connection,  parameters={}):
+    def get_longflex_offers_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexroffers/embedded/', parameters)
         if json_res is None:
             return None
@@ -90,21 +93,21 @@ class FlexibilityQaApi:
 
 
     @staticmethod
-    def get_longflex_assets_embedded(api_connection,  parameters={}):
+    def get_longflex_assets_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/longflexassets/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_meterdata(api_connection,  parameters={}):
+    def get_meterdata(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/qa/flexassetmeterdata/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def upsert_meterdata(api_connection, key,asset_id, df_meter_data_ams, df_meter_data_submeter):
+    def upsert_meterdata(api_connection: ApiConnection, key,asset_id, df_meter_data_ams, df_meter_data_submeter):
         payload = {
             'asset_id': asset_id,
          }
@@ -122,7 +125,7 @@ class FlexibilityQaApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_meterdata(api_connection, resolution, assets,  use_sub_meter=False,  longflex_origination=False):
+    def load_meterdata(api_connection: ApiConnection, resolution, assets,  use_sub_meter=False,  longflex_origination=False):
         payload={
             'assets':assets,
             'resolution': resolution,
@@ -134,7 +137,7 @@ class FlexibilityQaApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_trade_meterdata(api_connection, resolution, assets,  use_sub_meter=False,  longflex_origination=False):
+    def load_trade_meterdata(api_connection: ApiConnection, resolution, assets,  use_sub_meter=False,  longflex_origination=False):
         payload={
             'assets':assets,
             'resolution': resolution,
@@ -146,7 +149,7 @@ class FlexibilityQaApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_grouped_meterdata(api_connection, resolution,  assets, use_sub_meter=False,  longflex_origination=False):
+    def load_grouped_meterdata(api_connection: ApiConnection, resolution,  assets, use_sub_meter=False,  longflex_origination=False):
         payload={
             'assets':assets,
             'resolution': resolution,

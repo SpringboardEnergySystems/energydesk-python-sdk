@@ -1,3 +1,5 @@
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 import pandas as pd
@@ -8,7 +10,7 @@ from energydeskapi.assetdata.assetdata_api import AssetDataApi
 import json
 logger = logging.getLogger(__name__)
 
-def load_multiasset_data(api_connection, asset_pk_list=[], period_from:str="2024-01-01", period_until:str="2024-03-01", resolution= PeriodResolutionEnum.HOURLY.value):
+def load_multiasset_data(api_connection: ApiConnection, asset_pk_list=[], period_from:str="2024-01-01", period_until:str="2024-03-01", resolution= PeriodResolutionEnum.HOURLY.value):
     period_start = datetime.strptime(period_from, '%Y-%m-%d').replace(tzinfo=pytz.timezone("Europe/Oslo"))
     period_end = datetime.strptime(period_until, '%Y-%m-%d').replace(tzinfo=pytz.timezone("Europe/Oslo"))
 

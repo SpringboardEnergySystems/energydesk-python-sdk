@@ -3,6 +3,9 @@ import pandas as pd
 #from energydeskapi.sdk.common_utils import parse_enum_type
 import json
 from datetime import datetime
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 class LoadStaticMatrices:
@@ -21,7 +24,7 @@ class MatrixApi:
     Class for matrix API wrapper
     """
     @staticmethod
-    def update_matrix(api_connection, matrix):
+    def update_matrix(api_connection: ApiConnection, matrix):
         """Updates matrices
 
         :param api_connection: class with API token for use with API
@@ -52,7 +55,7 @@ class MatrixApi:
         return None
 
     @staticmethod
-    def get_matrix(api_connection, pk):
+    def get_matrix(api_connection: ApiConnection, pk):
         """Fetches rated company
 
         :param api_connection: class with API token for use with API
@@ -65,7 +68,7 @@ class MatrixApi:
         return None
     
     @staticmethod
-    def post_matrix(api_connection, id, payload):
+    def post_matrix(api_connection: ApiConnection, id, payload):
         logger.info("Posting matrix with id " + str(id))
         json_res=api_connection.exec_post_url('/api/creditrisk/staticmatrix/', payload)
         if json_res is not None:
@@ -73,7 +76,7 @@ class MatrixApi:
         return None
 
     @staticmethod
-    def post_matrix_from_excel(api_connection, name, file_path):
+    def post_matrix_from_excel(api_connection: ApiConnection, name, file_path):
         context = pd.read_excel(file_path)
         json_data = json.loads(context.to_json(orient="records"))
         data = {

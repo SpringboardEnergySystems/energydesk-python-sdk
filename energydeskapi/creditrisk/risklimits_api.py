@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ class RiskLimitsApi:
 
     """
     @staticmethod
-    def get_risk_categories(api_connection, params={}):
+    def get_risk_categories(api_connection: ApiConnection, params={}):
         """Fetching list of risk categories
 
         :param api_connection: class with API token for use with API
@@ -22,7 +22,7 @@ class RiskLimitsApi:
         return None
     
     @staticmethod
-    def post_risk_categories(api_connection, payload):
+    def post_risk_categories(api_connection: ApiConnection, payload):
         """Fetching list of risk categories
 
         :param api_connection: class with API token for use with API
@@ -39,7 +39,7 @@ class RatingCategoryApi:
 
     """
     @staticmethod
-    def get_rating_categories(api_connection, params={}):
+    def get_rating_categories(api_connection: ApiConnection, params={}):
         """Fetching list of risk categories
 
         :param api_connection: class with API token for use with API
@@ -52,7 +52,7 @@ class RatingCategoryApi:
         return None
     
     @staticmethod
-    def post_rating_category(api_connection, payload):
+    def post_rating_category(api_connection: ApiConnection, payload):
         """Fetching list of risk categories
 
         :param api_connection: class with API token for use with API
@@ -65,7 +65,7 @@ class RatingCategoryApi:
         return None
     
     @staticmethod
-    def delete_rating_category(api_connection, payload):
+    def delete_rating_category(api_connection: ApiConnection, payload):
         """Deleting risk category
 
         Args:
@@ -79,7 +79,7 @@ class RatingCategoryApi:
         return None
     
     @staticmethod
-    def update_rating_category(api_connection, pk, payload):
+    def update_rating_category(api_connection: ApiConnection, pk, payload):
         """Updating risk category
 
         Args:

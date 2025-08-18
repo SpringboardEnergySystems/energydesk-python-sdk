@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.sdk.common_utils import check_fix_date2str
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.market_enum_types import ProfileTypeEnum
@@ -54,7 +57,7 @@ class FixedPriceApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def list_active_price_offers(api_connection, parameters={}):
+    def list_active_price_offers(api_connection: ApiConnection, parameters={}):
         """Calculated fix price in period
 
         :param api_connection: class with API token for use with API

@@ -3,6 +3,9 @@ import logging
 import pandas as pd
 
 import ast
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 #  Change
 class NasdaqApi:
@@ -12,7 +15,7 @@ class NasdaqApi:
 
 
     @staticmethod
-    def get_traderecords(api_connection, parameters={}):
+    def get_traderecords(api_connection: ApiConnection, parameters={}):
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -28,7 +31,7 @@ class NasdaqApi:
         return df
 
     @staticmethod
-    def update_traderecord(api_connection, contract_id, deal_number, trade_id, trade_report_type,trade_datetime,external_contract_id):
+    def update_traderecord(api_connection: ApiConnection, contract_id, deal_number, trade_id, trade_report_type,trade_datetime,external_contract_id):
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API

@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.contract_enum_types import GosTechnologyEnum, GosSupportEnum
 from energydeskapi.assets.assets_api import AssetsApi
@@ -85,7 +87,7 @@ class GosApi:
 
 
   @staticmethod
-  def get_quality_url(api_connection, quality_pk):
+  def get_quality_url(api_connection: ApiConnection, quality_pk):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API
@@ -96,7 +98,7 @@ class GosApi:
     return api_connection.get_base_url() + '/api/portfoliomanager/go/quality/' + str(quality_pk) + "/"
 
   @staticmethod
-  def get_support_url(api_connection, support_pk):
+  def get_support_url(api_connection: ApiConnection, support_pk):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API
@@ -107,7 +109,7 @@ class GosApi:
     return api_connection.get_base_url() + '/api/portfoliomanager/go/support/' + str(support_pk) + "/"
 
   @staticmethod
-  def get_qualities(api_connection, parameters={}):
+  def get_qualities(api_connection: ApiConnection, parameters={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -119,7 +121,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_support_alternatives(api_connection, parameters={}):
+  def get_support_alternatives(api_connection: ApiConnection, parameters={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -131,7 +133,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_qualities_df(api_connection, parameters={}):
+  def get_qualities_df(api_connection: ApiConnection, parameters={}):
     """Fetches all companies in system with basic key+ name infmation
 
     :param api_connection: class with API token for use with API
@@ -146,7 +148,7 @@ class GosApi:
     return df
 
   @staticmethod
-  def get_quality_by_key(api_connection, key):
+  def get_quality_by_key(api_connection: ApiConnection, key):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -159,7 +161,7 @@ class GosApi:
 
 
   @staticmethod
-  def register_quality(api_connection, shortname, description):
+  def register_quality(api_connection: ApiConnection, shortname, description):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -176,7 +178,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_technology_url(api_connection, tech):
+  def get_technology_url(api_connection: ApiConnection, tech):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API
@@ -190,7 +192,7 @@ class GosApi:
 
 
   @staticmethod
-  def get_technologies(api_connection, parameters={}):
+  def get_technologies(api_connection: ApiConnection, parameters={}):
     json_res = api_connection.exec_get_url('/api/portfoliomanager/go/technology/', parameters)
     if json_res is not None:
       return json_res

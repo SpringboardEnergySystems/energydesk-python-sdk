@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 import pandas as pd
 from energydeskapi.grid.grid_api import GridNodeApi
@@ -46,7 +49,7 @@ class CapacityTenderApi:
     """
 
     @staticmethod
-    def upsert_capacity_tender(api_connection, capacity_tender):
+    def upsert_capacity_tender(api_connection: ApiConnection, capacity_tender):
 
         logger.info("Upserting Capacity Tender")
         if capacity_tender.pk > 0:

@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -6,7 +9,7 @@ class DwhApi:
     """Class for user access to Datawarehouse
     """
     @staticmethod
-    def get_contract_dimension(api_connection, parameters={}):
+    def get_contract_dimension(api_connection: ApiConnection, parameters={}):
         """Fetches  contracts
         """
         json_res = api_connection.exec_get_url('/api/dwh/contracts/', parameters)
@@ -14,7 +17,7 @@ class DwhApi:
             return None
         return json_res
     @staticmethod
-    def get_report_dimension(api_connection, parameters={}):
+    def get_report_dimension(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/reports/', parameters)
@@ -23,7 +26,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_timestamp_dimension(api_connection, parameters={}):
+    def get_timestamp_dimension(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/times/', parameters)
@@ -32,7 +35,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_contract_timeseries(api_connection, parameters={}):
+    def get_contract_timeseries(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/contracttimeseries/', parameters)
@@ -41,7 +44,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_periodview_timeseries(api_connection, parameters={}):
+    def get_periodview_timeseries(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         if 'report_date' in parameters:
@@ -52,7 +55,7 @@ class DwhApi:
             return None
         return json_res
     @staticmethod
-    def get_productview_timeseries(api_connection, parameters={}):
+    def get_productview_timeseries(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         if 'report_date' in parameters:
@@ -64,7 +67,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_flexibility_activations(api_connection, parameters={}):
+    def get_flexibility_activations(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         if 'report_date' in parameters:
@@ -76,7 +79,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_hedgeview_timeseries(api_connection, parameters={}):
+    def get_hedgeview_timeseries(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/hedgeviewtimeseries/latest/', parameters)
@@ -85,7 +88,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_grid_exposure(api_connection, parameters={}):
+    def get_grid_exposure(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/gridexposure/latest/', parameters)
@@ -95,7 +98,7 @@ class DwhApi:
 
 
     @staticmethod
-    def get_report_types(api_connection, parameters={}):
+    def get_report_types(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/reporttypes/', parameters)
@@ -104,7 +107,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_report_dates(api_connection, parameters={}):
+    def get_report_dates(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/reportdates/', parameters)
@@ -113,7 +116,7 @@ class DwhApi:
         return json_res
 
     @staticmethod
-    def get_portfolios(api_connection, parameters={}):
+    def get_portfolios(api_connection: ApiConnection, parameters={}):
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/reportportfolios/', parameters)

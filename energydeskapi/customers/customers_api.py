@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -61,7 +63,7 @@ class CustomersApi:
 
 
     @staticmethod
-    def upsert_company(api_connection, company):
+    def upsert_company(api_connection: ApiConnection, company):
         """Updates companies
 
         :param api_connection: class with API token for use with API
@@ -81,7 +83,7 @@ class CustomersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def create_companies(api_connection, companies):
+    def create_companies(api_connection: ApiConnection, companies):
         """Registers companies
 
         :param api_connection: class with API token for use with API
@@ -100,8 +102,8 @@ class CustomersApi:
                 logger.info("Company registered " + company.name)
 
     # This should e identical to create_assets (i.e. create_companies) taking a list of class Company
-    # def create_companies(api_connection, companies): looping through companies and getting get_dict() to insert into API
-    def register_company(api_connection, company):
+    # def create_companies(api_connection: ApiConnection, companies): looping through companies and getting get_dict() to insert into API
+    def register_company(api_connection: ApiConnection, company):
         """Registers company
 
         :param api_connection: class with API token for use with API
@@ -115,7 +117,7 @@ class CustomersApi:
         logger.info(f"Registered company {json_res}")
         return json_res["Registration"]
     
-    def register_manual_company(api_connection, company):
+    def register_manual_company(api_connection: ApiConnection, company):
         """Registers company
 
         :param api_connection: class with API token for use with API
@@ -129,7 +131,7 @@ class CustomersApi:
         logger.info(f"Registered maual company {json_res}")
         return json_res, success
 
-    def register_company_from_regnumber(api_connection, registry_number: str, country: str):
+    def register_company_from_regnumber(api_connection: ApiConnection, registry_number: str, country: str):
         """Registers company with registry number
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -170,7 +172,7 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_company(api_connection, key):
+    def get_company(api_connection: ApiConnection, key):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -182,7 +184,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies(api_connection, parameters={}):
+    def get_companies(api_connection: ApiConnection, parameters={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -194,7 +196,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies_compact(api_connection, parameters={}):
+    def get_companies_compact(api_connection: ApiConnection, parameters={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -206,7 +208,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies_embedded(api_connection, parameters={}):
+    def get_companies_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -232,7 +234,7 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_companies_df(api_connection, parameters={}):
+    def get_companies_df(api_connection: ApiConnection, parameters={}):
         """Fetches all companies in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API
@@ -248,7 +250,7 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_company_pk_by_name(api_connection, company_name):
+    def get_company_pk_by_name(api_connection: ApiConnection, company_name):
         """Fetches companies from name
 
         :param api_connection: class with API token for use with API
@@ -266,7 +268,7 @@ class CustomersApi:
         return company_key
 
     @staticmethod
-    def get_company_by_key(api_connection, pk):
+    def get_company_by_key(api_connection: ApiConnection, pk):
         """Fetches a specific company as long as the user has rights
 
         :param api_connection: class with API token for use with API
@@ -281,7 +283,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_company_type_url(api_connection, company_type_enum):
+    def get_company_type_url(api_connection: ApiConnection, company_type_enum):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
@@ -294,7 +296,7 @@ class CustomersApi:
         return api_connection.get_base_url() + '/api/customers/companytypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_company_role_url(api_connection, company_role_enum):
+    def get_company_role_url(api_connection: ApiConnection, company_role_enum):
         """Fetches url for company roles from enum value
 
         :param api_connection: class with API token for use with API
@@ -305,7 +307,7 @@ class CustomersApi:
         return api_connection.get_base_url() + '/api/customers/companyroles/' + str(company_role_enum.value) + "/"
 
     @staticmethod
-    def get_company_url(api_connection, company_pk):
+    def get_company_url(api_connection: ApiConnection, company_pk):
         """Fetches url for companies from pk
 
         :param api_connection: class with API token for use with API
@@ -316,7 +318,7 @@ class CustomersApi:
         return api_connection.get_base_url() + '/api/customers/companies/' + str(company_pk) + "/"
 
     @staticmethod
-    def get_country_url(api_connection, country_pk):
+    def get_country_url(api_connection: ApiConnection, country_pk):
         """Fetches url for countries from pk
 
         :param api_connection: class with API token for use with API
@@ -327,7 +329,7 @@ class CustomersApi:
         return api_connection.get_base_url() + '/api/customers/countries/' + str(country_pk) + "/"
 
     @staticmethod
-    def get_company_from_registry_number(api_connection, registry_number):
+    def get_company_from_registry_number(api_connection: ApiConnection, registry_number):
         """Fetches all company objects with URL relations. Will only return companies for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -343,7 +345,7 @@ class CustomersApi:
         return None
 
     @staticmethod
-    def get_company_status(api_connection, status):
+    def get_company_status(api_connection: ApiConnection, status):
         """Fetches companies based on if they're active or not
 
         :param api_connection: class with API token for use with API

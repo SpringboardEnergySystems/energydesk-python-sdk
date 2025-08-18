@@ -4,6 +4,8 @@ import pendulum
 from dataclasses import asdict
 from dataclasses import dataclass
 
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder
 
 logger = logging.getLogger(__name__)
@@ -65,39 +67,39 @@ class FlexibilityPrequalifyApi:
 
 
     @staticmethod
-    def get_flex_prequalification_url(api_connection, order_status):
+    def get_flex_prequalification_url(api_connection: ApiConnection, order_status):
         status_pk = order_status if isinstance(order_status, int) else order_status.value
         return api_connection.get_base_url() + '/api/flexibility/prequalification/requests/' + str(status_pk) + "/"
 
     @staticmethod
-    def get_prequal_bidquality(api_connection,  parameters={}):
+    def get_prequal_bidquality(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexibility/prequalification/bidqualitytest/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_prequal_bidquality_embedded(api_connection,  parameters={}):
+    def get_prequal_bidquality_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexibility/prequalification/bidqualitytest/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_prequal_requests_embedded(api_connection,  parameters={}):
+    def get_prequal_requests_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexibility/prequalification/requests/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_prequal_offers_embedded(api_connection,  parameters={}):
+    def get_prequal_offers_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/flexibility/prequalification/productoffers/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def upsert_offers(api_connection, data: FlexMarketOffer):
+    def upsert_offers(api_connection: ApiConnection, data: FlexMarketOffer):
         logger.debug("Upserting flex offer ")
         payload = json.loads(data.json)
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
@@ -143,7 +145,7 @@ class FlexibilityPrequalifyApi:
 
 
     @staticmethod
-    def check_gridnode_status(api_connection, gridnode_name):
+    def check_gridnode_status(api_connection: ApiConnection, gridnode_name):
         payload={'grid_node_name':gridnode_name}
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
             '/api/flexibility/prequalification/gridnodestatus/', payload)
@@ -151,7 +153,7 @@ class FlexibilityPrequalifyApi:
 
 
     @staticmethod
-    def upsert_longflex_requests(api_connection, gridnode_name,requested_flexiblity:dict):
+    def upsert_longflex_requests(api_connection: ApiConnection, gridnode_name,requested_flexiblity:dict):
         payload={'grid_node_name':gridnode_name,
                'requested_flexiblity':requested_flexiblity}
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
@@ -159,7 +161,7 @@ class FlexibilityPrequalifyApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_prequal_bidquality(api_connection, data: FlexPrequalBidTest):
+    def upsert_prequal_bidquality(api_connection: ApiConnection, data: FlexPrequalBidTest):
         logger.debug("Upserting flex prequalif")
         payload = json.loads(data.json)
 
@@ -172,7 +174,7 @@ class FlexibilityPrequalifyApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def make_prequalification_request(api_connection, longflex_offer_id,asset_id_list=['GUID1','GUID2','GUID3']):
+    def make_prequalification_request(api_connection: ApiConnection, longflex_offer_id,asset_id_list=['GUID1','GUID2','GUID3']):
         payload={'longflex_offer_id':longflex_offer_id,
                'requested_date_for_activationtest':str(pendulum.today(tz="Europe/Oslo")),
                'asset_list':asset_id_list}

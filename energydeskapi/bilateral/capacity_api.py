@@ -1,5 +1,7 @@
 import logging
 
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.types.contract_enum_types import QuantityTypeEnum
@@ -165,20 +167,20 @@ class RatesConfiguration:
 class CapacityApi:
 
     @staticmethod
-    def get_capacity_profile(api_connection, parameters={}):
+    def get_capacity_profile(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/calculated/', parameters)
         if json_res is not None:
           return json_res
         return None
 
     @staticmethod
-    def get_capacity_request(api_connection, parameters={}):
+    def get_capacity_request(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/', parameters)
         if json_res is not None:
           return json_res
         return None
     @staticmethod
-    def get_capacity_request_by_key(api_connection, pk):
+    def get_capacity_request_by_key(api_connection: ApiConnection, pk):
         logger.info("Fetching tenders with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/bilateral/availability/tender/' + str(pk) + "/")
         if json_res is None:
@@ -186,29 +188,29 @@ class CapacityApi:
         return json_res
 
     @staticmethod
-    def get_capacity_request_embedded(api_connection, parameters={}):
+    def get_capacity_request_embedded(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/embedded/', parameters)
         if json_res is not None:
           return json_res
         return None
     @staticmethod
-    def get_tender_instance_embedded(api_connection, parameters={}):
+    def get_tender_instance_embedded(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/instance/', parameters)
         if json_res is not None:
           return json_res
         return None
     @staticmethod
-    def get_tender_instance_by_key(api_connection, pk):
+    def get_tender_instance_by_key(api_connection: ApiConnection, pk):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/instance/' + str(pk) + "/")
         if json_res is not None:
           return json_res
         return None
     @staticmethod
-    def get_capacity_request_url(api_connection, key):
+    def get_capacity_request_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/bilateral/availability/tender/' + str(key) + "/"
 
     @staticmethod
-    def list_active_capacity_offers(api_connection, parameters={}):
+    def list_active_capacity_offers(api_connection: ApiConnection, parameters={}):
 
         logger.info("Retrieve previously given pricees")
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tenderoffers/embedded/', parameters)
@@ -216,14 +218,14 @@ class CapacityApi:
             return json_res
         return []
     @staticmethod
-    def get_availability_hours(api_connection, parameters={}):
+    def get_availability_hours(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/availablehours/', parameters)
         if json_res is not None:
           return json_res
         return []
 
     @staticmethod
-    def upsert_capacity_request(api_connection, capacity_profile):
+    def upsert_capacity_request(api_connection: ApiConnection, capacity_profile):
       if capacity_profile.pk > 0:
           success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
               '/api/bilateral/availability/tender/' + str(capacity_profile.pk) + "/", capacity_profile.get_dict(api_connection))
@@ -233,7 +235,7 @@ class CapacityApi:
       return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def calculate_availability_price(api_connection, price_params:AvailabilityPriceParams):
+    def calculate_availability_price(api_connection: ApiConnection, price_params:AvailabilityPriceParams):
         rec=price_params.json
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
               '/api/bilateral/contractpricer/calcavailability/', rec)
@@ -242,7 +244,7 @@ class CapacityApi:
 
 
     @staticmethod
-    def upsert_availability_hours(api_connection, availability_hours):
+    def upsert_availability_hours(api_connection: ApiConnection, availability_hours):
       if availability_hours.pk > 0:
           success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
               '/api/bilateral/availability/flexiblehours/' + str(availability_hours.pk) + "/", availability_hours.get_dict(api_connection))
@@ -251,7 +253,7 @@ class CapacityApi:
               '/api/bilateral/availability/flexiblehours/', availability_hours.get_dict(api_connection))
       return success, returned_data, status_code, error_msg
     @staticmethod
-    def calculate_capacity_price(api_connection, tender_id, activation_price, currency_code="NOK"):
+    def calculate_capacity_price(api_connection: ApiConnection, tender_id, activation_price, currency_code="NOK"):
         qry_payload = {
                 "currency_code": currency_code,
                 "tender_id":tender_id,
@@ -334,7 +336,7 @@ class CapacityApi:
         return json_res
 
     @staticmethod
-    def upsert_rates_configuration(api_connection, pricing_conf):
+    def upsert_rates_configuration(api_connection: ApiConnection, pricing_conf):
         logger.info("Registering capacity rates configuration")
         if type(pricing_conf) is dict:
             pk = pricing_conf['pk']
@@ -352,7 +354,7 @@ class CapacityApi:
 
 
     @staticmethod
-    def get_rates_configuration_by_pk(api_connection, pk):
+    def get_rates_configuration_by_pk(api_connection: ApiConnection, pk):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API
