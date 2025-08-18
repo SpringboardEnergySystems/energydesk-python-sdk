@@ -375,8 +375,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def upsert_contract(api_connection,
-                          contract: Contract):
+    def upsert_contract(api_connection: ApiConnection, contract: Contract):
         """Registers contracts
 
         :param api_connection: class with API token for use with API
@@ -416,8 +415,7 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_contract_from_dict(api_connection,
-                        dict):
+    def upsert_contract_from_dict(api_connection: ApiConnection, dict):
         """Registers contracts from dictionary
 
         :param api_connection: class with API token for use with API
