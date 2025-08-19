@@ -91,9 +91,10 @@ class FlexibilityPrequalifyApi:
         if json_res is None:
             return None
         return json_res
+
     @staticmethod
     def get_prequal_gridnodes_requested(api_connection: ApiConnection,  parameters={}):
-        json_res = api_connection.exec_get_url('/api/flexibility/prequalification/requests/uniquenodes/', parameters)
+        json_res = api_connection.exec_get_url('/api/flexibility/prequalification/productrequests/uniquenodes/', parameters)
         if json_res is None:
             return None
         return json_res
