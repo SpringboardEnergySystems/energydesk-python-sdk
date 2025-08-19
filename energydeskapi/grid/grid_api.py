@@ -172,6 +172,13 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def get_grid_nodes_armed(api_connection: ApiConnection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/grid/gridnodearming/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_grid_nodes_embedded(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/embedded/', parameters)
         if json_res is None:
