@@ -56,6 +56,21 @@ class GridNode:
         return dict
 
 
+class GridNodeArming:
+    def __init__(self):
+        self.pk = 0
+        self.grid_node = None
+        self.period_from = None
+        self.period_until=None
+
+
+    def get_dict(self, api_connection):
+        dict = {}
+        dict['pk'] = self.pk
+        if self.grid_node is not None: dict['grid_node'] = GridNode.get_grid_node_url(api_connection, self.grid_node)
+        if self.period_from is not None: dict['period_from'] = self.period_from
+        if self.period_until is not None: dict['period_until'] = self.period_until
+        return dict
 
 class GridApi:
     """ Class for assets
@@ -172,11 +187,23 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_grid_nodes_armed(api_connection: ApiConnection, parameters={}):
-        json_res = api_connection.exec_get_url('/api/grid/gridnodearming/', parameters)
+    def get_grid_nodes_arming(api_connection: ApiConnection, parameters={}):
+        json_res = api_connection.exec_get_url('/api/grid/gridnodearming/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
+
+    @staticmethod
+    def upsert_grid_node_arming(api_connection: ApiConnection, grid_node_arming):
+
+        logger.info("Upserting Gridnode arming")
+        if grid_node_arming.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/grid/gridnodearming/' + str(grid_node_arming.pk) + "/", grid_node_arming.get_dict(api_connection))
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/grid/gridnodearming/', grid_node_arming.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
 
     @staticmethod
     def get_grid_nodes_embedded(api_connection: ApiConnection, parameters={}):
