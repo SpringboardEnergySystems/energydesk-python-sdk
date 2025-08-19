@@ -1,5 +1,8 @@
 import logging
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
@@ -81,27 +84,27 @@ class FlexibilityApi:
     """
 
     @staticmethod
-    def get_regulation_type_url(api_connection, regulation_type_enum):
+    def get_regulation_type_url(api_connection: ApiConnection, regulation_type_enum):
         type_pk = regulation_type_enum if isinstance(regulation_type_enum, int) else regulation_type_enum.value
         return api_connection.get_base_url() + '/api/flexiblepower/regulation/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_regulation_direction_url(api_connection, etype):
+    def get_regulation_direction_url(api_connection: ApiConnection, etype):
         type_pk = etype if isinstance(etype, int) else etype.value
         return api_connection.get_base_url() + '/api/flexmarkets/regulatingdirections/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_reserves_categories_url(api_connection, etype):
+    def get_reserves_categories_url(api_connection: ApiConnection, etype):
         type_pk = etype if isinstance(etype, int) else etype.value
         return api_connection.get_base_url() + '/api/flexmarkets/reservescategories/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_reserves_types_url(api_connection, etype):
+    def get_reserves_types_url(api_connection: ApiConnection, etype):
         type_pk = etype if isinstance(etype, int) else etype.value
         return api_connection.get_base_url() + '/api/flexmarkets/reservestypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_flexible_assets_embedded(api_connection, parameters={}):
+    def get_flexible_assets_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -113,7 +116,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_flexible_assets_tradable(api_connection, parameters={}):
+    def get_flexible_assets_tradable(api_connection: ApiConnection, parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -125,7 +128,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_flexible_assets(api_connection, parameters={}):
+    def get_flexible_assets(api_connection: ApiConnection, parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -137,13 +140,13 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_reserves_prices(api_connection, parameters={}):
+    def get_reserves_prices(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_reserves_prices_analyzed(api_connection, parameters={}):
+    def get_reserves_prices_analyzed(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/analyzed/', parameters)
         if json_res is None:
             return None
@@ -151,21 +154,21 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_localflexibility_prices(api_connection, parameters={}):
+    def get_localflexibility_prices(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/localflexprices/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_localflex_capacity_prices(api_connection, parameters={}):
+    def get_localflex_capacity_prices(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/localcapacityprices/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def remove_asset_flexibility(api_connection, extern_asset_id):
+    def remove_asset_flexibility(api_connection: ApiConnection, extern_asset_id):
         asset_offering=FlexibilityApi.get_flexible_assets(api_connection, parameters={'asset__extern_asset_id':extern_asset_id})
         print(asset_offering)
         flag=True
@@ -177,7 +180,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_asset_flexibility_periodoffers(api_connection, parameters={}):
+    def get_asset_flexibility_periodoffers(api_connection: ApiConnection, parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -189,7 +192,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def remove_asset_flexibility_periodoffers(api_connection, extern_asset_id):
+    def remove_asset_flexibility_periodoffers(api_connection: ApiConnection, extern_asset_id):
         asset_offering=FlexibilityApi.get_asset_flexibility_periodoffers(api_connection, parameters={'flexible_asset__asset__extern_asset_id':extern_asset_id})
         print(asset_offering)
         flag=True
@@ -200,7 +203,7 @@ class FlexibilityApi:
         return flag
 
     @staticmethod
-    def get_flexibility_markets(api_connection,  parameters={}):
+    def get_flexibility_markets(api_connection: ApiConnection,  parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -211,7 +214,7 @@ class FlexibilityApi:
             return None
         return json_res
     @staticmethod
-    def get_flexibility_products(api_connection,  parameters={}):
+    def get_flexibility_products(api_connection: ApiConnection,  parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -223,7 +226,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_flexible_portfolios(api_connection,  parameters={}):
+    def get_flexible_portfolios(api_connection: ApiConnection,  parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -235,7 +238,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_asset_profile_types(api_connection,  parameters={}):
+    def get_asset_profile_types(api_connection: ApiConnection,  parameters={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -247,7 +250,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_asset_offer_url(api_connection, asset_offer_pk):
+    def get_asset_offer_url(api_connection: ApiConnection, asset_offer_pk):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -257,14 +260,14 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def find_flexibility_potential(api_connection, payload):
+    def find_flexibility_potential(api_connection: ApiConnection, payload):
         logger.info("Lookup flexibility potential")
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/flexiblepower/assetpotential/', payload)
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def load_lonflex_agreements(api_connection):  # NODES contracts
+    def load_lonflex_agreements(api_connection: ApiConnection):  # NODES contracts
         logger.info("Lookup flexibility potential")
         parameters = {}
         json_res = api_connection.exec_get_url('/api/flexiblepower/longflexagreements/', parameters)
@@ -273,7 +276,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def load_grid_node_polygons(api_connection, grid_nodes:list):
+    def load_grid_node_polygons(api_connection: ApiConnection, grid_nodes:list):
         logger.info("Lookup flexibility potential")
         payload = {'grid_nodes':grid_nodes}
         success, returned_data, status_code, error_msg = api_connection.exec_post_url(
@@ -284,7 +287,7 @@ class FlexibilityApi:
         return returned_data
 
     @staticmethod
-    def upsert_scheduled_regulation(api_connection, scheduled_regulation):
+    def upsert_scheduled_regulation(api_connection: ApiConnection, scheduled_regulation):
         logger.debug("Upserting scheduled_regulation")
         payload = scheduled_regulation.get_dict(api_connection)
         key = int(payload['pk'])
@@ -298,7 +301,7 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_flexible_asset(api_connection, extern_asset_id, callback):
+    def upsert_flexible_asset(api_connection: ApiConnection, extern_asset_id, callback):
         logger.debug("Upserting flexible asset")
         asset=AssetsApi.get_assets(api_connection, {'extern_asset_id':extern_asset_id})
         key = int(asset['results'][0]['pk'])
@@ -309,7 +312,7 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_regulation_schedule(api_connection, parameters, external_asset_id=None):
+    def get_regulation_schedule(api_connection: ApiConnection, parameters, external_asset_id=None):
         if external_asset_id is not None:
             parameters={
                 'flexible_asset__asset__extern_asset_id':external_asset_id
@@ -321,7 +324,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_external_market_offers(api_connection, parameters):
+    def get_external_market_offers(api_connection: ApiConnection, parameters):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -335,7 +338,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_availability_profile_templates(api_connection, parameters={}):
+    def get_availability_profile_templates(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/availabilityprofiletemplates/', parameters)
         if json_res is None:
             return None
@@ -348,7 +351,7 @@ class FlexibilityApi:
         return api_connection.get_base_url() + '/api/flexiblepower/assetavailabilityprofiles/' + str(pk) + "/"
 
     @staticmethod
-    def get_flexible_market_url(api_connection, flexible_market_pk):
+    def get_flexible_market_url(api_connection: ApiConnection, flexible_market_pk):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -358,14 +361,14 @@ class FlexibilityApi:
         return api_connection.get_base_url() + '/api/flexiblepower/flexiblemarkets/' + str(flexible_market_pk) + "/"
 
     @staticmethod
-    def get_asset_profile_type_url(api_connection, asset_profile_type_enum):
+    def get_asset_profile_type_url(api_connection: ApiConnection, asset_profile_type_enum):
         type_pk = asset_profile_type_enum if isinstance(asset_profile_type_enum,
                                                            int) else asset_profile_type_enum.value
         return api_connection.get_base_url() + '/api/flexiblepower/assetprofiletypes/' + str(type_pk) + "/"
 
 
     @staticmethod
-    def upsert_market_offering(api_connection, external_market_asset):
+    def upsert_market_offering(api_connection: ApiConnection, external_market_asset):
 
         logger.debug("Upserting market offering")
         payload = external_market_asset.get_dict(api_connection)
@@ -381,14 +384,14 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_asset_availability_profile(api_connection, parameters={}):
+    def get_asset_availability_profile(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/assetavailabilityprofiles/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def upsert_asset_availability_profile(api_connection, pk, payload):
+    def upsert_asset_availability_profile(api_connection: ApiConnection, pk, payload):
 
         logger.info("Upserting availability profile")
         print(json.dumps(payload, indent=2))
@@ -401,7 +404,7 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_availability_profile_template(api_connection, pk, payload):
+    def upsert_availability_profile_template(api_connection: ApiConnection, pk, payload):
 
         logger.debug("Upserting availability profile template")
 
@@ -414,7 +417,7 @@ class FlexibilityApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def remove_market_offering(api_connection, external_asset_id=None):
+    def remove_market_offering(api_connection: ApiConnection, external_asset_id=None):
         params={}
         if external_asset_id is not None:
             params['flexibleasset__asset__extern_asset_id']=external_asset_id
@@ -426,14 +429,14 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_market_offerings(api_connection, parameters={}):
+    def get_market_offerings(api_connection: ApiConnection, parameters={}):
 
         market_offerings=FlexibilityApi.get_external_market_offers(api_connection, parameters)
         print(market_offerings)
         return market_offerings
 
     @staticmethod
-    def get_empty_dispatch_schedule(api_connection):
+    def get_empty_dispatch_schedule(api_connection: ApiConnection):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -447,7 +450,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_asset_dispatch_schedule(api_connection,  extern_asset_id, period_from, period_until):
+    def get_asset_dispatch_schedule(api_connection: ApiConnection,  extern_asset_id, period_from, period_until):
         """Fetches asset dispatch schedule
 
         :param api_connection: class with API token for use with API
@@ -469,7 +472,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_availability_schedule(api_connection, extern_asset_id, period_from, period_until):
+    def get_availability_schedule(api_connection: ApiConnection, extern_asset_id, period_from, period_until):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -487,7 +490,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_portfolio_availability(api_connection, portfolio_id, period_from, period_until):
+    def get_portfolio_availability(api_connection: ApiConnection, portfolio_id, period_from, period_until):
         param={'portfolio_id':portfolio_id,
                'period_from':period_from,
                'period_until':period_until}
@@ -515,7 +518,7 @@ class FlexibilityApi:
         return AssetsApi.get_assets_embedded(api_connection, {"meter_id":mpid})
 
     @staticmethod
-    def generate_baselines_for_asset(api_connection, payload):
+    def generate_baselines_for_asset(api_connection: ApiConnection, payload):
         success, json_res, status_code, error_msg =BaselinesApi.generate_baselines(api_connection, payload)
         if success is False:
             return None
@@ -532,7 +535,7 @@ class FlexibilityApi:
         return json.loads(df.to_json(orient='records'))
 
     @staticmethod
-    def register_asset_readings(api_connection, asset_pk, df_readings):
+    def register_asset_readings(api_connection: ApiConnection, asset_pk, df_readings):
         payload = {
             'asset': AssetsApi.get_asset_url(api_connection, asset_pk),
             'time_series_type': AssetDataApi.get_timeseries_type_url(api_connection, TimeSeriesTypesEnum.METERREADINGS),
@@ -548,7 +551,7 @@ class FlexibilityApi:
         logger.info("Registered readings OK")
         return json_res
     @staticmethod
-    def register_flexible_asset(api_connection, extern_asset_id,description, meter_id, sub_meter_id,
+    def register_flexible_asset(api_connection: ApiConnection, extern_asset_id,description, meter_id, sub_meter_id,
                                 address, city, latitude, longitude, asset_category,asset_type,
                                 asset_owner_regnumber,asset_manager_regnumber, dso_regnumber,brp_regnumber,
                                 technical_manager_regnumber, callback_url
@@ -585,7 +588,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def register_asset_availability(api_connection, asset_id, extern_asset_id,
+    def register_asset_availability(api_connection: ApiConnection, asset_id, extern_asset_id,
                                     period_from, period_until,  active_profile, profile_changerequest, kw_available,
                                 avgcost_per_unit=0):
         """Simplified registration of flexible asset

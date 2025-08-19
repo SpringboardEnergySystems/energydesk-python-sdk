@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.customers.customers_api import Company, CustomersApi
 logger = logging.getLogger(__name__)
 
@@ -10,7 +12,7 @@ class SystemApi:
     """
 
     @staticmethod
-    def get_system_features(api_connection):
+    def get_system_features(api_connection: ApiConnection):
         """Fetches system features
 
         :param api_connection: class with API token for use with API
@@ -24,7 +26,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_feature_by_key(api_connection, pk):
+    def get_system_feature_by_key(api_connection: ApiConnection, pk):
         """Fetches system feature by key
 
         :param api_connection: class with API token for use with API
@@ -38,7 +40,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_feature_url(api_connection, pk):
+    def get_system_feature_url(api_connection: ApiConnection, pk):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API
@@ -49,7 +51,7 @@ class SystemApi:
         return api_connection.get_base_url() + '/api/system/systemfeatures/' + str(pk) + "/"
 
     @staticmethod
-    def get_system_access_types(api_connection):
+    def get_system_access_types(api_connection: ApiConnection):
         """Fetches system access types
 
         :param api_connection: class with API token for use with API
@@ -63,7 +65,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_access_type_by_key(api_connection, pk):
+    def get_system_access_type_by_key(api_connection: ApiConnection, pk):
         """Fetches system access type by key
 
         :param api_connection: class with API token for use with API
@@ -79,7 +81,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_access_type_url(api_connection, pk):
+    def get_system_access_type_url(api_connection: ApiConnection, pk):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API
@@ -92,7 +94,7 @@ class SystemApi:
 
 
     @staticmethod
-    def get_system_manager(api_connection):
+    def get_system_manager(api_connection: ApiConnection):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API
@@ -107,7 +109,7 @@ class SystemApi:
 
 
     @staticmethod
-    def upsert_system_manager(api_connection, system_owner_pk, system_manager_pk):
+    def upsert_system_manager(api_connection: ApiConnection, system_owner_pk, system_manager_pk):
         """Fetches scheduled jobs
 
         :param api_connection: class with API token for use with API

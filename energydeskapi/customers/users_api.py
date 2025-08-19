@@ -20,7 +20,7 @@ class User:
         self.alias: Optional[str]=None
         self.user_role: Optional[int] = None
         self.is_super_user: bool=False
-        self.company: Optional[str]=None
+        self.company: Optional[int]=None
         self.company_registry_number: Optional[str]=None
         self.password: Optional[str]=None
         self.authentication_type: Optional[str]=None
@@ -84,7 +84,7 @@ class UsersApi:
     """
 
     @staticmethod
-    def update_userprofile(api_connection, user):
+    def update_userprofile(api_connection: ApiConnection, user: User):
         """Updates user profiles
 
         :param api_connection: class with API token for use with API
@@ -101,7 +101,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_user_profile(api_connection):
+    def get_user_profile(api_connection: ApiConnection):
         """Fetches user profile
 
         :param api_connection: class with API token for use with API
@@ -114,7 +114,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_api_token(api_connection):
+    def get_api_token(api_connection: ApiConnection):
         """Fetches API token
 
         :param api_connection: class with API token for use with API
@@ -127,7 +127,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_users_by_role(api_connection, user_role_enum):
+    def get_users_by_role(api_connection: ApiConnection, user_role_enum):
         """Fetches users from roles
 
         :param api_connection: class with API token for use with API
@@ -139,7 +139,7 @@ class UsersApi:
         return UsersApi.get_users(api_connection, {"user_role__pk": parse_enum_type(user_role_enum)})
 
     @staticmethod
-    def get_users_by_role_df(api_connection, user_role_enum):
+    def get_users_by_role_df(api_connection: ApiConnection, user_role_enum):
         """Fetches users from roles and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -151,7 +151,7 @@ class UsersApi:
 
 
     @staticmethod
-    def get_profile_by_username(api_connection, username):
+    def get_profile_by_username(api_connection: ApiConnection, username: str):
         """Fetches profile from username
 
         :param api_connection: class with API token for use with API
@@ -162,7 +162,7 @@ class UsersApi:
         return UsersApi.get_users(api_connection, {"user__username": str(username)})
 
     @staticmethod
-    def get_profile_by_key(api_connection, pk):
+    def get_profile_by_key(api_connection: ApiConnection, pk):
         """Fetches user profile from key
 
         :param api_connection: class with API token for use with API
@@ -177,7 +177,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_embedded_profile_by_key(api_connection, pk):
+    def get_embedded_profile_by_key(api_connection: ApiConnection, pk):
         payload = {"id": pk}
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', payload)
         results = json_res['results']
@@ -201,7 +201,7 @@ class UsersApi:
         return dfsubset[['pk', 'username', 'user_role', 'email', 'first_name', 'last_name', 'company']]
 
     @staticmethod
-    def get_users_by_key_df(api_connection, user_profile_key):
+    def get_users_by_key_df(api_connection: ApiConnection, user_profile_key):
         """Fetches user profile from key and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -212,7 +212,7 @@ class UsersApi:
         return UsersApi.get_profile_by_key(api_connection,user_profile_key)
 
     @staticmethod
-    def get_user_by_key(api_connection, pk):
+    def get_user_by_key(api_connection: ApiConnection, pk):
         """Fetches user from key
 
         :param api_connection: class with API token for use with API
@@ -227,7 +227,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def update_user(api_connection, pk, payload ):
+    def update_user(api_connection: ApiConnection, pk, payload ):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
@@ -240,7 +240,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_users(api_connection, parameters={}):
+    def get_users(api_connection: ApiConnection, parameters={}):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
@@ -253,7 +253,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_users_embedded(api_connection, parameters={}):
+    def get_users_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches user profiles
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -276,7 +276,7 @@ class UsersApi:
         return output
 
     @staticmethod
-    def get_users_df2(api_connection, parameters={}):
+    def get_users_df2(api_connection: ApiConnection, parameters={}):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
@@ -291,7 +291,7 @@ class UsersApi:
         df = pd.json_normalize(dict, max_level=1)
         return UsersApi.process_dataframe(df)
     @staticmethod
-    def get_users_df(api_connection, parameters={}):
+    def get_users_df(api_connection: ApiConnection, parameters={}):
         #json_res=UsersApi.get_users(api_connection, parameters)
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
         if json_res is not None:
@@ -323,7 +323,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_user_roles_df(api_connection):
+    def get_user_roles_df(api_connection: ApiConnection):
         """Fetches all user roles and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -337,7 +337,7 @@ class UsersApi:
         return df
 
     @staticmethod
-    def get_user_groups(api_connection):
+    def get_user_groups(api_connection: ApiConnection):
         """Fetches user groups
 
         :param api_connection: class with API token for use with API
@@ -350,7 +350,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_groups_df(api_connection):
+    def get_user_groups_df(api_connection: ApiConnection):
         """Fetches user groups and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -364,7 +364,7 @@ class UsersApi:
         return df
 
     @staticmethod
-    def get_user_group_by_key(api_connection, pk):
+    def get_user_group_by_key(api_connection: ApiConnection, pk):
         """Fetches user groups
 
         :param api_connection: class with API token for use with API
@@ -379,7 +379,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_group_url(api_connection, pk):
+    def get_user_group_url(api_connection: ApiConnection, pk):
         """Fetches url for a specified user group
 
         :param api_connection: class with API token for use with API
@@ -392,7 +392,7 @@ class UsersApi:
         return full_url
 
     @staticmethod
-    def get_users_from_user_group(api_connection, pk):
+    def get_users_from_user_group(api_connection: ApiConnection, pk):
         """Fetches users from user groups
 
         :param api_connection: class with API token for use with API
@@ -408,7 +408,7 @@ class UsersApi:
         return users
 
     @staticmethod
-    def get_users_from_user_group_embedded(api_connection, pk):
+    def get_users_from_user_group_embedded(api_connection: ApiConnection, pk):
         """Fetches users from user groups with embedding
 
         :param api_connection: class with API token for use with API
@@ -424,7 +424,7 @@ class UsersApi:
         return users
 
     @staticmethod
-    def upsert_user_groups(api_connection, user_group):
+    def upsert_user_groups(api_connection: ApiConnection, user_group):
         """Creates/Updates user groups
 
         :param api_connection: class with API token for use with API
@@ -446,7 +446,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def delete_user_groups(api_connection, pk):
+    def delete_user_groups(api_connection: ApiConnection, pk):
         """Deletes user groups
 
         :param api_connection: class with API token for use with API
@@ -462,7 +462,7 @@ class UsersApi:
         return "User group has users and can't be deleted", status_code
 
     @staticmethod
-    def add_user_to_user_group(api_connection, group_pk, user_pk):
+    def add_user_to_user_group(api_connection: ApiConnection, group_pk, user_pk):
         """Removes users from user group
 
         :param api_connection: class with API token for use with API
@@ -482,7 +482,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def remove_user_from_user_group(api_connection, group_pk, user_pk):
+    def remove_user_from_user_group(api_connection: ApiConnection, group_pk, user_pk):
         """Removes users from user group
 
         :param api_connection: class with API token for use with API
@@ -502,7 +502,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_user_feature_access(api_connection, params={}):
+    def get_user_feature_access(api_connection: ApiConnection, params={}):
         """Fetches accesses to features for user groups
 
         :param api_connection: class with API token for use with API
@@ -515,7 +515,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_feature_access_embedded(api_connection, params={}):
+    def get_user_feature_access_embedded(api_connection: ApiConnection, params={}):
         """Fetches accesses to features for user groups with embedding
 
         :param api_connection: class with API token for use with API
@@ -528,7 +528,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_feature_access_for_user_group(api_connection, group_pk):
+    def get_user_feature_access_for_user_group(api_connection: ApiConnection, group_pk):
         """Fetches features to user groups
 
         :param api_connection: class with API token for use with API
@@ -544,7 +544,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def update_permissions(api_connection, permissions):
+    def update_permissions(api_connection: ApiConnection, permissions):
         """Updates feature accesses
 
         :param api_connection: class with API token for use with API
@@ -560,7 +560,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def upsert_user_feature_access(api_connection, user_feature_access):
+    def upsert_user_feature_access(api_connection: ApiConnection, user_feature_access):
         """Upserts accesses to features for user groups
 
         :param api_connection: class with API token for use with API
@@ -580,7 +580,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def delete_user_feature_access(api_connection, pk):
+    def delete_user_feature_access(api_connection: ApiConnection, pk):
         """Deletes features to user groups
 
         :param api_connection: class with API token for use with API
@@ -596,7 +596,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_user_url(api_connection, user_pk):
+    def get_user_url(api_connection: ApiConnection, user_pk):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API
@@ -607,7 +607,7 @@ class UsersApi:
         return api_connection.get_base_url() + '/api/customers/profiles/' + str(user_pk) + "/"
 
     @staticmethod
-    def send_password_reset_email(api_connection, email):
+    def send_password_reset_email(api_connection: ApiConnection, email):
         """ Sends email to user with instructions for resetting password
 
         :param api_connection: class with API token for use with API
@@ -619,7 +619,7 @@ class UsersApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def reset_password(api_connection, payload):
+    def reset_password(api_connection: ApiConnection, payload):
         """ Resets password for users
 
         :param api_connection: class with API token for use with API
@@ -631,7 +631,7 @@ class UsersApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def validate_reset_token(api_connection, token):
+    def validate_reset_token(api_connection: ApiConnection, token):
         """ Checks if token for resetting password is valid
 
         :param api_connection: class with API token for use with API

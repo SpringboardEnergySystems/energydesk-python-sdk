@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 import requests
 import environ
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class LatexApi:
         return requests.post(server_url, json=payload)
 
     @staticmethod
-    def download_pdf_attachment(api_connection, tex_file):
+    def download_pdf_attachment(api_connection: ApiConnection, tex_file):
         payload = {"tex_file":tex_file}
         print(payload)
         response = LatexApi.exec_post(
@@ -30,7 +31,7 @@ class LatexApi:
         return None
 
     @staticmethod
-    def convert_and_email(api_connection, tex_file):
+    def convert_and_email(api_connection: ApiConnection, tex_file):
         payload = {"tex_file": tex_file,
                    "email_receipients": "string"}
         response = LatexApi.exec_post(
@@ -40,7 +41,7 @@ class LatexApi:
         return None
 
     @staticmethod
-    def download_pdf_stream(api_connection, tex_file):
+    def download_pdf_stream(api_connection: ApiConnection, tex_file):
         payload = {"tex_file": tex_file}
         print(payload)
         response = LatexApi.exec_post(

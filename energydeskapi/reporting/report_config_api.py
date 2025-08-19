@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.sdk.common_utils import key_from_url
 from energydeskapi.portfolios.portfolio_api import PortfoliosApi
 logger = logging.getLogger(__name__)
@@ -59,7 +61,7 @@ class ReportConfigApi:
     """
 
     @staticmethod
-    def get_report_configs(api_connection, parameters={}):
+    def get_report_configs(api_connection: ApiConnection, parameters={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -70,7 +72,7 @@ class ReportConfigApi:
             return None
         return json_res
     @staticmethod
-    def upsert_report_config(api_connection, report_config):
+    def upsert_report_config(api_connection: ApiConnection, report_config):
         """Registers/Updates asset
 
         :param api_connection: class with API token for use with API

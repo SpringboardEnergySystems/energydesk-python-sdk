@@ -2,6 +2,9 @@ import json
 import logging
 import pandas as pd
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.sdk.common_utils import parse_enum_type
 logger = logging.getLogger(__name__)
 
@@ -29,7 +32,7 @@ class LocationApi:
 
     """
     @staticmethod
-    def get_main_production_area(api_connection):
+    def get_main_production_area(api_connection: ApiConnection):
         """Fetches main area of company
 
         :param api_connection: class with API token for use with API
@@ -42,7 +45,7 @@ class LocationApi:
         return None
 
     @staticmethod
-    def get_default_zones(api_connection):
+    def get_default_zones(api_connection: ApiConnection):
         """Fetches main area of company
 
         :param api_connection: class with API token for use with API
@@ -54,7 +57,7 @@ class LocationApi:
             return json_res
         return None
     @staticmethod
-    def get_dso_area(api_connection, dso_name):
+    def get_dso_area(api_connection: ApiConnection, dso_name):
         """Fetches main area of company
 
         :param api_connection: class with API token for use with API
@@ -68,7 +71,7 @@ class LocationApi:
         return None
 
     @staticmethod
-    def generate_asset_polygon(api_connection, asset_list):
+    def generate_asset_polygon(api_connection: ApiConnection, asset_list):
         """Fetches main area of company
 
         :param api_connection: class with API token for use with API
@@ -83,7 +86,7 @@ class LocationApi:
         return None
 
     @staticmethod
-    def generate_default_map(api_connection, map_type, include_assets, zones=[], country="NOR"):
+    def generate_default_map(api_connection: ApiConnection, map_type, include_assets, zones=[], country="NOR"):
         """Fetches main area of company
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -103,7 +106,7 @@ class LocationApi:
         return None
 
     @staticmethod
-    def get_location_type_url(api_connection, location_type_enum):
+    def get_location_type_url(api_connection: ApiConnection, location_type_enum):
         """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
@@ -116,7 +119,7 @@ class LocationApi:
             type_pk) + "/"
 
     @staticmethod
-    def upsert_local_areas(api_connection, local_areas):
+    def upsert_local_areas(api_connection: ApiConnection, local_areas):
         """Upsert local area
         Inserts (new) or updated existing local area
 
@@ -133,7 +136,7 @@ class LocationApi:
             return json_res
 
     @staticmethod
-    def get_local_area_url(api_connection, key):
+    def get_local_area_url(api_connection: ApiConnection, key):
         """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
@@ -145,7 +148,7 @@ class LocationApi:
             key) + "/"
 
     @staticmethod
-    def get_local_areas(api_connection, parameters={}):
+    def get_local_areas(api_connection: ApiConnection, parameters={}):
         """Fetches local area from location type pk
 
         :param api_connection: class with API token for use with API
@@ -161,7 +164,7 @@ class LocationApi:
 
 
 
-    def get_local_areas_df(api_connection,  location_type_enum):
+    def get_local_areas_df(api_connection: ApiConnection,  location_type_enum):
         """Fetches local areas and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -173,7 +176,7 @@ class LocationApi:
         return None if json_res is None else pd.DataFrame(data=json_res)
 
     @staticmethod
-    def get_location_types(api_connection):
+    def get_location_types(api_connection: ApiConnection):
         """Fetches all location types
 
         :param api_connection: class with API token for use with API
@@ -187,7 +190,7 @@ class LocationApi:
 
 
     @staticmethod
-    def get_location_types_df(api_connection):
+    def get_location_types_df(api_connection: ApiConnection):
         """Fetches all location types and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -197,7 +200,7 @@ class LocationApi:
         return None if json_res is None else pd.DataFrame(data=json_res)
 
     @staticmethod
-    def get_geolocation_details(api_connection, locarea_pk):
+    def get_geolocation_details(api_connection: ApiConnection, locarea_pk):
         """Fetches location details from pk
 
         :param api_connection: class with API token for use with API

@@ -1,5 +1,7 @@
 import logging, json
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.portfolios.portfoliotree_utils import convert_embedded_tree_to_jstree,convert_nodes_from_jstree, create_flat_tree_for_jstree,create_embedded_tree_recursive, create_embedded_tree_for_dropdown
 from energydeskapi.portfolios.portfoliotree_utils import sample_portfolio_tree, sample_portfolio_tree_embedded
 from energydeskapi.portfolios.portfolio_api import PortfolioNode, PortfoliosApi
@@ -11,7 +13,7 @@ logger = logging.getLogger(__name__)
 class PortfolioTreeApi:
 
   @staticmethod
-  def get_portfolio_tree(api_connection, parameters={}):
+  def get_portfolio_tree(api_connection: ApiConnection, parameters={}):
       logger.info("Fetching portfolio tree")
       json_res = PortfoliosApi.get_portfolios_embedded(api_connection, parameters)
       if json_res is None:
@@ -19,7 +21,7 @@ class PortfolioTreeApi:
       return create_embedded_tree_recursive(json_res)
 
   @staticmethod
-  def get_portfolio_flat_tree(api_connection, parameters={}):
+  def get_portfolio_flat_tree(api_connection: ApiConnection, parameters={}):
       logger.info("Fetching portfolio flat tree")
       json_res=PortfolioTreeApi.get_portfolio_tree(api_connection, parameters)
       if json_res is None:
@@ -41,7 +43,7 @@ class PortfolioTreeApi:
 
 
   @staticmethod
-  def upsert_portfolio_tree_from_flat_dict(api_connection, portfolio_nodes):
+  def upsert_portfolio_tree_from_flat_dict(api_connection: ApiConnection, portfolio_nodes):
 
     success, json_res, status_code, error_msg = api_connection.exec_post_url(
               '/api/portfoliomanager/portfoliotree-creation/', payload=portfolio_nodes)
@@ -49,7 +51,7 @@ class PortfolioTreeApi:
     return success, None
 
   @staticmethod
-  def upsert_portfolio_tree(api_connection, portfolio_nodes):
+  def upsert_portfolio_tree(api_connection: ApiConnection, portfolio_nodes):
     logger.info("SAVING TREE (upsert_portfolio_tree)")
     list=[]
     for p in portfolio_nodes:
@@ -58,7 +60,7 @@ class PortfolioTreeApi:
 
 
   @staticmethod
-  def get_portfolio_tree_for_dropdown(api_connection, parameters={}):
+  def get_portfolio_tree_for_dropdown(api_connection: ApiConnection, parameters={}):
     logger.info("Fetching portfolio tree")
     json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
     if json_res is None:
@@ -68,7 +70,7 @@ class PortfolioTreeApi:
     #return arr
 
   @staticmethod
-  def get_portfolio_url(api_connection, portfolio_pk):
+  def get_portfolio_url(api_connection: ApiConnection, portfolio_pk):
       """Fetches url for portfolio from pk
 
       :param api_connection: class with API token for use with API

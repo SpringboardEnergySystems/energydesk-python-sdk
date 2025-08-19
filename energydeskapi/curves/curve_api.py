@@ -2,6 +2,9 @@ import logging
 import pandas as pd
 import json
 import ast
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.market_enum_types import MarketEnum
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.sdk.pandas_utils import convert_dataframe_to_localtime
@@ -13,7 +16,7 @@ class CurveApi:
     """
 
     @staticmethod
-    def get_curve_models(api_connection):
+    def get_curve_models(api_connection: ApiConnection):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -23,7 +26,7 @@ class CurveApi:
         json_res = api_connection.exec_get_url('/api/curvemanager/forwardcurvemodels/')
         return json_res
     @staticmethod
-    def get_curve_models_df(api_connection):
+    def get_curve_models_df(api_connection: ApiConnection):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -115,7 +118,7 @@ class CurveApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_latest_forward_curve(api_connection, parameters={}):
+    def get_latest_forward_curve(api_connection: ApiConnection, parameters={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API

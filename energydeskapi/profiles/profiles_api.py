@@ -1,4 +1,7 @@
 import logging
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.sdk.common_utils import check_fix_date2str
 from energydeskapi.profiles.profiles import GenericProfile
 logger = logging.getLogger(__name__)
@@ -30,7 +33,7 @@ class ProfilesApi:
     """
 
     @staticmethod
-    def get_spot_profiles(api_connection, parameters={}):
+    def get_spot_profiles(api_connection: ApiConnection, parameters={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -43,7 +46,7 @@ class ProfilesApi:
         return None
 
     @staticmethod
-    def get_volume_profiles(api_connection, parameters={}):
+    def get_volume_profiles(api_connection: ApiConnection, parameters={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -56,7 +59,7 @@ class ProfilesApi:
         return None
 
     @staticmethod
-    def get_volume_profile_by_key(api_connection, key):
+    def get_volume_profile_by_key(api_connection: ApiConnection, key):
         """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
@@ -72,7 +75,7 @@ class ProfilesApi:
 
 
     @staticmethod
-    def delete_volume_profile(api_connection, pk):
+    def delete_volume_profile(api_connection: ApiConnection, pk):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -83,7 +86,7 @@ class ProfilesApi:
 
 
     @staticmethod
-    def upsert_volume_profile(api_connection, profile):
+    def upsert_volume_profile(api_connection: ApiConnection, profile):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -97,7 +100,7 @@ class ProfilesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_yearlyfactors(api_connection, factor):
+    def upsert_yearlyfactors(api_connection: ApiConnection, factor):
         """Registers yearly factors
 
         :param api_connection: class with API token for use with API
@@ -108,7 +111,7 @@ class ProfilesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def convert_volumeprofile_to_factors(api_connection, volume_profile:GenericProfile):
+    def convert_volumeprofile_to_factors(api_connection: ApiConnection, volume_profile:GenericProfile):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -122,7 +125,7 @@ class ProfilesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def convert_relativeprofile_to_yearlyfactors(api_connection, delivery_from, delivery_until, relative_profile:GenericProfile):
+    def convert_relativeprofile_to_yearlyfactors(api_connection: ApiConnection, delivery_from, delivery_until, relative_profile:GenericProfile):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

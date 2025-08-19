@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.product_utils import convert_productjson_dataframe
@@ -90,7 +92,7 @@ class ProductsApi:
     """
 
     @staticmethod
-    def get_commodity_definitioon_url(api_connection, commodity_deinition_pk):
+    def get_commodity_definitioon_url(api_connection: ApiConnection, commodity_deinition_pk):
         """Fetches url for tradingbook from pk
 
         :param api_connection: class with API token for use with API
@@ -101,61 +103,61 @@ class ProductsApi:
         return api_connection.get_base_url() + '/api/markets/commoditydefinitions/' + str(commodity_deinition_pk) + "/"
 
     @staticmethod
-    def get_commodity_definitions(api_connection, parameters={}):
+    def get_commodity_definitions(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/commoditydefinitions/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products(api_connection, parameters={}):
+    def get_market_products(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products_embedded(api_connection, parameters={}):
+    def get_market_products_embedded(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products_objects(api_connection, parameters={}):
+    def get_market_products_objects(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
         if json_res is None:
             return None
         return json_res['results']
 
     @staticmethod
-    def get_product_prices(api_connection, parameters={}):
+    def get_product_prices(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/productprices/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_product_prices_embedded(api_connection, parameters={}):
+    def get_product_prices_embedded(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products_df(api_connection, parameters={}):
+    def get_market_products_df(api_connection: ApiConnection, parameters={}):
         json_res=ProductsApi.get_market_products_embedded(api_connection, parameters)
         return convert_productjson_dataframe(json_res)
 
     @staticmethod
-    def generate_market_product_from_ticker(api_connection, market, market_ticker):
+    def generate_market_product_from_ticker(api_connection: ApiConnection, market, market_ticker):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/gen-marketproduct/',
                                                 {'market_ticker':market_ticker, 'market':market})
         logger.debug(f"Generating market product from ticker. Status:{status_code}, Result:{json_res}")
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def register_commodity(api_connection, commodity_definition):
+    def register_commodity(api_connection: ApiConnection, commodity_definition):
         """Registers products
 
         :param api_connection: class with API token for use with API
@@ -170,7 +172,7 @@ class ProductsApi:
         logger.debug(f"Registering commodity. Result:{json_res}")
         return json_res['pk']
     @staticmethod
-    def register_products(api_connection, product_list):
+    def register_products(api_connection: ApiConnection, product_list):
         """Registers products
 
         :param api_connection: class with API token for use with API
@@ -190,7 +192,7 @@ class ProductsApi:
                 return False
             logger.debug(f"Registering products. Result: {json_res}")
     @staticmethod
-    def get_products(api_connection, market_enum):
+    def get_products(api_connection: ApiConnection, market_enum):
         """Fetches products from markets
 
         :param api_connection: class with API token for use with API
@@ -212,7 +214,7 @@ class ProductsApi:
         return json_res
 
     @staticmethod
-    def get_products_df(api_connection, market_enum):
+    def get_products_df(api_connection: ApiConnection, market_enum):
         """Fetches products from markets and displays in a dataframe
 
         :param api_connection: class with API token for use with API

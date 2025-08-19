@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from datetime import datetime, timedelta, timezone, date
 from dateutil import parser
@@ -150,7 +152,7 @@ class BilateralApi:
         return True, df_deliveries,df_trades, status_code, error_msg
 
     @staticmethod
-    def get_bilateral_trades(api_connection, period_from, period_until):
+    def get_bilateral_trades(api_connection: ApiConnection, period_from, period_until):
         qry_payload = {
             "period_from": period_from,
             "period_until": period_until,
@@ -171,7 +173,7 @@ class BilateralApi:
             return False, None, status_code, "Problems reading the list of trades from server"
 
     @staticmethod
-    def get_bilateral_trades_for_externals(api_connection, period_from, period_until):
+    def get_bilateral_trades_for_externals(api_connection: ApiConnection, period_from, period_until):
         qry_payload = {
             "period_from": period_from,
             "period_until": period_until,
@@ -192,7 +194,7 @@ class BilateralApi:
 
 
     @staticmethod
-    def get_avaiable_fixprice_periods(api_connection):
+    def get_avaiable_fixprice_periods(api_connection: ApiConnection):
         """Fetches pricing configurations
 
         :param api_connection: class with API token for use with API
@@ -204,7 +206,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_contract_doc(api_connection, external_id):
+    def get_contract_doc(api_connection: ApiConnection, external_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -216,7 +218,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_capacity_contract_doc(api_connection, external_id):
+    def get_capacity_contract_doc(api_connection: ApiConnection, external_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -229,7 +231,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def preview_capacity_contract_doc(api_connection, payload):
+    def preview_capacity_contract_doc(api_connection: ApiConnection, payload):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -242,7 +244,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_contract_profile(api_connection, contract_id, resolution="Monthly"):
+    def get_contract_profile(api_connection: ApiConnection, contract_id, resolution="Monthly"):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -267,7 +269,7 @@ class BilateralApi:
 
 
     @staticmethod
-    def get_capacity_allocation(api_connection, periods, substation_profile):
+    def get_capacity_allocation(api_connection: ApiConnection, periods, substation_profile):
         dict_periods=[]
         for p in periods:
             dict_periods.append({
@@ -282,7 +284,7 @@ class BilateralApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/capacity/allocation/', qry_payload)
         return success, json_res, status_code, error_msg
     @staticmethod
-    def upsert_capacity_allocation(api_connection, periods, substation_profile, capacity_map):
+    def upsert_capacity_allocation(api_connection: ApiConnection, periods, substation_profile, capacity_map):
         dict_periods=[]
         for p in periods:
             dict_periods.append({
@@ -299,7 +301,7 @@ class BilateralApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/capacity/allocation/', qry_payload)
         return success, json_res, status_code, error_msg
     @staticmethod
-    def calculate_capacity_price(api_connection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
+    def calculate_capacity_price(api_connection: ApiConnection, periods, substation_profile, current_price, activation_price, currency_code="NOK"):
         dict_periods=[]
         for p in periods:
             dict_periods.append({
@@ -363,7 +365,7 @@ class BilateralApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calculate_contract_price_df(api_connection, periods, price_area, currency_code,curve_model,
+    def calculate_contract_price_df(api_connection: ApiConnection, periods, price_area, currency_code,curve_model,
                                     wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
                                     monthly_profile=get_baseload_months(),
                                     weekday_profile=get_baseload_weekdays(),
@@ -402,7 +404,7 @@ class BilateralApi:
         return None, None, None, "error_msg", []
 
     @staticmethod
-    def get_rates_configurations(api_connection):
+    def get_rates_configurations(api_connection: ApiConnection):
         """Fetches pricing configurations
 
         :param api_connection: class with API token for use with API
@@ -414,7 +416,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_curve_configurations(api_connection):
+    def get_curve_configurations(api_connection: ApiConnection):
         """Fetches pricing configurations
 
         :param api_connection: class with API token for use with API
@@ -427,7 +429,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_rates_configuration_by_pk(api_connection, pk):
+    def get_rates_configuration_by_pk(api_connection: ApiConnection, pk):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API
@@ -439,7 +441,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_curve_configuration_by_pk(api_connection, pk):
+    def get_curve_configuration_by_pk(api_connection: ApiConnection, pk):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API
@@ -451,7 +453,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def upsert_rates_configuration(api_connection, pricing_conf):
+    def upsert_rates_configuration(api_connection: ApiConnection, pricing_conf):
         logger.info("Registering pricing configuration")
         if type(pricing_conf) is dict:
             pk = pricing_conf['pk']
@@ -469,7 +471,7 @@ class BilateralApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_curve_configuration(api_connection, curve_conf):
+    def upsert_curve_configuration(api_connection: ApiConnection, curve_conf):
         logger.info("Registering pricing configuration")
         if type(curve_conf) is dict:
             pk = curve_conf['pk']
@@ -488,7 +490,7 @@ class BilateralApi:
 
 
     @staticmethod
-    def generate_adjusted_curve_from_config(api_connection, pricing_config_pk, curve_date=datetime.today()):
+    def generate_adjusted_curve_from_config(api_connection: ApiConnection, pricing_config_pk, curve_date=datetime.today()):
         logger.info("Adjusting curve")
         payload={
             'pricing_config_pk':pricing_config_pk,
@@ -499,7 +501,7 @@ class BilateralApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def generate_adjusted_curve(api_connection, price_area,
+    def generate_adjusted_curve(api_connection: ApiConnection, price_area,
                                 yearly_epad_reduction,
                                 spread_adjustment_sys, spread_adjustment_epad, curve_date=datetime.today()):
         logger.info("Adjusting curve from parameters")
@@ -518,7 +520,7 @@ class BilateralApi:
 
     # Loads a relative profile with delivery period, applied with a yearly volume
     @staticmethod
-    def load_profiled_volume(api_connection, product_code, yearly_volume, include_hourly_series=False):
+    def load_profiled_volume(api_connection: ApiConnection, product_code, yearly_volume, include_hourly_series=False):
         """Loads a relative profile with delivery period, applied with a yearly volume
 
         :param api_connection: class with API token for use with API
@@ -568,7 +570,7 @@ class BilateralApi:
 
 
     @staticmethod
-    def get_rates_application_url(api_connection, rates_application_enum):
+    def get_rates_application_url(api_connection: ApiConnection, rates_application_enum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API

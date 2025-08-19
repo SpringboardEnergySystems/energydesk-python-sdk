@@ -32,7 +32,7 @@ class AssetGroupApi:
     """
 
     @staticmethod
-    def upsert_asset_group(api_connection, asset_group):
+    def upsert_asset_group(api_connection: ApiConnection, asset_group):
         """Registers/Updates asset_group
 
         :param api_connection: class with API token for use with API
@@ -51,7 +51,7 @@ class AssetGroupApi:
 
 
     @staticmethod
-    def get_asset_groups(api_connection, parameters={}):
+    def get_asset_groups(api_connection: ApiConnection, parameters={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -63,7 +63,7 @@ class AssetGroupApi:
         return json_res
 
     @staticmethod
-    def get_asset_group_by_key(api_connection, pk):
+    def get_asset_group_by_key(api_connection: ApiConnection, pk):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -75,7 +75,7 @@ class AssetGroupApi:
         return json_res
 
     @staticmethod
-    def delete_asset_group(api_connection, pk):
+    def delete_asset_group(api_connection: ApiConnection, pk):
         """Deletes an assset group
 
         :param api_connection: class with API token for use with API
@@ -85,7 +85,7 @@ class AssetGroupApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_groups_embedded(api_connection, parameters={}):
+    def get_asset_groups_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API

@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 #fields = ['pk', 'asset_id', 'extern_asset_id', 'description', 'asset_type', 'grid_connection', 'power_supplier',
@@ -150,7 +152,7 @@ class AssetsApi:
     """
 
     @staticmethod
-    def get_asset_type_url(api_connection, asset_type_enum):
+    def get_asset_type_url(api_connection: ApiConnection, asset_type_enum):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -162,7 +164,7 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod
-    def get_asset_type(api_connection, asset_type_pk):
+    def get_asset_type(api_connection: ApiConnection, asset_type_pk):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -177,7 +179,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def get_asset_category_url(api_connection, asset_category_enum):
+    def get_asset_category_url(api_connection: ApiConnection, asset_category_enum):
         """Fetches asset category from url
 
         :param api_connection: class with API token for use with API
@@ -191,7 +193,7 @@ class AssetsApi:
 
 
     @staticmethod
-    def get_asset_category(api_connection, asset_category_enum):
+    def get_asset_category(api_connection: ApiConnection, asset_category_enum):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -207,7 +209,7 @@ class AssetsApi:
 
     # This function returns a single price (avg) for the period requested
     @staticmethod
-    def create_assets(api_connection, asset_list):
+    def create_assets(api_connection: ApiConnection, asset_list):
         """Registers assets
 
         :param api_connection: class with API token for use with API
@@ -228,7 +230,7 @@ class AssetsApi:
                 logger.info("Asset registered " + asset.description)
 
     @staticmethod
-    def upsert_asset(api_connection, asset):
+    def upsert_asset(api_connection: ApiConnection, asset):
         """Registers/Updates asset
 
         :param api_connection: class with API token for use with API
@@ -246,7 +248,7 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_types(api_connection, parameters={}):
+    def get_asset_types(api_connection: ApiConnection, parameters={}):
         """Fetches the type of all assets
 
         :param api_connection: class with API token for use with API
@@ -259,7 +261,7 @@ class AssetsApi:
         return df
 
     @staticmethod
-    def get_asset_categories(api_connection):
+    def get_asset_categories(api_connection: ApiConnection):
         """Fetches the categories of all assets
 
         :param api_connection: class with API token for use with API
@@ -272,7 +274,7 @@ class AssetsApi:
         return df
 
     @staticmethod
-    def upsert_asset_type(api_connection, asset_type):
+    def upsert_asset_type(api_connection: ApiConnection, asset_type):
         """Registers/Updates asset
 
         :param api_connection: class with API token for use with API
@@ -290,7 +292,7 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_url(api_connection, asset_pk):
+    def get_asset_url(api_connection: ApiConnection, asset_pk):
         """Fetches asset from url
 
         :param api_connection: class with API token for use with API
@@ -301,7 +303,7 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
 
     @staticmethod
-    def delete_asset(api_connection, pk):
+    def delete_asset(api_connection: ApiConnection, pk):
         """Deletes an assset
 
         :param api_connection: class with API token for use with API
@@ -311,7 +313,7 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_assets(api_connection, parameters={}):
+    def get_assets(api_connection: ApiConnection, parameters={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -327,7 +329,7 @@ class AssetsApi:
         # return json_res
 
     @staticmethod
-    def get_assets_embedded(api_connection, parameters={}):
+    def get_assets_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API
@@ -336,7 +338,7 @@ class AssetsApi:
         json_res = api_connection.exec_get_url('/api/assets/assets/embedded', parameters)
         return json_res
     @staticmethod
-    def get_assets_compact(api_connection, parameters={}):
+    def get_assets_compact(api_connection: ApiConnection, parameters={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API
@@ -346,7 +348,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def get_assets_df(api_connection, parameters={}):
+    def get_assets_df(api_connection: ApiConnection, parameters={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API
@@ -359,7 +361,7 @@ class AssetsApi:
         return df
 
     @staticmethod
-    def get_asset_by_description(api_connection, description):
+    def get_asset_by_description(api_connection: ApiConnection, description):
         """Fetches assets from description
 
         :param api_connection: class with API token for use with API
@@ -374,7 +376,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def get_asset_by_key(api_connection, pk):
+    def get_asset_by_key(api_connection: ApiConnection, pk):
         """Fetches asset from key
 
         :param api_connection: class with API token for use with API
@@ -389,7 +391,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def get_assetsbytype_ext(api_connection, asset_type_enum):
+    def get_assetsbytype_ext(api_connection: ApiConnection, asset_type_enum):
         """Fetches assets from types with extended information
 
         :param api_connection: class with API token for use with API
@@ -405,7 +407,7 @@ class AssetsApi:
         return df
 
     @staticmethod
-    def get_asset_subtypes(api_connection):
+    def get_asset_subtypes(api_connection: ApiConnection):
         """Fetches asset subtypes
 
         :param api_connection: class with API token for use with API
@@ -418,7 +420,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def upsert_asset_subtypes(api_connection, subtype):
+    def upsert_asset_subtypes(api_connection: ApiConnection, subtype):
         """Upserts asset subtypes
 
         :param api_connection: class with API token for use with API

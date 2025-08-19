@@ -4,6 +4,9 @@ import logging
 import pendulum
 import pandas as pd
 from datetime import datetime, timedelta
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 logger = logging.getLogger(__name__)
@@ -171,7 +174,7 @@ class LemsApi:
 
     """
     @staticmethod
-    def upsert_localmarket(api_connection, payload):
+    def upsert_localmarket(api_connection: ApiConnection, payload):
         """Registers local marketplace
 
         :param api_connection: class with API token for use with API
@@ -190,7 +193,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_local_markets(api_connection, params={}):
+    def get_local_markets(api_connection: ApiConnection, params={}):
         """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
@@ -203,7 +206,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_local_market_url(api_connection, key):
+    def get_local_market_url(api_connection: ApiConnection, key):
         """Fetches url for location type from pk
 
         :param api_connection: class with API token for use with API
@@ -215,7 +218,7 @@ class LemsApi:
             key) + "/"
 
     @staticmethod
-    def upsert_localproduct(api_connection, local_product):
+    def upsert_localproduct(api_connection: ApiConnection, local_product):
         """Registers local local product
 
         :param api_connection: class with API token for use with API
@@ -232,7 +235,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def upsert_custom_profile(api_connection, custom_profile):
+    def upsert_custom_profile(api_connection: ApiConnection, custom_profile):
         """Registers local local product profile
 
         :param api_connection: class with API token for use with API
@@ -245,7 +248,7 @@ class LemsApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_ticker_data(api_connection, area=None):
+    def get_ticker_data(api_connection: ApiConnection, area=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -263,7 +266,7 @@ class LemsApi:
 
 
     @staticmethod
-    def get_custom_profiles(api_connection, parameters={}):
+    def get_custom_profiles(api_connection: ApiConnection, parameters={}):
         """Fetches all profiles stored in local market
 
         :param api_connection: class with API token for use with API
@@ -275,7 +278,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_profile_by_key(api_connection, pk):
+    def get_profile_by_key(api_connection: ApiConnection, pk):
         """Fetches product profile from key
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -289,7 +292,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_traded_products(api_connection, parameters={}):
+    def get_traded_products(api_connection: ApiConnection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -301,7 +304,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_all_local_products(api_connection, parameters={}):
+    def get_all_local_products(api_connection: ApiConnection, parameters={}):
         """Fetches all products including expired
 
         :param api_connection: class with API token for use with API
@@ -313,7 +316,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_traded_products_df(api_connection, parameters={}):
+    def get_traded_products_df(api_connection: ApiConnection, parameters={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -326,7 +329,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def match_specific_order(api_connection, ticker, order_id):
+    def match_specific_order(api_connection: ApiConnection, ticker, order_id):
         payload = {
              "ticker": ticker,
             'order_id':order_id
@@ -338,7 +341,7 @@ class LemsApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def add_order(api_connection, ticker, price, currency, quantity, buy_or_sell, order_type="NORMAL", expiry=None, status="ACTIVE", exclusive=None):
+    def add_order(api_connection: ApiConnection, ticker, price, currency, quantity, buy_or_sell, order_type="NORMAL", expiry=None, status="ACTIVE", exclusive=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -373,7 +376,7 @@ class LemsApi:
 
 
     @staticmethod
-    def add_buyer_order(api_connection, ticker, price, currency, quantity, order_type="NORMAL", expiry=None, extern_comp_reg=None,extern_comp_name=None):
+    def add_buyer_order(api_connection: ApiConnection, ticker, price, currency, quantity, order_type="NORMAL", expiry=None, extern_comp_reg=None,extern_comp_name=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -406,7 +409,7 @@ class LemsApi:
             logger.error(error_msg)
         return success, json_res, status_code, error_msg
     @staticmethod
-    def remove_order(api_connection, ticker, order_id):
+    def remove_order(api_connection: ApiConnection, ticker, order_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -422,7 +425,7 @@ class LemsApi:
 
         return success
     @staticmethod
-    def decline_order(api_connection, ticker, order_id):
+    def decline_order(api_connection: ApiConnection, ticker, order_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -438,7 +441,7 @@ class LemsApi:
 
         return success
     @staticmethod
-    def query_active_anonymous_orders(api_connection, ticker=None):
+    def query_active_anonymous_orders(api_connection: ApiConnection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -454,7 +457,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def get_market_status(api_connection):
+    def get_market_status(api_connection: ApiConnection):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -466,7 +469,7 @@ class LemsApi:
         json_res = api_connection.exec_get_url(url)
         return json_res
     @staticmethod
-    def get_market_status_parsed(api_connection, tz="Europe/Oslo"):
+    def get_market_status_parsed(api_connection: ApiConnection, tz="Europe/Oslo"):
         market_status=LemsApi.get_market_status(api_connection)
         market_opens= pendulum.parse(market_status['market_opens'])
         market_closes = pendulum.parse(market_status['market_closes'])
@@ -476,7 +479,7 @@ class LemsApi:
         return market_is_open,market_opens,market_closes
 
     @staticmethod
-    def query_own_orders(api_connection, show_active_only=False, ticker=None):
+    def query_own_orders(api_connection: ApiConnection, show_active_only=False, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -495,7 +498,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def get_own_trades(api_connection, ticker=None):
+    def get_own_trades(api_connection: ApiConnection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -508,7 +511,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_own_trades_df(api_connection, ticker=None):
+    def get_own_trades_df(api_connection: ApiConnection, ticker=None):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -521,7 +524,7 @@ class LemsApi:
         return df
 
     @staticmethod
-    def get_contract_doc(api_connection, deal_id):
+    def get_contract_doc(api_connection: ApiConnection, deal_id):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API

@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.geolocation.location_api import LocationApi
 from energydeskapi.types.contract_enum_types import GosTechnologyEnum, GosSupportEnum
 from energydeskapi.assets.assets_api import AssetsApi
@@ -42,7 +44,7 @@ class CapacityApi:
   """
 
   @staticmethod
-  def get_capacity_contract_types(api_connection, parameters={}):
+  def get_capacity_contract_types(api_connection: ApiConnection, parameters={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API

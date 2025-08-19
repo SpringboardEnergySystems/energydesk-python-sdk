@@ -1,3 +1,5 @@
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -64,7 +66,7 @@ def bilateral_dealcapture(api_conn):
         c.commodity_profile="BASELOAD"
         ContractsApi.upsert_contract(api_conn,c)
 
-def get_dealcapture_config(api_connection):
+def get_dealcapture_config(api_connection: ApiConnection):
     """Fetches dealcapture
 
     :param api_connection: class with API token for use with API
@@ -75,7 +77,7 @@ def get_dealcapture_config(api_connection):
         return None
     return json_res
 
-def set_dealcapture_config(api_connection, payload):
+def set_dealcapture_config(api_connection: ApiConnection, payload):
     """Sets dealcapture
 
     :param api_connection: class with API token for use with API

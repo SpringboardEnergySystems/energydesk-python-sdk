@@ -2,6 +2,8 @@ import logging
 import requests
 import environ
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
 from rauth import OAuth2Service
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
@@ -13,7 +15,7 @@ class ElvizLinksApi:
 
     """
     @staticmethod
-    def get_company_mappings(api_connection):
+    def get_company_mappings(api_connection: ApiConnection):
         """Fetches company mappings
 
         :param api_connection: class with API token for use with API
@@ -23,7 +25,7 @@ class ElvizLinksApi:
         return api_connection.exec_get_url('/api/elvizmapping/companies/')
 
     @staticmethod
-    def lookup_company_mapping(api_connection, elviz_company_id):
+    def lookup_company_mapping(api_connection: ApiConnection, elviz_company_id):
         """Looks up company mapping from an elviz company id
 
         :param api_connection: class with API token for use with API
@@ -39,7 +41,7 @@ class ElvizLinksApi:
                 return comp
         return None
     @staticmethod
-    def upsert_company_mapping(api_connection, registry_number, elviz_company_id, elviz_company_name):
+    def upsert_company_mapping(api_connection: ApiConnection, registry_number, elviz_company_id, elviz_company_name):
         """Registers or updates a company mapping
 
         :param api_connection: class with API token for use with API
@@ -72,7 +74,7 @@ class ElvizLinksApi:
         return True
 
     @staticmethod
-    def get_user_mappings(api_connection):
+    def get_user_mappings(api_connection: ApiConnection):
         """Fetches user mappings
 
         :param api_connection: class with API token for use with API
@@ -100,7 +102,7 @@ class ElvizLinksApi:
         return auth_session
 
     @staticmethod
-    def lookup_user_mapping(api_connection, elviz_user_id):
+    def lookup_user_mapping(api_connection: ApiConnection, elviz_user_id):
         """Looks up user mapping from an elviz user id
 
         :param api_connection: class with API token for use with API
@@ -117,7 +119,7 @@ class ElvizLinksApi:
         return None
 
     @staticmethod
-    def upsert_user_mapping(api_connection, enegydesk_username, elviz_user_id, elviz_userr_name):
+    def upsert_user_mapping(api_connection: ApiConnection, enegydesk_username, elviz_user_id, elviz_userr_name):
         """Registers or updates a user mapping
 
         :param api_connection: class with API token for use with API
@@ -150,7 +152,7 @@ class ElvizLinksApi:
 
 
     @staticmethod
-    def get_portfolio_mappings(api_connection):
+    def get_portfolio_mappings(api_connection: ApiConnection):
         """Fetches portfolio mappings
 
         :param api_connection: class with API token for use with API
@@ -160,7 +162,7 @@ class ElvizLinksApi:
         return api_connection.exec_get_url('/api/elvizmapping/portfolios/', {'page_size':1000})
 
     @staticmethod
-    def lookup_tadingbook(api_connection, tradingbook_name):
+    def lookup_tadingbook(api_connection: ApiConnection, tradingbook_name):
         """Looks up tradingbooks from name
 
         :param api_connection: class with API token for use with API
@@ -179,7 +181,7 @@ class ElvizLinksApi:
         return None
 
     @staticmethod
-    def lookup_portfolio_mapping(api_connection, elviz_portfolio_id):
+    def lookup_portfolio_mapping(api_connection: ApiConnection, elviz_portfolio_id):
         """Looks up portfolio mappings from elviz portfolio id
 
         :param api_connection: class with API token for use with API
@@ -197,13 +199,13 @@ class ElvizLinksApi:
 
     # Appserver needs full list of Elviz Portfolios for a mapping used in Export XML
     @staticmethod
-    def update_portfolio_name(api_connection, elviz_portfolio_name):
+    def update_portfolio_name(api_connection: ApiConnection, elviz_portfolio_name):
         payload = {"portfolio_name": elviz_portfolio_name}
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/elvizmapping/elvizportfolio/',
                                                                                  payload)
 
     @staticmethod
-    def upsert_portfolio_mapping(api_connection, tradingbook, elviz_portfolio_id, elviz_portfolio_name):
+    def upsert_portfolio_mapping(api_connection: ApiConnection, tradingbook, elviz_portfolio_id, elviz_portfolio_name):
         """Registers or updates a portfolio mapping
 
         :param api_connection: class with API token for use with API
@@ -297,7 +299,7 @@ class ElvizLinksApi:
 
 
     @staticmethod
-    def get_latest_elviz_trades(api_connection, owner_company_pk=0, days_back=1):
+    def get_latest_elviz_trades(api_connection: ApiConnection, owner_company_pk=0, days_back=1):
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)
@@ -305,7 +307,7 @@ class ElvizLinksApi:
         return elviz_trades
 
     @staticmethod
-    def get_elviz_trades_specific_period(api_connection, owner_company_pk: int, date_from: str, date_until: str):
+    def get_elviz_trades_specific_period(api_connection: ApiConnection, owner_company_pk: int, date_from: str, date_until: str):
         port_maps=ElvizLinksApi.get_portfolio_mappings(api_connection)
         usr_maps=ElvizLinksApi.get_user_mappings(api_connection)
         comp_maps=ElvizLinksApi.get_company_mappings(api_connection)

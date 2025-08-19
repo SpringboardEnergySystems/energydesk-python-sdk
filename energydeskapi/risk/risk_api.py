@@ -4,6 +4,9 @@ import pandas as pd
 import json
 from json import JSONEncoder
 from dataclasses import dataclass
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assetdata.assetdata_api import DateTimeEncoder
 from energydeskapi.portfolios.portfolio_api import PortfoliosApi
 from datetime import datetime, timedelta
@@ -60,7 +63,7 @@ class RiskApi:
 
     """
     @staticmethod
-    def upsert_global_risk_parameters(api_connection, risk_params):
+    def upsert_global_risk_parameters(api_connection: ApiConnection, risk_params):
         """Updates global risk parameters
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -73,7 +76,7 @@ class RiskApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/globalriskparameters/',risk_params.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
     @staticmethod
-    def get_risk_parameters(api_connection, parameters={}):
+    def get_risk_parameters(api_connection: ApiConnection, parameters={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -85,7 +88,7 @@ class RiskApi:
             return json_res
         return None
     @staticmethod
-    def calc_volatilities(api_connection, months_back, price_areas):
+    def calc_volatilities(api_connection: ApiConnection, months_back, price_areas):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -101,7 +104,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calc_volatilities_df(api_connection, months_back, price_areas):
+    def calc_volatilities_df(api_connection: ApiConnection, months_back, price_areas):
         success, json_res, status_code, error_msg=RiskApi.calc_volatilities(api_connection, months_back, price_areas)
         if success ==False:
             return None
@@ -109,7 +112,7 @@ class RiskApi:
         return df
 
     @staticmethod
-    def calc_covariance_var(api_connection, portfolio_id, days_back=40, decay_factor=0.94):
+    def calc_covariance_var(api_connection: ApiConnection, portfolio_id, days_back=40, decay_factor=0.94):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -126,7 +129,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def calc_covariance_var_df(api_connection, portfolio_id, days_back=40, decay_factor=0.94):
+    def calc_covariance_var_df(api_connection: ApiConnection, portfolio_id, days_back=40, decay_factor=0.94):
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_var(api_connection, portfolio_id, days_back, decay_factor)
         if success ==False:
             logger.error(f"Covariance calculation gave error: {error_msg}")
@@ -139,7 +142,7 @@ class RiskApi:
         return dfvars,portfolio_mean,portfolio_stdev
 
     @staticmethod
-    def calc_covariance_matrix(api_connection, days_back=40, decay_factor=0.94):
+    def calc_covariance_matrix(api_connection: ApiConnection, days_back=40, decay_factor=0.94):
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -156,7 +159,7 @@ class RiskApi:
 
 
     @staticmethod
-    def calc_covariance_matrix_df(api_connection, days_back=40, decay_factor=0.94):
+    def calc_covariance_matrix_df(api_connection: ApiConnection, days_back=40, decay_factor=0.94):
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back, decay_factor)
         if success ==False:
             logger.error(f"Calculating the convariance matrix got:{error_msg}")
@@ -166,7 +169,7 @@ class RiskApi:
         return dfvars
 
     @staticmethod
-    def get_rolling_products(api_connection, params={})->dict:
+    def get_rolling_products(api_connection: ApiConnection, params={})->dict:
         """Lists rolling products
         """
         logger.info("Loads rolling products")
@@ -174,7 +177,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def get_rolling_products_embedded(api_connection, params={})->dict:
+    def get_rolling_products_embedded(api_connection: ApiConnection, params={})->dict:
         """Lists rolling products
         """
         logger.info("Loads rolling products")
@@ -182,13 +185,13 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def upsert_rolling_product(api_connection, products: RollingProduct | list[RollingProduct]):
+    def upsert_rolling_product(api_connection: ApiConnection, products: RollingProduct | list[RollingProduct]):
         payload = products.__dict__ if isinstance(products, RollingProduct) else [product.__dict__ for product in products]
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/rollingproducts/', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_covariance_data(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float, covariance_data: dict, correlation_data:dict):
+    def upsert_covariance_data(api_connection: ApiConnection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float, covariance_data: dict, correlation_data:dict):
         logger.info("Upserting covariance data product")
         payload = {
             'trading_date': str(trading_date)[:10],
@@ -202,7 +205,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_productreturns_data(api_connection, trading_date:pendulum,timestamp:pendulum,days_history:int,decay_factor:float, returns_data: dict):
+    def upsert_productreturns_data(api_connection: ApiConnection, trading_date:pendulum,timestamp:pendulum,days_history:int,decay_factor:float, returns_data: dict):
         logger.info("Upserting product returns")
         payload={
             'trading_date': str(trading_date)[:10],
@@ -215,7 +218,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_product_returns(api_connection, params={})->dict:
+    def get_product_returns(api_connection: ApiConnection, params={})->dict:
         """Lists product returns
         """
         logger.info("Loads product returns")
@@ -224,7 +227,7 @@ class RiskApi:
 
 
     @staticmethod
-    def get_rolling_tickers(api_connection, params={})->dict:
+    def get_rolling_tickers(api_connection: ApiConnection, params={})->dict:
         """Lists product returns
         """
         logger.info("Loads product returns tickers")
@@ -232,7 +235,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def get_rolling_products_returns(api_connection, params={})->dict:
+    def get_rolling_products_returns(api_connection: ApiConnection, params={})->dict:
         """Lists product returns
         """
         logger.info("Loads product returns tickers")
@@ -241,7 +244,7 @@ class RiskApi:
 
 
     @staticmethod
-    def get_var_portfolios(api_connection, params={})->dict:
+    def get_var_portfolios(api_connection: ApiConnection, params={})->dict:
         """Lists VaR portfolios
         """
         logger.info("Loads current var portfolios")
@@ -249,7 +252,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def get_product_returns_embedded(api_connection, params={})->dict:
+    def get_product_returns_embedded(api_connection: ApiConnection, params={})->dict:
         """Lists product returns
         """
         logger.info("Loads product returns")
@@ -258,7 +261,7 @@ class RiskApi:
 
 
     @staticmethod
-    def get_covariance_data(api_connection, params={})->dict:
+    def get_covariance_data(api_connection: ApiConnection, params={})->dict:
         """Lists product returns
         """
         logger.info("Loads product returns")
@@ -266,7 +269,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def get_covariance_data_embedded(api_connection, params={})->dict:
+    def get_covariance_data_embedded(api_connection: ApiConnection, params={})->dict:
         """Lists product returns
         """
         logger.info("Loads product returns")
@@ -274,7 +277,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def upsert_var_calculation(api_connection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
+    def upsert_var_calculation(api_connection: ApiConnection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
                               portfolio_id:int, var95:float, var99:float, port_mean:float, port_stdev:float, var_data:dict):
         logger.info("Upserting VaR calculation")
         payload = {
@@ -289,35 +292,35 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_var_calculations(api_connection, params={})->dict:
+    def get_var_calculations(api_connection: ApiConnection, params={})->dict:
         """Lists VaR calculations
         """
         logger.info("Loads VaR calculations")
         json_res = api_connection.exec_get_url('/api/riskmanager/varcalculations/',params)
         return json_res
     @staticmethod
-    def get_var_calculations_compact(api_connection, params={})->dict:
+    def get_var_calculations_compact(api_connection: ApiConnection, params={})->dict:
         """Lists VaR calculations
         """
         logger.info("Loads VaR calculations")
         json_res = api_connection.exec_get_url('/api/riskmanager/varcalculations/compact/',params)
         return json_res
     @staticmethod
-    def get_var_calculations_embedded(api_connection, params={})->dict:
+    def get_var_calculations_embedded(api_connection: ApiConnection, params={})->dict:
         """Lists VaR calculations
         """
         logger.info("Loads VaR calculations")
         json_res = api_connection.exec_get_url('/api/riskmanager/varcalculations/embedded/',params)
         return json_res
     @staticmethod
-    def get_var_dates(api_connection, params={})->dict:
+    def get_var_dates(api_connection: ApiConnection, params={})->dict:
         """Lists VaR calculations
         """
         logger.info("Loads VaR dates in DB")
         json_res = api_connection.exec_get_url('/api/riskmanager/vardates/',params)
         return json_res
     @staticmethod
-    def get_var_portfolios_calculated(api_connection, params={})->dict:
+    def get_var_portfolios_calculated(api_connection: ApiConnection, params={})->dict:
         """Lists VaR portfolios that have been calculated. May filter on date
         """
         logger.info("Loads VaR portfolios in DB")
@@ -325,28 +328,28 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def post_marketestimators(api_connection, payload):
+    def post_marketestimators(api_connection: ApiConnection, payload):
         """posts market estimators to database"""
         logger.info("Posting market estimators")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketestimators/', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_marketestimators(api_connection):
+    def get_marketestimators(api_connection: ApiConnection):
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/')
         return json_res
 
     @staticmethod
-    def get_marketestimators_latest(api_connection):
+    def get_marketestimators_latest(api_connection: ApiConnection):
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketestimators/latest/')
         return json_res
 
     @staticmethod
-    def get_marketestimators_dict(api_connection, latest=True) -> Dict[str, pd.DataFrame | list] | None:
+    def get_marketestimators_dict(api_connection: ApiConnection, latest=True) -> Dict[str, pd.DataFrame | list] | None:
         """Fetches market estimators from the database"""
         logger.info("Fetching market estimators")
         if latest:
@@ -391,7 +394,7 @@ class RiskApi:
         return None
 
     @staticmethod
-    def get_create_report(api_connection, payload):
+    def get_create_report(api_connection: ApiConnection, payload):
         """updates or creates a simprice report"""
         logger.info("Posting simprice report")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/simpricereportdata/', payload)
@@ -399,28 +402,28 @@ class RiskApi:
 
 
     @staticmethod
-    def get_market_areas(api_connection):
+    def get_market_areas(api_connection: ApiConnection):
         """Fetches market areas from the database"""
         logger.info("Fetching market areas")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/')
         return json_res
 
     @staticmethod
-    def get_market_areas_filtered(api_connection, areas:list[str]):
+    def get_market_areas_filtered(api_connection: ApiConnection, areas:list[str]):
         """Fetches market areas from the database"""
         logger.info("Fetching market areas")
         json_res = api_connection.exec_get_url('/api/riskmanager/marketareas/', {'name__in': areas})
         return json_res
 
     @staticmethod
-    def post_market_area(api_connection, payload):
+    def post_market_area(api_connection: ApiConnection, payload):
         """posts market areas to database"""
         logger.info("Posting market areas")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def bulk_post_market_areas(api_connection, payload):
+    def bulk_post_market_areas(api_connection: ApiConnection, payload):
         """posts market areas to database"""
         logger.info("Bulk posting market areas")
         # The endpoint for bulk insertion is appended with the action's name 'bulk_create'
@@ -428,7 +431,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
     
     @staticmethod
-    def get_pfe_reports(api_connection, payload):
+    def get_pfe_reports(api_connection: ApiConnection, payload):
         logger.info("Retrieving PFE Reports")
         json_result = api_connection.exec_get_url('/api/riskmanager/pfereport/latest/', payload)
         return json_result

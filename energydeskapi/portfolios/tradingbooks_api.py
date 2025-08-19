@@ -1,7 +1,7 @@
 import json
 import logging
 import pandas as pd
-
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -34,7 +34,7 @@ class TradingBooksApi:
 
 
     @staticmethod
-    def get_tradingbooks(api_connection, parameters={}):
+    def get_tradingbooks(api_connection: ApiConnection, parameters={}):
         """Fetches all tradingbooks
 
         :param api_connection: class with API token for use with API
@@ -47,7 +47,7 @@ class TradingBooksApi:
         return json_res
     @staticmethod
 
-    def get_tradingbooks_embedded(api_connection, parameters={}):
+    def get_tradingbooks_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches all tradingbooks
 
         :param api_connection: class with API token for use with API
@@ -60,7 +60,7 @@ class TradingBooksApi:
         return json_res
 
     @staticmethod
-    def get_tradingbooks_compact(api_connection, parameters={}):
+    def get_tradingbooks_compact(api_connection: ApiConnection, parameters={}):
         """Fetches all tradingbooks
 
         :param api_connection: class with API token for use with API
@@ -74,7 +74,7 @@ class TradingBooksApi:
 
 
     @staticmethod
-    def get_tradingbooks_df(api_connection, parameters={}):
+    def get_tradingbooks_df(api_connection: ApiConnection, parameters={}):
         """Fetches all tradingbooks and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -89,7 +89,7 @@ class TradingBooksApi:
         return df
 
     @staticmethod
-    def get_tradingbooks_by_commodityfilter(api_connection, commodities,parameters={}):
+    def get_tradingbooks_by_commodityfilter(api_connection: ApiConnection, commodities,parameters={}):
         """Fetches tradingbooks from commodity filter
 
         :param api_connection: class with API token for use with API
@@ -111,7 +111,7 @@ class TradingBooksApi:
         return res
 
     @staticmethod
-    def get_tradingbooks_by_commodityfilter_df(api_connection, commodities, parameters={}):
+    def get_tradingbooks_by_commodityfilter_df(api_connection: ApiConnection, commodities, parameters={}):
         """Fetches tradingbooks from commodity filter and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -129,7 +129,7 @@ class TradingBooksApi:
         df = pd.DataFrame(data=tmp)
         return df
     @staticmethod
-    def get_tradingbook_by_pk(api_connection, pk):
+    def get_tradingbook_by_pk(api_connection: ApiConnection, pk):
         """Loads tradingbooks from key
 
         :param api_connection: class with API token for use with API
@@ -142,7 +142,7 @@ class TradingBooksApi:
         return dict
 
     @staticmethod
-    def get_tradingbook_url(api_connection, tradingbook_pk):
+    def get_tradingbook_url(api_connection: ApiConnection, tradingbook_pk):
         """Fetches url for tradingbook from pk
 
         :param api_connection: class with API token for use with API
@@ -154,7 +154,7 @@ class TradingBooksApi:
 
 
     @staticmethod
-    def upsert_tradingbook(api_connection, tradingbook):
+    def upsert_tradingbook(api_connection: ApiConnection, tradingbook):
         """Inserts or updates a tradingbook
 
         :param api_connection: class with API token for use with API
@@ -177,7 +177,7 @@ class TradingBooksApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def register_tradingbooks(api_connection, tradingbooks):
+    def register_tradingbooks(api_connection: ApiConnection, tradingbooks):
         """Registers tradingbooks
 
         :param api_connection: class with API token for use with API

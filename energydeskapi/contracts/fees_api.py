@@ -1,5 +1,8 @@
 import logging
 import json
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
 from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
@@ -56,12 +59,12 @@ class FeesApi:
     """
 
     @staticmethod
-    def get_feetype_url(api_connection, value:FeeTypeEnum):
+    def get_feetype_url(api_connection: ApiConnection, value:FeeTypeEnum):
         value_pk = value if isinstance(value, int) else value.value
         return api_connection.get_base_url() + '/api/portfoliomanager/feetypes/' + str(value_pk) + "/"
 
     @staticmethod
-    def get_feetypes(api_connection,  parameters={}):
+    def get_feetypes(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/portfoliomanager/feetypes/', parameters)
         if json_res is None:
             return None
@@ -69,19 +72,19 @@ class FeesApi:
 
 
     @staticmethod
-    def get_feerates_url(api_connection, value):
+    def get_feerates_url(api_connection: ApiConnection, value):
         value_pk = value if isinstance(value, int) else value.value
         return api_connection.get_base_url() + '/api/portfoliomanager/feerates/' + str(value_pk) + "/"
 
     @staticmethod
-    def get_feerates(api_connection, parameters={}):
+    def get_feerates(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/portfoliomanager/feerates/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_feerates_embedded(api_connection,  parameters={}):
+    def get_feerates_embedded(api_connection: ApiConnection,  parameters={}):
         json_res = api_connection.exec_get_url('/api/portfoliomanager/feerates/embedded/', parameters)
         if json_res is None:
             return None
@@ -89,7 +92,7 @@ class FeesApi:
 
 
     @staticmethod
-    def upsert_feerates(api_connection, data: FeeRate):
+    def upsert_feerates(api_connection: ApiConnection, data: FeeRate):
         logger.debug("Upserting feerates")
         payload = json.loads(data.json)
 

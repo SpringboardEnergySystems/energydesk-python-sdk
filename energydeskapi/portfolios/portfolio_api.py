@@ -1,7 +1,7 @@
 import json
 import logging
 import pandas as pd
-
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -70,7 +70,7 @@ class PortfoliosApi:
       """
 
     @staticmethod
-    def get_portfolios(api_connection, parameters={}):
+    def get_portfolios(api_connection: ApiConnection, parameters={}):
         """Fetches all portfolios
 
         :param api_connection: class with API token for use with API
@@ -83,7 +83,7 @@ class PortfoliosApi:
         return json_res
     @staticmethod
 
-    def get_portfolios_embedded(api_connection, parameters={}):
+    def get_portfolios_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches all portfolios
 
         :param api_connection: class with API token for use with API
@@ -97,7 +97,7 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def get_portfolio_by_pk(api_connection, pk):
+    def get_portfolio_by_pk(api_connection: ApiConnection, pk):
         """Loads portfolios from key
 
         :param api_connection: class with API token for use with API
@@ -110,7 +110,7 @@ class PortfoliosApi:
         return dict
 
     @staticmethod
-    def get_portfolio_url(api_connection, portfolio_pk):
+    def get_portfolio_url(api_connection: ApiConnection, portfolio_pk):
         """Fetches url for portfolio from pk
 
         :param api_connection: class with API token for use with API
@@ -122,7 +122,7 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def upsert_portfolio(api_connection, portfolio):
+    def upsert_portfolio(api_connection: ApiConnection, portfolio):
         """Insefrts or updates a tradingbook
 
         :param api_connection: class with API token for use with API

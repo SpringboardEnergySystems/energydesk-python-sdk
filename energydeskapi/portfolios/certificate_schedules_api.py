@@ -1,7 +1,7 @@
 import json
 import logging
 import pandas as pd
-
+from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -38,7 +38,7 @@ class CertificateSchedulesApi:
 
 
     @staticmethod
-    def get_certificate_schedules(api_connection, parameters={}):
+    def get_certificate_schedules(api_connection: ApiConnection, parameters={}):
         """Fetches all certificate schedules
 
         :param api_connection: class with API token for use with API
@@ -49,7 +49,7 @@ class CertificateSchedulesApi:
         return json_res
 
     @staticmethod
-    def get_certificate_schedule(api_connection, pk: int):
+    def get_certificate_schedule(api_connection: ApiConnection, pk: int):
         """Fetches a specific certificate schedule
 
         :param api_connection: class with API token for use with API
@@ -63,7 +63,7 @@ class CertificateSchedulesApi:
 
 
     @staticmethod
-    def get_certificate_schedules_of_certificate(api_connection, certificate_id: int, additional_parameters={}):
+    def get_certificate_schedules_of_certificate(api_connection: ApiConnection, certificate_id: int, additional_parameters={}):
         """Fetches all schedules for a certain certificate
 
         :param api_connection: class with API token for use with API
@@ -79,7 +79,7 @@ class CertificateSchedulesApi:
         return json_res
 
     @staticmethod
-    def register_certificate_schedule(api_connection, schedule: CertificateSchedule):
+    def register_certificate_schedule(api_connection: ApiConnection, schedule: CertificateSchedule):
         """Registers certificate schedules
 
         :param api_connection: class with API token for use with API
@@ -97,7 +97,7 @@ class CertificateSchedulesApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def update_certificate_schedule(api_connection, schedule: CertificateSchedule):
+    def update_certificate_schedule(api_connection: ApiConnection, schedule: CertificateSchedule):
         """Update certificate schedules
 
         :param api_connection: class with API token for use with API
@@ -115,7 +115,7 @@ class CertificateSchedulesApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def delete_certificate_schedule(api_connection, pk: int):
+    def delete_certificate_schedule(api_connection: ApiConnection, pk: int):
         """Deletes a certificate schedule
 
         :param api_connection: class with API token for use with API
@@ -127,7 +127,7 @@ class CertificateSchedulesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_certificate_contract_url(api_connection, certificate_contract_pk: int) -> str:
+    def get_certificate_contract_url(api_connection: ApiConnection, certificate_contract_pk: int) -> str:
         """Certificate url from key
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

@@ -3,6 +3,9 @@ import pandas as pd
 from dataclasses import dataclass, asdict, field
 from dataclasses import dataclass
 from enum import Enum
+
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +61,7 @@ class SchedulerApi:
 
     """
     @staticmethod
-    def get_job_definition_url(api_connection, job_definition):
+    def get_job_definition_url(api_connection: ApiConnection, job_definition):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
@@ -69,7 +72,7 @@ class SchedulerApi:
 
         return api_connection.get_base_url() + '/api/schedulemanager/jobdefinitions/' + str(job_definition) + "/"
     @staticmethod
-    def upsert_scheduled_job(api_connection, job):
+    def upsert_scheduled_job(api_connection: ApiConnection, job):
         """Fetches scheduled jobs
 
         :param api_connection: class with API token for use with API
@@ -85,7 +88,7 @@ class SchedulerApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_scheduled_jobs(api_connection, parameters={}):
+    def get_scheduled_jobs(api_connection: ApiConnection, parameters={}):
         """Fetches scheduled jobs
 
         :param api_connection: class with API token for use with API
@@ -97,7 +100,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_jobs_df(api_connection, parameters={}):
+    def get_scheduled_jobs_df(api_connection: ApiConnection, parameters={}):
         """Fetches scheduled jobs df
 
         :param api_connection: class with API token for use with API
@@ -110,7 +113,7 @@ class SchedulerApi:
         return df
 
     @staticmethod
-    def get_scheduled_jobs_embedded(api_connection, parameters={}):
+    def get_scheduled_jobs_embedded(api_connection: ApiConnection, parameters={}):
         """Fetches scheduled jobs embedded df
 
         :param api_connection: class with API token for use with API
@@ -122,7 +125,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_jobs_embedded_df(api_connection, parameters={}):
+    def get_scheduled_jobs_embedded_df(api_connection: ApiConnection, parameters={}):
         """Fetches scheduled jobs embedded df
 
         :param api_connection: class with API token for use with API
@@ -135,7 +138,7 @@ class SchedulerApi:
         return df
 
     @staticmethod
-    def get_scheduled_job(api_connection, pk):
+    def get_scheduled_job(api_connection: ApiConnection, pk):
         """Fetches scheduled job by pk
 
         :param api_connection: class with API token for use with API
@@ -147,7 +150,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_job_embedded(api_connection, pk):
+    def get_scheduled_job_embedded(api_connection: ApiConnection, pk):
         """Fetches scheduled job by pk
 
         :param api_connection: class with API token for use with API
@@ -159,7 +162,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_job_definitions(api_connection, parameters={}):
+    def get_job_definitions(api_connection: ApiConnection, parameters={}):
         """Fetches scheduled jobs and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -171,7 +174,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_job_definition(api_connection, pk):
+    def get_job_definition(api_connection: ApiConnection, pk):
         """Fetches scheduled job by pk
 
         :param api_connection: class with API token for use with API
@@ -183,7 +186,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_job_execution(api_connection, job_definition_pk):
+    def get_scheduled_job_execution(api_connection: ApiConnection, job_definition_pk):
         """Fetches scheduled jobs and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -196,7 +199,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_job_execution_embedded(api_connection, param):
+    def get_scheduled_job_execution_embedded(api_connection: ApiConnection, param):
         """Fetches scheduled jobs and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -209,7 +212,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def upload_scheduled_job_execution(api_connection, execution):
+    def upload_scheduled_job_execution(api_connection: ApiConnection, execution):
         """Uploads scheduled job executions
 
         :param api_connection: class with API token for use with API

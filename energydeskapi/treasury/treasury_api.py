@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 from energydeskapi.customers.customers_api import CustomersApi
 
 logger = logging.getLogger(__name__)
@@ -10,7 +12,7 @@ class TreasuryApi:
     """
 
     @staticmethod
-    def get_treasury_banks(api_connection):
+    def get_treasury_banks(api_connection: ApiConnection):
         """Fetches all treasury banks
 
         :param api_connection: class with API token for use with API
@@ -25,7 +27,7 @@ class TreasuryApi:
         return df
 
     @staticmethod
-    def register_treasury_bank(api_connection, registry_number, treasury_system_name):
+    def register_treasury_bank(api_connection: ApiConnection, registry_number, treasury_system_name):
         """Registers treasury bank from brreg
 
         :param api_connection: class with API token for use with API

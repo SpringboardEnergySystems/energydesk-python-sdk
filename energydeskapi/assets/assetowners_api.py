@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 
 class AssetOwnersApi:
@@ -9,7 +11,7 @@ class AssetOwnersApi:
 
     # Create a json file from NetworkX DiGraph defining ownerships
     @staticmethod
-    def save_ownerships(api_connection, asset_manager_pk, ownership_graph_jsonstr):
+    def save_ownerships(api_connection: ApiConnection, asset_manager_pk, ownership_graph_jsonstr):
         """Saves ownership of asset
 
         :param api_connection: class with API token for use with API
@@ -26,7 +28,7 @@ class AssetOwnersApi:
 
 
     @staticmethod
-    def load_ownerships(api_connection):
+    def load_ownerships(api_connection: ApiConnection):
         """Loads ownership of asset
 
         :param api_connection: class with API token for use with API
@@ -36,7 +38,7 @@ class AssetOwnersApi:
         return json_res
 
     @staticmethod
-    def get_asset_ownerships(api_connection):
+    def get_asset_ownerships(api_connection: ApiConnection):
         """Fetches ownership of all assets
 
         :param api_connection: class with API token for use with API
@@ -49,7 +51,7 @@ class AssetOwnersApi:
         return df
 
     @staticmethod
-    def get_asset_ownerships_pivoted(api_connection):
+    def get_asset_ownerships_pivoted(api_connection: ApiConnection):
         """Fetches pivoted ownerships of all assets
 
         :param api_connection: class with API token for use with API
@@ -62,7 +64,7 @@ class AssetOwnersApi:
         return df
 
     @staticmethod
-    def all_asset_ownership_paths(api_connection):
+    def all_asset_ownership_paths(api_connection: ApiConnection):
         """Fetches the path all asset ownerships
 
         :param api_connection: class with API token for use with API

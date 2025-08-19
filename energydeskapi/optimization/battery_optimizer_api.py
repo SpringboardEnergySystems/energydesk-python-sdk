@@ -2,6 +2,8 @@ import pendulum
 
 import logging
 import pandas as pd
+from energydeskapi.sdk.api_connection import ApiConnection
+
 logger = logging.getLogger(__name__)
 class OptimizerInput:
     def __init__(self,optimize_fromdate=pendulum.duration(days=-50), optimize_untildate=pendulum.duration(days=-1),
@@ -42,7 +44,7 @@ class BatteryOptimizationApi:
     """
 
     @staticmethod
-    def optimize_battery(api_connection, optimizer_input):
+    def optimize_battery(api_connection: ApiConnection, optimizer_input):
         payload = optimizer_input.get_dict()
         print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/flexoptimizer/optimizebattery/', payload)
