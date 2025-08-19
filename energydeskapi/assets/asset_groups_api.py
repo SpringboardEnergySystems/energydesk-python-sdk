@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 logger = logging.getLogger(__name__)
+from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.assets.assets_api import AssetsApi
 #fields = ['pk', 'asset_id', 'extern_asset_id', 'description', 'asset_type', 'grid_connection', 'power_supplier',
  #         'asset_owner', 'asset_manager', 'meter_id', 'sub_meter_id', 'vendor', 'is_active']
