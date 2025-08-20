@@ -283,6 +283,12 @@ def check_gridnode_status(api_conn, grid_node_name="Bagn"):
     print(success, status_code)
     df=pd.DataFrame(returned_data['grid_node_status'])
     print(df)
+from energydeskapi.grid.grid_api import GridNodeApi
+def get_grid_subnodes(api_conn, grid_company_name="Elvia"):
+    data=GridNodeApi.get_sub_grid_nodes(api_conn, {'grid_company_name': grid_company_name})
+
+    df=pd.DataFrame(data)
+    print(df)
 
 def check_prequalification_from_key(token=None, key=0):
     server_url = f"http://127.0.0.1:8001/api/flexibility/prequalification/requests/{key}/"
@@ -379,7 +385,7 @@ if __name__ == '__main__':
     #load_offer(api_conn_basic)
     #reload_portfolio_profile(api_conn_basic,"5bc8e5d4-049a-4364-8d76-b306007d8940")
     #process_offer(api_conn_basic)
-    check_gridnode_status(api_conn_basic, "Dal")
+    get_grid_subnodes(api_conn_basic, "Elvia")
     sys.exit(0)
     #env = environ.Env()
     token=get_access_token()

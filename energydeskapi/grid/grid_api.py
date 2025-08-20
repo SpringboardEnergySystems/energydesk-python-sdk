@@ -187,6 +187,14 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
+    def get_sub_grid_nodes(api_connection: ApiConnection, parameters={}):
+        logger.info("Retrieving Sub Gridnodes {}".format(parameters))
+        json_res = api_connection.exec_get_url('/api/flexmarkets/gridsubnodes/', parameters)
+        if json_res is None:
+            return None
+        return json_res
+
+    @staticmethod
     def get_grid_nodes_arming(api_connection: ApiConnection, parameters={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodearming/embedded/', parameters)
         if json_res is None:
