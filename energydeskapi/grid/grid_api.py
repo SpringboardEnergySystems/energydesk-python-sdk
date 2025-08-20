@@ -67,6 +67,7 @@ class GridNodeArming:
     def get_dict(self, api_connection):
         dict = {}
         dict['pk'] = self.pk
+        dict['period_until']=None
         if self.grid_node is not None: dict['grid_node'] = GridNodeApi.get_grid_node_url(api_connection, self.grid_node)
         if self.period_from is not None: dict['period_from'] = self.period_from
         if self.period_until is not None: dict['period_until'] = self.period_until
