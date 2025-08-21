@@ -71,7 +71,7 @@ def ask_copilot_question(api_conn, context_url, question):
     for res in data.json()['results']:
         print("Description:", res.get('description', 'No description available'))
 
-
+import sys
 if __name__ == '__main__':
     api_conn=init_api()
     contexts=get_copilot_contextx(api_conn)

@@ -19,6 +19,7 @@ class CopilotApi:
     @staticmethod
     def get_available_contexts(api_connection: ApiConnection, parameters={})->list[Context]:
         data = api_connection.exec_get_url('/ai/contexts/', parameters)
+        print(json.dumps(data, indent=2))
         all_contexts = []
         if data:
             for endp in data['contexts']:
@@ -27,6 +28,3 @@ class CopilotApi:
                 all_contexts.append(ctx)
             return all_contexts
         return []
-
-
-
