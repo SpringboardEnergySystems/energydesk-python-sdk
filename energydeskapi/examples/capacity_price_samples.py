@@ -4,6 +4,9 @@ import pandas as pd
 import json, pytz
 from dateutil import parser
 import random, time
+
+from energydeskapi.bilateral.fixed_price_api import FixedPriceApi
+
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
 from energydeskapi.sdk.profiles_utils import relative_profile_to_dataframe
 from dateutil.relativedelta import relativedelta
