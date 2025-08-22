@@ -17,3 +17,4 @@ class TestEnvUtils(TestCase):
 
     def test_from_semicolon_colon_config_to_dict_empty(self):
         dc = from_semicolon_colon_config_to_dict("")
+        self.assertDictEqual(dc, {})
