@@ -4,6 +4,9 @@ import logging
 import copy
 from random import randrange
 import random
+
+from energydeskapi.customers.users_api import UsersApi
+
 from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.customers.customers_api import CustomersApi
@@ -14,7 +17,7 @@ from energydeskapi.types.contract_enum_types import ContractStatusEnum, Contract
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum
 from os.path import join, dirname
 from moneyed import EUR
-from energydeskapi.sdk.datetime_utils import convert_datime_to_utcstr, convert_datime_to_locstr
+from energydeskapi.sdk.datetime_utils import convert_tzaware_datetime_to_utcstr, convert_datime_to_locstr
 from dotenv import load_dotenv
 from energydeskapi.sdk.money_utils import FormattedMoney
 from datetime import datetime, timedelta
@@ -41,21 +44,21 @@ if __name__ == '__main__':
     api_conn.set_token(tok, "Token")
 
 
-    ndaq_pk=CustomersApi.get_company_by_name(api_conn, MarketPlaceEnum.NASDAQ_OMX.name)
-    prof=CustomersApi.get_user_profile(api_conn)
+    ndaq_pk=CustomersApi.get_company_pk_by_name(api_conn, MarketPlaceEnum.NASDAQ_OMX.name)
+    prof=UsersApi.get_user_profile(api_conn)
     my_user_keey=prof['pk']
 
-    all_prod_df=DerivativesApi.fetch_products(api_conn, MarketPlaceEnum.NASDAQ_OMX.name, MarketEnum.NORDIC_POWER.name, convert_datime_to_utcstr(datetime.today()))
+    all_prod_df=DerivativesApi.get_products_df(api_conn, MarketPlaceEnum.NASDAQ_OMX.name, MarketEnum.NORDIC_POWER.name, convert_tzaware_datetime_to_utcstr(datetime.today()))
     qtr_products=all_prod_df[all_prod_df.ticker.str.contains("BLQ") &
                     ~all_prod_df.instrument.str.contains("EPAD")] #Filter away EPADs in this test
     import pandas as pd
     qtr_products.index = pd.RangeIndex(len(qtr_products.index))
-    random.seed(datetime.now())
+    random.seed(datetime.now().isoformat())
 
     fake_deliv_from=(datetime.today() + timedelta(days=200)).replace( hour=0, minute=0, second=0, microsecond=0)
     fake_deliv_until = (datetime.today() + timedelta(days=500)).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    TradingBooksApi.fetch_tradingbooks(api_conn)
+    TradingBooksApi.get_tradingbooks(api_conn)
     yester = (datetime.today() + timedelta(days=-1)).replace( hour=0, minute=0, second=0, microsecond=0)
     dtstr1=convert_datime_to_utcstr(yester)
     dtstr2=convert_datime_to_locstr(yester, "Europe/Oslo")  #In order to get the date correct
@@ -63,7 +66,7 @@ if __name__ == '__main__':
 
     commodity_type = CommodityTypeEnum.POWER
     contract_status = ContractStatusEnum.REGISTERED
-    instrument_type = InstrumentTypeEnum.FORWARD
+    instrument_type = InstrumentTypeEnum.FWD
 
     counterpart = api_conn.get_base_url() + "/api/customers/company/" + str(ndaq_pk) + "/"
     marketplace = api_conn.get_base_url() + "/api/customers/company/" + str(ndaq_pk) + "/"
