@@ -150,7 +150,7 @@ class ClearingApi:
         return all_record
 
     @staticmethod
-    def get_clearing_report_records_embedded(api_connection: ApiConnection, parameters={}):
+    def get_clearing_report_records_embedded(api_connection: ApiConnection, parameters={}) -> list[dict]:
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -172,7 +172,7 @@ class ClearingApi:
         return all_record
 
     @staticmethod
-    def get_clearing_report_records_df(api_connection: ApiConnection, parameters={}):
+    def get_clearing_report_records_df(api_connection: ApiConnection, parameters={}) -> pd.DataFrame:
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -184,7 +184,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_reports(api_connection: ApiConnection, parameters={}):
+    def get_clearing_reports(api_connection: ApiConnection, parameters={}) -> pd.DataFrame:
         """Fetches a list of clearing reports
 
         :param api_connection: class with API token for use with API
@@ -200,7 +200,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_reports_embedded(api_connection: ApiConnection, parameters={}):
+    def get_clearing_reports_embedded(api_connection: ApiConnection, parameters={}) -> pd.DataFrame:
         """Fetches a list of embedded clearing reports
 
         :param api_connection: class with API token for use with API
@@ -216,7 +216,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_report_types(api_connection: ApiConnection):
+    def get_clearing_report_types(api_connection: ApiConnection) -> pd.DataFrame:
         """Fetches a list of clearing report types
 
         :param api_connection: class with API token for use with API
@@ -233,7 +233,7 @@ class ClearingApi:
 
 
     @staticmethod
-    def approve_all_reconciled_trades(api_connection,date):
+    def approve_all_reconciled_trades(api_connection: ApiConnection, date: str):
         success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/clearing/approve-reconciled-contracts/',{'date':date})
         return success, returned_data, status_code, error_msg
 
