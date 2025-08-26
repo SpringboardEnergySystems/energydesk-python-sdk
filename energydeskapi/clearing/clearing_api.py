@@ -7,6 +7,8 @@ import pandas as pd
 import ast
 
 from energydeskapi.sdk.api_connection import ApiConnection
+from energydeskapi.types.clearing_enum_types import ReconciliationStatusEnum, ClearingHouse, ClearingReportTypeEnum, \
+    ClearingReportFormat
 
 logger = logging.getLogger(__name__)
 #  Change
@@ -86,19 +88,8 @@ class ClearingApi:
         return api_connection.get_base_url() + '/api/clearing/reconciliation/positions/' + str(key) + "/"
 
     @staticmethod
-    def query_clearing_report_data(api_connection: ApiConnection, clearing_house, clearing_report_type, clearing_report_format, from_date, to_date ):
+    def query_clearing_report_data(api_connection: ApiConnection, clearing_house: ClearingHouse|int, clearing_report_type: ClearingReportTypeEnum|int, clearing_report_format: ClearingReportFormat|int, from_date: str, to_date: str ) -> bool:
         """Queries clearing data between a set time
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        :param clearing_house: description...
-        :type clearing_house: str, required
-        :param clearing_report_type: type of clearing report
-        :type clearing_report_type: str, required
-        :param from_date: date and time from
-        :type from_date: str, required
-        :param to_date: date and time to
-        :type to_date: str, required
         """
         logger.info("Querying clearing report types")
         crhouse_pk = clearing_house if isinstance(clearing_house, int) else clearing_house.value
@@ -112,16 +103,13 @@ class ClearingApi:
         success, json_res, status_code, error_msg  = api_connection.exec_post_url('/api/clearing/query-clearing-report-data/', payload)
         return True
     @staticmethod
-    def get_reconciliation_status_url(api_connection: ApiConnection, reconciliation_status_enum):
+    def get_reconciliation_status_url(api_connection: ApiConnection, reconciliation_status_enum: ReconciliationStatusEnum|int) -> str:
         type_pk = reconciliation_status_enum if isinstance(reconciliation_status_enum, int) else reconciliation_status_enum.value
         return api_connection.get_base_url() + '/api/clearing/reconciliationstatus/' + str(type_pk) + "/"
 
     @staticmethod
-    def perform_reconciliation(api_connection: ApiConnection, date):
+    def perform_reconciliation(api_connection: ApiConnection, date: str):
         """Reconcile internal and external contracts for a given date
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
         """
         logger.info("Reconciling contracts")
         payload = {"date": date}
@@ -132,7 +120,7 @@ class ClearingApi:
 
 
     @staticmethod
-    def get_clearing_report_records(api_connection: ApiConnection, parameters={}):
+    def get_clearing_report_records(api_connection: ApiConnection, parameters={}) -> list[dict]:
         """Fetches a list of clearing report records
 
         :param api_connection: class with API token for use with API
