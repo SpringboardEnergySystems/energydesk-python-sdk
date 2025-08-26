@@ -1,4 +1,6 @@
 import logging
+from typing import Any, Optional
+
 import pandas as pd
 import json
 
@@ -15,7 +17,7 @@ class PortfolioViewsApi:
 
 
     @staticmethod
-    def get_product_view(api_connection: ApiConnection, parameters={}):
+    def get_product_view(api_connection: ApiConnection, parameters={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -33,7 +35,7 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
-    def get_position_view(api_connection: ApiConnection, parameters={}):
+    def get_position_view(api_connection: ApiConnection, parameters={}) -> Optional[dict[str, Any]]:
         logger.info("Fetching position view" +  str(parameters))
         json_res = api_connection.exec_get_url('/api/portfoliomanager/positionview/', parameters)
         if json_res is None:
@@ -50,7 +52,7 @@ class PortfolioViewsApi:
         return  json_res
 
     @staticmethod
-    def get_product_view_df(api_connection: ApiConnection, parameters={}):
+    def get_product_view_df(api_connection: ApiConnection, parameters={}) -> tuple[Optional[int], Optional[pd.DataFrame]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -68,7 +70,7 @@ class PortfolioViewsApi:
         return id, df
 
     @staticmethod
-    def get_period_view(api_connection: ApiConnection, parameters={}):
+    def get_period_view(api_connection: ApiConnection, parameters={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -89,7 +91,7 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
-    def get_currency_view(api_connection: ApiConnection, parameters={}):
+    def get_currency_view(api_connection: ApiConnection, parameters={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -108,7 +110,7 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
-    def get_period_view_df(api_connection: ApiConnection, parameters={}):
+    def get_period_view_df(api_connection: ApiConnection, parameters={}) -> tuple[Optional[int], Optional[pd.DataFrame]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -127,7 +129,7 @@ class PortfolioViewsApi:
         return id, df
 
     @staticmethod
-    def get_currency_view_df(api_connection: ApiConnection, parameters={}):
+    def get_currency_view_df(api_connection: ApiConnection, parameters={}) -> tuple[Optional[int], Optional[pd.DataFrame]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
