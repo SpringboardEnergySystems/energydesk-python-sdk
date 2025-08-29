@@ -160,3 +160,13 @@ def next_weekday(d, weekday):
     if days_ahead <= 0: # Target day already happened this week
         days_ahead += 7
     return d + timedelta(days_ahead)
+
+
+def parse_date_exactly(date_text: str) -> pendulum.Date:
+    if date_text is not None:
+        if len(date_text) >= 10:
+            return pendulum.parse(date_text[:10], exact=True)
+        else:
+            raise Exception(f"The date text {date_text} is too short.")
+    else:
+        raise Exception(f"The date text is None.")
