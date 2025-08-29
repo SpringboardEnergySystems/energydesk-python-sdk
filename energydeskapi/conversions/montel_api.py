@@ -22,9 +22,23 @@ class MontelApi:
         return response.text
 
     @staticmethod
+    def exec_download_historical_internally(period_from: date, period_until: date) -> dict:
+        server_url = MontelApi._build_server_url(f"download_historical")
+        logger.info(f"Calling montel service URL {server_url} to download historical prices internally in Montel service")
+        h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
+        authsess = ElvizLinksApi.obtain_session()
+        response = authsess.post(server_url, headers=h, data={
+            "from": period_from.isoformat(),
+            "until": period_until.isoformat()
+        })
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Response: {response}")
+        return response.text
+
+    @staticmethod
     def exec_get_historical(period_from: date, period_until: date) -> dict:
         server_url = MontelApi._build_server_url(f"historical?from={period_from.isoformat()}&until={period_until.isoformat()}")
-        logger.info(f"Calling montel service URL {server_url}")
+        logger.info(f"Calling montel service URL {server_url} to get the historical prices from the Montel service own database")
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
         response = authsess.get(server_url, headers=h)
