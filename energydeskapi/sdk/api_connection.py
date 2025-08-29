@@ -1,6 +1,7 @@
 """
 Wrapper for Token management
 """
+from typing import Optional
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -278,7 +279,7 @@ class ApiConnection(object):
       :param base_url: the prefix of the URL (examples: https://api-test.energydesk.no, http://127.0.0.1:(0000)
       :type base_url: str:
       """
-    def __init__(self, base_url: str, bearer_token=None):
+    def __init__(self, base_url: str, bearer_token: Optional[str]=None):
         self.api_connection=_api_connection(base_url, bearer_token)
     def get_authorization_header(self):
         return self.api_connection.get_authorization_header()
@@ -315,7 +316,7 @@ class ApiTempConnection:
     SOmetimes we
       """
 
-    def __init__(self, base_url, bearer_token=None):
+    def __init__(self, base_url: str, bearer_token: Optional[str]=None):
         self.api_connection = _api_connection(base_url, bearer_token)
 
     def get_authorization_header(self):
