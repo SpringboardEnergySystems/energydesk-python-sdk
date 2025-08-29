@@ -48,7 +48,7 @@ class MasterAgreementApi:
     """
 
     @staticmethod
-    def get_master_agreements(api_connection: ApiConnection, parameters={}):
+    def get_master_agreements(api_connection: ApiConnection, parameters: dict={}):
         """Fetches master contract agreements
 
         :param api_connection: class with API token for use with API
@@ -62,7 +62,7 @@ class MasterAgreementApi:
         return None
 
     @staticmethod
-    def get_master_agreements_embedded(api_connection: ApiConnection, parameters={}):
+    def get_master_agreements_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches master contract agreements
 
         :param api_connection: class with API token for use with API

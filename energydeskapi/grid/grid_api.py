@@ -91,7 +91,7 @@ class GridApi:
         return api_connection.get_base_url() + '/api/grid/gridmap/' + str(gridmap_pk) + "/"
 
     @staticmethod
-    def get_gridmaps(api_connection: ApiConnection, parameters={}):
+    def get_gridmaps(api_connection: ApiConnection, parameters: dict={}):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -188,7 +188,7 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_sub_grid_nodes(api_connection: ApiConnection, parameters={}):
+    def get_sub_grid_nodes(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Retrieving Sub Gridnodes {}".format(parameters))
         json_res = api_connection.exec_get_url('/api/flexmarkets/gridsubnodes/', parameters)
         if json_res is None:
@@ -196,7 +196,7 @@ class GridNodeApi:
         return json_res
 
     @staticmethod
-    def get_grid_nodes_arming(api_connection: ApiConnection, parameters={}):
+    def get_grid_nodes_arming(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodearming/embedded/', parameters)
         if json_res is None:
             return None
@@ -215,20 +215,20 @@ class GridNodeApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_grid_nodes_embedded(api_connection: ApiConnection, parameters={}):
+    def get_grid_nodes_embedded(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_grid_nodes_with_embedded_tenders(api_connection: ApiConnection, parameters={}):
+    def get_grid_nodes_with_embedded_tenders(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/tenders/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_grid_nodes(api_connection: ApiConnection, parameters={}):
+    def get_grid_nodes(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/grid/gridnodes/', parameters)
         if json_res is None:
             return None

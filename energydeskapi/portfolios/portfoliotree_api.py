@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class PortfolioTreeApi:
 
   @staticmethod
-  def get_portfolio_tree(api_connection: ApiConnection, parameters={}):
+  def get_portfolio_tree(api_connection: ApiConnection, parameters: dict={}):
       logger.info("Fetching portfolio tree")
       json_res = PortfoliosApi.get_portfolios_embedded(api_connection, parameters)
       if json_res is None:
@@ -21,7 +21,7 @@ class PortfolioTreeApi:
       return create_embedded_tree_recursive(json_res)
 
   @staticmethod
-  def get_portfolio_flat_tree(api_connection: ApiConnection, parameters={}):
+  def get_portfolio_flat_tree(api_connection: ApiConnection, parameters: dict={}):
       logger.info("Fetching portfolio flat tree")
       json_res=PortfolioTreeApi.get_portfolio_tree(api_connection, parameters)
       if json_res is None:
@@ -60,7 +60,7 @@ class PortfolioTreeApi:
 
 
   @staticmethod
-  def get_portfolio_tree_for_dropdown(api_connection: ApiConnection, parameters={}):
+  def get_portfolio_tree_for_dropdown(api_connection: ApiConnection, parameters: dict={}):
     logger.info("Fetching portfolio tree")
     json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
     if json_res is None:

@@ -10,7 +10,7 @@ class AuditLogApi:
     """
 
     @staticmethod
-    def get_audit_log(api_connection: ApiConnection, parameters={}):
+    def get_audit_log(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -22,7 +22,7 @@ class AuditLogApi:
         return json_res
 
     @staticmethod
-    def get_audit_log_embedded(api_connection: ApiConnection, parameters={}):
+    def get_audit_log_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches audit log with embedded structure for user and contracts
 
         :param api_connection: class with API token for use with API
@@ -62,7 +62,7 @@ class AuditLogApi:
         return json_res
 
     @staticmethod
-    def get_audit_log_types(api_connection: ApiConnection, parameters={}):
+    def get_audit_log_types(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all audit log types
 
         :param api_connection: class with API token for use with API

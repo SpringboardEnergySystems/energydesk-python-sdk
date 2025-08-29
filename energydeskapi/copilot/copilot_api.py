@@ -17,7 +17,7 @@ class CopilotApi:
     """Class for Copilot Access to EnergyDesk API
     """
     @staticmethod
-    def get_available_contexts(api_connection: ApiConnection, parameters={})->list[Context]:
+    def get_available_contexts(api_connection: ApiConnection, parameters: dict={})->list[Context]:
         data = api_connection.exec_get_url('/ai/contexts/', parameters)
         print(json.dumps(data, indent=2))
         all_contexts = []

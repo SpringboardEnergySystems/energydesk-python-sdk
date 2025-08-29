@@ -77,7 +77,7 @@ class FeesApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/feerates/' + str(value_pk) + "/"
 
     @staticmethod
-    def get_feerates(api_connection: ApiConnection, parameters={}):
+    def get_feerates(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/portfoliomanager/feerates/', parameters)
         if json_res is None:
             return None

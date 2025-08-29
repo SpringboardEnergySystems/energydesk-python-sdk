@@ -14,7 +14,7 @@ class SettlementApi:
 
 
     @staticmethod
-    def get_settlement_data(api_connection: ApiConnection, parameters={}):
+    def get_settlement_data(api_connection: ApiConnection, parameters: dict={}):
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -26,7 +26,7 @@ class SettlementApi:
         return res
 
     @staticmethod
-    def get_settlement_view(api_connection: ApiConnection, parameters={}):
+    def get_settlement_view(api_connection: ApiConnection, parameters: dict={}):
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -43,7 +43,7 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
-    def get_settlement_view_df(api_connection: ApiConnection, parameters={}):
+    def get_settlement_view_df(api_connection: ApiConnection, parameters: dict={}):
 
 
         id, json_res = SettlementApi.get_settlement_view(api_connection, parameters)
@@ -55,7 +55,7 @@ class SettlementApi:
         return id, df
 
     @staticmethod
-    def get_period_result_view(api_connection: ApiConnection, parameters={}):
+    def get_period_result_view(api_connection: ApiConnection, parameters: dict={}):
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -72,7 +72,7 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
-    def get_period_position_and_result_view(api_connection: ApiConnection, parameters={}):
+    def get_period_position_and_result_view(api_connection: ApiConnection, parameters: dict={}):
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -90,12 +90,12 @@ class SettlementApi:
         return view_id, view_data, positionview_data
 
     @staticmethod
-    def get_period_result_view_csv(api_connection: ApiConnection, parameters={}):
+    def get_period_result_view_csv(api_connection: ApiConnection, parameters: dict={}):
         data = api_connection.exec_get_url('/api/settlement/settlementview/periodresultscsv/', parameters)
         return data
 
     @staticmethod
-    def get_period_result_view_df(api_connection: ApiConnection, parameters={}):
+    def get_period_result_view_df(api_connection: ApiConnection, parameters: dict={}):
 
         id, json_res = SettlementApi.get_period_result_view(api_connection, parameters)
         if json_res is None:
@@ -104,7 +104,7 @@ class SettlementApi:
         return id, df
 
     @staticmethod
-    def get_product_result_view(api_connection: ApiConnection, parameters={}):
+    def get_product_result_view(api_connection: ApiConnection, parameters: dict={}):
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -121,7 +121,7 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
-    def get_product_result_view_df(api_connection: ApiConnection, parameters={}):
+    def get_product_result_view_df(api_connection: ApiConnection, parameters: dict={}):
 
         id, json_res = SettlementApi.get_product_result_view(api_connection, parameters)
 

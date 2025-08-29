@@ -308,7 +308,7 @@ class AssetDataApi:
         return json_res
 
     @staticmethod
-    def get_latest_forecast(api_connection: ApiConnection, parameters={}):
+    def get_latest_forecast(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Retrieve previously stored forecasts")
 
         json_res = api_connection.exec_get_url('/api/assetdata/timeseriesdata/latest/', parameters)
@@ -342,7 +342,7 @@ class AssetDataApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_assetgroup_forecast(api_connection: ApiConnection, parameters={}):
+    def get_assetgroup_forecast(api_connection: ApiConnection, parameters: dict={}):
         """Fetches forecast for asset group
 
         :param api_connection: class with API token for use with API

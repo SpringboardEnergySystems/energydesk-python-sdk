@@ -120,7 +120,7 @@ class ClearingApi:
 
 
     @staticmethod
-    def get_clearing_report_records(api_connection: ApiConnection, parameters={}) -> list[dict]:
+    def get_clearing_report_records(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         """Fetches a list of clearing report records
 
         :param api_connection: class with API token for use with API
@@ -138,7 +138,7 @@ class ClearingApi:
         return all_record
 
     @staticmethod
-    def get_clearing_report_records_embedded(api_connection: ApiConnection, parameters={}) -> list[dict]:
+    def get_clearing_report_records_embedded(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -160,7 +160,7 @@ class ClearingApi:
         return all_record
 
     @staticmethod
-    def get_clearing_report_records_df(api_connection: ApiConnection, parameters={}) -> pd.DataFrame:
+    def get_clearing_report_records_df(api_connection: ApiConnection, parameters: dict={}) -> pd.DataFrame:
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API
@@ -172,7 +172,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_reports(api_connection: ApiConnection, parameters={}) -> pd.DataFrame:
+    def get_clearing_reports(api_connection: ApiConnection, parameters: dict={}) -> pd.DataFrame:
         """Fetches a list of clearing reports
 
         :param api_connection: class with API token for use with API
@@ -188,7 +188,7 @@ class ClearingApi:
         return df
 
     @staticmethod
-    def get_clearing_reports_embedded(api_connection: ApiConnection, parameters={}) -> pd.DataFrame:
+    def get_clearing_reports_embedded(api_connection: ApiConnection, parameters: dict={}) -> pd.DataFrame:
         """Fetches a list of embedded clearing reports
 
         :param api_connection: class with API token for use with API

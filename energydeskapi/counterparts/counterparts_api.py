@@ -95,7 +95,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_credit_ratings(api_connection: ApiConnection, parameters={}):
+    def get_credit_ratings(api_connection: ApiConnection, parameters: dict={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -107,7 +107,7 @@ class CounterPartsApi:
             return json_res
         return None
     @staticmethod
-    def get_credit_ratings_df(api_connection: ApiConnection, parameters={}):
+    def get_credit_ratings_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches credit ratings for counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -119,7 +119,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_counterparts(api_connection: ApiConnection, parameters={}):
+    def get_counterparts(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -147,7 +147,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterparts_df(api_connection: ApiConnection, parameters={}):
+    def get_counterparts_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -188,7 +188,7 @@ class CounterPartsApi:
         return None
 
     @staticmethod
-    def get_counterpart_limits(api_connection: ApiConnection, parameters={}):
+    def get_counterpart_limits(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -226,7 +226,7 @@ class CounterPartsApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/counterparts/counterpartlimits/', payload)
         return success, returned_data, status_code, error_msg
     @staticmethod
-    def get_counterpart_allowances(api_connection: ApiConnection, parameters={}) -> list[dict]:
+    def get_counterpart_allowances(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -239,7 +239,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_allowances_embedded(api_connection: ApiConnection, parameters={}) -> dict:
+    def get_counterpart_allowances_embedded(api_connection: ApiConnection, parameters: dict={}) -> dict:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API
@@ -288,7 +288,7 @@ class CounterPartsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_counterpart_types(api_connection: ApiConnection, parameters={}) -> list[dict]:
+    def get_counterpart_types(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         """Fetches all counterparts
 
         :param api_connection: class with API token for use with API

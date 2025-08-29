@@ -44,7 +44,7 @@ class CapacityApi:
   """
 
   @staticmethod
-  def get_capacity_contract_types(api_connection: ApiConnection, parameters={}):
+  def get_capacity_contract_types(api_connection: ApiConnection, parameters: dict={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API

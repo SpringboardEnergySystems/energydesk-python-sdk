@@ -103,49 +103,49 @@ class ProductsApi:
         return api_connection.get_base_url() + '/api/markets/commoditydefinitions/' + str(commodity_deinition_pk) + "/"
 
     @staticmethod
-    def get_commodity_definitions(api_connection: ApiConnection, parameters={}):
+    def get_commodity_definitions(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/commoditydefinitions/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products(api_connection: ApiConnection, parameters={}):
+    def get_market_products(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products_embedded(api_connection: ApiConnection, parameters={}):
+    def get_market_products_embedded(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products_objects(api_connection: ApiConnection, parameters={}):
+    def get_market_products_objects(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/embedded/', parameters)
         if json_res is None:
             return None
         return json_res['results']
 
     @staticmethod
-    def get_product_prices(api_connection: ApiConnection, parameters={}):
+    def get_product_prices(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/productprices/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_product_prices_embedded(api_connection: ApiConnection, parameters={}):
+    def get_product_prices_embedded(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if json_res is None:
             return False
         return json_res
 
     @staticmethod
-    def get_market_products_df(api_connection: ApiConnection, parameters={}):
+    def get_market_products_df(api_connection: ApiConnection, parameters: dict={}):
         json_res=ProductsApi.get_market_products_embedded(api_connection, parameters)
         return convert_productjson_dataframe(json_res)
 

@@ -17,17 +17,17 @@ class BaselinesApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_baseline_algorithminstances(api_connection: ApiConnection, parameters={}):
+    def get_baseline_algorithminstances(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/baselines/algorithminstances', parameters)
         return json_res
 
     @staticmethod
-    def get_baseline_algorithms(api_connection: ApiConnection, parameters={}):
+    def get_baseline_algorithms(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/baselines/algorithms', parameters)
         return json_res
 
     @staticmethod
-    def get_baseline_resolutions(api_connection: ApiConnection, parameters={}):
+    def get_baseline_resolutions(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/baselines/resolutions', parameters)
         return json_res
 

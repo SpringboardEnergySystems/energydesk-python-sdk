@@ -76,7 +76,7 @@ class RiskApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/globalriskparameters/',risk_params.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
     @staticmethod
-    def get_risk_parameters(api_connection: ApiConnection, parameters={}):
+    def get_risk_parameters(api_connection: ApiConnection, parameters: dict={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

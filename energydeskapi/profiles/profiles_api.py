@@ -33,7 +33,7 @@ class ProfilesApi:
     """
 
     @staticmethod
-    def get_spot_profiles(api_connection: ApiConnection, parameters={}):
+    def get_spot_profiles(api_connection: ApiConnection, parameters: dict={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API
@@ -46,7 +46,7 @@ class ProfilesApi:
         return None
 
     @staticmethod
-    def get_volume_profiles(api_connection: ApiConnection, parameters={}):
+    def get_volume_profiles(api_connection: ApiConnection, parameters: dict={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

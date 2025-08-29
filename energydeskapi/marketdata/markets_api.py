@@ -36,7 +36,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_markets(api_connection: ApiConnection, parameters={}):
+    def get_markets(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -47,7 +47,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_markets_df(api_connection: ApiConnection, parameters={}):
+    def get_markets_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -153,7 +153,7 @@ class MarketsApi:
 
 
     @staticmethod
-    def get_commodity_types(api_connection: ApiConnection, parameters={}):
+    def get_commodity_types(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all commodity types
 
         :param api_connection: class with API token for use with API
@@ -166,7 +166,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_commodity(api_connection: ApiConnection, parameters={}):
+    def get_commodity(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all commodity types
 
         :param api_connection: class with API token for use with API
@@ -179,7 +179,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_instrument_types(api_connection: ApiConnection, parameters={}):
+    def get_instrument_types(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all commodity types
 
         :param api_connection: class with API token for use with API

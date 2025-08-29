@@ -61,7 +61,7 @@ class ReportConfigApi:
     """
 
     @staticmethod
-    def get_report_configs(api_connection: ApiConnection, parameters={}):
+    def get_report_configs(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API

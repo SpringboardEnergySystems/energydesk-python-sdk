@@ -167,14 +167,14 @@ class RatesConfiguration:
 class CapacityApi:
 
     @staticmethod
-    def get_capacity_profile(api_connection: ApiConnection, parameters={}):
+    def get_capacity_profile(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/calculated/', parameters)
         if json_res is not None:
           return json_res
         return None
 
     @staticmethod
-    def get_capacity_request(api_connection: ApiConnection, parameters={}):
+    def get_capacity_request(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/', parameters)
         if json_res is not None:
           return json_res
@@ -188,13 +188,13 @@ class CapacityApi:
         return json_res
 
     @staticmethod
-    def get_capacity_request_embedded(api_connection: ApiConnection, parameters={}):
+    def get_capacity_request_embedded(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/embedded/', parameters)
         if json_res is not None:
           return json_res
         return None
     @staticmethod
-    def get_tender_instance_embedded(api_connection: ApiConnection, parameters={}):
+    def get_tender_instance_embedded(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/instance/', parameters)
         if json_res is not None:
           return json_res
@@ -210,7 +210,7 @@ class CapacityApi:
         return api_connection.get_base_url() + '/api/bilateral/availability/tender/' + str(key) + "/"
 
     @staticmethod
-    def list_active_capacity_offers(api_connection: ApiConnection, parameters={}):
+    def list_active_capacity_offers(api_connection: ApiConnection, parameters: dict={}):
 
         logger.info("Retrieve previously given pricees")
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tenderoffers/embedded/', parameters)
@@ -218,7 +218,7 @@ class CapacityApi:
             return json_res
         return []
     @staticmethod
-    def get_availability_hours(api_connection: ApiConnection, parameters={}):
+    def get_availability_hours(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/availablehours/', parameters)
         if json_res is not None:
           return json_res
