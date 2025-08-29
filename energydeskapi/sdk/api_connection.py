@@ -278,35 +278,35 @@ class ApiConnection(object):
       :param base_url: the prefix of the URL (examples: https://api-test.energydesk.no, http://127.0.0.1:(0000)
       :type base_url: str:
       """
-    def __init__(self, base_url, bearer_token=None):
+    def __init__(self, base_url: str, bearer_token=None):
         self.api_connection=_api_connection(base_url, bearer_token)
     def get_authorization_header(self):
         return self.api_connection.get_authorization_header()
     def get_base_url(self):
         return self.api_connection.get_base_url()
-    def set_base_url(self, base_url):
+    def set_base_url(self, base_url: str):
         self.api_connection.set_base_url(base_url)
-    def validate_via_basic_auth(self, username, password):
+    def validate_via_basic_auth(self, username: str, password: str):
         return self.api_connection.validate_via_basic_auth(username, password)
-    def validate_token(self, token, backend="google-oauth2"):
+    def validate_token(self, token: str, backend: str="google-oauth2"):
         return self.api_connection.validate_token(token, backend)
-    def set_token(self, token, token_type="Bearer"):
+    def set_token(self, token: str, token_type: str="Bearer"):
         return self.api_connection.set_token(token, token_type)
     def get_token(self):
         return self.api_connection.get_token()
     @staticmethod
-    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+    def validate_jwt_token( base_url: str, token: str, backend: str="google-oauth2"):
         return _api_connection.validate_jwt_token( base_url, token, backend)
 
-    def exec_get_url(self, trailing_url: str, parameters={}, extra_headers={}):
+    def exec_get_url(self, trailing_url: str, parameters: dict={}, extra_headers: dict={}):
         return self.api_connection.exec_get_url(trailing_url, parameters, extra_headers)
-    def exec_post_url(self, trailing_url, payload, extra_headers={}):
+    def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
         return self.api_connection.exec_post_url(trailing_url, payload, extra_headers)
-    def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
+    def exec_post_url_binary(self, trailing_url: str, payload: dict, extra_headers={}):
         return self.api_connection.exec_post_url_binary(trailing_url, payload, extra_headers)
-    def exec_patch_url(self, trailing_url, payload, extra_headers={}):
+    def exec_patch_url(self, trailing_url: str, payload: dict, extra_headers={}):
         return self.api_connection.exec_patch_url(trailing_url, payload, extra_headers)
-    def exec_delete_url(self, trailing_url,extra_headers={}):
+    def exec_delete_url(self, trailing_url: str,extra_headers: dict={}):
         return self.api_connection.exec_delete_url(trailing_url, extra_headers)
 
 
@@ -322,31 +322,31 @@ class ApiTempConnection:
         return self.api_connection.get_authorization_header()
     def get_base_url(self):
         return self.api_connection.get_base_url()
-    def validate_via_basic_auth(self, username, password):
+    def validate_via_basic_auth(self, username: str, password: str):
         return self.api_connection.validate_via_basic_auth(username, password)
-    def validate_token(self, token, backend="google-oauth2"):
+    def validate_token(self, token: str, backend: str="google-oauth2"):
         return self.api_connection.validate_token(token, backend)
-    def set_token(self, token, token_type="Bearer"):
+    def set_token(self, token: str, token_type: str="Bearer"):
         return self.api_connection.set_token(token, token_type)
     def get_token(self):
         return self.api_connection.get_token()
-    def set_base_url(self, base_url):
+    def set_base_url(self, base_url: str):
         self.api_connection.set_base_url(base_url)
 
     @staticmethod
-    def validate_jwt_token(base_url, token, backend="google-oauth2"):
+    def validate_jwt_token(base_url: str, token: str, backend="google-oauth2"):
         return _api_connection.validate_jwt_token(base_url, token, backend)
-    def exec_get_url(self, trailing_url: str, parameters={}, extra_headers={}):
+    def exec_get_url(self, trailing_url: str, parameters: dict={}, extra_headers: dict={}):
         return self.api_connection.exec_get_url(trailing_url, parameters, extra_headers)
-    def exec_post_url(self, trailing_url, payload, extra_headers={}):
+    def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
         return self.api_connection.exec_post_url(trailing_url, payload, extra_headers)
-    def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
+    def exec_post_url_binary(self, trailing_url: str, payload: dict, extra_headers={}):
         return self.api_connection.exec_post_url_binary(trailing_url, payload, extra_headers)
 
-    def exec_patch_url(self, trailing_url, payload, extra_headers={}):
+    def exec_patch_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
         return self.api_connection.exec_patch_url(trailing_url, payload, extra_headers)
 
-    def exec_delete_url(self, trailing_url, extra_headers={}):
+    def exec_delete_url(self, trailing_url: str, extra_headers: dict={}):
         return self.api_connection.exec_delete_url(trailing_url, extra_headers)
 
 class Borg:
