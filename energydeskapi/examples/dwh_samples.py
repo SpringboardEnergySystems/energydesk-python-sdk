@@ -21,15 +21,16 @@ def get_contracts(api_conn):
     jsondata = DwhApi.get_contract_dimension( api_conn, {})
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
-    print(df)
+    return df
 def get_reports(api_conn):
-    jsondata = DwhApi.get_report_dimension( api_conn, {"currency":"NOK","report_type":"MONTHLY_PNL"})
+    jsondata = DwhApi.get_report_dimension( api_conn, {"currency":"EUR","report_type":"PERIODVIEW_CONTRACTS_DAILY"})
     #print(json.dumps(jsondata, indent=2))
     df=pd.DataFrame(jsondata)
-    df['report_date'] = df.apply(convert_date_column, axis=1, args=("report_date",))
-    report_dates=[str(d)[:10] for d in df['report_date'].unique()]
-    print(report_dates)
-
+    if len(df)>0:
+        df['report_date'] = df.apply(convert_date_column, axis=1, args=("report_date",))
+        report_dates=[str(d)[:10] for d in df['report_date'].unique()]
+        print(report_dates)
+    return df
 
 def get_contract_timeseries(api_conn):
     jsondata = DwhApi.get_contract_timeseries( api_conn, {})
@@ -59,13 +60,16 @@ def get_report_types(api_conn):
     #print(df)
 
 
-def load_specific_reports(api_conn, report_type, portfolio_id):
-    print("LOADING" ,report_type)
-    param={'report_type':report_type,'portfolio_id':portfolio_id, 'currency':'EUR', 'report_date':'2025-05-26T22:00:00Z'}
+def load_specific_reports(api_conn, report_type, report_date,portfolio_id):
+    strdate=pendulum.parse(report_date, tz="Europe/Oslo").astimezone(pytz.timezone('UTC'))
+    param={'report_type':report_type,'portfolio_id':portfolio_id, 'currency':'EUR', 'report_date':strdate}
     jsondata = DwhApi.get_periodview_timeseries( api_conn, param)
     df=pd.DataFrame(jsondata)
+    if len(df)>0:
+        df=df.sort_values(by=['period_from'])
     return df
 def load_reports(api_conn):
+
     df_powerexpo=load_specific_reports(api_conn, 'PERIODVIEW_CONTRACTS_MONTHLY', 36)
     print(df_powerexpo)
 
@@ -81,5 +85,14 @@ if __name__ == '__main__':
 
     api_conn = init_api()
     #get_report_types(api_conn)
-    load_reports(api_conn)
-
+    get_reports(api_conn)
+    df_contracts=get_contracts(api_conn)
+    df_view=load_specific_reports(api_conn, 'PERIODVIEW_CONTRACTS_DAILY', '2025-06-03',36)
+    #load_reports(api_conn)
+    if len(df_view)>0:
+        df_view['trade_id'] = pd.to_numeric(df_view['trade_id'], errors='coerce').astype('Int64')
+        # Join df_view (master) with df_contracts on trade_id (df_view) == contract_id (df_contracts)
+        df_merged = df_view.merge(df_contracts, left_on='trade_id', right_on='contract_id', how='left', suffixes=('', '_contract'))
+        print(df_merged)
+    else:
+        print("Empty view")
