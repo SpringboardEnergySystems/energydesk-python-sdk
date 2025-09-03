@@ -17,7 +17,7 @@ class PortfolioViewsApi:
 
 
     @staticmethod
-    def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
+    def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[list[dict]]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -91,7 +91,7 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
-    def get_currency_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
+    def get_currency_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[list[dict]]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
