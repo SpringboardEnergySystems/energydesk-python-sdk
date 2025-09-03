@@ -14,7 +14,7 @@ class PortfolioViewsApi:
 
       """
     @staticmethod
-    def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[list[dict]]]:
+    def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[str]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -32,7 +32,7 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
-    def get_position_view(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict]]:
+    def get_position_view(api_connection: ApiConnection, parameters: dict={}) -> Optional[str]:
         logger.info("Fetching position view" +  str(parameters))
         json_res = api_connection.exec_get_url('/api/portfoliomanager/positionview/', parameters)
         if json_res is None:
