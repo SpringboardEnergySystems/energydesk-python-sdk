@@ -38,7 +38,7 @@ class CertificateSchedulesApi:
 
 
     @staticmethod
-    def get_certificate_schedules(api_connection: ApiConnection, parameters={}):
+    def get_certificate_schedules(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all certificate schedules
 
         :param api_connection: class with API token for use with API

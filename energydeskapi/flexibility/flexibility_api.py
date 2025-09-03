@@ -104,7 +104,7 @@ class FlexibilityApi:
         return api_connection.get_base_url() + '/api/flexmarkets/reservestypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_flexible_assets_embedded(api_connection: ApiConnection, parameters={}):
+    def get_flexible_assets_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -116,7 +116,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_flexible_assets_tradable(api_connection: ApiConnection, parameters={}):
+    def get_flexible_assets_tradable(api_connection: ApiConnection, parameters: dict={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -128,7 +128,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_flexible_assets(api_connection: ApiConnection, parameters={}):
+    def get_flexible_assets(api_connection: ApiConnection, parameters: dict={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -140,13 +140,13 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_reserves_prices(api_connection: ApiConnection, parameters={}):
+    def get_reserves_prices(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
     @staticmethod
-    def get_reserves_prices_analyzed(api_connection: ApiConnection, parameters={}):
+    def get_reserves_prices_analyzed(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/reservesprices/analyzed/', parameters)
         if json_res is None:
             return None
@@ -154,14 +154,14 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_localflexibility_prices(api_connection: ApiConnection, parameters={}):
+    def get_localflexibility_prices(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/localflexprices/embedded/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_localflex_capacity_prices(api_connection: ApiConnection, parameters={}):
+    def get_localflex_capacity_prices(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/flexmarkets/localcapacityprices/embedded/', parameters)
         if json_res is None:
             return None
@@ -180,7 +180,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_asset_flexibility_periodoffers(api_connection: ApiConnection, parameters={}):
+    def get_asset_flexibility_periodoffers(api_connection: ApiConnection, parameters: dict={}):
         """Fetches empty schedule
 
         :param api_connection: class with API token for use with API
@@ -338,7 +338,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_availability_profile_templates(api_connection: ApiConnection, parameters={}):
+    def get_availability_profile_templates(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/availabilityprofiletemplates/', parameters)
         if json_res is None:
             return None
@@ -384,7 +384,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_asset_availability_profile(api_connection: ApiConnection, parameters={}):
+    def get_asset_availability_profile(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/flexiblepower/assetavailabilityprofiles/', parameters)
         if json_res is None:
             return None
@@ -429,7 +429,7 @@ class FlexibilityApi:
 
 
     @staticmethod
-    def get_market_offerings(api_connection: ApiConnection, parameters={}):
+    def get_market_offerings(api_connection: ApiConnection, parameters: dict={}):
 
         market_offerings=FlexibilityApi.get_external_market_offers(api_connection, parameters)
         print(market_offerings)

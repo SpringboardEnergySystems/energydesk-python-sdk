@@ -522,7 +522,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def get_contract_types(api_connection: ApiConnection, parameters={}):
+    def get_contract_types(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all quantity types
 
         :param api_connection: class with API token for use with API
@@ -535,7 +535,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_quantity_units(api_connection: ApiConnection, parameters={}):
+    def get_quantity_units(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all quantity units
 
         :param api_connection: class with API token for use with API
@@ -548,7 +548,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_quantity_types(api_connection: ApiConnection, parameters={}):
+    def get_quantity_types(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all quantity types
 
         :param api_connection: class with API token for use with API
@@ -652,7 +652,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_tags(api_connection: ApiConnection, parameters={}):
+    def get_contract_tags(api_connection: ApiConnection, parameters: dict={}):
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
@@ -662,7 +662,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def list_contracts(api_connection: ApiConnection, parameters={}):
+    def list_contracts(api_connection: ApiConnection, parameters: dict={}):
         """Lists contracts
 
         :param api_connection: class with API token for use with API
@@ -674,7 +674,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts', parameters)
         return json_res
     @staticmethod
-    def list_contracts_embedded(api_connection: ApiConnection, parameters={}):
+    def list_contracts_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -686,19 +686,19 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
         return json_res
     @staticmethod
-    def list_contracts_csv(api_connection: ApiConnection, parameters={}):
+    def list_contracts_csv(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Listing contracts as CSV")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/csv/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_emir(api_connection: ApiConnection, parameters={}):
+    def list_contracts_emir(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Listing contracts on format for EMIR reporting")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/emir/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_xml(api_connection: ApiConnection, parameters={}):
+    def list_contracts_xml(api_connection: ApiConnection, parameters: dict={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -710,7 +710,7 @@ class ContractsApi:
         xmlres = api_connection.exec_get_url('/api/portfoliomanager/contracts/xmlelviz/', parameters)
         return xmlres
     @staticmethod
-    def list_contracts_compact(api_connection: ApiConnection, parameters={}):
+    def list_contracts_compact(api_connection: ApiConnection, parameters: dict={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -723,13 +723,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_current_counterparts(api_connection: ApiConnection, parameters={}):
+    def get_current_counterparts(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Listing contracts counterparts")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/counterparts/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_df(api_connection: ApiConnection, parameters={}):
+    def list_contracts_df(api_connection: ApiConnection, parameters: dict={}):
         """Lists contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -793,7 +793,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_filters(api_connection: ApiConnection, parameters={}):
+    def get_contract_filters(api_connection: ApiConnection, parameters: dict={}):
         """Fetches contract filters
 
         :param api_connection: class with API token for use with API

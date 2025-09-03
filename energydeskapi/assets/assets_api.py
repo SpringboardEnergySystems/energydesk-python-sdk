@@ -248,7 +248,7 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_types(api_connection: ApiConnection, parameters={}):
+    def get_asset_types(api_connection: ApiConnection, parameters: dict={}):
         """Fetches the type of all assets
 
         :param api_connection: class with API token for use with API
@@ -313,7 +313,7 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_assets(api_connection: ApiConnection, parameters={}):
+    def get_assets(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -329,7 +329,7 @@ class AssetsApi:
         # return json_res
 
     @staticmethod
-    def get_assets_embedded(api_connection: ApiConnection, parameters={}):
+    def get_assets_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API
@@ -338,7 +338,7 @@ class AssetsApi:
         json_res = api_connection.exec_get_url('/api/assets/assets/embedded', parameters)
         return json_res
     @staticmethod
-    def get_assets_compact(api_connection: ApiConnection, parameters={}):
+    def get_assets_compact(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API
@@ -348,7 +348,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def get_assets_df(api_connection: ApiConnection, parameters={}):
+    def get_assets_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API

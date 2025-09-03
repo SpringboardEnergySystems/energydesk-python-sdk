@@ -184,7 +184,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies(api_connection: ApiConnection, parameters={}):
+    def get_companies(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -196,7 +196,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies_compact(api_connection: ApiConnection, parameters={}):
+    def get_companies_compact(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -208,7 +208,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies_embedded(api_connection: ApiConnection, parameters={}):
+    def get_companies_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -234,7 +234,7 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_companies_df(api_connection: ApiConnection, parameters={}):
+    def get_companies_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all companies in system with basic key+ name infmation
 
         :param api_connection: class with API token for use with API

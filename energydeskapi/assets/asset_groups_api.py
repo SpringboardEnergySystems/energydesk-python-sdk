@@ -52,7 +52,7 @@ class AssetGroupApi:
 
 
     @staticmethod
-    def get_asset_groups(api_connection: ApiConnection, parameters={}):
+    def get_asset_groups(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -86,7 +86,7 @@ class AssetGroupApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_groups_embedded(api_connection: ApiConnection, parameters={}):
+    def get_asset_groups_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all assets with extended information
 
         :param api_connection: class with API token for use with API

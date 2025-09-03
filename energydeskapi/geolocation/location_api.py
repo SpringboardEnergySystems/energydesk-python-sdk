@@ -148,7 +148,7 @@ class LocationApi:
             key) + "/"
 
     @staticmethod
-    def get_local_areas(api_connection: ApiConnection, parameters={}):
+    def get_local_areas(api_connection: ApiConnection, parameters: dict={}):
         """Fetches local area from location type pk
 
         :param api_connection: class with API token for use with API

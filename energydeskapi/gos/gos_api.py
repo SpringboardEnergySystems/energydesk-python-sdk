@@ -109,7 +109,7 @@ class GosApi:
     return api_connection.get_base_url() + '/api/portfoliomanager/go/support/' + str(support_pk) + "/"
 
   @staticmethod
-  def get_qualities(api_connection: ApiConnection, parameters={}):
+  def get_qualities(api_connection: ApiConnection, parameters: dict={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -121,7 +121,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_support_alternatives(api_connection: ApiConnection, parameters={}):
+  def get_support_alternatives(api_connection: ApiConnection, parameters: dict={}):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API
@@ -133,7 +133,7 @@ class GosApi:
     return json_res
 
   @staticmethod
-  def get_qualities_df(api_connection: ApiConnection, parameters={}):
+  def get_qualities_df(api_connection: ApiConnection, parameters: dict={}):
     """Fetches all companies in system with basic key+ name infmation
 
     :param api_connection: class with API token for use with API
@@ -192,7 +192,7 @@ class GosApi:
 
 
   @staticmethod
-  def get_technologies(api_connection: ApiConnection, parameters={}):
+  def get_technologies(api_connection: ApiConnection, parameters: dict={}):
     json_res = api_connection.exec_get_url('/api/portfoliomanager/go/technology/', parameters)
     if json_res is not None:
       return json_res

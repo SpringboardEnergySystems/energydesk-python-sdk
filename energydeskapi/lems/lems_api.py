@@ -266,7 +266,7 @@ class LemsApi:
 
 
     @staticmethod
-    def get_custom_profiles(api_connection: ApiConnection, parameters={}):
+    def get_custom_profiles(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all profiles stored in local market
 
         :param api_connection: class with API token for use with API
@@ -292,7 +292,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_traded_products(api_connection: ApiConnection, parameters={}):
+    def get_traded_products(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -304,7 +304,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_all_local_products(api_connection: ApiConnection, parameters={}):
+    def get_all_local_products(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all products including expired
 
         :param api_connection: class with API token for use with API
@@ -316,7 +316,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_traded_products_df(api_connection: ApiConnection, parameters={}):
+    def get_traded_products_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API

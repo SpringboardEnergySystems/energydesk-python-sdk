@@ -98,7 +98,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def get_prices_flatlist(api_connection: ApiConnection, parameters={}):
+    def get_prices_flatlist(api_connection: ApiConnection, parameters: dict={}):
         jsondata= api_connection.exec_get_url('/api/markets/productprices/flatlist/', parameters)
         if jsondata is None:
             return None
@@ -115,7 +115,7 @@ class DerivativesApi:
         return json_res
 
     @staticmethod
-    def get_prices_embedded_json(api_connection: ApiConnection, parameters={}):
+    def get_prices_embedded_json(api_connection: ApiConnection, parameters: dict={}):
         jsondata= api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if jsondata is None:
             return None

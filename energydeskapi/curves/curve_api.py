@@ -118,7 +118,7 @@ class CurveApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_latest_forward_curve(api_connection: ApiConnection, parameters={}):
+    def get_latest_forward_curve(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API

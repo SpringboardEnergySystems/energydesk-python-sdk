@@ -70,7 +70,7 @@ class PortfoliosApi:
       """
 
     @staticmethod
-    def get_portfolios(api_connection: ApiConnection, parameters={}):
+    def get_portfolios(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all portfolios
 
         :param api_connection: class with API token for use with API
@@ -83,7 +83,7 @@ class PortfoliosApi:
         return json_res
     @staticmethod
 
-    def get_portfolios_embedded(api_connection: ApiConnection, parameters={}):
+    def get_portfolios_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all portfolios
 
         :param api_connection: class with API token for use with API

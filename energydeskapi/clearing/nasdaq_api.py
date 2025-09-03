@@ -15,7 +15,7 @@ class NasdaqApi:
 
 
     @staticmethod
-    def get_traderecords(api_connection: ApiConnection, parameters={}):
+    def get_traderecords(api_connection: ApiConnection, parameters: dict={}):
         """Fetches a list of embedded clearing report records
 
         :param api_connection: class with API token for use with API

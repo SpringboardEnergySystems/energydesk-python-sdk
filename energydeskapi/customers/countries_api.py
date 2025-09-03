@@ -10,7 +10,7 @@ class CountriesApi:
 
     """
     @staticmethod
-    def get_countries(api_connection: ApiConnection, parameters={}):
+    def get_countries(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API

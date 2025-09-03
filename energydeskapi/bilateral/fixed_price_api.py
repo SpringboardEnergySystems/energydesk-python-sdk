@@ -57,7 +57,7 @@ class FixedPriceApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def list_active_price_offers(api_connection: ApiConnection, parameters={}):
+    def list_active_price_offers(api_connection: ApiConnection, parameters: dict={}):
         """Calculated fix price in period
 
         :param api_connection: class with API token for use with API

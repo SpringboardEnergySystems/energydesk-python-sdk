@@ -36,7 +36,7 @@ class ResultsApi:
     """
 
     @staticmethod
-    def get_stored_results(api_connection: ApiConnection, parameters={}):
+    def get_stored_results(api_connection: ApiConnection, parameters: dict={}):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

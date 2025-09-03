@@ -240,7 +240,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_users(api_connection: ApiConnection, parameters={}):
+    def get_users(api_connection: ApiConnection, parameters: dict={}):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
@@ -253,7 +253,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_users_embedded(api_connection: ApiConnection, parameters={}):
+    def get_users_embedded(api_connection: ApiConnection, parameters: dict={}):
         """Fetches user profiles
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -276,7 +276,7 @@ class UsersApi:
         return output
 
     @staticmethod
-    def get_users_df2(api_connection: ApiConnection, parameters={}):
+    def get_users_df2(api_connection: ApiConnection, parameters: dict={}):
         """Fetches user profiles
 
         :param api_connection: class with API token for use with API
@@ -291,7 +291,7 @@ class UsersApi:
         df = pd.json_normalize(dict, max_level=1)
         return UsersApi.process_dataframe(df)
     @staticmethod
-    def get_users_df(api_connection: ApiConnection, parameters={}):
+    def get_users_df(api_connection: ApiConnection, parameters: dict={}):
         #json_res=UsersApi.get_users(api_connection, parameters)
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', parameters)
         if json_res is not None:

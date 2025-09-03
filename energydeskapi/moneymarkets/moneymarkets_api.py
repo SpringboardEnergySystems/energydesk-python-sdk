@@ -13,7 +13,7 @@ class MoneyMarketsApi:
     """
 
     @staticmethod
-    def get_fxspot(api_connection: ApiConnection, parameters={}):
+    def get_fxspot(api_connection: ApiConnection, parameters: dict={}):
         """Fetches fxspot
 
         :param api_connection: class with API token for use with API
@@ -28,7 +28,7 @@ class MoneyMarketsApi:
         return currency_date, df
 
     @staticmethod
-    def get_fxtenors(api_connection: ApiConnection, parameters={}):
+    def get_fxtenors(api_connection: ApiConnection, parameters: dict={}):
         """Fetches fxtenors
 
         :param api_connection: class with API token for use with API
@@ -43,7 +43,7 @@ class MoneyMarketsApi:
         return currency_date, df
 
     @staticmethod
-    def get_yieldcurves(api_connection: ApiConnection, parameters={}):
+    def get_yieldcurves(api_connection: ApiConnection, parameters: dict={}):
         """Fetches yieldcurves
 
         :param api_connection: class with API token for use with API
@@ -57,7 +57,7 @@ class MoneyMarketsApi:
         return currency_date, jdata
 
     @staticmethod
-    def get_yieldcurves_df(api_connection: ApiConnection, parameters={}):
+    def get_yieldcurves_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches yieldcurves
 
         :param api_connection: class with API token for use with API
@@ -81,7 +81,7 @@ class MoneyMarketsApi:
 
         return currency_date, df
     @staticmethod
-    def get_fwdrates(api_connection: ApiConnection, parameters={}):
+    def get_fwdrates(api_connection: ApiConnection, parameters: dict={}):
         """Fetches yieldcurves
 
         :param api_connection: class with API token for use with API
@@ -96,7 +96,7 @@ class MoneyMarketsApi:
         return currency_date, df
 
     @staticmethod
-    def get_fwd_curves(api_connection: ApiConnection, parameters={}):
+    def get_fwd_curves(api_connection: ApiConnection, parameters: dict={}):
         """Fetches yieldcurves
 
         :param api_connection: class with API token for use with API
