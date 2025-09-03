@@ -31,13 +31,13 @@ class _api_connection:
         """
         return self.base_url
 
-    def set_base_url(self, base_url):
+    def set_base_url(self, base_url: str):
         self.base_url=base_url
 
     def get_token(self):
         return self.token
 
-    def validate_via_basic_auth(self, username, password):
+    def validate_via_basic_auth(self, username: str, password: str):
         # Making a get request
         #response = requests.get(self.get_base_url() + '/api/customers/profiles/',{"user__username": str(username)},
         #                        auth=HTTPBasicAuth(username, password))
@@ -72,7 +72,7 @@ class _api_connection:
     #Example
 
     @staticmethod
-    def __exec_impl_jwt_conversion(base_url, token, backend="google-oauth2"):
+    def __exec_impl_jwt_conversion(base_url: str, token: str, backend: str="google-oauth2"):
         auth_id, auth_secret=ApiConnection.get_internal_auth()
         http.client._MAXHEADERS = 1000
         server_url = base_url + "/auth/convert-token"
@@ -92,15 +92,15 @@ class _api_connection:
         return access_token
 
     @staticmethod
-    def validate_jwt_token( base_url, token, backend="google-oauth2"):
+    def validate_jwt_token( base_url: str, token: str, backend: str="google-oauth2"):
         return _api_connection.__exec_impl_jwt_conversion( base_url, token, backend)
 
-    def validate_token(self, token, backend="google-oauth2"):
+    def validate_token(self, token: str, backend: str="google-oauth2"):
         access_token=_api_connection.__exec_impl_jwt_conversion(self.get_base_url(), token, backend)
         self.set_token(access_token, "Bearer")
         return True
 
-    def set_token(self, token, token_type="Bearer"):
+    def set_token(self, token: str, token_type: str="Bearer"):
         """Sets a token
 
         :param token: API token
@@ -130,7 +130,7 @@ class _api_connection:
             return {}
         return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
 
-    def exec_post_url_binary(self, trailing_url, payload, extra_headers={}):
+    def exec_post_url_binary(self, trailing_url: str, payload: dict, extra_headers: dict={}):
         headers=self.get_authorization_header()
         for key in extra_headers:
             headers[key]=extra_headers[key]
@@ -139,7 +139,7 @@ class _api_connection:
         logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
         return  requests.post(server_url, json=payload,   headers=headers)
 
-    def exec_post_url(self, trailing_url, payload, extra_headers={}):
+    def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
         """Posts content from URL
 
         :param trailing_url: description...
@@ -171,7 +171,7 @@ class _api_connection:
                 raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return False, None, result.status_code, result.text
 
-    def exec_delete_url(self, trailing_url,extra_headers={}):
+    def exec_delete_url(self, trailing_url: str,extra_headers: dict={}):
         """Posts content from URL
 
         :param trailing_url: description...
@@ -199,7 +199,7 @@ class _api_connection:
             return False, None, result.status_code, result.text
 
 
-    def exec_patch_url(self, trailing_url, payload, extra_headers={}):
+    def exec_patch_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
         """Posts content from URL
 
         :param trailing_url: description...
@@ -231,7 +231,7 @@ class _api_connection:
     def _add_trailing_slash_if_missing(self, server_url: str) -> str:
         return server_url if server_url.endswith("/") else server_url + "/"
 
-    def exec_get_url(self, trailing_url: str,  parameters={}, extra_headers={}):
+    def exec_get_url(self, trailing_url: str,  parameters: dict={}, extra_headers: dict={}):
         """Returns content from URL
 
         :param trailing_url: description...

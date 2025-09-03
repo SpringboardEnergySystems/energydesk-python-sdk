@@ -6,13 +6,13 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-def resolve_date_from_strutctime(iso_str, target_tz="Europe/Oslo"):
+def resolve_date_from_strutctime(iso_str: str, target_tz: str="Europe/Oslo"):
     dt = parser.isoparse(iso_str)
     loc = convert_datime_to_locstr(dt, target_tz)
     return loc[:10]
 
 # Takes a REST JSON list and produces a dataframe with ticker, delivery information
-def convert_productjson_dataframe(jsondata):
+def convert_productjson_dataframe(jsondata: dict) -> pd.DataFrame:
     data = []
     for p in jsondata['results']:
         ticker = p['commodity_definition']['product_code']
