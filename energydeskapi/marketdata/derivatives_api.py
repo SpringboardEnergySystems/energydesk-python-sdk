@@ -1,3 +1,5 @@
+from typing import Optional, Union
+
 import requests
 import logging
 import pandas as pd
@@ -40,7 +42,7 @@ class DerivativesApi:
         return markets
 
     @staticmethod
-    def get_products_df(api_connection: ApiConnection, market_place, market_name, traded_from_date):
+    def get_products_df(api_connection: ApiConnection, market_place: str, market_name: str, traded_from_date: str) -> Optional[pd.DataFrame]:
         """Fetches products within a specified date
 
         :param api_connection: class with API token for use with API
@@ -66,7 +68,7 @@ class DerivativesApi:
         return None
 
     @staticmethod
-    def fetch_product_prices(base_url, token, market_place, market_name, area=None):
+    def fetch_product_prices(base_url, token: str, market_place: str, market_name: str, area: Optional[str]=None):
         """Fetches product prices
 
         :param base_url: prefix of the URL
@@ -105,10 +107,10 @@ class DerivativesApi:
         return jsondata
 
     @staticmethod
-    def upsert_prices_flatlist(api_connection: ApiConnection, snapshot):
+    def upsert_prices_snapshot(api_connection: ApiConnection, snapshot: Union[dict, list[dict]]):
         payload={"snapshot":snapshot}
         logger.info("Saving product price snapshot")
-        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/productprices/flatlist/', payload)
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/productprices/updatesnapshot/', payload)
         if json_res is None:
             return None
         print(json_res)
@@ -122,19 +124,8 @@ class DerivativesApi:
         return jsondata
 
     @staticmethod
-    def fetch_daily_prices(api_connection: ApiConnection, market_place, market_name, area=None):
+    def fetch_daily_prices(api_connection: ApiConnection, market_place: str, market_name: str, area: Optional[str]=None):
         """Fetches daily prices
-
-        :param base_url: prefix of the URL
-        :type base_url: str, required
-        :param token: API token
-        :type token: str, required
-        :param market_place: description...
-        :type market_place: str, required
-        :param market_name: name of market
-        :type market_name: str, required
-        :param area: area code
-        :type area: str
         """
 
         logger.info("Fetching daily prices in " + market_name)
@@ -157,23 +148,8 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def fetch_prices_in_period(api_connection: ApiConnection, market_place, market_name, ticker, period_from, period_until):
+    def fetch_prices_in_period(api_connection: ApiConnection, market_place: str, market_name: str, ticker: str, period_from: str, period_until: str) -> Optional[pd.DataFrame]:
         """Fetches price for selected product
-
-        :param base_url: prefix of the URL
-        :type base_url: str, required
-        :param token: API token
-        :type token: str, required
-        :param market_place: description...
-        :type market_place: str, required
-        :param market_name: name of market
-        :type market_name: str, required
-        :param ticker: description...
-        :type ticker: str, required
-        :param period_from: period from
-        :type period_from: str, required
-        :param period_until: period to
-        :type period_until: str, required
         """
 
         qry_payload={"currency_code":"EUR"}
@@ -201,23 +177,8 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def update_intraday_price(api_connection: ApiConnection, market, price_date, df):
+    def update_intraday_price(api_connection: ApiConnection, market: str, price_date: str, df: pd.DataFrame):
         """Fetches price for selected product
-
-        :param base_url: prefix of the URL
-        :type base_url: str, required
-        :param token: API token
-        :type token: str, required
-        :param market_place: description...
-        :type market_place: str, required
-        :param market_name: name of market
-        :type market_name: str, required
-        :param ticker: description...
-        :type ticker: str, required
-        :param period_from: period from
-        :type period_from: str, required
-        :param period_until: period to
-        :type period_until: str, required
         """
 
         logger.info("Fetching counterparts list")
