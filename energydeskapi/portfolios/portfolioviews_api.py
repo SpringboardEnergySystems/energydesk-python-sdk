@@ -87,7 +87,7 @@ class PortfolioViewsApi:
         return view_id, view_data
 
     @staticmethod
-    def get_flat_period_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
+    def get_period_view_records(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
