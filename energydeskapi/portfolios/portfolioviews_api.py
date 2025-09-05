@@ -95,8 +95,8 @@ class PortfolioViewsApi:
         """
         logger.info("Fetching period view as record sets")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/periodview/records/', parameters)
-        if type(json_res)!=str:
-            json_res=json.dumps(json_res)
+        if type(json_res)==str:
+            json_res=json.loads(json_res)
         return json_res
 
     @staticmethod

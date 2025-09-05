@@ -30,8 +30,10 @@ def get_period_view(api_conn):
     #print(data)
     json_res = PortfolioViewsApi.get_period_view_records(api_conn, params)
     print(type(json_res))
-    if json_res is not None:
-        print(json.dumps(json_res, indent=2))
+    df=pd.DataFrame(data=json_res)
+    print(df)
+    #if json_res is not None:
+    #    print(json.dumps(json_res, indent=2))
 
 def get_position_view(api_conn):
     groupby=PortfolioViewsApi.get_position_view_groupby_fields(api_conn)
