@@ -86,9 +86,21 @@ class PortfolioViewsApi:
         if len(json_res['view_data'])==0:
             return None, None
         view_id=json_res['view_id']
-        print(type(json_res['view_data']))
         view_data = json_res['view_data']
         return view_id, view_data
+
+    @staticmethod
+    def get_flat_period_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
+        """Fetches specific product view
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        logger.info("Fetching period view as record sets")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/periodview/records/', parameters)
+        if type(json_res)!=str:
+            json_res=json.dumps(json_res)
+        return json_res
 
     @staticmethod
     def get_currency_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[list[dict]]]:
@@ -121,8 +133,10 @@ class PortfolioViewsApi:
 
         if json_res is None:
             return None, None
+
         if type(json_res)!=str:
             json_res=json.dumps(json_res)
+
         df = pd.read_json(json_res, orient="table")
         #df = pd.DataFrame(data=eval(json_res), orient)
 
