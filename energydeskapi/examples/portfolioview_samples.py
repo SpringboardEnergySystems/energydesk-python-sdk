@@ -28,7 +28,7 @@ def get_period_view(api_conn):
     #pd.set_option('display.max_rows', None)
     #view_id, data = PortfolioViewsApi.get_period_view_df(api_conn, params)
     #print(data)
-    json_res = PortfolioViewsApi.get_flat_period_view(api_conn, params)
+    json_res = PortfolioViewsApi.get_period_view_records(api_conn, params)
     print(type(json_res))
     if json_res is not None:
         print(json.dumps(json_res, indent=2))
