@@ -1,3 +1,5 @@
+from typing import Generator, Any
+
 import pytz
 from dateutil import parser
 from datetime import date, datetime, timedelta
@@ -147,7 +149,7 @@ def overlapping_seconds(calc_period_from, calc_period_until, test_period_from, t
     return 0
 
 
-def prev_weekday(d, weekday):
+def prev_weekday(d: datetime, weekday: int) -> datetime:
     days = d.isoweekday() - weekday -1
     if days < 0:
         days += 7
@@ -155,7 +157,7 @@ def prev_weekday(d, weekday):
     previous_date=localize_datetime(previous_date, "Europe/Oslo")
     return previous_date#date(previous_date.year, previous_date.month, previous_date.day)
 
-def next_weekday(d, weekday):
+def next_weekday(d: datetime, weekday: int) -> datetime:
     days_ahead = weekday - d.weekday()
     if days_ahead <= 0: # Target day already happened this week
         days_ahead += 7
@@ -170,3 +172,28 @@ def parse_date_exactly(date_text: str) -> pendulum.Date:
             raise Exception(f"The date text {date_text} is too short.")
     else:
         raise Exception(f"The date text is None.")
+
+def dates_from_days_back(last_day_in_period: pendulum.Date, days_back: int) -> Generator[pendulum.Date, Any, None]:
+    day = last_day_in_period
+    days_still_to_load = days_back
+    while days_still_to_load > 0:
+        while is_weekend(day):
+            day = day.add(days=-1)
+        yield day
+        day = day.add(days=-1)
+        days_still_to_load = days_still_to_load - 1
+
+def previous_non_weekend(yesterday: pendulum.Date) -> pendulum.Date:
+    day = yesterday
+    while day.isoweekday() in [6, 7]:
+        day = day.add(days=-1)
+    return day
+
+def next_non_weekend(tomorrow: pendulum.Date) -> pendulum.Date:
+    day = tomorrow
+    while is_weekend(day):
+        day = day.add(days=1)
+    return day
+
+def is_weekend(day: pendulum.Date) -> bool:
+    return day.isoweekday() in [6, 7]
