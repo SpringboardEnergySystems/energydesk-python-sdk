@@ -16,25 +16,24 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_period_view(api_conn):
-    ut=PortfoliosApi.get_portfolios_embedded(api_conn)
-    for u in ut:
-        print(u['pk'],u['description'])   # Just to see ID of portfolios available for next query
-
-    filter={
-        "portfolio":9,#  3=Fastpris, 4=GO, ContractTypeEnum.GOO.value,
-        'view_currency': 'NOK',
-        "view_period_from__gte":'2023-01-01',
-        "view_period_until__lt": '2029-05-01',
-        #"commodity__delivery_from": '2023-01-01',
-        #"commodity__delivery_until": '2025-01-01',
-        "resolution":"Monthly",
-        #"groupby":['trade_id', 'area']
+    params = {
+        'groupby__in': ['counterpart', 'area'],
+        'resolution': 'Monthly',
+        'portfolio': 33,
+        'view_currency': 'EUR',
+        'commodity__market__id__in': [1],
+        'view_period_from__gte': '2025-06-01',
+        'view_period_until__lt': '2036-01-01'
     }
-    print(filter)
-    v, df=PortfolioViewsApi.get_period_view_df(api_conn, filter)
-    #df['GWh'] = df['netvol'] / 1000
+    #pd.set_option('display.max_rows', None)
+    #view_id, data = PortfolioViewsApi.get_period_view_df(api_conn, params)
+    #print(data)
+    json_res = PortfolioViewsApi.get_period_view_records(api_conn, params)
+    print(type(json_res))
+    df=pd.DataFrame(data=json_res)
     print(df)
-    #print(df['asset'].unique().tolist())
+    #if json_res is not None:
+    #    print(json.dumps(json_res, indent=2))
 
 def get_position_view(api_conn):
     groupby=PortfolioViewsApi.get_position_view_groupby_fields(api_conn)
@@ -85,4 +84,4 @@ def get_product_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_position_view(api_conn)
+    get_period_view(api_conn)
