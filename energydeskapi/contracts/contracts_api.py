@@ -401,7 +401,7 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def upsert_contract_tag(api_connection: ApiConnection, tag):
+    def upsert_contract_tag(api_connection: ApiConnection, tag: ContractTag):
         """Registers contracts
 
         :param api_connection: class with API token for use with API
@@ -486,7 +486,7 @@ class ContractsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_contract_type_url(api_connection: ApiConnection, contract_type_enum):
+    def get_contract_type_url(api_connection: ApiConnection, contract_type_enum: ContractTypeEnum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -509,7 +509,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/quantitytypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_quantity_unit_url(api_connection: ApiConnection, quantity_unit_enum):
+    def get_quantity_unit_url(api_connection: ApiConnection, quantity_unit_enum: QuantityUnitEnum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -561,7 +561,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_type_url(api_connection: ApiConnection, contract_type_enum):
+    def get_contract_type_url(api_connection: ApiConnection, contract_type_enum: ContractTypeEnum):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -583,7 +583,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(contract_status_enum)) + "/"
 
     @staticmethod
-    def load_tradingbook_by_pk(api_connection: ApiConnection, pk):
+    def load_tradingbook_by_pk(api_connection: ApiConnection, pk: int):
         """Fetches tradingbooks from pk
 
         :param api_connection: class with API token for use with API
@@ -599,7 +599,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def query_contracts(api_connection: ApiConnection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
+    def query_contracts(api_connection: ApiConnection, query_payload: dict={"trading_book_key":0, "last_trades_count": 10}):
         """Queries contracts
 
         :param api_connection: class with API token for use with API
@@ -614,7 +614,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def query_contracts_df(api_connection: ApiConnection, query_payload={"trading_book_key":0, "last_trades_count": 10}):
+    def query_contracts_df(api_connection: ApiConnection, query_payload: dict={"trading_book_key":0, "last_trades_count": 10}):
         """Queries contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -628,7 +628,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def get_contract(api_connection: ApiConnection, contract_pk):
+    def get_contract(api_connection: ApiConnection, contract_pk: int):
         """Fetches contract from pk
 
         :param api_connection: class with API token for use with API
@@ -642,7 +642,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def get_contract_tag(api_connection: ApiConnection, pk):
+    def get_contract_tag(api_connection: ApiConnection, pk: int):
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
@@ -745,7 +745,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum):
+    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum: ContractTypeEnum):
         """Fetches url for a commodity type from enum value
 
         :param api_connection: class with API token for use with API
@@ -757,7 +757,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(commodity_type_enum)) + "/"
 
     @staticmethod
-    def get_contract_url(api_connection: ApiConnection, contract_pk):
+    def get_contract_url(api_connection: ApiConnection, contract_pk: int):
         """Fetches url for contracts from pk
 
         :param api_connection: class with API token for use with API
@@ -805,7 +805,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_filter_by_key(api_connection: ApiConnection, filter_pk):
+    def get_contract_filter_by_key(api_connection: ApiConnection, filter_pk: int):
         """Fetches contract filter from pk
 
         :param api_connection: class with API token for use with API
@@ -853,7 +853,7 @@ class ContractsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
-    def fetch_standard_contract(api_connection: ApiConnection, contract_pk):
+    def fetch_standard_contract(api_connection: ApiConnection, contract_pk: int):
         """Fetches standard contracts
 
         :param api_connection: class with API token for use with API
@@ -866,7 +866,7 @@ class ContractsApi:
 
         return json_res
 
-    def fetch_bilateral_contract(api_connection: ApiConnection, contract_pk):
+    def fetch_bilateral_contract(api_connection: ApiConnection, contract_pk: int):
         """Fetches bilateral contracts
 
         :param api_connection: class with API token for use with API
@@ -878,7 +878,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
 
-    def generate_second_leg_contract(api_connection: ApiConnection, contract, external_tb):
+    def generate_second_leg_contract(api_connection: ApiConnection, contract: Contract, external_tb):
         """Generate a second leg contract for internal trades
         
         :param api_connection: class with API token for use with API
