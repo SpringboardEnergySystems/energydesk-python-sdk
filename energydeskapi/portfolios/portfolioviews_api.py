@@ -1,7 +1,6 @@
 import logging
 from dataclasses import dataclass
 from typing import Any, Optional
-from warnings import deprecated
 
 import pandas as pd
 import json
@@ -22,7 +21,7 @@ class PortfolioViewsApi:
 
       """
 
-    @deprecated(reason="Can only return a tuple with two values. Use get_product_view_data() if you can")
+    # deprecated: can only return a tuple with two values. Use get_product_view_data() if you can
     @staticmethod
     def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[str]]:
         """Fetches specific product view
