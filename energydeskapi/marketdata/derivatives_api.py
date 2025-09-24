@@ -148,7 +148,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def fetch_prices_in_period(api_connection: ApiConnection, market_place: str, market_name: str, ticker: str, period_from: str, period_until: str) -> Optional[pd.DataFrame]:
+    def fetch_prices_in_period(api_connection: ApiConnection, market_place: Optional[str], market_name: Optional[str], ticker: Optional[str], period_from: Optional[str], period_until: Optional[str]) -> Optional[pd.DataFrame]:
         """Fetches price for selected product
         """
 

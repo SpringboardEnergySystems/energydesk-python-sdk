@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from typing import Any, Optional
 
 import pandas as pd
@@ -9,10 +10,18 @@ from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
 #  Change
 
+@dataclass(frozen=True)
+class ProductViewData:
+    view_id: str
+    view_data: str
+    totals: str
+
 class PortfolioViewsApi:
     """Class for tradingbooks
 
       """
+
+    # deprecated: can only return a tuple with two values. Use get_product_view_data() if you can
     @staticmethod
     def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[str]]:
         """Fetches specific product view
@@ -30,6 +39,23 @@ class PortfolioViewsApi:
         view_id=json_res['view_id']
         view_data = json_res['view_data']
         return view_id, view_data
+
+    @staticmethod
+    def get_product_view_data(api_connection: ApiConnection, parameters: dict={}) -> Optional[ProductViewData]:
+        logger.info(f"Fetching product view {parameters}")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/productview/', parameters)
+        if (    json_res is not None
+                and json_res['view_id'] is not None
+                and json_res['view_data'] is not None
+        ):
+            return ProductViewData(
+                json_res['view_id'],
+                json_res['view_data'],
+                json_res['totals']
+            )
+        else:
+            return None
+
 
     @staticmethod
     def get_position_view(api_connection: ApiConnection, parameters: dict={}) -> Optional[str]:
