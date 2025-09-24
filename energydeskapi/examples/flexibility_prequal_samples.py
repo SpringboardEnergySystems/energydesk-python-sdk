@@ -268,13 +268,16 @@ def check_requests(api_conn):
         print(req['quality_measure'])
 
 def check_prequalification(token=None):
+    params={'page_size': 1000, 'status':'FAILED'}
     server_url = "https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/requests/embedded/"
-    #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
     headers={'Authorization': 'Bearer ' + token}
-    print(headers)
-    print(server_url)
-    data = requests.get(server_url,headers=headers)
-    print(data.status_code)
+    data = requests.get(server_url,headers=headers, params=params)
+    for rec in data.json()['results']:
+        if rec['status']['status_code']=='FAILED':
+            reason=rec['prequalification_bidquality'][0]['test_result']['result_description']
+            print(f"Prequal test failed with error {reason}")
+
+    return
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
 
@@ -291,8 +294,9 @@ def get_grid_subnodes(api_conn, grid_company_name="Elvia"):
     print(df)
 
 def check_prequalification_from_key(token=None, key=0):
-    server_url = f"http://127.0.0.1:8001/api/flexibility/prequalification/requests/{key}/"
-    #server_url="http://127.0.0.1:8001/api/flexibility/prequalification/requests/embedded/"
+    #server_url = f"http://127.0.0.1:8001/api/flexibility/prequalification/requests/{key}/"
+    server_url = f"https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/requests/{key}/"
+
     headers={'Authorization': 'Bearer ' + token}
     print(headers)
     print(server_url)
@@ -385,16 +389,16 @@ if __name__ == '__main__':
     #load_offer(api_conn_basic)
     #reload_portfolio_profile(api_conn_basic,"5bc8e5d4-049a-4364-8d76-b306007d8940")
     #process_offer(api_conn_basic)
-    get_grid_subnodes(api_conn_basic, "Elvia")
-    sys.exit(0)
+    #get_grid_subnodes(api_conn_basic, "Elvia")
+
     #env = environ.Env()
     token=get_access_token()
     #make_prequalification_request(token)
     #generate_profile(token)
     #check_prequalification(token)
-    sys.exit(0)
-    #check_prequalification_from_key(token, 7)
-    edesk_base_url = env.str('ENERGYDESK_URL')
+    #sys.exit(0)
+    check_prequalification_from_key(token, 9)
+    #edesk_base_url = env.str('ENERGYDESK_URL')
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
     #process_offer(api_conn_basic)
     #register_prequal(api_conn)

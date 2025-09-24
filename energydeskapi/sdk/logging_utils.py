@@ -7,6 +7,7 @@ import environ
 from logging.handlers import TimedRotatingFileHandler
 from dataclasses import dataclass
 from energydeskapi.sdk.common_utils import load_class_from_string
+from energydeskapi.sdk.logstash_singleline_formatter import SingleLineLogstashFormatter
 logger = logging.getLogger(__name__)
 
 import socket
@@ -17,10 +18,7 @@ class LogstashConfig:
     port : int
     customer: str= "cust1"
     environment: str = "dev1"
-    appname: str = "pod1"
-
-
-
+    appname: str = "SDK"
 
 def get_environment_value(parameter, default):
     env = environ.Env()
@@ -77,14 +75,34 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
     def create_tcp_handler(host, port):
         env = environ.Env()
         loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
-        handler_class = load_class_from_string("logstash.TCPLogstashHandler") #pip install python-logstash before enabling this
-        handler=handler_class(host, port, version=1, tags= [enable_logstash_conf.customer,enable_logstash_conf.environment, enable_logstash_conf.appname],)
+        handler_class = load_class_from_string("logstash_async.handler.AsynchronousLogstashHandler") #pip install python-logstash before enabling this
+        handler = handler_class(
+            host,
+            port,
+            database_path='/tmp/django-logstash.db',
+            version=1,
+            tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
+            ssl_enable=True,
+            ssl_verify=False
+        )
         handler.setLevel(get_loglevel_from_str(loglev))
+        formatter = SingleLineLogstashFormatter(
+            message_type='python-logstash',
+            fqdn=False,
+            extra_prefix='extra',
+            extra={
+                'logstash_async_version': '4.0.2',
+                'customer': enable_logstash_conf.customer,
+                'environment': enable_logstash_conf.environment,
+                'appname': enable_logstash_conf.appname
+            }
+        )
+        handler.setFormatter(formatter)
         return handler
 
-    def create_file_handler() -> TimedRotatingFileHandler:
+    def create_file_handler()-> TimedRotatingFileHandler:
         try:
-            os.mkdir("./logs")
+            os.makedirs('./logs', exist_ok=True)
         except:
             pass
         filelogger = TimedRotatingFileHandler('./logs/' + servicetag + '.log', 'midnight', 1)
@@ -119,4 +137,3 @@ def create_logstash_from_environment():
     if not enabled:
         return None
     return LogstashConfig(host, port, cust_name, env_name, app_name)
-

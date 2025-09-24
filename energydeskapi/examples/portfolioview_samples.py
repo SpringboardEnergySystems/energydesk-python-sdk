@@ -22,7 +22,7 @@ def get_period_view(api_conn):
         'portfolio': 33,
         'view_currency': 'EUR',
         'commodity__market__id__in': [1],
-        'view_period_from__gte': '2025-06-01',
+        'view_period_from__gte': '2025-09-01',
         'view_period_until__lt': '2036-01-01'
     }
     #pd.set_option('display.max_rows', None)
