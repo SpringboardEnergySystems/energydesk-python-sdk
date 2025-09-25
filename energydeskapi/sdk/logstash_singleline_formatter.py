@@ -1,5 +1,5 @@
 import json
-from logstash_async.formatter import LogstashFormatter
+#from logstash_async.formatter import LogstashFormatter
 
 class SingleLineLogstashFormatter(LogstashFormatter):
     def _format_to_dict(self, record):
