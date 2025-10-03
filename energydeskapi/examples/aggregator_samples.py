@@ -103,7 +103,7 @@ def view_assets(api_conn):
     assets=AssetsApi.get_assets_embedded(api_conn)
     print(json.dumps(assets, indent=2))
 
-def generate_timeseries(api_conn, asset_pk):
+def generate_timeseries(api_conn, asset_pk: int):
     df=generate_hourly_samples(pendulum.today().add(days=-200),
                             pendulum.today(), 100, 12)
     payload = {
@@ -146,7 +146,7 @@ def display_basline_models(api_conn):
     res=BaselinesApi.get_baseline_algorithminstances(api_conn)
     print(res)
 
-def get_baselines_for_asset(api_conn, asset_pk): # Read back baselines from API
+def get_baselines_for_asset(api_conn, asset_pk: int): # Read back baselines from API
     params={
         'assetlist_id__in':[asset_pk],
         'time_series_type__id':TimeSeriesTypesEnum.BASELINES.value,

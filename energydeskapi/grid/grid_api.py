@@ -79,7 +79,7 @@ class GridApi:
     """
 
     @staticmethod
-    def get_grid_map_url(api_connection: ApiConnection, gridmap_pk):
+    def get_grid_map_url(api_connection: ApiConnection, gridmap_pk: int):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -139,7 +139,7 @@ class GridNodeApi:
     """
 
     @staticmethod
-    def get_grid_node_url(api_connection: ApiConnection, gridnode_pk):
+    def get_grid_node_url(api_connection: ApiConnection, gridnode_pk: int):
         return api_connection.get_base_url() + '/api/grid/gridnodes/' + str(gridnode_pk) + "/"
 
     @staticmethod

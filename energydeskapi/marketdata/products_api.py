@@ -92,7 +92,7 @@ class ProductsApi:
     """
 
     @staticmethod
-    def get_commodity_definitioon_url(api_connection: ApiConnection, commodity_deinition_pk):
+    def get_commodity_definitioon_url(api_connection: ApiConnection, commodity_deinition_pk: int):
         """Fetches url for tradingbook from pk
 
         :param api_connection: class with API token for use with API

@@ -142,7 +142,7 @@ class TradingBooksApi:
         return dict
 
     @staticmethod
-    def get_tradingbook_url(api_connection: ApiConnection, tradingbook_pk):
+    def get_tradingbook_url(api_connection: ApiConnection, tradingbook_pk: int):
         """Fetches url for tradingbook from pk
 
         :param api_connection: class with API token for use with API

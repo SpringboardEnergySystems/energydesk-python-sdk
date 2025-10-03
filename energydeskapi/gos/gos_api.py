@@ -87,7 +87,7 @@ class GosApi:
 
 
   @staticmethod
-  def get_quality_url(api_connection: ApiConnection, quality_pk):
+  def get_quality_url(api_connection: ApiConnection, quality_pk: int):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API
@@ -98,7 +98,7 @@ class GosApi:
     return api_connection.get_base_url() + '/api/portfoliomanager/go/quality/' + str(quality_pk) + "/"
 
   @staticmethod
-  def get_support_url(api_connection: ApiConnection, support_pk):
+  def get_support_url(api_connection: ApiConnection, support_pk: int):
     """Fetches url for certificates
 
     :param api_connection: class with API token for use with API

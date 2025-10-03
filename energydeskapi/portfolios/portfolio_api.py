@@ -110,7 +110,7 @@ class PortfoliosApi:
         return dict
 
     @staticmethod
-    def get_portfolio_url(api_connection: ApiConnection, portfolio_pk):
+    def get_portfolio_url(api_connection: ApiConnection, portfolio_pk: int):
         """Fetches url for portfolio from pk
 
         :param api_connection: class with API token for use with API

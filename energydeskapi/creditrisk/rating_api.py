@@ -44,7 +44,7 @@ class AnnualAccountsApi:
         return None
 
     @staticmethod
-    def get_annual_accounts_of_company(api_connection: ApiConnection, company_pk):
+    def get_annual_accounts_of_company(api_connection: ApiConnection, company_pk: int):
         """Fetches rated company
 
         :param api_connection: class with API token for use with API
@@ -171,7 +171,7 @@ class CompanyRatingApi:
         return None
 
     @staticmethod
-    def get_rating_from_company_pk(api_connection: ApiConnection, company_pk):
+    def get_rating_from_company_pk(api_connection: ApiConnection, company_pk: int):
         logger.info("Fetching rated companny with key " + str(company_pk))
         json_res=api_connection.exec_get_url('/api/creditrisk/companyratings/', parameters={'company__id': str(company_pk)})
         if json_res is not None:

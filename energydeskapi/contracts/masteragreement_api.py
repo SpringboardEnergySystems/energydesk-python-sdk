@@ -76,7 +76,7 @@ class MasterAgreementApi:
         return None
 
     @staticmethod
-    def get_master_agreements_by_key(api_connection: ApiConnection, masteragreement_pk):
+    def get_master_agreements_by_key(api_connection: ApiConnection, masteragreement_pk: int):
         """Fetches master contract agreement from pk
 
         :param api_connection: class with API token for use with API
@@ -93,7 +93,7 @@ class MasterAgreementApi:
         return json_res
 
     @staticmethod
-    def upsert_master_agreement(api_connection: ApiConnection, master_agreement):
+    def upsert_master_agreement(api_connection: ApiConnection, master_agreement: MasterContractAgreement):
         """Creates/Updates master contract agreements
 
         :param api_connection: class with API token for use with API

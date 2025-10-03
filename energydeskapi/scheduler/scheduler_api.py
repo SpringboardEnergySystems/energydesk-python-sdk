@@ -186,7 +186,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_job_execution(api_connection: ApiConnection, job_definition_pk):
+    def get_scheduled_job_execution(api_connection: ApiConnection, job_definition_pk: int):
         """Fetches scheduled jobs and displays in a dataframe
 
         :param api_connection: class with API token for use with API

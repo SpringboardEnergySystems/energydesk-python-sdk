@@ -200,7 +200,7 @@ class LocationApi:
         return None if json_res is None else pd.DataFrame(data=json_res)
 
     @staticmethod
-    def get_geolocation_details(api_connection: ApiConnection, locarea_pk):
+    def get_geolocation_details(api_connection: ApiConnection, locarea_pk: int):
         """Fetches location details from pk
 
         :param api_connection: class with API token for use with API

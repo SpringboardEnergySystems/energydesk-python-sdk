@@ -462,7 +462,7 @@ class UsersApi:
         return "User group has users and can't be deleted", status_code
 
     @staticmethod
-    def add_user_to_user_group(api_connection: ApiConnection, group_pk, user_pk):
+    def add_user_to_user_group(api_connection: ApiConnection, group_pk, user_pk: int):
         """Removes users from user group
 
         :param api_connection: class with API token for use with API
@@ -482,7 +482,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def remove_user_from_user_group(api_connection: ApiConnection, group_pk, user_pk):
+    def remove_user_from_user_group(api_connection: ApiConnection, group_pk, user_pk: int):
         """Removes users from user group
 
         :param api_connection: class with API token for use with API
@@ -528,7 +528,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_feature_access_for_user_group(api_connection: ApiConnection, group_pk):
+    def get_user_feature_access_for_user_group(api_connection: ApiConnection, group_pk: int):
         """Fetches features to user groups
 
         :param api_connection: class with API token for use with API
@@ -596,7 +596,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_user_url(api_connection: ApiConnection, user_pk):
+    def get_user_url(api_connection: ApiConnection, user_pk: int):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API

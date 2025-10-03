@@ -250,7 +250,7 @@ class FlexibilityApi:
         return json_res
 
     @staticmethod
-    def get_asset_offer_url(api_connection: ApiConnection, asset_offer_pk):
+    def get_asset_offer_url(api_connection: ApiConnection, asset_offer_pk: int):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API
@@ -351,7 +351,7 @@ class FlexibilityApi:
         return api_connection.get_base_url() + '/api/flexiblepower/assetavailabilityprofiles/' + str(pk) + "/"
 
     @staticmethod
-    def get_flexible_market_url(api_connection: ApiConnection, flexible_market_pk):
+    def get_flexible_market_url(api_connection: ApiConnection, flexible_market_pk: int):
         """Fetches url for a contract type from enum value
 
         :param api_connection: class with API token for use with API

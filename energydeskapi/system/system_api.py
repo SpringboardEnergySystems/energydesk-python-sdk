@@ -109,7 +109,7 @@ class SystemApi:
 
 
     @staticmethod
-    def upsert_system_manager(api_connection: ApiConnection, system_owner_pk, system_manager_pk):
+    def upsert_system_manager(api_connection: ApiConnection, system_owner_pk, system_manager_pk: int):
         """Fetches scheduled jobs
 
         :param api_connection: class with API token for use with API

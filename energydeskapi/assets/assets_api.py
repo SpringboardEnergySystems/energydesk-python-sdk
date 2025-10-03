@@ -164,7 +164,7 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assettypes/' + str(atype_pk) + "/"
 
     @staticmethod
-    def get_asset_type(api_connection: ApiConnection, asset_type_pk):
+    def get_asset_type(api_connection: ApiConnection, asset_type_pk: int):
         """Fetches asset type from url
 
         :param api_connection: class with API token for use with API
@@ -292,7 +292,7 @@ class AssetsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def get_asset_url(api_connection: ApiConnection, asset_pk):
+    def get_asset_url(api_connection: ApiConnection, asset_pk: int):
         """Fetches asset from url
 
         :param api_connection: class with API token for use with API

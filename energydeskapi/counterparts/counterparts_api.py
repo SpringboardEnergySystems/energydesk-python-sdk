@@ -132,7 +132,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart(api_connection: ApiConnection, counterpart_pk):
+    def get_counterpart(api_connection: ApiConnection, counterpart_pk: int):
         """Fetches counterpart from pk
 
         :param api_connection: class with API token for use with API
@@ -161,7 +161,7 @@ class CounterPartsApi:
         return df
 
     @staticmethod
-    def query_counterpart_exposure(api_connection,commodity_type_pk):
+    def query_counterpart_exposure(api_connection,commodity_type_pk: int):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -201,7 +201,7 @@ class CounterPartsApi:
         return json_res
 
     @staticmethod
-    def get_counterpart_limits_by_key(api_connection: ApiConnection, counterpartlimit_pk):
+    def get_counterpart_limits_by_key(api_connection: ApiConnection, counterpartlimit_pk: int):
         """Fetches counterpart limit from pk
 
         :param api_connection: class with API token for use with API
@@ -278,7 +278,7 @@ class CounterPartsApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def delete_counterpart_allowances(api_connection: ApiConnection, counterpartallowance_pk):
+    def delete_counterpart_allowances(api_connection: ApiConnection, counterpartallowance_pk: int):
         """Deletes a counterpart allowance
 
         :param api_connection: class with API token for use with API
