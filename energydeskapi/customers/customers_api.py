@@ -268,7 +268,7 @@ class CustomersApi:
         return company_key
 
     @staticmethod
-    def get_company_by_key(api_connection: ApiConnection, pk):
+    def get_company_by_key(api_connection: ApiConnection, pk: int):
         """Fetches a specific company as long as the user has rights
 
         :param api_connection: class with API token for use with API

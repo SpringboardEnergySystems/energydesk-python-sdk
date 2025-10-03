@@ -162,7 +162,7 @@ class UsersApi:
         return UsersApi.get_users(api_connection, {"user__username": str(username)})
 
     @staticmethod
-    def get_profile_by_key(api_connection: ApiConnection, pk):
+    def get_profile_by_key(api_connection: ApiConnection, pk: int):
         """Fetches user profile from key
 
         :param api_connection: class with API token for use with API
@@ -177,7 +177,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_embedded_profile_by_key(api_connection: ApiConnection, pk):
+    def get_embedded_profile_by_key(api_connection: ApiConnection, pk: int):
         payload = {"id": pk}
         json_res = api_connection.exec_get_url('/api/customers/profiles/embedded/', payload)
         results = json_res['results']
@@ -212,7 +212,7 @@ class UsersApi:
         return UsersApi.get_profile_by_key(api_connection,user_profile_key)
 
     @staticmethod
-    def get_user_by_key(api_connection: ApiConnection, pk):
+    def get_user_by_key(api_connection: ApiConnection, pk: int):
         """Fetches user from key
 
         :param api_connection: class with API token for use with API
@@ -364,7 +364,7 @@ class UsersApi:
         return df
 
     @staticmethod
-    def get_user_group_by_key(api_connection: ApiConnection, pk):
+    def get_user_group_by_key(api_connection: ApiConnection, pk: int):
         """Fetches user groups
 
         :param api_connection: class with API token for use with API
@@ -379,7 +379,7 @@ class UsersApi:
         return json_res
 
     @staticmethod
-    def get_user_group_url(api_connection: ApiConnection, pk):
+    def get_user_group_url(api_connection: ApiConnection, pk: int):
         """Fetches url for a specified user group
 
         :param api_connection: class with API token for use with API
@@ -392,7 +392,7 @@ class UsersApi:
         return full_url
 
     @staticmethod
-    def get_users_from_user_group(api_connection: ApiConnection, pk):
+    def get_users_from_user_group(api_connection: ApiConnection, pk: int):
         """Fetches users from user groups
 
         :param api_connection: class with API token for use with API
@@ -408,7 +408,7 @@ class UsersApi:
         return users
 
     @staticmethod
-    def get_users_from_user_group_embedded(api_connection: ApiConnection, pk):
+    def get_users_from_user_group_embedded(api_connection: ApiConnection, pk: int):
         """Fetches users from user groups with embedding
 
         :param api_connection: class with API token for use with API
@@ -446,7 +446,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def delete_user_groups(api_connection: ApiConnection, pk):
+    def delete_user_groups(api_connection: ApiConnection, pk: int):
         """Deletes user groups
 
         :param api_connection: class with API token for use with API
@@ -580,7 +580,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def delete_user_feature_access(api_connection: ApiConnection, pk):
+    def delete_user_feature_access(api_connection: ApiConnection, pk: int):
         """Deletes features to user groups
 
         :param api_connection: class with API token for use with API
