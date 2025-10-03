@@ -22,7 +22,7 @@ class ResultCalcParams:
         self.resolution=resolution
         self.currency=currency
 
-    def get_dict(self, api_conn):
+    def get_dict(self, api_conn: ApiConnection):
         dict = {}
         dict['portfolios'] = self.portfolios
         dict['trading_date'] = self.trading_date.strftime("%Y-%m-%d")
@@ -49,7 +49,7 @@ class ResultsApi:
 
 
     @staticmethod
-    def calculate_results(api_connection: ApiConnection, results_params):
+    def calculate_results(api_connection: ApiConnection, results_params: ResultCalcParams):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

@@ -27,7 +27,7 @@ class TreasuryApi:
         return df
 
     @staticmethod
-    def register_treasury_bank(api_connection: ApiConnection, registry_number, treasury_system_name):
+    def register_treasury_bank(api_connection: ApiConnection, registry_number: str, treasury_system_name: str):
         """Registers treasury bank from brreg
 
         :param api_connection: class with API token for use with API
@@ -38,7 +38,7 @@ class TreasuryApi:
         :type treasury_system_name: str, required
         """
         logger.info("Fetching treasury bank list")
-        company=CustomersApi.get_company_from_registry_number( api_connection,registry_number)
+        company=CustomersApi.get_company_from_registry_number(api_connection,registry_number)
         print(company)
         comp_url=api_connection.get_base_url() + "/api/customers/companies/" + str(company['pk']) + "/"
         print(comp_url)

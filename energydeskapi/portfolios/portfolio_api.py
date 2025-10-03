@@ -122,7 +122,7 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def upsert_portfolio(api_connection: ApiConnection, portfolio):
+    def upsert_portfolio(api_connection: ApiConnection, portfolio: PortfolioNode):
         """Insefrts or updates a tradingbook
 
         :param api_connection: class with API token for use with API

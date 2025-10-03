@@ -19,7 +19,7 @@ class ClearingApi:
 
 
     @staticmethod
-    def upsert_clearing_report(api_connection: ApiConnection, clearing_house, clearing_report_type,clearing_report_format,clearing_report_date, report_data):
+    def upsert_clearing_report(api_connection: ApiConnection, clearing_house: str, clearing_report_type: str ,clearing_report_format: str,clearing_report_date, report_data):
         logger.info("Storing clearing report")
         payload = {"clearing_house": clearing_house,
                    "clearing_report_type": clearing_report_type,
@@ -30,7 +30,7 @@ class ClearingApi:
         return True
 
     @staticmethod
-    def upsert_positions_reconciliation(api_connection: ApiConnection, pk, clearing_house, clearing_account,  clearing_date, reconciliation_status, comment):
+    def upsert_positions_reconciliation(api_connection: ApiConnection, pk, clearing_house: str, clearing_account: str,  clearing_date, reconciliation_status, comment):
         logger.info("Storing clearing reconciliation")
         payload = {"clearing_house": clearing_house,'clearing_account':clearing_account,
                    "reconciliation_status": reconciliation_status,
@@ -300,7 +300,7 @@ class ClearingApi:
         return json_res
 
     @staticmethod
-    def update_reconciled_contract(api_connection: ApiConnection, payload):
+    def update_reconciled_contract(api_connection: ApiConnection, payload: dict):
         success, json_res, status_code, error_msg  = a = api_connection.exec_patch_url('/api/clearing/reconciledcontracts/'+ str(payload['pk']) + "/", payload)
         return success, json_res, status_code, error_msg
 

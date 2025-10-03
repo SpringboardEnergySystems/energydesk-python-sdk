@@ -157,7 +157,7 @@ class ProductsApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def register_commodity(api_connection: ApiConnection, commodity_definition):
+    def register_commodity(api_connection: ApiConnection, commodity_definition: dict):
         """Registers products
 
         :param api_connection: class with API token for use with API
@@ -172,7 +172,7 @@ class ProductsApi:
         logger.debug(f"Registering commodity. Result:{json_res}")
         return json_res['pk']
     @staticmethod
-    def register_products(api_connection: ApiConnection, product_list):
+    def register_products(api_connection: ApiConnection, product_list: list[Product]):
         """Registers products
 
         :param api_connection: class with API token for use with API

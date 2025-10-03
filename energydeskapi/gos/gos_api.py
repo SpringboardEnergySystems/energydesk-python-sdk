@@ -161,7 +161,7 @@ class GosApi:
 
 
   @staticmethod
-  def register_quality(api_connection: ApiConnection, shortname, description):
+  def register_quality(api_connection: ApiConnection, shortname: str, description: str):
     """Fetches certificates from server
 
     :param api_connection: class with API token for use with API

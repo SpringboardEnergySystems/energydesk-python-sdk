@@ -231,7 +231,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def preview_capacity_contract_doc(api_connection: ApiConnection, payload):
+    def preview_capacity_contract_doc(api_connection: ApiConnection, payload: dict):
         """Fetches all counterparts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -490,7 +490,7 @@ class BilateralApi:
 
 
     @staticmethod
-    def generate_adjusted_curve_from_config(api_connection: ApiConnection, pricing_config_pk, curve_date=datetime.today()):
+    def generate_adjusted_curve_from_config(api_connection: ApiConnection, pricing_config_pk: int, curve_date=datetime.today()):
         logger.info("Adjusting curve")
         payload={
             'pricing_config_pk':pricing_config_pk,
@@ -520,7 +520,7 @@ class BilateralApi:
 
     # Loads a relative profile with delivery period, applied with a yearly volume
     @staticmethod
-    def load_profiled_volume(api_connection: ApiConnection, product_code, yearly_volume, include_hourly_series=False):
+    def load_profiled_volume(api_connection: ApiConnection, product_code: str, yearly_volume, include_hourly_series=False):
         """Loads a relative profile with delivery period, applied with a yearly volume
 
         :param api_connection: class with API token for use with API
