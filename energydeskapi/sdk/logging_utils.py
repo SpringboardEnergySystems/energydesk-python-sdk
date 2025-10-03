@@ -1,13 +1,13 @@
 from typing import Optional
 
-import environ
 import logging
 import os
 import environ
 from logging.handlers import TimedRotatingFileHandler
 from dataclasses import dataclass
 from energydeskapi.sdk.common_utils import load_class_from_string
-from energydeskapi.sdk.logstash_singleline_formatter import SingleLineLogstashFormatter
+import importlib
+
 logger = logging.getLogger(__name__)
 
 import socket
@@ -86,6 +86,9 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
             ssl_verify=False
         )
         handler.setLevel(get_loglevel_from_str(loglev))
+        # Lazy import SingleLineLogstashFormatter
+        module = importlib.import_module('energydeskapi.sdk.logstash_singleline_formatter')
+        SingleLineLogstashFormatter = getattr(module, 'SingleLineLogstashFormatter')
         formatter = SingleLineLogstashFormatter(
             message_type='python-logstash',
             fqdn=False,
