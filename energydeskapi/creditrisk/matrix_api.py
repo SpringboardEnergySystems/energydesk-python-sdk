@@ -55,7 +55,7 @@ class MatrixApi:
         return None
 
     @staticmethod
-    def get_matrix(api_connection: ApiConnection, pk):
+    def get_matrix(api_connection: ApiConnection, pk: int):
         """Fetches rated company
 
         :param api_connection: class with API token for use with API

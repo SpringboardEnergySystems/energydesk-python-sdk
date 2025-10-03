@@ -64,7 +64,7 @@ class AssetGroupApi:
         return json_res
 
     @staticmethod
-    def get_asset_group_by_key(api_connection: ApiConnection, pk):
+    def get_asset_group_by_key(api_connection: ApiConnection, pk: int):
         """Fetches all assets
 
         :param api_connection: class with API token for use with API
@@ -76,7 +76,7 @@ class AssetGroupApi:
         return json_res
 
     @staticmethod
-    def delete_asset_group(api_connection: ApiConnection, pk):
+    def delete_asset_group(api_connection: ApiConnection, pk: int):
         """Deletes an assset group
 
         :param api_connection: class with API token for use with API

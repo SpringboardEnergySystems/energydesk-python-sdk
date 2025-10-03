@@ -157,7 +157,7 @@ class FlexibilityPortfolioApi:
         return api_connection.get_base_url() + '/api/flexiblepower/flexorderstatuses/' + str(status_pk) + "/"
 
     @staticmethod
-    def get_flexible_portfolio_url(api_connection: ApiConnection, pk):
+    def get_flexible_portfolio_url(api_connection: ApiConnection, pk: int):
         """Fetches url for a contract type from enum value
         """
         return api_connection.get_base_url() + '/api/flexiblepower/flexibleportfolios/' + str(pk) + "/"

@@ -26,7 +26,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_feature_by_key(api_connection: ApiConnection, pk):
+    def get_system_feature_by_key(api_connection: ApiConnection, pk: int):
         """Fetches system feature by key
 
         :param api_connection: class with API token for use with API
@@ -40,7 +40,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_feature_url(api_connection: ApiConnection, pk):
+    def get_system_feature_url(api_connection: ApiConnection, pk: int):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API
@@ -65,7 +65,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_access_type_by_key(api_connection: ApiConnection, pk):
+    def get_system_access_type_by_key(api_connection: ApiConnection, pk: int):
         """Fetches system access type by key
 
         :param api_connection: class with API token for use with API
@@ -81,7 +81,7 @@ class SystemApi:
         return None
 
     @staticmethod
-    def get_system_access_type_url(api_connection: ApiConnection, pk):
+    def get_system_access_type_url(api_connection: ApiConnection, pk: int):
         """Fetches user from url
 
         :param api_connection: class with API token for use with API

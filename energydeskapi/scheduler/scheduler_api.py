@@ -138,7 +138,7 @@ class SchedulerApi:
         return df
 
     @staticmethod
-    def get_scheduled_job(api_connection: ApiConnection, pk):
+    def get_scheduled_job(api_connection: ApiConnection, pk: int):
         """Fetches scheduled job by pk
 
         :param api_connection: class with API token for use with API
@@ -150,7 +150,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_job_embedded(api_connection: ApiConnection, pk):
+    def get_scheduled_job_embedded(api_connection: ApiConnection, pk: int):
         """Fetches scheduled job by pk
 
         :param api_connection: class with API token for use with API
@@ -174,7 +174,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_job_definition(api_connection: ApiConnection, pk):
+    def get_job_definition(api_connection: ApiConnection, pk: int):
         """Fetches scheduled job by pk
 
         :param api_connection: class with API token for use with API

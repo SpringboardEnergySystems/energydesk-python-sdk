@@ -109,7 +109,7 @@ class RatingApi:
 
 
     @staticmethod
-    def get_rating(api_connection: ApiConnection, pk):
+    def get_rating(api_connection: ApiConnection, pk: int):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -122,7 +122,7 @@ class RatingApi:
         return None
     
     @staticmethod
-    def get_embedded_rating(api_connection: ApiConnection, pk):
+    def get_embedded_rating(api_connection: ApiConnection, pk: int):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -179,7 +179,7 @@ class CompanyRatingApi:
         return None
 
     @staticmethod
-    def get_rating(api_connection: ApiConnection, pk):
+    def get_rating(api_connection: ApiConnection, pk: int):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API
@@ -192,7 +192,7 @@ class CompanyRatingApi:
         return None
     
     @staticmethod
-    def get_embedded_rating(api_connection: ApiConnection, pk):
+    def get_embedded_rating(api_connection: ApiConnection, pk: int):
         """Fetches rated rating
 
         :param api_connection: class with API token for use with API

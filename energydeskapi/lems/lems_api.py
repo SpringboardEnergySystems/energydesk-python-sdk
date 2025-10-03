@@ -278,7 +278,7 @@ class LemsApi:
         return json_res
 
     @staticmethod
-    def get_profile_by_key(api_connection: ApiConnection, pk):
+    def get_profile_by_key(api_connection: ApiConnection, pk: int):
         """Fetches product profile from key
         :param api_connection: class with API token for use with API
         :type api_connection: str, required

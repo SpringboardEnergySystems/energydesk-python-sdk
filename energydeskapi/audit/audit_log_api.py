@@ -34,7 +34,7 @@ class AuditLogApi:
         return json_res
 
     @staticmethod
-    def get_audit_log_object(api_connection: ApiConnection, pk):
+    def get_audit_log_object(api_connection: ApiConnection, pk: int):
         """Fetches audit log with embedded structure for user and contracts
 
         :param api_connection: class with API token for use with API
@@ -47,7 +47,7 @@ class AuditLogApi:
         return json_res
 
     @staticmethod
-    def get_audit_log_by_key(api_connection: ApiConnection, pk):
+    def get_audit_log_by_key(api_connection: ApiConnection, pk: int):
         """Fetches audit log with embedded structure for user and contracts
 
         :param api_connection: class with API token for use with API

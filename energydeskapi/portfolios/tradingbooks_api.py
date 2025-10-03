@@ -129,7 +129,7 @@ class TradingBooksApi:
         df = pd.DataFrame(data=tmp)
         return df
     @staticmethod
-    def get_tradingbook_by_pk(api_connection: ApiConnection, pk):
+    def get_tradingbook_by_pk(api_connection: ApiConnection, pk: int):
         """Loads tradingbooks from key
 
         :param api_connection: class with API token for use with API

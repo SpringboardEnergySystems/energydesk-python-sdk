@@ -25,7 +25,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_certificate_by_key(api_connection: ApiConnection, pk):
+    def get_necs_certificate_by_key(api_connection: ApiConnection, pk: int):
         """Fetches NECS certificate from pk
 
         :param api_connection: class with API token for use with API
@@ -55,7 +55,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_transaction_by_key(api_connection: ApiConnection, pk):
+    def get_necs_transaction_by_key(api_connection: ApiConnection, pk: int):
         """Fetches NECS transaction from pk
 
         :param api_connection: class with API token for use with API
@@ -85,7 +85,7 @@ class NecsApi:
         return None
 
     @staticmethod
-    def get_necs_transaction_bundle_by_key(api_connection: ApiConnection, pk):
+    def get_necs_transaction_bundle_by_key(api_connection: ApiConnection, pk: int):
         """Fetches NECS transaction bundle from pk
 
         :param api_connection: class with API token for use with API

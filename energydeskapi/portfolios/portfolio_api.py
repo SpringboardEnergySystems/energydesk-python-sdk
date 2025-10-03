@@ -97,7 +97,7 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def get_portfolio_by_pk(api_connection: ApiConnection, pk):
+    def get_portfolio_by_pk(api_connection: ApiConnection, pk: int):
         """Loads portfolios from key
 
         :param api_connection: class with API token for use with API

@@ -75,7 +75,7 @@ class ProfilesApi:
 
 
     @staticmethod
-    def delete_volume_profile(api_connection: ApiConnection, pk):
+    def delete_volume_profile(api_connection: ApiConnection, pk: int):
         """Fetches credit ratings for counterparts
 
         :param api_connection: class with API token for use with API

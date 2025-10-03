@@ -429,7 +429,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_rates_configuration_by_pk(api_connection: ApiConnection, pk):
+    def get_rates_configuration_by_pk(api_connection: ApiConnection, pk: int):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API
@@ -441,7 +441,7 @@ class BilateralApi:
         return json_res
 
     @staticmethod
-    def get_curve_configuration_by_pk(api_connection: ApiConnection, pk):
+    def get_curve_configuration_by_pk(api_connection: ApiConnection, pk: int):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API

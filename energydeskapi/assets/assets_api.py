@@ -303,7 +303,7 @@ class AssetsApi:
         return api_connection.get_base_url() + '/api/assets/assets/' + str(asset_pk) + "/"
 
     @staticmethod
-    def delete_asset(api_connection: ApiConnection, pk):
+    def delete_asset(api_connection: ApiConnection, pk: int):
         """Deletes an assset
 
         :param api_connection: class with API token for use with API
@@ -376,7 +376,7 @@ class AssetsApi:
         return json_res
 
     @staticmethod
-    def get_asset_by_key(api_connection: ApiConnection, pk):
+    def get_asset_by_key(api_connection: ApiConnection, pk: int):
         """Fetches asset from key
 
         :param api_connection: class with API token for use with API

@@ -180,7 +180,7 @@ class CapacityApi:
           return json_res
         return None
     @staticmethod
-    def get_capacity_request_by_key(api_connection: ApiConnection, pk):
+    def get_capacity_request_by_key(api_connection: ApiConnection, pk: int):
         logger.info("Fetching tenders with key " + str(pk))
         json_res=api_connection.exec_get_url('/api/bilateral/availability/tender/' + str(pk) + "/")
         if json_res is None:
@@ -200,7 +200,7 @@ class CapacityApi:
           return json_res
         return None
     @staticmethod
-    def get_tender_instance_by_key(api_connection: ApiConnection, pk):
+    def get_tender_instance_by_key(api_connection: ApiConnection, pk: int):
         json_res = api_connection.exec_get_url('/api/bilateral/availability/tender/instance/' + str(pk) + "/")
         if json_res is not None:
           return json_res
@@ -354,7 +354,7 @@ class CapacityApi:
 
 
     @staticmethod
-    def get_rates_configuration_by_pk(api_connection: ApiConnection, pk):
+    def get_rates_configuration_by_pk(api_connection: ApiConnection, pk: int):
         """Fetches pricing configuration from pk
 
         :param api_connection: class with API token for use with API
