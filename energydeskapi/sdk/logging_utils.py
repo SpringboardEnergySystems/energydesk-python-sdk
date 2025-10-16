@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 import logging
 import os
@@ -20,7 +20,7 @@ class LogstashConfig:
     environment: str = "dev1"
     appname: str = "SDK"
 
-def get_environment_value(parameter, default):
+def get_environment_value(parameter: str, default: Any) -> Any:
     env = environ.Env()
     outvalue = default
     if parameter in os.environ:
@@ -39,7 +39,7 @@ def get_consolelog_format():
     format="%(asctime)s %(levelname)-8s %(message)s"
     return format
 
-def get_loglevel_from_str(strlevel):
+def get_loglevel_from_str(strlevel: str) -> int:
     if strlevel=="DEBUG":
         return logging.DEBUG
     if strlevel=="INFO":
@@ -50,7 +50,7 @@ def get_loglevel_from_str(strlevel):
         return logging.ERROR
     return logging.INFO
 
-def get_loglevel_to_str(level):
+def get_loglevel_to_str(level: int) -> str:
     if level==logging.DEBUG:
         return "DEBUG"
     if level==logging.INFO:
@@ -61,7 +61,7 @@ def get_loglevel_to_str(level):
         return "ERROR"
     return "INFO"
 
-def setup_service_logging(servicetag: str, file_level=logging.INFO, console_level=logging.INFO, enable_logstash_conf:LogstashConfig=None):
+def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console_level: int=logging.INFO, enable_logstash_conf:LogstashConfig=None):
     console_level=get_loglevel_from_str(get_environment_value("OVERRIDE_CONSOLE_LOGLEVEL", get_loglevel_to_str(console_level)))
     file_level=get_loglevel_from_str(get_environment_value("OVERRIDE_FILE_LOGLEVEL", get_loglevel_to_str(file_level)))
 
@@ -129,14 +129,15 @@ def setup_service_logging(servicetag: str, file_level=logging.INFO, console_leve
 def create_logstash_from_environment():
     env=environ.Env()
     enabled = False if "LOGSTASH_ENABLED" not in env else env.bool("LOGSTASH_ENABLED")
-    host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
-    port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")
-    cust_name = "" if "LOGSTASH_CLIENT_CUSTOMER" not in env else env.str("LOGSTASH_CLIENT_CUSTOMER")
-    app_name = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
-    env_name = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
-    if host is None or port is None:
+    if enabled:
+        host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
+        port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")
+        if host is not None and port is not None:
+            cust_name = "" if "LOGSTASH_CLIENT_CUSTOMER" not in env else env.str("LOGSTASH_CLIENT_CUSTOMER")
+            app_name = "" if "LOGSTASH_CLIENT_APP" not in env else env.str("LOGSTASH_CLIENT_APP")
+            env_name = "" if "LOGSTASH_CLIENT_ENVIRONMENT" not in env else env.str("LOGSTASH_CLIENT_ENVIRONMENT")
+            return LogstashConfig(host, port, cust_name, env_name, app_name)
+        else:
+            return None
+    else:
         return None
-    # Even if host and port is set, one may still disable certain deployments temporatily
-    if not enabled:
-        return None
-    return LogstashConfig(host, port, cust_name, env_name, app_name)
