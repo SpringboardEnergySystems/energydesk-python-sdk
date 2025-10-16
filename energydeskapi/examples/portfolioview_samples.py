@@ -17,13 +17,12 @@ logging.basicConfig(level=logging.INFO,
 
 def get_period_view(api_conn):
     params = {
-        'groupby__in': ['counterpart', 'area'],
+        'groupby__in': ['area', 'trade_id'],
         'resolution': 'Monthly',
-        'portfolio': 33,
-        'view_currency': 'EUR',
-        'commodity__market__id__in': [1],
-        'view_period_from__gte': '2025-09-01',
-        'view_period_until__lt': '2036-01-01'
+        'contract_type': 5,
+        'view_currency': 'NOK',
+        'view_period_from__gte': '2025-01-01',
+        'view_period_until__lt': '2025-04-01'
     }
     #pd.set_option('display.max_rows', None)
     #view_id, data = PortfolioViewsApi.get_period_view_df(api_conn, params)
