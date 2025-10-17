@@ -128,3 +128,6 @@ def load_class_from_string(full_class_string: str) -> Any:
 T = TypeVar('T')
 def optional_to_list(optional: Optional[T]) -> list[T]:
     return [optional] if optional is not None else []
+
+def not_nones_in_list(ls: list[Optional[T]]) -> list[T]:
+    return [v for v in ls if v is not None]
