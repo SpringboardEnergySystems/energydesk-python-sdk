@@ -88,7 +88,7 @@ def load_rolling_products(api_conn):
     data=RiskApi.get_rolling_tickers(api_conn, {'trading_date__gte':"2024-11-01"})
     print(data)
 
-    data=RiskApi.get_rolling_products(api_conn,{'ticker':'NORDIC_POWER_MONTH_01', 'page_size':100})
+    data=RiskApi.get_rolling_products(api_conn,{'ticker':'NORDIC_POWER_MONTH_01', 'page_size':10000})
     #data=RiskApi.get_rolling_products_returns(api_conn, {'ticker':'NORDIC_POWER_MONTH_03'})
     print(data)
 
