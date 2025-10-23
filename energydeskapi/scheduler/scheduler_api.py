@@ -34,7 +34,6 @@ class ScheduledJob:
         if self.dynamic_parameter is not None: dict['dynamic_parameter'] = self.dynamic_parameter
         if self.dynamic_config is not None: dict['dynamic_config'] = self.dynamic_config
         if self.is_active is not None: dict['is_active'] = self.is_active
-
         return dict
 
 class ScheduledJobExecution:
@@ -56,12 +55,28 @@ class ScheduledJobExecution:
 
         return dict
 
+class JobDefinition:
+    def __init__(self):
+        self.pk = 0
+        self.description = None
+        self.func_name = None
+        self.python_module = None
+        self.config = None
+
+    def get_dict(self, api_conn):
+        dict = {'pk':self.pk}
+        if self.description is not None: dict['description'] = self.description
+        if self.func_name is not None: dict['func_name'] = self.func_name
+        if self.python_module is not None: dict['python_module'] = self.python_module
+        if self.config is not None: dict['config'] = self.config
+        return dict
+
 class SchedulerApi:
     """ Class for scheduler
 
     """
     @staticmethod
-    def get_job_definition_url(api_connection: ApiConnection, job_definition):
+    def get_job_definition_url(api_connection: ApiConnection, job_definition_pk: int) -> str:
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
@@ -70,9 +85,10 @@ class SchedulerApi:
         :type company_type_enum: str, required
         """
 
-        return api_connection.get_base_url() + '/api/schedulemanager/jobdefinitions/' + str(job_definition) + "/"
+        return api_connection.get_base_url() + '/api/schedulemanager/jobdefinitions/' + str(job_definition_pk) + "/"
+
     @staticmethod
-    def upsert_scheduled_job(api_connection: ApiConnection, job):
+    def upsert_scheduled_job(api_connection: ApiConnection, job: ScheduledJob):
         """Fetches scheduled jobs
 
         :param api_connection: class with API token for use with API
@@ -186,6 +202,23 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
+    def upsert_job_definition(api_connection: ApiConnection, job: JobDefinition):
+        """Fetches scheduled jobs
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        if job.pk > 0:
+            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                f"/api/schedulemanager/jobdefinitions/{job.pk}/", job.get_dict(api_connection))
+        else:
+            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+                '/api/schedulemanager/jobdefinitions/', job.get_dict(api_connection))
+        return success, returned_data, status_code, error_msg
+
+
+    @staticmethod
     def get_scheduled_job_execution(api_connection: ApiConnection, job_definition_pk: int):
         """Fetches scheduled jobs and displays in a dataframe
 
@@ -199,7 +232,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def get_scheduled_job_execution_embedded(api_connection: ApiConnection, param):
+    def get_scheduled_job_execution_embedded(api_connection: ApiConnection, param: dict):
         """Fetches scheduled jobs and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -212,7 +245,7 @@ class SchedulerApi:
         return json_res
 
     @staticmethod
-    def upload_scheduled_job_execution(api_connection: ApiConnection, execution):
+    def upload_scheduled_job_execution(api_connection: ApiConnection, execution: ScheduledJobExecution):
         """Uploads scheduled job executions
 
         :param api_connection: class with API token for use with API
