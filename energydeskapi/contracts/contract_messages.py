@@ -24,7 +24,7 @@ class ContractForLiveViewMessage:
     contract_price: PriceWithCurrency
     quentity_type: str #QuantityTypeEnum
     buy_or_sell: str #"BUY" or "SELL"
-    price_at_contract_creation: float
+    market_price_at_contract_creation: float
 
 @dataclass(frozen=True)
 class ContractChangeMessage:
