@@ -78,8 +78,9 @@ def get_access_token():
         "Cache-Control": "no-cache"
     }
     response = requests.request("POST", token_endpoint, data=body, headers=headers)
-    print(response.text)
+
     token_json = response.json()
+    print(json.dumps(token_json, indent=2))
     return token_json["access_token_jwt"]
 
 def load_sample_metervalues():
@@ -256,6 +257,8 @@ def register_prequal(api_conn):
         prequrl=FlexibilityPrequalifyApi.get_flex_prequalification_url(api_conn,returned_data['pk'])
         fbid = FlexPrequalBidTest(0,prequrl,profile,0.25, timeseries_data)
         FlexibilityPrequalifyApi.upsert_prequal_bidquality(api_conn, fbid)
+    else:
+        print("Error making prequalification request", status_code, error_msg)
 
 
 def check_requests(api_conn):
@@ -304,7 +307,8 @@ def check_prequalification_from_key(token=None, key=0):
     print(data.status_code)
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
-
+    else:
+        print(data.text)
 # Token not used in this sample as the gneerateprofile API is open
 def generate_profile(token=None):
     asset_list, df_portfolio=load_sample_metervalues()
@@ -335,17 +339,19 @@ def make_prequalification_request(token=None):
     current_dir=dirname(__file__)
     docpath = join(current_dir, 'hflex.csv')
     data=open(docpath,"r").read()
-    print(data)
-    return []
+
     server_url="http://127.0.0.1:8001/api/flexibility/prequalification/makerequest/"
-    server_url = "https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/makerequest/"
+    #server_url = "https://elvia-test.energydesk.no/appserver/api/flexibility/prequalification/makerequest/"
     headers={'Authorization': 'Bearer ' + token}
-    payload={'product_offer_id':"Abildsø-275 for Oct25-Mar26_chunk_1",
+
+    payload={'product_offer_id':"cadeefa1-9880-439f-8152-b30500edc4fc",
              'asset_list':asset_list,'meter_data':prepare_meterdata()}
     data = requests.post(server_url,headers=headers, json=payload)
-    print(data.status_code)
+
     if data.status_code<300:
         print(json.dumps(data.json(), indent=2))
+    else:
+        print(data.status_code, data.text)
 
 def process_offer(api_conn):
     payload={'product_offer_id':"e522e465-98f2-4f86-8ab1-b30e00840464",}
@@ -393,11 +399,11 @@ if __name__ == '__main__':
 
     #env = environ.Env()
     token=get_access_token()
-    #make_prequalification_request(token)
+    make_prequalification_request(token)
     #generate_profile(token)
     #check_prequalification(token)
     #sys.exit(0)
-    check_prequalification_from_key(token, 9)
+    #check_prequalification_from_key(token, 9)
     #edesk_base_url = env.str('ENERGYDESK_URL')
     #api_conn=ApiConnection(edesk_base_url,bearer_token=str(token))
     #process_offer(api_conn_basic)

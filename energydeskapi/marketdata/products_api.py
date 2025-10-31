@@ -108,7 +108,12 @@ class ProductsApi:
         if json_res is None:
             return False
         return json_res
-
+    @staticmethod
+    def get_commodity_definitions_embedded(api_connection: ApiConnection, parameters: dict={}):
+        json_res = api_connection.exec_get_url('/api/markets/commoditydefinitions/embedded/', parameters)
+        if json_res is None:
+            return False
+        return json_res
     @staticmethod
     def get_market_products(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/', parameters)

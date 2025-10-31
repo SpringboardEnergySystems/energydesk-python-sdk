@@ -62,11 +62,13 @@ def manage_market_products(api_conn, ticker):
     if len(res['results'])==0:
         print("Need to create product")
 
-        res=ProductsApi.generate_market_product_from_ticker(api_conn,MarketPlaceEnum.NASDAQ_OMX.name, ticker)
+        res=ProductsApi.generate_market_product_from_ticker(api_conn,MarketPlaceEnum.NASDAQ_OMX, ticker)
         print(res)
 
 
-
+def market_products(api_conn):
+    res=ProductsApi.get_commodity_definitions_embedded(api_conn, {'page_size':10})
+    print(json.dumps(res['results'], indent=2))
 
 
 def get_market_types(api_conn):
@@ -99,10 +101,11 @@ def get_commodity_profile(api_conn, ticker):
 if __name__ == '__main__':
     #   pd.set_option('display.max_rows', None)
     api_conn=init_api()
+
     context = {}
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     #print(df)
-    query_fx(api_conn)
+    market_products(api_conn)
     #success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
     #context['delivery_from'] = returned_data['delivery_from']
