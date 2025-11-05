@@ -435,3 +435,41 @@ class RiskApi:
         logger.info("Retrieving PFE Reports")
         json_result = api_connection.exec_get_url('/api/riskmanager/pfereport/latest/', payload)
         return json_result
+
+    @staticmethod
+    def post_area_volatility(api_connection: ApiConnection, area_pk: int, volatility_data: list):
+        """
+        Store volatility data for a specific market area.
+        
+        Args:
+            api_connection: API connection instance
+            area_pk: Primary key of the market area
+            volatility_data: List of volatility values
+        
+        Returns:
+            Tuple of (success, json_res, status_code, error_msg)
+        """
+        logger.info(f"Posting volatility data for market area {area_pk}")
+        payload = {'data': volatility_data}
+        success, json_res, status_code, error_msg = api_connection.exec_post_url(
+            f'/api/riskmanager/marketareas/{area_pk}/store_volatility/', 
+            payload
+        )
+        return success, json_res, status_code, error_msg
+    
+    @staticmethod
+    def get_area_volatility(api_connection: ApiConnection, area_pk: int):
+        """
+        Retrieve volatility data for a specific market area.
+        
+        Args:
+            api_connection: API connection instance
+            area_pk: Primary key of the market area
+        Returns:
+            JSON response containing volatility data
+        """
+        logger.info(f"Fetching volatility data for market area {area_pk}")
+        json_res = api_connection.exec_get_url(
+                f'/api/riskmanager/marketareas/{area_pk}/load_volatility/'
+            )
+        return json_res

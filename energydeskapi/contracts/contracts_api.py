@@ -44,7 +44,7 @@ class Contract:
                  delivery_type=DeliveryTypeEnum.FINANCIAL.value,
                  profile_type=ProfileTypeEnum.BASELOAD.value,
                  profile_category=ProfileTypeEnum.BASELOAD.name,
-                 quentity_type=QuantityTypeEnum.EFFECT.value,
+                 quantity_type=QuantityTypeEnum.EFFECT.value,
                  quantity_unit=QuantityUnitEnum.MW.value,
                  contract_type=ContractTypeEnum.NASDAQ.value,
                  asset_link=None
@@ -61,7 +61,7 @@ class Contract:
         self.trade_date=trade_date
         self.trade_datetime=trade_datetime
         self.quantity_unit=quantity_unit
-        self.quantity_type=quentity_type
+        self.quantity_type=quantity_type
         self.commodity_type=commodity_type
         self.asset_link = asset_link
         self.profile_type=profile_type

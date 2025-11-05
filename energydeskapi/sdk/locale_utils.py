@@ -6,6 +6,9 @@ from dateutil import parser
 import pendulum
 from babel.numbers import parse_decimal as babel_parse_decimal,format_decimal as babel_format_decimal, decimal as babel_decimal
 from babel.dates import format_datetime as babel_format_datetime, format_date as babel_format_date
+
+OSLO_TIMEZONE='Europe/Oslo'
+
 def get_country_code(country_pref_enum=CountryPrefEnum.NORWAY):
     if country_pref_enum==CountryPrefEnum.NORWAY:
         return "nb_NO.utf-8"
@@ -37,14 +40,14 @@ def parse_decimal(dec_str, country_pref_enum=CountryPrefEnum.NORWAY):
         return dec_str
     return babel_parse_decimal(dec_str,locale=get_country_code(country_pref_enum))
 
-def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'),country_pref_enum=CountryPrefEnum.NORWAY):
+def format_datetime_from_dt(dt, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone(OSLO_TIMEZONE),country_pref_enum=CountryPrefEnum.NORWAY):
     if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
         dt=tzinfo.localize(dt)
     else:
         dt=dt.astimezone(tzinfo)
     return babel_format_datetime(dt, format=format, tzinfo=tzinfo, locale=get_country_code(country_pref_enum))
 
-def format_datetime_from_iso(dts, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
+def format_datetime_from_iso(dts, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.timezone(OSLO_TIMEZONE), country_pref_enum=CountryPrefEnum.NORWAY):
     dt=parser.isoparse(dts)
     if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
         dt=tzinfo.localize(dt)
@@ -56,7 +59,7 @@ def format_datetime_from_iso(dts, format="yyyy.MM.dd  HH:mm:ss zzz",tzinfo=pytz.
 def format_pandas_decimalcol(row, colname, country_pref_enum=CountryPrefEnum.NORWAY, decimal_places=2, truncate=True):
     return format_decimal(row[colname],country_pref_enum,decimal_places, truncate)
 
-def format_pandas_datetimecol_from_iso(row, colname,format="yyyy.MM.dd  HH:mm:ss zzz", tzinfo=pytz.timezone('Europe/Oslo'), country_pref_enum=CountryPrefEnum.NORWAY):
+def format_pandas_datetimecol_from_iso(row, colname,format="yyyy.MM.dd  HH:mm:ss zzz", tzinfo=pytz.timezone(OSLO_TIMEZONE), country_pref_enum=CountryPrefEnum.NORWAY):
     return format_datetime_from_iso(row[colname],format=format, tzinfo=tzinfo, country_pref_enum=country_pref_enum)
 
 import pendulum
