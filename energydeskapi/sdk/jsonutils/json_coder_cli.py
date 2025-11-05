@@ -10,7 +10,7 @@ Usage:
 import sys
 import argparse
 import json
-from json_coder import (
+from energydeskapi.sdk.jsonutils.json_coder import (
     encode_json_file_to_string,
     encode_json_to_string,
     decode_string_to_json,

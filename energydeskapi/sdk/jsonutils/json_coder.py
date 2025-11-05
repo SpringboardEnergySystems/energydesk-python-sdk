@@ -20,7 +20,8 @@ def encode_json_to_string(json_data: Union[str, List[Dict[str, Any]], Dict[str, 
                           record_delimiter: str = '|',
                           pair_delimiter: str = ';',
                           key_value_delimiter: str = ':',
-                          url_encode: bool = True) -> str:
+                          url_encode: bool = True,
+                          auto_extract_array: bool = False) -> str:
     """
     Encode JSON data into a delimited string format suitable for environment variables.
 
@@ -30,18 +31,20 @@ def encode_json_to_string(json_data: Union[str, List[Dict[str, Any]], Dict[str, 
         pair_delimiter: Delimiter between key-value pairs within a record (default: ';')
         key_value_delimiter: Delimiter between key and value (default: ':')
         url_encode: Whether to URL-encode values to handle special characters (default: True)
+        auto_extract_array: If True and root is a dict with single key containing an array, extract it automatically
 
     Returns:
         Delimited string representation of the JSON data
-
-    Example:
-        >>> data = [{"type": "portfolio", "id": 36, "sub_account": "trading"}]
-        >>> encode_json_to_string(data)
-        'type:portfolio;id:36;sub_account:trading'
     """
     # Parse JSON string if needed
     if isinstance(json_data, str):
         json_data = json.loads(json_data)
+
+    # Auto-extract array from single-key wrapper object
+    if auto_extract_array and isinstance(json_data, dict):
+        keys = list(json_data.keys())
+        if len(keys) == 1 and isinstance(json_data[keys[0]], list):
+            json_data = json_data[keys[0]]
 
     # Convert single dict to list
     if isinstance(json_data, dict):
@@ -183,12 +186,13 @@ def _convert_value_type(value: str) -> Any:
     return value
 
 
-def encode_json_file_to_string(file_path: str, **kwargs) -> str:
+def encode_json_file_to_string(file_path: str, auto_extract_array: bool = True, **kwargs) -> str:
     """
     Read a JSON file and encode it to a delimited string.
 
     Args:
         file_path: Path to the JSON file
+        auto_extract_array: If True, automatically extract array from single-key wrapper object (default: True)
         **kwargs: Additional arguments to pass to encode_json_to_string
 
     Returns:
@@ -196,7 +200,7 @@ def encode_json_file_to_string(file_path: str, **kwargs) -> str:
     """
     with open(file_path, 'r', encoding='utf-8') as f:
         json_data = json.load(f)
-    return encode_json_to_string(json_data, **kwargs)
+    return encode_json_to_string(json_data, auto_extract_array=auto_extract_array, **kwargs)
 
 
 def decode_string_to_json_file(encoded_string: str, file_path: str,
