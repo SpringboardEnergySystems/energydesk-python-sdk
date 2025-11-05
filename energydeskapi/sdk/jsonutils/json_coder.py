@@ -226,9 +226,9 @@ if __name__ == '__main__':
 
     # Example 1: Basic encoding/decoding
     sample_data = [
-        {"type": "portfolio", "id": 36, "sub_account": "trading"},
-        {"type": "portfolio", "id": 94, "sub_account": "hph"},
-        {"type": "portfolio", "id": 48, "sub_account": "celsio"}
+        {"type": "portfolio", "id": 36, "sub_account": "x"},
+        {"type": "portfolio", "id": 94, "sub_account": "y"},
+        {"type": "portfolio", "id": 48, "sub_account": "z"}
     ]
 
     print("\nOriginal JSON:")
