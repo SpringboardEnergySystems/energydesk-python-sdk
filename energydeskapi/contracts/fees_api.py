@@ -39,6 +39,7 @@ class FeeRate:
     valid_until: datetime
     fee_rate: float
     fee_rate_currency: str
+    block_size_category: str
     @property
     def __dict__(self):
         """
