@@ -73,6 +73,23 @@ def get_period_view_test(api_conn):
     v, df = PortfolioViewsApi.get_period_view_df(api_conn, filter)
     print(v, df)
 
+
+def get_period_view_records(api_conn):
+
+    periodview_params={
+        'portfolio': "33",
+        'view_currency': 'EUR',
+        'commodity__market__id__in': '1',
+        "view_period_from__gte":'2025-11-01',
+        "view_period_until__lt": '2036-01-01',
+        "resolution":"Monthly",
+        "groupby__in": ['counterpart','area']
+    }
+    print(periodview_params)
+    output= PortfolioViewsApi.get_period_view_records(api_conn, periodview_params)
+    print(output)
+
+
 def get_product_view(api_conn):
 
     filter={'portfolio': "36", "view_currency":"EUR"}#,'commodity__delivery_until__gte':str(pendulum.today())}
@@ -83,4 +100,4 @@ def get_product_view(api_conn):
 if __name__ == '__main__':
     #pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_period_view(api_conn)
+    get_period_view_records(api_conn)
