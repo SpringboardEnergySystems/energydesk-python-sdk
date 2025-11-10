@@ -47,15 +47,17 @@ def get_contract_counterparts(api_conn):
     print(json_contractfilter)
 
 
-def get_contracts(api_conn, trading_book=None):
-    filter={"portfolio":2}#"pk": [1,3]}
-    json_data = ContractsApi.list_contracts_embedded(api_conn,filter)
-    #records=json_data['results']  # 200 at a time
+def get_contracts(api_conn):
+    parameters={"page_size":1000, "portfolio__in":[36, 94,48, 54,55 ]}#"pk": [1,3]}
+    json_data = ContractsApi.get_contracts_formatted(api_conn,"ifs",parameters)
+    print("Returned {} contracts".format(len(json_data['results'])))
     for rec in json_data['results']:
-        if rec['commodity']['product_code'].startswith("SYOSL"):
-            print(json.dumps(rec, indent=2))
-    #df=pd.DataFrame(data=eval(records))
-    #print(df)
+        pass#print(rec['ticker'],rec['generic_ticker'])
+        #print(json.dumps(rec, indent=2))
+    f=open("./contracts.json","w")
+    f.write(json.dumps(json_data['results'], indent=2))
+    f.close()
+
 
 def get_contract_tags(api_conn):
     json_contractfilter = ContractsApi.get_contract_tags(api_conn)
@@ -210,7 +212,7 @@ def query_paginated_contracts(api_conn):
     fullurl="http://127.0.0.1:8001/api/portfoliomanager/contracts/"
     result = requests.get(fullurl, headers=head, params=parameters)
     print(result)
-    #ContractsApi.list_contracts(api_conn, parameters)
+
 def query_sources(api_conn):
     x=GosApi.get_source_collections_embedded(api_conn)
     #x=json.loads(x)
@@ -250,7 +252,7 @@ def get_fixedprice_contracts(api_conn):
             print(json.dumps(rec, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contract_counterparts(api_conn)
+    get_contracts(api_conn)
     #load_contracts_csv(api_conn)
     #cancel_contract(api_conn)
     #get_contract_filters(api_conn)

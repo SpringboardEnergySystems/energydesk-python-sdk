@@ -662,6 +662,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
+    def get_contracts_formatted(api_connection: ApiConnection, format_suburl:str, parameters: dict={}):
+        """Lists contracts with a sub URL idenfitying the specific output , eg emir"""
+        logger.info("Querying contracts on {}".format(format_suburl))
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/' + format_suburl, parameters)
+        return json_res
+
+    @staticmethod
     def list_contracts(api_connection: ApiConnection, parameters: dict={}):
         """Lists contracts
 
