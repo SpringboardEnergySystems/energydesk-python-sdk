@@ -134,3 +134,6 @@ def not_nones_in_list(ls: list[Optional[T]]) -> list[T]:
 
 def split_in_chunks(items: list[T], size: int) -> list[list[T]]:
     return [items[i:i + size] for i in range(0, len(items), size)]
+
+def flatten_nested2_list(nested_list: list[list[T]]) -> list[T]:
+    return [item for simple_lost in nested_list for item in simple_lost]
