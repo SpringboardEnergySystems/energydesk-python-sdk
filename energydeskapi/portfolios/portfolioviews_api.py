@@ -37,7 +37,7 @@ class PortfolioViewsApi:
         if json_res is None:
             return None, None
         view_id=json_res['view_id']
-        view_data = json_res['view_data']
+        view_data = json.loads(json_res['view_data'])
         return view_id, view_data
 
     @staticmethod

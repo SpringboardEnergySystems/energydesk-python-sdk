@@ -48,15 +48,13 @@ def get_contract_counterparts(api_conn):
 
 
 def get_contracts(api_conn):
-    parameters={"page_size":1000, "portfolio__in":[36, 94,48, 54,55 ]}#"pk": [1,3]}
-    json_data = ContractsApi.get_contracts_formatted(api_conn,"ifs",parameters)
+    parameters={"page_size":10, "contract_price_currency":"NOK", "portfolio__in":[36, 94,48, 54,55 ]}
+    json_data = ContractsApi.list_contracts(api_conn,parameters)
     print("Returned {} contracts".format(len(json_data['results'])))
     for rec in json_data['results']:
         pass#print(rec['ticker'],rec['generic_ticker'])
-        #print(json.dumps(rec, indent=2))
-    f=open("./contracts.json","w")
-    f.write(json.dumps(json_data['results'], indent=2))
-    f.close()
+        print(json.dumps(rec, indent=2))
+
 
 
 def get_contract_tags(api_conn):
