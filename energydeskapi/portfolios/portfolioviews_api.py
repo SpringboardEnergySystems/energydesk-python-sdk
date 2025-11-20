@@ -23,22 +23,29 @@ class PortfolioViewsApi:
 
     # deprecated: can only return a tuple with two values. Use get_product_view_data() if you can
     @staticmethod
-    def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[str]]:
+    def get_product_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[Any]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        import uuid
-        result = uuid.uuid4()
-        id=str(result.hex)
-        logger.info("Fetching product view" +  str(parameters))
+        view_id, json_view_data = PortfolioViewsApi._get_product_view_data_as_text(api_connection, parameters)
+        view_data = json.loads(json_view_data) if json_view_data is not None else None
+        return view_id, view_data
+
+
+    @staticmethod
+    def _get_product_view_data_as_text(api_connection: ApiConnection, parameters: dict) -> tuple[Optional[int], Optional[str]]:
+        # import uuid
+        # result = uuid.uuid4()
+        # id = str(result.hex)
+        logger.info(f"Fetching product view {parameters}")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/productview/', parameters)
         if json_res is None:
             return None, None
-        view_id=json_res['view_id']
-        view_data = json.loads(json_res['view_data'])
-        return view_id, view_data
+        view_id = json_res['view_id']
+        json_view_data = json_res['view_data']
+        return view_id, json_view_data
 
     @staticmethod
     def get_product_view_data(api_connection: ApiConnection, parameters: dict={}) -> Optional[ProductViewData]:
@@ -82,15 +89,15 @@ class PortfolioViewsApi:
         :type api_connection: str, required
         """
 
-        id, json_res = PortfolioViewsApi.get_product_view(api_connection, parameters)
-        if json_res is None:
+        id, json_res = PortfolioViewsApi._get_product_view_data_as_text(api_connection, parameters)
+        if json_res is not None and len(json_res) > 0:
+            js = json.loads(json_res)
+            df = pd.DataFrame(data=js)
+            df=df.fillna(0)
+            return id, df
+        else:
             return None, None
-        if len(json_res)==0:
-            return None, None
-        js=json.loads(json_res)
-        df = pd.DataFrame(data=js)
-        df=df.fillna(0)
-        return id, df
+
 
     @staticmethod
     def get_period_view(api_connection: ApiConnection, parameters: dict={}) -> tuple[Optional[int], Optional[dict[str, Any]]]:
