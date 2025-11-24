@@ -77,22 +77,15 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
         handler = handler_class(
             host,
             port,
-            version=1,
-            tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname]
+            version=1
         )
         handler.setLevel(get_loglevel_from_str(loglev))
         # Use python-logstash's built-in formatter
-        LogstashFormatterV1 = load_class_from_string("logstash.formatter.LogstashFormatterV1")
-        formatter = LogstashFormatterV1(
+        LogstashFormatterVersion1 = load_class_from_string("logstash.formatter.LogstashFormatterVersion1")
+        formatter = LogstashFormatterVersion1(
             message_type='python-logstash',
             tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
-            fqdn=False,
-            extra_prefix='extra',
-            extra={
-                'customer': enable_logstash_conf.customer,
-                'environment': enable_logstash_conf.environment,
-                'appname': enable_logstash_conf.appname
-            }
+            fqdn=False
         )
         handler.setFormatter(formatter)
         return handler
