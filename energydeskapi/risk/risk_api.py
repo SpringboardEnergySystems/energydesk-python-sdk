@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Union
+from typing import Dict, Union, Any, Optional
 import pandas as pd
 import json
 from json import JSONEncoder
@@ -63,7 +63,7 @@ class RiskApi:
 
     """
     @staticmethod
-    def upsert_global_risk_parameters(api_connection: ApiConnection, risk_params: dict):
+    def upsert_global_risk_parameters(api_connection: ApiConnection, risk_params: dict) -> tuple[bool, dict, int, str]:
         """Updates global risk parameters
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -88,7 +88,7 @@ class RiskApi:
             return json_res
         return None
     @staticmethod
-    def calc_volatilities(api_connection: ApiConnection, months_back: int, price_areas):
+    def calc_volatilities(api_connection: ApiConnection, months_back: int, price_areas) -> tuple[bool, dict, int, str]:
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -112,7 +112,7 @@ class RiskApi:
         return df
 
     @staticmethod
-    def calc_covariance_var(api_connection: ApiConnection, portfolio_id: int, days_back=40, decay_factor=0.94):
+    def calc_covariance_var(api_connection: ApiConnection, portfolio_id: int, days_back=40, decay_factor=0.94) -> tuple[bool, dict, int, str]:
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -142,7 +142,7 @@ class RiskApi:
         return dfvars,portfolio_mean,portfolio_stdev
 
     @staticmethod
-    def calc_covariance_matrix(api_connection: ApiConnection, days_back=40, decay_factor=0.94):
+    def calc_covariance_matrix(api_connection: ApiConnection, days_back=40, decay_factor=0.94) -> tuple[bool, dict, int, str]:
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -159,11 +159,11 @@ class RiskApi:
 
 
     @staticmethod
-    def calc_covariance_matrix_df(api_connection: ApiConnection, days_back=40, decay_factor=0.94):
+    def calc_covariance_matrix_df(api_connection: ApiConnection, days_back=40, decay_factor=0.94) -> Optional[pd.DataFrame]:
         success, json_res, status_code, error_msg=RiskApi.calc_covariance_matrix(api_connection,  days_back, decay_factor)
         if success ==False:
             logger.error(f"Calculating the convariance matrix got:{error_msg}")
-            return None,None,None
+            return None
         dfvars=pd.DataFrame(data=json.loads(json_res['covariance_data']))
         dfvars.index=dfvars.columns.to_flat_index()
         return dfvars
@@ -185,13 +185,13 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def upsert_rolling_product(api_connection: ApiConnection, products: RollingProduct | list[RollingProduct]):
+    def upsert_rolling_product(api_connection: ApiConnection, products: RollingProduct | list[RollingProduct]) -> tuple[bool, dict, int, str]:
         payload = products.__dict__ if isinstance(products, RollingProduct) else [product.__dict__ for product in products]
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/rollingproducts/', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_covariance_data(api_connection: ApiConnection,  trading_date: pendulum, timestamp: pendulum, days_history:int,decay_factor:float, covariance_data: dict, correlation_data:dict):
+    def upsert_covariance_data(api_connection: ApiConnection,  trading_date: pendulum.DateTime, timestamp: pendulum.DateTime, days_history:int,decay_factor:float, covariance_data: dict, correlation_data:dict):
         logger.info("Upserting covariance data product")
         payload = {
             'trading_date': str(trading_date)[:10],
@@ -205,7 +205,7 @@ class RiskApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def upsert_productreturns_data(api_connection: ApiConnection, trading_date:pendulum, timestamp:pendulum, days_history:int,decay_factor:float, returns_data: dict):
+    def upsert_productreturns_data(api_connection: ApiConnection, trading_date:pendulum.DateTime, timestamp:pendulum.DateTime, days_history:int,decay_factor:float, returns_data: dict):
         logger.info("Upserting product returns")
         payload={
             'trading_date': str(trading_date)[:10],
@@ -278,7 +278,7 @@ class RiskApi:
 
     @staticmethod
     def upsert_var_calculation(api_connection: ApiConnection,  trading_date:pendulum,timestamp:pendulum, days_history:int,decay_factor:float,
-                              portfolio_id:int, var95:float, var99:float, port_mean:float, port_stdev:float, var_data:dict):
+                              portfolio_id:int, var95:float, var99:float, port_mean:float, port_stdev:float, var_data:dict) -> tuple[bool, dict, int, str]:
         logger.info("Upserting VaR calculation")
         payload = {
             'trading_date': str(trading_date)[:10],
@@ -328,7 +328,7 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def post_marketestimators(api_connection: ApiConnection, payload):
+    def post_marketestimators(api_connection: ApiConnection, payload) -> tuple[bool, dict, int, str]:
         """posts market estimators to database"""
         logger.info("Posting market estimators")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketestimators/', payload)
@@ -416,14 +416,14 @@ class RiskApi:
         return json_res
 
     @staticmethod
-    def post_market_area(api_connection: ApiConnection, payload):
+    def post_market_area(api_connection: ApiConnection, payload) -> tuple[bool, dict, int, str]:
         """posts market areas to database"""
         logger.info("Posting market areas")
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/riskmanager/marketareas/', payload)
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def bulk_post_market_areas(api_connection: ApiConnection, payload):
+    def bulk_post_market_areas(api_connection: ApiConnection, payload) -> tuple[bool, dict, int, str]:
         """posts market areas to database"""
         logger.info("Bulk posting market areas")
         # The endpoint for bulk insertion is appended with the action's name 'bulk_create'
@@ -437,7 +437,7 @@ class RiskApi:
         return json_result
 
     @staticmethod
-    def post_area_volatility(api_connection: ApiConnection, area_pk: int, volatility_data: list):
+    def post_area_volatility(api_connection: ApiConnection, area_pk: int, volatility_data: list) -> tuple[bool, dict, int, str]:
         """
         Store volatility data for a specific market area.
         
