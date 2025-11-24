@@ -47,6 +47,17 @@ class MarketsApi:
         return json_res
 
     @staticmethod
+    def get_market_places(api_connection: ApiConnection, parameters: dict={}):
+        """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+
+        json_res=api_connection.exec_get_url('/api/markets/marketplaces/', parameters)
+        return json_res
+
+    @staticmethod
     def get_markets_df(api_connection: ApiConnection, parameters: dict={}):
         """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
 
