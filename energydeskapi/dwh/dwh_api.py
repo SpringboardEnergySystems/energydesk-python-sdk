@@ -62,6 +62,8 @@ class DwhApi:
             json_res = api_connection.exec_get_url('/api/dwh/productviewtimeseries/', parameters)
         else:
             json_res = api_connection.exec_get_url('/api/dwh/productviewtimeseries/latest/', parameters)
+
+        logger.info(f"DWH json_res:{json_res}")
         if json_res is None:
             return None
         return json_res
