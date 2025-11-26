@@ -7,42 +7,6 @@ from urllib3.exceptions import IncompleteRead
 import requests
 logger = logging.getLogger(__name__)
 
-def exec_get_url(api_connection, trailing_url, parameters):
-    headers = api_connection.get_authorization_header()
-
-    server_url: str = api_connection.add_trailing_slash_if_missing(api_connection.get_base_url() + trailing_url)
-
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            # Increase timeout significantly
-            response = requests.get(
-                server_url,
-                headers=headers,
-                params=parameters,
-                timeout=(30, 600),  # 30s connect, 600s read
-                stream=True  # Enable streaming
-            )
-
-            # Manually consume response to handle incomplete reads
-            content = b''
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    content += chunk
-
-            response._content = content
-            return response.json()
-
-        except (ChunkedEncodingError, IncompleteRead) as e:
-            if attempt == max_retries - 1:
-                logger.error(f"Failed after {max_retries} attempts: {e}")
-                raise
-
-            wait_time = 2 ** attempt  # Exponential backoff
-            logger.warning(f"Incomplete read on attempt {attempt + 1}/{max_retries}, retrying in {wait_time}s...")
-            time.sleep(wait_time)
-
-    return None
 
 class DwhApi:
     """Class for user access to Datawarehouse
