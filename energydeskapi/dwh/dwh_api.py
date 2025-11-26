@@ -87,9 +87,9 @@ class DwhApi:
         """Fetches  reports
         """
         if 'report_date' in parameters:
-            json_res = exec_get_url(api_connection,'/api/dwh/periodviewtimeseries/', parameters)
+            json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/', parameters)
         else:
-            json_res = exec_get_url(api_connection,'/api/dwh/periodviewtimeseries/latest/', parameters)
+            json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/latest/', parameters)
         logger.info(f"DWH json_res:{json_res}")
         if json_res is None:
             return None
