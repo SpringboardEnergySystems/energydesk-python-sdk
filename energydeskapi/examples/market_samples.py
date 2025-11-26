@@ -69,6 +69,8 @@ def manage_market_products(api_conn, ticker):
 def market_products(api_conn):
     res=ProductsApi.get_commodity_definitions_embedded(api_conn, {'page_size':10})
     print(json.dumps(res['results'], indent=2))
+    res=MarketsApi.get_market_places(api_conn)
+    print(json.dumps(res['results'], indent=2))
 
 
 def get_market_types(api_conn):
