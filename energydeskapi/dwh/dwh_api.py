@@ -1,9 +1,48 @@
 import logging
 
 from energydeskapi.sdk.api_connection import ApiConnection
-
+import time
+from requests.exceptions import ChunkedEncodingError
+from urllib3.exceptions import IncompleteRead
+import requests
 logger = logging.getLogger(__name__)
 
+def exec_get_url(api_connection, trailing_url, parameters):
+    headers = api_connection.get_authorization_header()
+
+    server_url: str = api_connection._add_trailing_slash_if_missing(api_connection.get_base_url() + trailing_url)
+
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            # Increase timeout significantly
+            response = requests.get(
+                server_url,
+                headers=headers,
+                params=parameters,
+                timeout=(30, 600),  # 30s connect, 600s read
+                stream=True  # Enable streaming
+            )
+
+            # Manually consume response to handle incomplete reads
+            content = b''
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    content += chunk
+
+            response._content = content
+            return response.json()
+
+        except (ChunkedEncodingError, IncompleteRead) as e:
+            if attempt == max_retries - 1:
+                logger.error(f"Failed after {max_retries} attempts: {e}")
+                raise
+
+            wait_time = 2 ** attempt  # Exponential backoff
+            logger.warning(f"Incomplete read on attempt {attempt + 1}/{max_retries}, retrying in {wait_time}s...")
+            time.sleep(wait_time)
+
+    return None
 
 class DwhApi:
     """Class for user access to Datawarehouse
@@ -48,9 +87,9 @@ class DwhApi:
         """Fetches  reports
         """
         if 'report_date' in parameters:
-            json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/', parameters)
+            json_res = exec_get_url(api_connection,'/api/dwh/periodviewtimeseries/', parameters)
         else:
-            json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/latest/', parameters)
+            json_res = exec_get_url(api_connection,'/api/dwh/periodviewtimeseries/latest/', parameters)
         logger.info(f"DWH json_res:{json_res}")
         if json_res is None:
             return None
