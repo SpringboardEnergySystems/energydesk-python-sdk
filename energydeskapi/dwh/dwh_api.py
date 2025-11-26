@@ -51,6 +51,7 @@ class DwhApi:
             json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/', parameters)
         else:
             json_res = api_connection.exec_get_url('/api/dwh/periodviewtimeseries/latest/', parameters)
+        logger.info(f"DWH json_res:{json_res}")
         if json_res is None:
             return None
         return json_res
@@ -85,6 +86,7 @@ class DwhApi:
         """Fetches  reports
         """
         json_res = api_connection.exec_get_url('/api/dwh/hedgeviewtimeseries/latest/', parameters)
+        logger.info(f"DWH json_res:{json_res}")
         if json_res is None:
             return None
         return json_res
