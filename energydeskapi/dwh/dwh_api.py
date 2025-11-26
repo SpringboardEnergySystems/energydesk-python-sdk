@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def exec_get_url(api_connection, trailing_url, parameters):
     headers = api_connection.get_authorization_header()
 
-    server_url: str = api_connection._add_trailing_slash_if_missing(api_connection.get_base_url() + trailing_url)
+    server_url: str = api_connection.add_trailing_slash_if_missing(api_connection.get_base_url() + trailing_url)
 
     max_retries = 3
     for attempt in range(max_retries):
