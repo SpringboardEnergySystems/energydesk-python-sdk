@@ -230,8 +230,7 @@ class _api_connection:
 
     def _add_trailing_slash_if_missing(self, server_url: str) -> str:
         return server_url if server_url.endswith("/") else server_url + "/"
-    def add_trailing_slash_if_missing(self, server_url: str) -> str:
-        return self._add_trailing_slash_if_missing(server_url)
+
 
     def exec_get_url(self, trailing_url: str,  parameters: dict={}, extra_headers: dict={}):
         """Returns content from URL
@@ -297,6 +296,9 @@ class ApiConnection(object):
         return self.api_connection.set_token(token, token_type)
     def get_token(self):
         return self.api_connection.get_token()
+    def add_trailing_slash_if_missing(self, server_url: str) -> str:
+        return self.api_connection._add_trailing_slash_if_missing(server_url)
+
     @staticmethod
     def validate_jwt_token( base_url: str, token: str, backend: str="google-oauth2"):
         return _api_connection.validate_jwt_token( base_url, token, backend)
