@@ -1,6 +1,6 @@
 import logging
 from os.path import join, dirname
-from typing import Optional, TypeVar, Any
+from typing import Optional, TypeVar, Any, AnyStr
 
 from dotenv import load_dotenv
 import environ
@@ -11,7 +11,7 @@ from energydeskapi.sdk.datetime_utils import convert_loc_datetime_to_utcstr
 from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
 
-def get_environment_value(parameter, default):
+def get_environment_value(parameter: str, default: str) -> str:
     env = environ.Env()
     outvalue = default
     if parameter in os.environ:
@@ -25,7 +25,7 @@ def check_fix_date2str(dt):
         return dt
     return convert_loc_datetime_to_utcstr(dt)
 
-def load_env(current_dir):
+def load_env(current_dir: AnyStr) -> None:
     """ Loads environment file
     """
     logging.info("Loading environment from "+ str(current_dir))
@@ -71,7 +71,7 @@ def parse_enum_type(etype):
 
 
 # Given a REST entity url https://.../..././/object/x/  will return thee X value
-def key_from_url(url):
+def key_from_url(url: str) -> int:
     if url is None:
         return 0
     cols=url.split("/")
@@ -80,7 +80,7 @@ def key_from_url(url):
     except:
         return 0
 
-def finalpart_from_url(url):
+def finalpart_from_url(url: str) -> str:
     if url is None:
         return ""
     cols=url.split("/")
@@ -95,7 +95,7 @@ def safe_prepare_json(json_input):  #If type is json string load as json
         json_input=json.loads(json_input)
     return json_input
 
-def dict_compare(d1, d2, ignore_fields=[]):
+def dict_compare(d1: dict, d2: dict, ignore_fields: list[str]=[]):
     d1_keys = set(d1.keys())
     d2_keys = set(d2.keys())
     for el in ignore_fields:
@@ -131,3 +131,9 @@ def optional_to_list(optional: Optional[T]) -> list[T]:
 
 def not_nones_in_list(ls: list[Optional[T]]) -> list[T]:
     return [v for v in ls if v is not None]
+
+def split_in_chunks(items: list[T], size: int) -> list[list[T]]:
+    return [items[i:i + size] for i in range(0, len(items), size)]
+
+def flatten_nested2_list(nested_list: list[list[T]]) -> list[T]:
+    return [item for simple_lost in nested_list for item in simple_lost]

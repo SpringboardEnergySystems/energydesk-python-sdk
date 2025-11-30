@@ -92,12 +92,30 @@ def get_period_view_records(api_conn):
 
 def get_product_view(api_conn):
 
-    filter={'portfolio': "36", "view_currency":"EUR"}#,'commodity__delivery_until__gte':str(pendulum.today())}
+    filter={'portfolio': "36", "view_currency":"EUR",
+            "trade_date__lte":"2025-08-13",
+            "commodity__delivery_until__gt":"2025-01-01",
+            "commodity__cascaded_date__gte":"2025-01-01"}
     print(filter)
-    view_id,df=PortfolioViewsApi.get_product_view_df(api_conn, filter)
+    view_id,data=PortfolioViewsApi.get_product_view(api_conn, filter)
+    print(json.dumps(data, indent=2))
+    fixed = []
+    for rec in data:
+        frec = rec.copy()
+        # Flatten ticker field if it's a list
+        if isinstance(frec.get('ticker'), list) and len(frec['ticker']) >= 2:
+            frec['ticker'] = frec['ticker'][0]
+            frec['portfolio'] = rec['ticker'][1]
+        fixed.append(frec)
+
+    #print(json.dumps(fixed, indent=2))
+    df=pd.DataFrame(data=fixed)
+    df=df.sort_values(by=['ticker'])
     print(df)
+    df.to_csv("product_view.csv")
+
 
 if __name__ == '__main__':
-    #pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_period_view_records(api_conn)
+    get_product_view(api_conn)

@@ -6,11 +6,9 @@ import environ
 from logging.handlers import TimedRotatingFileHandler
 from dataclasses import dataclass
 from energydeskapi.sdk.common_utils import load_class_from_string
-import importlib
 
 logger = logging.getLogger(__name__)
 
-import socket
 
 @dataclass(frozen=True)
 class LogstashConfig:
@@ -75,30 +73,19 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
     def create_tcp_handler(host, port):
         env = environ.Env()
         loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
-        handler_class = load_class_from_string("logstash_async.handler.AsynchronousLogstashHandler") #pip install python-logstash before enabling this
+        handler_class = load_class_from_string("logstash.TCPLogstashHandler")
         handler = handler_class(
             host,
             port,
-            database_path='/tmp/django-logstash.db',
-            version=1,
-            tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
-            ssl_enable=True,
-            ssl_verify=False
+            version=1
         )
         handler.setLevel(get_loglevel_from_str(loglev))
-        # Lazy import SingleLineLogstashFormatter
-        module = importlib.import_module('energydeskapi.sdk.logstash_singleline_formatter')
-        SingleLineLogstashFormatter = getattr(module, 'SingleLineLogstashFormatter')
-        formatter = SingleLineLogstashFormatter(
+        # Use python-logstash's built-in formatter
+        LogstashFormatterVersion1 = load_class_from_string("logstash.formatter.LogstashFormatterVersion1")
+        formatter = LogstashFormatterVersion1(
             message_type='python-logstash',
-            fqdn=False,
-            extra_prefix='extra',
-            extra={
-                'logstash_async_version': '4.0.2',
-                'customer': enable_logstash_conf.customer,
-                'environment': enable_logstash_conf.environment,
-                'appname': enable_logstash_conf.appname
-            }
+            tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
+            fqdn=False
         )
         handler.setFormatter(formatter)
         return handler
@@ -128,7 +115,7 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
 # Just to make setup simpler with some standardized env names
 def create_logstash_from_environment():
     env=environ.Env()
-    enabled = False if "LOGSTASH_ENABLED" not in env else env.bool("LOGSTASH_ENABLED")
+    enabled = False if "LOGSTASH_ENABLED" not in env else env.str("LOGSTASH_ENABLED").upper() == "TRUE"
     if enabled:
         host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
         port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")

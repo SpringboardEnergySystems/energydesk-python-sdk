@@ -40,6 +40,11 @@ class InstrumentTypeEnum(Enum):
     EUROPT = 5
     ASIOPT = 6
 
+class StructureTypeEnum(Enum):
+    PLAIN = 1
+    CFD = 2
+
+
 class BlockSizeEnum(Enum):
     SPOT = 1
     DAY = 2

@@ -197,3 +197,6 @@ def next_non_weekend(tomorrow: pendulum.Date) -> pendulum.Date:
 
 def is_weekend(day: pendulum.Date) -> bool:
     return day.isoweekday() in [6, 7]
+
+def pendulum_date_to_datetime(date: pendulum.Date, tz: str | pendulum.Timezone) -> pendulum.DateTime:
+    return pendulum.DateTime.create(date.year, date.month, date.day, tz=tz)
