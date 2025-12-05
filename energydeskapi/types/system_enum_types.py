@@ -19,6 +19,8 @@ class SystemFeaturesEnum(Enum):
     FORWARD_CURVES = 15
     SCHEDULED_TASKS = 16
     FEES = 17
+    PRODUCTS = 18
+    PRICES = 19
 
 class SystemAccessTypeEnum(Enum):
     READ = 1
