@@ -18,6 +18,9 @@ class SystemFeaturesEnum(Enum):
     VAR_CONFIG = 14
     FORWARD_CURVES = 15
     SCHEDULED_TASKS = 16
+    FEES = 17
+    PRODUCTS = 18
+    PRICES = 19
 
 class SystemAccessTypeEnum(Enum):
     READ = 1
@@ -57,5 +60,8 @@ def system_features_description(x):
         SystemFeaturesEnum.COMPANY_CREDIT_SCORE: "Company Credit Score",
         SystemFeaturesEnum.VAR_CONFIG: "VaR Config",
         SystemFeaturesEnum.FORWARD_CURVES: "Forward Price Curves",
-        SystemFeaturesEnum.SCHEDULED_TASKS: "Scheduled Tasks"
+        SystemFeaturesEnum.SCHEDULED_TASKS: "Scheduled Tasks",
+        SystemFeaturesEnum.FEES: "Fees",
+        SystemFeaturesEnum.PRODUCTS: "Products",
+        SystemFeaturesEnum.PRICES: "Prices"
     }[x]
