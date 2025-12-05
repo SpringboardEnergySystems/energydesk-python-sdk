@@ -1,6 +1,9 @@
 import logging
+
 import pandas as pd
+
 from energydeskapi.sdk.api_connection import ApiConnection
+from energydeskapi.types.company_enum_types import CompanyTypeEnum, CompanyRoleEnum
 
 logger = logging.getLogger(__name__)
 
@@ -175,7 +178,7 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_company(api_connection: ApiConnection, key):
+    def get_company(api_connection: ApiConnection, key: int):
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -286,7 +289,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_company_type_url(api_connection: ApiConnection, company_type_enum):
+    def get_company_type_url(api_connection: ApiConnection, company_type_enum: int | CompanyTypeEnum):
         """Fetches url for company types from enum value
 
         :param api_connection: class with API token for use with API
@@ -299,7 +302,7 @@ class CustomersApi:
         return api_connection.get_base_url() + '/api/customers/companytypes/' + str(type_pk) + "/"
 
     @staticmethod
-    def get_company_role_url(api_connection: ApiConnection, company_role_enum):
+    def get_company_role_url(api_connection: ApiConnection, company_role_enum: CompanyRoleEnum):
         """Fetches url for company roles from enum value
 
         :param api_connection: class with API token for use with API
@@ -348,7 +351,7 @@ class CustomersApi:
         return None
 
     @staticmethod
-    def get_company_status(api_connection: ApiConnection, status):
+    def get_company_status(api_connection: ApiConnection, status: str):
         """Fetches companies based on if they're active or not
 
         :param api_connection: class with API token for use with API
