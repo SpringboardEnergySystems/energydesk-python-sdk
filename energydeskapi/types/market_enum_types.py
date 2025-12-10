@@ -55,7 +55,11 @@ class BlockSizeEnum(Enum):
     SEASON = 7
     YEAR = 8
 
-
+class SpotStatusEnum(Enum):
+    SPOT_FINAL = 1
+    SPOT_PRELIMINARY = 2
+    SPOT_CANCELLED = 3
+    SPOT_MISSING = 4
 
 def delivery_type_description(x):
     return {
