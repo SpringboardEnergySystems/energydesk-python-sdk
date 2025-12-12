@@ -6,6 +6,8 @@ from energydeskapi.assets.assets_api import AssetsApi
 import json
 
 from energydeskapi.sdk.api_connection import ApiConnection, AuthorizationFailedException
+import base64
+import requests
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -20,6 +22,30 @@ def rauth_sample(client_id, client_secret, scope, token_endpoint, energydesk_bas
     assets=AssetsApi.get_assets_embedded(api_conn)  # Accessing actual resource using the bearer token
     print(assets)
 
+
+def get_access_token():
+    env = environ.Env()
+    client_id = env.str('OAUTH_CLIENT_ID')
+    client_secret = env.str('OAUTH_CLIENT_SECRET')
+    token_endpoint = env.str('OAUTHCHECK_ACCESS_TOKEN_OBTAIN_URL')
+    data=(client_id + ":" + client_secret).replace(" ", "%20")
+    encoded_bytes = base64.b64encode(data.encode('utf-8'))
+    encoded_str = encoded_bytes.decode('utf-8')
+    body = "grant_type=client_credentials"
+    headers = {
+        'Content-Type': "application/x-www-form-urlencoded",
+        'Authorization': "Basic " + encoded_str,
+        "Cache-Control": "no-cache"
+    }
+    response = requests.request("POST", token_endpoint, data=body, headers=headers)
+    if response.status_code != 200:
+        raise AuthorizationFailedException(f"Failed to obtain access token from {token_endpoint}")
+    token_json = response.json()
+    print(json.dumps(token_json, indent=2))
+    if "access_token_jwt" in token_json:
+        return token_json["access_token_jwt"]
+    else:
+        return token_json["access_token"]
 
 
 if __name__ == '__main__':
