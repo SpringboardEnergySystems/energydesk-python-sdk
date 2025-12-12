@@ -22,6 +22,10 @@ def rauth_sample(client_id, client_secret, scope, token_endpoint, energydesk_bas
     assets=AssetsApi.get_assets_embedded(api_conn)  # Accessing actual resource using the bearer token
     print(assets)
 
+def get_access_token_by_auth(client_id, client_secret, scope, token_endpoint, energydesk_base_url):
+    service = OAuth2Service(client_id=client_id,client_secret = client_secret,access_token_url=token_endpoint)
+    session = service.get_auth_session(data={'grant_type': 'client_credentials', "scope": scope}, decoder=json.loads)
+    return str(session.access_token)
 
 def get_access_token(check_jwt=True):
     env = environ.Env()
