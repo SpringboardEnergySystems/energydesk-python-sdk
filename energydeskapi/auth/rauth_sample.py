@@ -33,6 +33,7 @@ def get_access_token(check_jwt=True):
     client_secret = env.str('OAUTH_CLIENT_SECRET')
     token_endpoint = env.str('OAUTHCHECK_ACCESS_TOKEN_OBTAIN_URL')
     concated_str=client_id + ":" + client_secret
+    logger.info(concated_str)
     data=concated_str.replace(" ", "%20")
     encoded_bytes = base64.b64encode(data.encode('utf-8'))
     encoded_str = encoded_bytes.decode('utf-8')
