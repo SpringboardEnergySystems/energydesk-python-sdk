@@ -23,7 +23,7 @@ def rauth_sample(client_id, client_secret, scope, token_endpoint, energydesk_bas
     print(assets)
 
 
-def get_access_token():
+def get_access_token(check_jwt=True):
     env = environ.Env()
     client_id = env.str('OAUTH_CLIENT_ID')
     client_secret = env.str('OAUTH_CLIENT_SECRET')
@@ -43,7 +43,7 @@ def get_access_token():
         raise AuthorizationFailedException(f"Failed to obtain access token from {token_endpoint}")
     token_json = response.json()
     print(json.dumps(token_json, indent=2))
-    if "access_token_jwt" in token_json:
+    if check_jwt and  "access_token_jwt" in token_json:
         return token_json["access_token_jwt"]
     else:
         return token_json["access_token"]
