@@ -12,6 +12,8 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
                               logging.StreamHandler()])
+
+logger = logging.getLogger(__name__)
 from rauth import OAuth2Service
 def rauth_sample(client_id, client_secret, scope, token_endpoint, energydesk_base_url):
     service = OAuth2Service(client_id=client_id,client_secret = client_secret,access_token_url=token_endpoint)
