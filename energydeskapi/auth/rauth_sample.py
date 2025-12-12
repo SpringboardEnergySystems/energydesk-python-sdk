@@ -29,6 +29,7 @@ def get_access_token():
     client_secret = env.str('OAUTH_CLIENT_SECRET')
     token_endpoint = env.str('OAUTHCHECK_ACCESS_TOKEN_OBTAIN_URL')
     data=(client_id + ":" + client_secret).replace(" ", "%20")
+    print(data)
     encoded_bytes = base64.b64encode(data.encode('utf-8'))
     encoded_str = encoded_bytes.decode('utf-8')
     body = "grant_type=client_credentials"
