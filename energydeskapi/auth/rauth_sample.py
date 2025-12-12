@@ -27,13 +27,9 @@ def get_access_token():
     env = environ.Env()
     client_id = env.str('OAUTH_CLIENT_ID')
     client_secret = env.str('OAUTH_CLIENT_SECRET')
-    print("ID", client_id,"SECRET", client_secret)
     token_endpoint = env.str('OAUTHCHECK_ACCESS_TOKEN_OBTAIN_URL')
     concated_str=client_id + ":" + client_secret
-    print(concated_str)
     data=concated_str.replace(" ", "%20")
-    print(token_endpoint)
-    print(data)
     encoded_bytes = base64.b64encode(data.encode('utf-8'))
     encoded_str = encoded_bytes.decode('utf-8')
     body = "grant_type=client_credentials"
