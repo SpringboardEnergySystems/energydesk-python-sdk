@@ -4,10 +4,10 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta
 import calendar as cal
 
-def get_weekdays_list(start=0):
+def get_weekdays_list(start=0) -> list[str]:
     #start = 0#[d for d in cal.day_name].index(weekday)
     return [cal.day_name[(i+start) % 7] for i in range(7)]
-def get_month_list():
+def get_month_list() -> list[str]:
     start = datetime(2022,1,1)
     return [(start + relativedelta(months=i)).strftime('%B') for i in range(12)]
 
@@ -38,7 +38,7 @@ def period_resolution_key(instance):
 
 PERIOD_CHOICES=[el.value for el in PeriodResolutionEnum]
 
-def period_addition_relativedelta(resolution_enum):
+def period_addition_relativedelta(resolution_enum: PeriodResolutionEnum) -> relativedelta:
     if resolution_enum==PeriodResolutionEnum.MINUTES:
         return relativedelta(minutes=1)
     elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
@@ -61,7 +61,7 @@ def period_addition_relativedelta(resolution_enum):
         return relativedelta(years=1)
     return relativedelta(days=0)  #Default
 
-def resolution_to_pandas_freq(resolution_enum):
+def resolution_to_pandas_freq(resolution_enum: PeriodResolutionEnum) -> str:
     if resolution_enum==PeriodResolutionEnum.MINUTES:
         return "1min"
     elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
@@ -85,7 +85,7 @@ def resolution_to_pandas_freq(resolution_enum):
     return "D"  #Default
 
 # This is not accurate for months and higher
-def period_resolution_hours(resolution_enum):
+def period_resolution_hours(resolution_enum: PeriodResolutionEnum) -> float:
     if resolution_enum==PeriodResolutionEnum.MINUTES:
         return 1/60
     elif resolution_enum==PeriodResolutionEnum.FIVEMIN:
@@ -109,11 +109,11 @@ def period_resolution_hours(resolution_enum):
     return 1
 
 # Server gets Monthly, Hourly etc as input, and needs this conversion
-def resolution_str_to_pandas_freq(resolution_str):
+def resolution_str_to_pandas_freq(resolution_str: str) -> str:
     return resolution_to_pandas_freq(PeriodResolutionEnum(resolution_str))
 
 # Server gets Monthly, Hourly etc as input, and needs this conversion
-def resolution_str_to_period_hours(resolution_str):
+def resolution_str_to_period_hours(resolution_str: str) -> float:
     return period_resolution_hours(PeriodResolutionEnum(resolution_str))
 
 """
