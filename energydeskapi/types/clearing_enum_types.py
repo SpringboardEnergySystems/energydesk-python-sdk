@@ -74,7 +74,8 @@ class ClearingReportTypeEnum(Enum):
     SPAN_PARAM_NONDELIVERYDATESLIST = 21
     SPAN_PARAM_TIMEPERIODLIST = 22
     SPAN_PARAM_TRAILERLIST = 23
-    LEDGER = 24
+    INTREDAY_TRANSACTIONS = 24
+    LEDGER = 25
 
     @staticmethod
     def clearing_report_type_code(x):
@@ -103,7 +104,8 @@ class ClearingReportTypeEnum(Enum):
             21: 'SPAN_PARAM_NONDELIVERYDATESLIST',
             22: 'SPAN_PARAM_TIMEPERIODLIST',
             23: 'SPAN_PARAM_TRAILERLIST',
-            24: 'LEDGER',
+            24: 'INTREDAY_TRANSACTIONS',
+            25: 'LEDGER',
         }.get(x.value, '')
 
 # Need another level if server does not auto approve, only reconcile as a suggestion.
