@@ -50,6 +50,7 @@ class ClearingReportFormat(Enum):
         }.get(x.value, '')
 
 class ClearingReportTypeEnum(Enum):
+    UNKNOWN = 100000
     TRANSACTIONS = 1
     POSITIONS = 2
     ACCMVALUE = 3
@@ -78,6 +79,7 @@ class ClearingReportTypeEnum(Enum):
     @staticmethod
     def clearing_report_type_code(x):
         return {
+            100000: 'UNKNOWN',
             1: 'TRANSACTIONS',
             2: 'POSITIONS',
             3: 'ACCMVALUE',
