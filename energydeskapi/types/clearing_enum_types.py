@@ -74,7 +74,7 @@ class ClearingReportTypeEnum(Enum):
     SPAN_PARAM_NONDELIVERYDATESLIST = 21
     SPAN_PARAM_TIMEPERIODLIST = 22
     SPAN_PARAM_TRAILERLIST = 23
-    INTREDAY_TRANSACTIONS = 24
+    INTRADAY_TRANSACTIONS = 24
     LEDGER = 25
 
     @staticmethod
@@ -104,7 +104,7 @@ class ClearingReportTypeEnum(Enum):
             21: 'SPAN_PARAM_NONDELIVERYDATESLIST',
             22: 'SPAN_PARAM_TIMEPERIODLIST',
             23: 'SPAN_PARAM_TRAILERLIST',
-            24: 'INTREDAY_TRANSACTIONS',
+            24: 'INTRADAY_TRANSACTIONS',
             25: 'LEDGER',
         }.get(x.value, '')
 
