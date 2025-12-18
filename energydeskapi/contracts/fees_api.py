@@ -1,28 +1,12 @@
-import logging
 import json
+import logging
+from dataclasses import dataclass, asdict
+from datetime import datetime
 
+from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder
 from energydeskapi.sdk.api_connection import ApiConnection
-
-from energydeskapi.assets.assets_api import AssetsApi
-from energydeskapi.types.asset_enum_types import TimeSeriesTypesEnum
-from energydeskapi.types.baselines_enum_types import BaselinesModelsEnums
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
-from energydeskapi.assetdata.assetdata_api import AssetDataApi
-import pendulum
-from energydeskapi.assetdata.baselines_api import BaselinesApi
-from energydeskapi.types.flexibility_enum_types import ExternalMarketTypeEnums
-import pandas as pd
-from datetime import timezone, datetime, date
-import json, pendulum
-from energydeskapi.contracts.contracts_api import ContractsApi
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum
-from energydeskapi.types.flexibility_enum_types import RegulationTypeEnums
-from json import JSONEncoder
-from dataclasses import dataclass
-from energydeskapi.flexibility.datatypes.json_encoder import DateTimeEncoder, date_hook
-from typing import List
-from dataclasses import dataclass, asdict, field
 from energydeskapi.types.contract_enum_types import FeeTypeEnum
+
 logger = logging.getLogger(__name__)
 
 

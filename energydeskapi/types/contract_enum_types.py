@@ -56,6 +56,7 @@ class FeeTypeEnum(Enum):
     TRADING_FEE = 1
     CLEARING_FEE = 2
     BROKER_FEE = 3
+    COMMISSION_FEE = 4
 
 
 def fee_type_description(x):
@@ -63,6 +64,7 @@ def fee_type_description(x):
         FeeTypeEnum.TRADING_FEE: "Trading Fee",
         FeeTypeEnum.CLEARING_FEE: "Clearing Fee",
         FeeTypeEnum.BROKER_FEE: "Broker Fee",
+        FeeTypeEnum.COMMISSION_FEE: "Commission Fee"
     }[x]
 
 def quantity_type_description(x):
