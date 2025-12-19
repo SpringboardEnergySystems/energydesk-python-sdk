@@ -73,3 +73,28 @@ def company_role_name(x):
         CompanyRoleEnum.UNDEFINED.value: 'Undefined',
         CompanyRoleEnum.GENERAL_CLEARING_MEMBER.value: 'General Clearing Member',
     }.get(x, 'DSO')
+
+def company_type_name(x):
+    return {
+        CompanyTypeEnum.DOMESTIC.value: 'Domestic',
+        CompanyTypeEnum.INDUSTRIAL.value: 'Industrial',
+        CompanyTypeEnum.UTILITY.value: 'Utility',
+        CompanyTypeEnum.GRID_OWNER.value: 'Grid Company',
+        CompanyTypeEnum.OPERATOR.value: 'Operator',
+        CompanyTypeEnum.BANK.value: 'Bank',
+        CompanyTypeEnum.TRADING_COMPANY.value: 'Trading Company',
+        CompanyTypeEnum.SERVICE_COMPANY.value: 'Service Company',
+        CompanyTypeEnum.GENERAL_COMPANY.value: 'General Company',
+    }.get(x, 'Domestic')
+
+def user_role_descripton(x):
+    return {
+        UserRoleEnum.ADMIN.value: 'Administrator',
+        UserRoleEnum.TRADER.value: 'Trader',
+        UserRoleEnum.RISKMANAGER.value: 'Risk Manager',
+        UserRoleEnum.MANAGER.value: 'Manager',
+        UserRoleEnum.STAKEHOLDER.value: 'Stakeholder',
+        UserRoleEnum.BACKOFFICE.value: 'Backoffice',
+        UserRoleEnum.EXTERNAL_GUEST.value: 'External Guest',
+        UserRoleEnum.ORIGINATOR.value: 'Originator',
+    }.get(x, 'Stakeholder')
