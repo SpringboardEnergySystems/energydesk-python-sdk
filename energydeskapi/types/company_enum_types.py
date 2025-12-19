@@ -57,3 +57,19 @@ def counterpart_type_description(x):
         CounterpartTypeEnum.EEX: "EEX Contract",
         CounterpartTypeEnum.INTERNAL: "Internal Contract"
     }[x]
+
+
+def company_role_name(x):
+    return {
+        CompanyRoleEnum.DSO.value: 'DSO',
+        CompanyRoleEnum.FSP.value: 'FSP',
+        CompanyRoleEnum.BRP.value: 'BRP',
+        CompanyRoleEnum.ASSET_OWNER.value: 'Asset Owner',
+        CompanyRoleEnum.OPERATOR.value: 'Operator',
+        CompanyRoleEnum.BROKER.value: 'Broker',
+        CompanyRoleEnum.CLEARING_HOUSE.value: 'Clearing House',
+        CompanyRoleEnum.PORTFOLIO_MANAGER.value: 'Portfolio Manager',
+        CompanyRoleEnum.BANK.value: 'Bank',
+        CompanyRoleEnum.UNDEFINED.value: 'Undefined',
+        CompanyRoleEnum.GENERAL_CLEARING_MEMBER.value: 'General Clearing Member',
+    }.get(x, 'DSO')
