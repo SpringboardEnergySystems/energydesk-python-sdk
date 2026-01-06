@@ -17,6 +17,7 @@ class MarketPlaceEnum(Enum):
     NASDAQ_OMX = 1
     NORDPOOL_SPOT = 2
     EEX = 3
+    EURONEXT = 4
 
 
 class DeliveryTypeEnum(Enum):
