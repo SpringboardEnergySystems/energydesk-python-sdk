@@ -36,13 +36,20 @@ def query_market_prices(api_conn):
     df=pd.DataFrame(data=json.loads(jd))
     print(df)
 
+def query_product_prices(api_conn, products=['ENOFUTBLYR-26','ENOFUTBLYR-27']):
+    today = pendulum.today('Europe/Oslo')
+    period_from = today.add(days=-150)
+    period_until = today.add(days=-110)
+    params={"price_date__gte": str(period_from),"price_date__lt": str(period_until), 'product__market_ticker__in':products,'page_size':1000}
+    data=DerivativesApi.get_closing_prices(api_conn, params)
+    print(json.dumps(data['results'], indent=2))
+
 def query_market_prices_embedded(api_conn):
     yesterday = pendulum.yesterday('Europe/Oslo')
     today = pendulum.today('Europe/Oslo')
     params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
     params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
     jd=DerivativesApi.get_prices_embedded_json(api_conn, params)
-
     print(jd)
 
 def query_market_types(api_conn):
@@ -107,7 +114,7 @@ if __name__ == '__main__':
     context = {}
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     #print(df)
-    market_products(api_conn)
+    query_product_prices(api_conn, ['ENOFUTBLYR-26','ENOFUTBLYR-27'])
     #success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
     #context['delivery_from'] = returned_data['delivery_from']
