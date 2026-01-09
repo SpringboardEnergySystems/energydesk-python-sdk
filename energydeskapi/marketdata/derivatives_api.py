@@ -122,6 +122,13 @@ class DerivativesApi:
         if jsondata is None:
             return None
         return jsondata
+    @staticmethod
+    def get_closing_prices(api_connection: ApiConnection, parameters: dict={}):
+        jsondata= api_connection.exec_get_url('/api/markets/productprices/closing/', parameters)
+        if jsondata is None:
+            return None
+        return jsondata
+
 
     @staticmethod
     def fetch_daily_prices(api_connection: ApiConnection, market_place: str, market_name: str, area: Optional[str]=None):

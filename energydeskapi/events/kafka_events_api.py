@@ -44,7 +44,8 @@ class KafkaClient(EventClient):
             return False
 
     def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None):
-
+        print(self.producer)
+        print(self.kafka_host)
         result = self.producer.send(topic, value=msg, headers=headers)
         return result
 
