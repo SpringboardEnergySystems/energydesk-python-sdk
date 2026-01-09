@@ -135,8 +135,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug("Calling URL " + str(server_url))
-        logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
+        logger.debug(f"Calling POST URL binary {server_url}")
+        logger.debug(f"...with payload {payload} and headers {headers}")
         return  requests.post(server_url, json=payload,   headers=headers)
 
     def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
@@ -153,8 +153,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug("Calling URL " + str(server_url))
-        logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
+        logger.debug(f"Calling POST URL {server_url}")
+        logger.debug(f"...with payload {payload} and headers {headers}")
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<210:
             if result.status_code>200 and result.text.strip()=="":
@@ -183,7 +183,7 @@ class _api_connection:
         for key in extra_headers:
             headers[key] = extra_headers[key]
         server_url = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug("Calling URL " + str(server_url))
+        logger.debug(f"Calling DELETE URL {server_url}")
         result = requests.delete(server_url, headers=headers)
         if result.status_code < 210:
             if result.status_code > 200 and result.text.strip() == "":
@@ -213,8 +213,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug("Calling URL " + str(server_url))
-        logger.debug("...with payload " + str(payload) + " and headers " + str(headers))
+        logger.debug(f"Calling PATCH URL {server_url}")
+        logger.debug(f"...with payload {payload} and headers {headers}")
         result = requests.patch(server_url, json=payload,   headers=headers)
         if result.status_code<202:
             json_data = result.json()
@@ -245,8 +245,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.info("Calling URL " + str(server_url))
-        logger.debug("...with payload " + " and headers " + str(headers))
+        logger.info(f"Calling GET URL {server_url}")
+        logger.debug(f"...with headers {headers}")
         if len(parameters.keys())>0:
             req = requests.Request('GET', server_url, headers=headers, params=parameters)
             prepared = req.prepare()
