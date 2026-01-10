@@ -71,24 +71,35 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
         return console
 
     def create_tcp_handler(host, port):
-        env = environ.Env()
-        loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
-        handler_class = load_class_from_string("logstash.TCPLogstashHandler")
-        handler = handler_class(
-            host,
-            port,
-            version=1
-        )
-        handler.setLevel(get_loglevel_from_str(loglev))
-        # Use python-logstash's built-in formatter
-        LogstashFormatterVersion1 = load_class_from_string("logstash.formatter.LogstashFormatterVersion1")
-        formatter = LogstashFormatterVersion1(
-            message_type='python-logstash',
-            tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
-            fqdn=False
-        )
-        handler.setFormatter(formatter)
-        return handler
+        try:
+            env = environ.Env()
+            loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
+
+            # Get timeout from environment or use default of 3 seconds
+            timeout = 3 if "LOGSTASH_TIMEOUT" not in env else env.int("LOGSTASH_TIMEOUT")
+
+            handler_class = load_class_from_string("logstash.TCPLogstashHandler")
+            handler = handler_class(
+                host,
+                port,
+                version=1,
+                timeout=timeout  # Add connection timeout
+            )
+            handler.setLevel(get_loglevel_from_str(loglev))
+
+            # Use python-logstash's built-in formatter
+            LogstashFormatterVersion1 = load_class_from_string("logstash.formatter.LogstashFormatterVersion1")
+            formatter = LogstashFormatterVersion1(
+                message_type='python-logstash',
+                tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
+                fqdn=False
+            )
+            handler.setFormatter(formatter)
+            logger.info(f"Logstash handler created successfully for {host}:{port}")
+            return handler
+        except Exception as e:
+            logger.warning(f"Failed to create Logstash handler for {host}:{port}: {e}. Logging will continue without Logstash.")
+            return None
 
     def create_file_handler()-> TimedRotatingFileHandler:
         try:
