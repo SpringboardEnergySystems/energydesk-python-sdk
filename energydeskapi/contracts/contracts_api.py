@@ -1,4 +1,6 @@
 import logging
+from typing import Dict, Any
+
 import pandas as pd
 
 from energydeskapi.sdk.api_connection import ApiConnection
@@ -122,7 +124,7 @@ class Contract:
                                     'quantity': self.quantity})
 
     @staticmethod
-    def from_simple_dict(d):
+    def from_simple_dict(d: Dict[str, Any]):
         c=Contract()
         c.pk=d['pk']
         c.instrument_type=d['commodity']['instrument_type']
@@ -171,7 +173,7 @@ class Contract:
         c.broker = d['broker'] if 'broker' in d else None
         return c
 
-    def get_simple_dict(self):
+    def get_simple_dict(self) -> Dict[str, Any]:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
@@ -241,7 +243,7 @@ class Contract:
         return dict
 
 
-    def get_dict(self, api_conn: ApiConnection):
+    def get_dict(self, api_conn: ApiConnection) -> Dict[str, Any]:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
