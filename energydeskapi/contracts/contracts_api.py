@@ -94,7 +94,8 @@ class Contract:
         self.contract_type=contract_type
         self.contract_sub_type=contract_type  #Default
         self.contract_status_comment=""  # Default
-    def update_users_company(self, apiconn):
+
+    def update_users_company(self, apiconn: ApiConnection):
         prof=UsersApi.get_user_profile(apiconn)
         if prof is None:
             return False
@@ -104,7 +105,7 @@ class Contract:
         self.contract_owner = comp['pk']  # Being set on contract from current user.
         return True
 
-    def add_contract_tag(self, tag):
+    def add_contract_tag(self, tag: str) -> None:
         self.contract_tags.append(tag)
 
 
@@ -890,7 +891,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
 
-    def generate_second_leg_contract(api_connection: ApiConnection, contract: Contract, external_tb):
+    def generate_second_leg_contract(api_connection: ApiConnection, contract: Contract, external_tb: int):
         """Generate a second leg contract for internal trades
         
         :param api_connection: class with API token for use with API
