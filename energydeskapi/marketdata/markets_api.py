@@ -2,6 +2,8 @@ import logging
 import json
 
 from energydeskapi.sdk.api_connection import ApiConnection
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum, InstrumentTypeEnum, \
+    CommodityTypeEnum, BlockSizeEnum, MarketEnum
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +14,7 @@ class MarketsApi:
     """
 
     @staticmethod
-    def get_market_url(api_connection: ApiConnection, market_enum):
+    def get_market_url(api_connection: ApiConnection, market_enum: int | MarketEnum) -> str:
         """Fetches url for market from enum value
 
         :param api_connection: class with API token for use with API
@@ -23,7 +25,7 @@ class MarketsApi:
         market = market_enum if isinstance(market_enum, int) else market_enum.value
         return api_connection.get_base_url() +'/api/markets/markets/' + str(market) + "/"
     @staticmethod
-    def get_market_obj(api_connection: ApiConnection, market_enum):
+    def get_market_obj(api_connection: ApiConnection, market_enum: MarketEnum):
         """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -71,7 +73,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_instrument_type_url(api_connection: ApiConnection, instrument_type_enum):
+    def get_instrument_type_url(api_connection: ApiConnection, instrument_type_enum: int | InstrumentTypeEnum) -> str:
         """Fetches url for instrument type from enum value
 
         :param api_connection: class with API token for use with API
@@ -81,8 +83,9 @@ class MarketsApi:
         """
         instrument_type = instrument_type_enum if isinstance(instrument_type_enum, int) else instrument_type_enum.value
         return api_connection.get_base_url() +'/api/markets/instrumenttypes/' + str(instrument_type) + "/"
+
     @staticmethod
-    def get_instrument_type_obj(api_connection: ApiConnection, instrument_type_enum):
+    def get_instrument_type_obj(api_connection: ApiConnection, instrument_type_enum: InstrumentTypeEnum):
         """Fetches all instrument type objects with URL relations. Will only return instrument types for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -97,7 +100,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_delivery_type_url(api_connection: ApiConnection, delivery_type_enum):
+    def get_delivery_type_url(api_connection: ApiConnection, delivery_type_enum: int | DeliveryTypeEnum):
         """Fetches url for commodity type from enum value
 
         :param api_connection: class with API token for use with API
@@ -109,7 +112,7 @@ class MarketsApi:
         return api_connection.get_base_url() +'/api/markets/deliverytypes/' + str(deltype) + "/"
 
     @staticmethod
-    def get_profile_type_url(api_connection: ApiConnection, profile_type_enum):
+    def get_profile_type_url(api_connection: ApiConnection, profile_type_enum: int | ProfileTypeEnum) -> str:
         """Fetches url for commodity type from enum value
 
         :param api_connection: class with API token for use with API
@@ -121,7 +124,7 @@ class MarketsApi:
         return api_connection.get_base_url() +'/api/markets/profiletypes/' + str(deltype) + "/"
 
     @staticmethod
-    def get_delivery_type_obj(api_connection: ApiConnection, delivery_type_enum):
+    def get_delivery_type_obj(api_connection: ApiConnection, delivery_type_enum: DeliveryTypeEnum):
         """Fetches all commodity type objects with URL relations. Will only return commodity types for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -136,7 +139,7 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum):
+    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum: int | CommodityTypeEnum) -> str:
         """Fetches url for commodity type from enum value
 
         :param api_connection: class with API token for use with API
@@ -148,7 +151,7 @@ class MarketsApi:
         return api_connection.get_base_url() +'/api/markets/commoditytypes/' + str(comm_type) + "/"
 
     @staticmethod
-    def get_commodity_type_obj(api_connection: ApiConnection, commodity_type_enum):
+    def get_commodity_type_obj(api_connection: ApiConnection, commodity_type_enum: CommodityTypeEnum):
         """Fetches all commodity type objects with URL relations. Will only return commodity types for which the user has rights
 
         :param api_connection: class with API token for use with API
@@ -204,7 +207,7 @@ class MarketsApi:
 
 
     @staticmethod
-    def get_blocksize_category_url(api_connection: ApiConnection, blocksize_category_enum):
+    def get_blocksize_category_url(api_connection: ApiConnection, blocksize_category_enum: BlockSizeEnum) -> str:
         """Fetches blocksize category from url
 
         :param api_connection: class with API token for use with API
@@ -215,7 +218,7 @@ class MarketsApi:
         return api_connection.get_base_url() +'/api/markets/blocksizecategories/' + str(blocksize_category_enum.value) + "/"
 
     @staticmethod
-    def get_blocksize_category_obj(api_connection: ApiConnection, blocksize_category_enum):
+    def get_blocksize_category_obj(api_connection: ApiConnection, blocksize_category_enum: BlockSizeEnum):
         """Fetches all blocksize category objects with URL relations. Will only return blocksize categories for which the user has rights
 
         :param api_connection: class with API token for use with API
