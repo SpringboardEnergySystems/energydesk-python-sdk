@@ -1,10 +1,8 @@
-from decimal import Decimal
-
-from energydeskapi.contracts.contracts_api import Contract
 from unittest import TestCase
 
-from energydeskapi.sdk.money_utils import Money, CurrencyCode
-from energydeskapi.types.contract_enum_types import QuantityUnitEnum, ContractTypeEnum
+from energydeskapi.contracts.contracts_api import Contract
+from energydeskapi.sdk.money_utils import CurrencyCode
+from energydeskapi.types.contract_enum_types import QuantityUnitEnum
 from energydeskapi.types.market_enum_types import ProfileTypeEnum, InstrumentTypeEnum, DeliveryTypeEnum, \
     CommodityTypeEnum
 
