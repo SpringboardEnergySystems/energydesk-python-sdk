@@ -1,11 +1,11 @@
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Self, Optional
 
 import pandas as pd
 
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
+from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json, Money
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -26,30 +26,30 @@ class Contract:
 
     """
     def __init__(self,
-                 external_contract_id=None,
-                 trading_book=None,
-                 contract_price=None,
-                 contract_qty=None,
-                 trading_fee=None,
-                 clearing_fee=None,
-                 broker_fee=None,
-                 clearing_commission_fee=None,
-                 trade_date=None,
-                 trade_datetime=None,
+                 external_contract_id: Optional[str]=None,
+                 trading_book: Optional[int]=None,
+                 contract_price: Optional[Money]=None,
+                 contract_qty: Optional[float]=None,
+                 trading_fee: Optional[float]=None,
+                 clearing_fee: Optional[float]=None,
+                 broker_fee: Optional[float]=None,
+                 clearing_commission_fee: Optional[float]=None,
+                 trade_date: Optional[str]=None,
+                 trade_datetime: Optional[str]=None,
                  commodity_type=None,
-                 instrument_type=None,
-                 contract_status=None,
-                 buy_or_sell=None,
+                 instrument_type: Optional[int]=None,
+                 contract_status: Optional[int]=None,
+                 buy_or_sell: Optional[int]=None,
                  counterpart=None,
-                 market=None,
-                 trader=None,
+                 market: Optional[int]=None,
+                 trader: Optional[int]=None,
                  marketplace_product=None,
-                 delivery_type=DeliveryTypeEnum.FINANCIAL.value,
-                 profile_type=ProfileTypeEnum.BASELOAD.value,
-                 profile_category=ProfileTypeEnum.BASELOAD.name,
-                 quantity_type=QuantityTypeEnum.EFFECT.value,
-                 quantity_unit=QuantityUnitEnum.MW.value,
-                 contract_type=ContractTypeEnum.NASDAQ.value,
+                 delivery_type: Optional[int]=DeliveryTypeEnum.FINANCIAL.value,
+                 profile_type: Optional[int]=ProfileTypeEnum.BASELOAD.value,
+                 profile_category: Optional[str]=ProfileTypeEnum.BASELOAD.name,
+                 quantity_type: Optional[int]=QuantityTypeEnum.EFFECT.value,
+                 quantity_unit: Optional[str]=QuantityUnitEnum.MW.value,
+                 contract_type: Optional[int]=ContractTypeEnum.NASDAQ.value,
                  asset_link=None
                  ):
         self.pk=0
@@ -97,7 +97,7 @@ class Contract:
         self.contract_sub_type=contract_type  #Default
         self.contract_status_comment=""  # Default
 
-    def update_users_company(self, apiconn: ApiConnection):
+    def update_users_company(self, apiconn: ApiConnection) -> bool:
         prof=UsersApi.get_user_profile(apiconn)
         if prof is None:
             return False
@@ -111,7 +111,7 @@ class Contract:
         self.contract_tags.append(tag)
 
 
-    def add_otc_delivery_period(self, delivery_from, delivery_until):
+    def add_otc_delivery_period(self, delivery_from, delivery_until) -> None:
         if isinstance(delivery_from, str):
             self.otc_multi_delivery_periods.append({'period_from': delivery_from,
                                     'period_until': delivery_until,
@@ -127,7 +127,7 @@ class Contract:
     def from_simple_dict(d: Dict[str, Any]):
         c=Contract()
         c.pk=d['pk']
-        c.instrument_type=d['commodity']['instrument_type']
+        c.instrument_type = d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
         c.profile_type = ProfileTypeEnum.BASELOAD if 'profile_type' not in d['commodity'] else d['commodity']['profile_type']#
         c.profile_category = ProfileTypeEnum.BASELOAD if d['commodity'][
