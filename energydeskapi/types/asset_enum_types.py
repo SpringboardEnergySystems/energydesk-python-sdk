@@ -25,13 +25,15 @@ class TimeSeriesTypesEnum(Enum):
     METERREADINGS = 1
     BASELINES = 2
     FORECASTS = 3
+    COSTFORECASTS = 4
 
     @staticmethod
     def timeseries_description(x):
         return {
             1: 'MeterReadings',
             2: 'Baselines',
-            3: 'Forecasts'
+            3: 'Forecasts',
+            4: 'CostForecasts'
         }.get(x.value, '')
 
     @staticmethod
@@ -40,4 +42,5 @@ class TimeSeriesTypesEnum(Enum):
             'MeterReadings': TimeSeriesTypesEnum.METERREADINGS,
             'Baselines': TimeSeriesTypesEnum.BASELINES,
             'Forecasts': TimeSeriesTypesEnum.FORECASTS,
+            'CostForecasts': TimeSeriesTypesEnum.COSTFORECASTS
         }.get(x, 0)

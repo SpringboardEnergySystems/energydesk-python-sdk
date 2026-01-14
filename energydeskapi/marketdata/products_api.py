@@ -114,6 +114,9 @@ class ProductsApi:
         if json_res is None:
             return False
         return json_res
+    def get_market_products_flat(api_connection: ApiConnection, parameters: dict={}):
+        data = api_connection.exec_get_url('/api/markets/marketproducts/flat/', parameters)
+        return data
     @staticmethod
     def get_market_products(api_connection: ApiConnection, parameters: dict={}):
         json_res = api_connection.exec_get_url('/api/markets/marketproducts/', parameters)
