@@ -200,3 +200,6 @@ def is_weekend(day: pendulum.Date) -> bool:
 
 def pendulum_date_to_datetime(date: pendulum.Date, tz: str | pendulum.Timezone) -> pendulum.DateTime:
     return pendulum.DateTime.create(date.year, date.month, date.day, tz=tz)
+
+def datetime_date_to_pendulum_date(dt: date) -> pendulum.Date:
+    return pendulum.Date(dt.year, dt.month, dt.day)
