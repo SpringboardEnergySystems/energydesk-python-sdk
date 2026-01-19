@@ -1,9 +1,11 @@
 import logging
+from typing import Dict, Any, Self, Optional
+
 import pandas as pd
 
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
+from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json, Money
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
@@ -24,29 +26,30 @@ class Contract:
 
     """
     def __init__(self,
-                 external_contract_id=None,
-                 trading_book=None,
-                 contract_price=None,
-                 contract_qty=None,
-                 trading_fee=None,
-                 clearing_fee=None,
-                 broker_fee=None,
-                 trade_date=None,
-                 trade_datetime=None,
+                 external_contract_id: Optional[str]=None,
+                 trading_book: Optional[int]=None,
+                 contract_price: Optional[Money]=None,
+                 contract_qty: Optional[float]=None,
+                 trading_fee: Optional[float]=None,
+                 clearing_fee: Optional[float]=None,
+                 broker_fee: Optional[float]=None,
+                 clearing_commission_fee: Optional[float]=None,
+                 trade_date: Optional[str]=None,
+                 trade_datetime: Optional[str]=None,
                  commodity_type=None,
-                 instrument_type=None,
-                 contract_status=None,
-                 buy_or_sell=None,
+                 instrument_type: Optional[int]=None,
+                 contract_status: Optional[int]=None,
+                 buy_or_sell: Optional[int]=None,
                  counterpart=None,
-                 market=None,
-                 trader=None,
+                 market: Optional[int]=None,
+                 trader: Optional[int]=None,
                  marketplace_product=None,
-                 delivery_type=DeliveryTypeEnum.FINANCIAL.value,
-                 profile_type=ProfileTypeEnum.BASELOAD.value,
-                 profile_category=ProfileTypeEnum.BASELOAD.name,
-                 quantity_type=QuantityTypeEnum.EFFECT.value,
-                 quantity_unit=QuantityUnitEnum.MW.value,
-                 contract_type=ContractTypeEnum.NASDAQ.value,
+                 delivery_type: Optional[int]=DeliveryTypeEnum.FINANCIAL.value,
+                 profile_type: Optional[int]=ProfileTypeEnum.BASELOAD.value,
+                 profile_category: Optional[str]=ProfileTypeEnum.BASELOAD.name,
+                 quantity_type: Optional[int]=QuantityTypeEnum.EFFECT.value,
+                 quantity_unit: Optional[str]=QuantityUnitEnum.MW.value,
+                 contract_type: Optional[int]=ContractTypeEnum.NASDAQ.value,
                  asset_link=None
                  ):
         self.pk=0
@@ -58,6 +61,7 @@ class Contract:
         self.trading_fee=trading_fee
         self.clearing_fee=clearing_fee
         self.broker_fee = broker_fee
+        self.clearing_commission_fee = clearing_commission_fee
         self.trade_date=trade_date
         self.trade_datetime=trade_datetime
         self.quantity_unit=quantity_unit
@@ -92,7 +96,8 @@ class Contract:
         self.contract_type=contract_type
         self.contract_sub_type=contract_type  #Default
         self.contract_status_comment=""  # Default
-    def update_users_company(self, apiconn):
+
+    def update_users_company(self, apiconn: ApiConnection) -> bool:
         prof=UsersApi.get_user_profile(apiconn)
         if prof is None:
             return False
@@ -102,11 +107,11 @@ class Contract:
         self.contract_owner = comp['pk']  # Being set on contract from current user.
         return True
 
-    def add_contract_tag(self, tag):
+    def add_contract_tag(self, tag: str) -> None:
         self.contract_tags.append(tag)
 
 
-    def add_otc_delivery_period(self, delivery_from, delivery_until):
+    def add_otc_delivery_period(self, delivery_from, delivery_until) -> None:
         if isinstance(delivery_from, str):
             self.otc_multi_delivery_periods.append({'period_from': delivery_from,
                                     'period_until': delivery_until,
@@ -119,10 +124,10 @@ class Contract:
                                     'quantity': self.quantity})
 
     @staticmethod
-    def from_simple_dict(d):
+    def from_simple_dict(d: Dict[str, Any]):
         c=Contract()
         c.pk=d['pk']
-        c.instrument_type=d['commodity']['instrument_type']
+        c.instrument_type = d['commodity']['instrument_type']
         c.commodity_type = d['commodity']['commodity_type']
         c.profile_type = ProfileTypeEnum.BASELOAD if 'profile_type' not in d['commodity'] else d['commodity']['profile_type']#
         c.profile_category = ProfileTypeEnum.BASELOAD if d['commodity'][
@@ -153,6 +158,7 @@ class Contract:
         c.trading_fee = gen_money_from_json(d['trading_fee'])
         c.clearing_fee = gen_money_from_json(d['clearing_fee'])
         c.broker_fee = gen_money_from_json(d['broker_fee'])
+        c.clearing_commission_fee = gen_money_from_json(d['clearing_commission_fee'])
         c.contract_status = d['contract_status']
         c.buy_or_sell = d['buy_or_sell']
         c.counterpart = d['counterpart']
@@ -167,7 +173,7 @@ class Contract:
         c.broker = d['broker'] if 'broker' in d else None
         return c
 
-    def get_simple_dict(self):
+    def get_simple_dict(self) -> Dict[str, Any]:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
@@ -205,6 +211,7 @@ class Contract:
         if self.quantity_unit is not None: dict['quantity_unit'] = self.quantity_unit.value
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
+        if self.clearing_commission_fee is not None: dict['clearing_commission_fee'] = gen_json_money(self.clearing_commission_fee)
         if self.broker_fee is not None: dict['broker_fee'] = gen_json_money(self.broker_fee)
         if self.contract_type is not None: dict['contract_type'] = self.contract_type.value
         if self.contract_status is not None: dict['contract_status'] = self.contract_status.value
@@ -236,7 +243,7 @@ class Contract:
         return dict
 
 
-    def get_dict(self, api_conn):
+    def get_dict(self, api_conn: ApiConnection) -> Dict[str, Any]:
         dict = {}
         dict['pk'] = self.pk
         prod = {}
@@ -282,6 +289,7 @@ class Contract:
         if self.trading_fee is not None: dict['trading_fee'] = gen_json_money(self.trading_fee)
         if self.clearing_fee is not None: dict['clearing_fee'] = gen_json_money(self.clearing_fee)
         if self.broker_fee is not None: dict['broker_fee'] = gen_json_money(self.broker_fee)
+        if self.clearing_commission_fee is not None: dict['clearing_commission_fee'] = gen_json_money(self.clearing_commission_fee)
         if self.contract_type is not None: dict['contract_type'] = ContractsApi.get_contract_type_url(api_conn, self.contract_type)
         if self.contract_status is not None: dict['contract_status'] = ContractsApi.get_contract_status_url(api_conn,
                                                                                                             self.contract_status)
@@ -885,7 +893,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
 
-    def generate_second_leg_contract(api_connection: ApiConnection, contract: Contract, external_tb):
+    def generate_second_leg_contract(api_connection: ApiConnection, contract: Contract, external_tb: int):
         """Generate a second leg contract for internal trades
         
         :param api_connection: class with API token for use with API
