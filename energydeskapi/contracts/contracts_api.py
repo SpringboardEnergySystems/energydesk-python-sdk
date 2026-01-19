@@ -1,23 +1,21 @@
+import json
 import logging
-from typing import Dict, Any, Self, Optional
+from typing import Dict, Any, Optional
 
 import pandas as pd
 
-from energydeskapi.sdk.api_connection import ApiConnection
-from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json, Money
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
-from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
-from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.assets.assets_api import AssetsApi
-from energydeskapi.marketdata.products_api import ProductHelper
 from energydeskapi.customers.customers_api import CustomersApi
-from energydeskapi.types.contract_enum_types import QuantityTypeEnum,QuantityUnitEnum, ContractTypeEnum
 from energydeskapi.customers.users_api import UsersApi
+from energydeskapi.marketdata.markets_api import MarketsApi
+from energydeskapi.marketdata.products_api import ProductHelper
+from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
+from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import check_fix_date2str
-
-from energydeskapi.contracts.profile_contract import ContractProfile, ContractProfilePeriod
-import json
+from energydeskapi.sdk.common_utils import parse_enum_type, convert_loc_datetime_to_utcstr
+from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json, Money
+from energydeskapi.types.contract_enum_types import QuantityTypeEnum, QuantityUnitEnum, ContractTypeEnum
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
 
 logger = logging.getLogger(__name__)
 
