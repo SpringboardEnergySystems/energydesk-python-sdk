@@ -51,6 +51,13 @@ class ContractTypeEnum(Enum):
     INTERNAL = 11
     FLEX_ACTIVATION = 12
 
+def is_contract_with_profile(contract_type: ContractTypeEnum) -> bool:
+    return contract_type in [
+        ContractTypeEnum.BILAT_FIXPRICE.value,
+        ContractTypeEnum.PROFILE.value,
+        ContractTypeEnum.PPA
+    ]
+
 
 class FeeTypeEnum(Enum):
     TRADING_FEE = 1
@@ -117,7 +124,6 @@ def contract_type_description(x):
         ContractTypeEnum.INTERNAL: "Internal Contract",
         ContractTypeEnum.FLEX_ACTIVATION: "Flex Activation"
     }[x]
-
 
 def contract_status_description(x):
     return {
