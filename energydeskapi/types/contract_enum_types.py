@@ -53,8 +53,8 @@ class ContractTypeEnum(Enum):
 
 def is_contract_with_profile(contract_type: ContractTypeEnum) -> bool:
     return contract_type in [
-        ContractTypeEnum.BILAT_FIXPRICE.value,
-        ContractTypeEnum.PROFILE.value,
+        ContractTypeEnum.BILAT_FIXPRICE,
+        ContractTypeEnum.PROFILE,
         ContractTypeEnum.PPA
     ]
 
