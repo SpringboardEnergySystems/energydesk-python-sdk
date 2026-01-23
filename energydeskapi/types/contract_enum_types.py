@@ -37,6 +37,11 @@ class GosSupportEnum(Enum):
     SUPPORT = 2
     UNSPECIFIED = 3
 
+#it is not a table in the database, but it is nice to have the two values as constants
+class BuySellEnum(Enum):
+    BUY = "BUY"
+    SELL = "SELL"
+
 class ContractTypeEnum(Enum):
     NASDAQ = 1
     EEX = 2
