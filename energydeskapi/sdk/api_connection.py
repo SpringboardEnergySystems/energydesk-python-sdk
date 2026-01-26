@@ -18,7 +18,7 @@ class TokenException(Exception):
     pass
 
 class _api_connection:
-    def __init__(self, base_url, bearer_token=None):
+    def __init__(self, base_url: str, bearer_token=None):
         self.base_url = base_url
         self.token_type=None
         if bearer_token is None:
@@ -26,7 +26,7 @@ class _api_connection:
         else:
             self.set_token(bearer_token, "Bearer")
 
-    def get_base_url(self):
+    def get_base_url(self) -> str:
         """Returns a string to be used as URL prefix for RET API
         """
         return self.base_url
@@ -34,10 +34,10 @@ class _api_connection:
     def set_base_url(self, base_url: str):
         self.base_url=base_url
 
-    def get_token(self):
+    def get_token(self) -> str:
         return self.token
 
-    def validate_via_basic_auth(self, username: str, password: str):
+    def validate_via_basic_auth(self, username: str, password: str) -> tuple[bool, str]:
         # Making a get request
         #response = requests.get(self.get_base_url() + '/api/customers/profiles/',{"user__username": str(username)},
         #                        auth=HTTPBasicAuth(username, password))
@@ -64,7 +64,7 @@ class _api_connection:
         return True, tok
 
     @staticmethod
-    def get_internal_auth():
+    def get_internal_auth() -> tuple[Optional[str], Optional[str]]:
         env = environ.Env()
         auth_id = None if not 'ENERGYDESK_AUTH_ID' in env else env.str('ENERGYDESK_AUTH_ID')
         auth_secret = None if not 'ENERGYDESK_AUTH_SECRET' in env else env.str('ENERGYDESK_AUTH_SECRET')
@@ -72,7 +72,7 @@ class _api_connection:
     #Example
 
     @staticmethod
-    def __exec_impl_jwt_conversion(base_url: str, token: str, backend: str="google-oauth2"):
+    def __exec_impl_jwt_conversion(base_url: str, token: str, backend: str="google-oauth2") -> Optional[str]:
         auth_id, auth_secret=ApiConnection.get_internal_auth()
         http.client._MAXHEADERS = 1000
         server_url = base_url + "/auth/convert-token"
@@ -92,15 +92,15 @@ class _api_connection:
         return access_token
 
     @staticmethod
-    def validate_jwt_token( base_url: str, token: str, backend: str="google-oauth2"):
+    def validate_jwt_token( base_url: str, token: str, backend: str="google-oauth2") -> Optional[str]:
         return _api_connection.__exec_impl_jwt_conversion( base_url, token, backend)
 
-    def validate_token(self, token: str, backend: str="google-oauth2"):
+    def validate_token(self, token: str, backend: str="google-oauth2") -> bool:
         access_token=_api_connection.__exec_impl_jwt_conversion(self.get_base_url(), token, backend)
         self.set_token(access_token, "Bearer")
         return True
 
-    def set_token(self, token: str, token_type: str="Bearer"):
+    def set_token(self, token: str, token_type: str="Bearer") -> None:
         """Sets a token
 
         :param token: API token
@@ -120,7 +120,7 @@ class _api_connection:
             self.token_type=None
             self.token=token
 
-    def get_current_token(self):
+    def get_current_token(self) -> str:
         return self.token
 
     def get_authorization_header(self):
@@ -139,7 +139,7 @@ class _api_connection:
         logger.debug(f"...with payload {payload} and headers {headers}")
         return  requests.post(server_url, json=payload,   headers=headers)
 
-    def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}):
+    def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}) -> tuple[bool, Optional[list|str], int, Optional[str]]:
         """Posts content from URL
 
         :param trailing_url: description...
@@ -171,7 +171,7 @@ class _api_connection:
                 raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return False, None, result.status_code, result.text
 
-    def exec_delete_url(self, trailing_url: str,extra_headers: dict={}):
+    def exec_delete_url(self, trailing_url: str,extra_headers: dict={}) -> tuple[bool, Optional[list|str], int, Optional[str]]:
         """Posts content from URL
 
         :param trailing_url: description...
@@ -232,7 +232,7 @@ class _api_connection:
         return server_url if server_url.endswith("/") else server_url + "/"
 
 
-    def exec_get_url(self, trailing_url: str,  parameters: dict={}, extra_headers: dict={}):
+    def exec_get_url(self, trailing_url: str,  parameters: dict={}, extra_headers: dict={}) -> dict | str | None:
         """Returns content from URL
 
         :param trailing_url: description...
