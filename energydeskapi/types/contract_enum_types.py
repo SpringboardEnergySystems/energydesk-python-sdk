@@ -37,6 +37,11 @@ class GosSupportEnum(Enum):
     SUPPORT = 2
     UNSPECIFIED = 3
 
+#it is not a table in the database, but it is nice to have the two values as constants
+class BuySellEnum(Enum):
+    BUY = "BUY"
+    SELL = "SELL"
+
 class ContractTypeEnum(Enum):
     NASDAQ = 1
     EEX = 2
@@ -50,6 +55,13 @@ class ContractTypeEnum(Enum):
     POSITION_TRANSFER = 10
     INTERNAL = 11
     FLEX_ACTIVATION = 12
+
+def is_contract_with_profile(contract_type: ContractTypeEnum) -> bool:
+    return contract_type in [
+        ContractTypeEnum.BILAT_FIXPRICE,
+        ContractTypeEnum.PROFILE,
+        ContractTypeEnum.PPA
+    ]
 
 
 class FeeTypeEnum(Enum):
@@ -117,7 +129,6 @@ def contract_type_description(x):
         ContractTypeEnum.INTERNAL: "Internal Contract",
         ContractTypeEnum.FLEX_ACTIVATION: "Flex Activation"
     }[x]
-
 
 def contract_status_description(x):
     return {
