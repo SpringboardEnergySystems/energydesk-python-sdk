@@ -247,7 +247,6 @@ class CustomersApi:
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
         """
-        logger.info("Delete companies from a company role")
         logger.info(f"Adding the companies {parameters['companies']} to the company role {parameters['company_role']}")
         api_connection.exec_post_url('/api/customers/companyroles/add_companies/', parameters)
 
