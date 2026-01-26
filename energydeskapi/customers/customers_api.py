@@ -249,7 +249,7 @@ class CustomersApi:
         """
         logger.info("Delete companies from a company role")
         logger.info(f"Adding the companies {parameters['companies']} to the company role {parameters['company_role']}")
-        api_connection.exec_post_url('/customers/companyroles/add_companies/', parameters)
+        api_connection.exec_post_url('/api/customers/companyroles/add_companies/', parameters)
 
     @staticmethod
     def delete_companies_from_company_role(api_connection: ApiConnection, parameters: dict[str, Any]) -> None:
@@ -259,7 +259,7 @@ class CustomersApi:
         :type api_connection: str, required
         """
         logger.info(f"Deleting the companies {parameters['companies']} from the company role {parameters['company_role']}")
-        api_connection.exec_post_url('/customers/companyroles/add_companies/', parameters)
+        api_connection.exec_post_url('/api/customers/companyroles/add_companies/', parameters)
 
     @staticmethod
     def get_companies_df(api_connection: ApiConnection, parameters: dict={}) -> Optional[pd.DataFrame]:
