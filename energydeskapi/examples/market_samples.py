@@ -61,8 +61,12 @@ def query_market_types(api_conn):
     url=MarketsApi.get_instrument_type_url(api_conn, InstrumentTypeEnum.FWD)
     print(InstrumentTypeEnum.FWD, url)
 def get_spot_prices(api_conn):
-    df=SpotPricesApi.get_spot_prices_df(api_conn)
-    print(df)
+    today = pendulum.today('Europe/Oslo')
+    period_from = today.add(days=-400)
+    params={"period_from": str(period_from),"period_until": str(today), 'currency_code':'EUR', 'resolution':'h','area':'NO1','market':'NORDIC_POWER','page_size':1000}
+    df=SpotPricesApi.get_spot_prices_df(api_conn, params)
+    df_no1=df['NO1']
+    print(df_no1)
 def manage_market_products(api_conn, ticker):
     res=ProductsApi.get_market_products(api_conn, {'market_ticker':ticker})
     print("Lookup ", ticker, " got ", res['results'])
@@ -74,8 +78,14 @@ def manage_market_products(api_conn, ticker):
 
 
 def market_products(api_conn):
-    res=ProductsApi.get_market_products_flat(api_conn, {'page_size':10})
-    print(res['results'])
+    res=ProductsApi.get_market_products_flat(api_conn, {'page_size':500, 'market_place__in':[MarketPlaceEnum.EURONEXT.value]})
+
+    df=pd.DataFrame(data=res['results'])
+    #print(df.columns)
+    #pd.set_option('display.max_rows', None)
+    print(df)
+    #print(df[['product_code','generic_product_code','price_basis_code']])
+    #print(json.dumps(res['results'], indent=2))
 
 
 def get_market_types(api_conn):

@@ -4,7 +4,7 @@ import pandas as pd
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
 from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum, MarketPlaceEnum
 from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.assets.assets_api import AssetsApi
@@ -692,6 +692,12 @@ class ContractsApi:
         logger.info("Listing contracts embedded")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
         return json_res
+    @staticmethod
+    def get_contracts_flat(api_connection: ApiConnection, parameters: dict={}):
+        logger.info("Listing contracts as flat structure")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/flat/', parameters)
+        return json_res
+
     @staticmethod
     def list_contracts_csv(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Listing contracts as CSV")

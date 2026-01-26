@@ -18,6 +18,7 @@ from energydeskapi.types.contract_enum_types import ContractStatusEnum
 from energydeskapi.types.market_enum_types import CommodityTypeEnum, InstrumentTypeEnum, MarketEnum
 from energydeskapi.sdk.money_utils import FormattedMoney
 import json
+from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum, MarketPlaceEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -45,6 +46,15 @@ def get_contract_counterparts(api_conn):
     pk = 1
     json_contractfilter = ContractsApi.get_current_counterparts(api_conn)
     print(json_contractfilter)
+
+def get_contracts_flat(api_conn):
+    res=ContractsApi.get_contracts_flat(api_conn, {'page_size':50,'marketplace_product__market_place__in':[MarketPlaceEnum.EURONEXT.value]})
+
+    df=pd.DataFrame(data=res['results'])
+    #print(df.columns)
+    #pd.set_option('display.max_columns', None)
+    print(df)
+
 
 
 def get_contracts(api_conn):
@@ -250,7 +260,7 @@ def get_fixedprice_contracts(api_conn):
             print(json.dumps(rec, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contracts(api_conn)
+    get_contracts_flat(api_conn)
     #load_contracts_csv(api_conn)
     #cancel_contract(api_conn)
     #get_contract_filters(api_conn)

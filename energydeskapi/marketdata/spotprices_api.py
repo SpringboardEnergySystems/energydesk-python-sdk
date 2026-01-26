@@ -21,7 +21,12 @@ class SpotPricesApi:
         json_res = api_connection.exec_get_url('/api/markets/spotprices/', parameters)
         if json_res is None:
             return None
-        df = pd.read_json(json_res, orient='records')
+        #df = pd.read_json(json_res, orient='records')
+        if isinstance(json_res, str):
+            import io
+            df = pd.read_json(io.StringIO(json_res), orient='records')
+        else:
+            df = pd.DataFrame(json_res)
         df.index = pd.to_datetime(df["datetimehour"])
         df.index = df.index.tz_convert('Europe/Oslo')
         df.datetimehour=df.index
