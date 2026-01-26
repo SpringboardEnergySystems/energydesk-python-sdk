@@ -49,11 +49,15 @@ def retrieve_stored_curve(api_conn):
                 df.to_excel("priskurve_" + area + "_" + curr + ".xlsx")
 
 import json
+from energydeskapi.curves.curve_api import CurveApi
+from energydeskapi.types.common_enum_types import PeriodResolutionEnum
+from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
+
 def query_forward_curves(api_conn):
-    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
+
+    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.MONTHLY.value,
                                                      'price_area':"NO1",
-                                                     'forward_curve_type':
-                                                     FwdCurveTypesEnum.PRICEIT.value})
+                                                     'forward_curve_type': FwdCurveTypesEnum.PRICEIT.value})
     if len(res)==0:
         print("No curves returned")
     else:
@@ -65,7 +69,6 @@ def query_forward_curves(api_conn):
         df.index=df['period_from']
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_convert("Europe/Oslo")
-        #df = df.drop(columns=['period_from', 'period_until'])
         print(df)
 
 def query_spot_forward_curves(api_conn):
@@ -110,5 +113,5 @@ def apply_julia_smoothcurve():
 
 if __name__ == '__main__':
     api_conn=init_api()
-    upload_curve_on_date(api_conn,"2023-11-01", "elviz_curves.xlsx")
+    query_forward_curves(api_conn)
     #get_curves_on_date(api_conn)

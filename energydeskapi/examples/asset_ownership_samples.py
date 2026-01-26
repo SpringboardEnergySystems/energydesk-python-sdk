@@ -14,6 +14,9 @@ logging.basicConfig(level=logging.INFO,
 def load_digraph_of_ownerships(api_conn):
 
     digraph=AssetOwnersApi.load_ownerships(api_conn)
+    dt=json.loads(digraph['ownership_graph'])
+    print(dt)
+    print(json.dumps(dt,indent=2))
     G = json_graph.node_link_graph(json.loads(digraph['ownership_graph']))
 
     #print({node: list(G[node]) for node in G})
