@@ -132,6 +132,9 @@ def optional_to_list(optional: Optional[T]) -> list[T]:
 def not_nones_in_list(ls: list[Optional[T]]) -> list[T]:
     return [v for v in ls if v is not None]
 
+def not_nones_in_dict_values(dc: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in dc.items() if v is not None}
+
 def split_in_chunks(items: list[T], size: int) -> list[list[T]]:
     return [items[i:i + size] for i in range(0, len(items), size)]
 
