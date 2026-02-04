@@ -133,32 +133,22 @@ def load_adjustments(api_conn, asset_id):
 
 import json
 def load_assetdata(api_conn):
-    #asset=AssetsApi.get_asset_url(api_conn, 1)
-    assets=AssetsApi.get_assets(api_conn, {"description":"B2C"})
-    print(assets)
+    assets=AssetsApi.get_assets(api_conn, {"description":"Unforseen_Consumption"})
     params={
         'asset__id':assets['results'][0]['pk'],
         'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
         'resolution': PeriodResolutionEnum.MONTHLY.value
     }
     res = AssetDataApi.get_aggregated_timeseries(api_conn,params)
-    df=AssetDataApi.get_assetgroup_forecast_df(api_conn, [assets['results'][0]['pk']], PeriodResolutionEnum.MONTHLY)
-    #jsdata=json.loads(res) if type(res)==str else res
-    #df=pd.DataFrame(data=jsdata)
-    print(df.plot())
+    #df=AssetDataApi.get_assetgroup_forecast_df(api_conn, [assets['results'][0]['pk']], PeriodResolutionEnum.MONTHLY)
+    print(res)
 
-def load_assetdata2(api_conn):
+def load_assetdata_hourly(api_conn):
 
-    assets=AssetsApi.get_assets(api_conn, {"asset_type__icontains":"BioBrensel"})
-    params={
-        'assetlist_id__in':[a['pk'] for a in assets['results']],
-        'time_series_type__id':TimeSeriesTypesEnum.FORECASTS.value,
-        'resolution': PeriodResolutionEnum.MONTHLY.value
-    }
-    df = AssetDataApi.get_asset_timeseries(api_conn, params)
-    df = pd.DataFrame(data=eval(df))
-    print(df)
-    print(df)
+    assets=AssetsApi.get_assets(api_conn, {"description":"Unforseen_Consumption"})
+    df = AssetDataApi.get_assetgroup_forecast_df(api_conn, [assets['results'][0]['pk']], PeriodResolutionEnum.HOURLY)
+    df.to_excel("assetdata.xlsx")
+
 import pytz
 def load_meterdata(api_conn,period_from="2024-10-01",period_until="2024-12-01"):
 
@@ -246,7 +236,7 @@ if __name__ == '__main__':
     #query_assetdata_types(api_conn)
     #pd.set_option('display.max_rows', None)
     #load_assetdata(api_conn)
-    load_meterdata(api_conn)
+    load_assetdata_hourly(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))

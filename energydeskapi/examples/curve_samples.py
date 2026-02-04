@@ -55,8 +55,8 @@ from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
 
 def query_forward_curves(api_conn):
 
-    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.MONTHLY.value,
-                                                     'price_area':"NO1",
+    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.HOURLY.value,
+                                                     'area':"NO1",'currency_code':"NOK",
                                                      'forward_curve_type': FwdCurveTypesEnum.PRICEIT.value})
     if len(res)==0:
         print("No curves returned")
@@ -69,7 +69,11 @@ def query_forward_curves(api_conn):
         df.index=df['period_from']
         df.index = pd.to_datetime(df.index)
         df.index = df.index.tz_convert("Europe/Oslo")
+        df.index = df.index.tz_localize(None)
+
+        #pd.set_option('display.max_rows', None)
         print(df)
+        df.to_excel("priskurve.xlsx")
 
 def query_spot_forward_curves(api_conn):
     success, df, status_code, error_msg =CurveApi.get_spotforward_curve_df(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )
