@@ -112,6 +112,14 @@ def get_date_part(isostr):
     dt=convert_datetime_from_utc(isostr)
     return dt.strftime("%Y-%m-%d")
 
+def debug_asset_data(api_conn):
+    params={'id__in': [11, 12, 22, 21, 19, 8, 9, 20, 13, 23, 14, 18, 10, 15, 17, 49, 16], 'time_series_type__id': 4, 'timeseries_date__lte': '2025-11-24', 'resolution': 'Monthly'}
+    jsdata=AssetDataApi.get_asset_timeseries(api_conn, params)
+    if type(jsdata) == str:
+        jsdata = json.loads(jsdata)
+    df = pd.DataFrame(data=jsdata)
+    print(df)
+
 def load_adjustments(api_conn, asset_id):
     res=AssetDataApi.get_timeseries_adjustments(api_conn, {'asset__id': asset_id})
     print("Adjustments for ", asset_id)
@@ -236,7 +244,7 @@ if __name__ == '__main__':
     #query_assetdata_types(api_conn)
     #pd.set_option('display.max_rows', None)
     #load_assetdata(api_conn)
-    load_assetdata_hourly(api_conn)
+    debug_asset_data(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
