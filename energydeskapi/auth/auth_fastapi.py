@@ -389,7 +389,7 @@ class FastAPIOIDCAuth:
                                                     <img src="{root_path}/static/energydesk/brightimages/edesk2.png" alt="EnergyDesk" style="max-height: 60px;">
                                                 </a>
                                                 <br/>
-                                                <div class="logotext text-green" style="margin-left: 0;">Clearing & Settlement</div>
+                                                <div class="logotext text-green" style="margin-left: 0;">{self.title}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -440,7 +440,7 @@ class FastAPIOIDCAuth:
                                 <i class="fa fa-lock"></i>
                             </div>
                             <h1>Authentication Required</h1>
-                            <p>Please sign in to access the Clearing Service</p>
+                            <p>Please sign in to access the {self.title}</p>
             '''
 
             # Add provider buttons with icons
