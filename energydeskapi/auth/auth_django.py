@@ -371,6 +371,9 @@ class DjangoOIDCAuth:
                 .lock-icon {{
                     text-align: center;
                     margin-bottom: 20px;
+                    font-size: 48px;
+                    color: #53B092;
+                    font-weight: 600;
                 }}
                 
                 .lock-icon i {{
@@ -442,7 +445,7 @@ class DjangoOIDCAuth:
                 <div class="login-overlay">
                     <div class="login-modal">
                         <div class="lock-icon">
-                            <i class="fa fa-lock"></i>
+                           EnergyDesk <i class="fa fa-lock"></i>
                         </div>
                         <h1>Authentication Required</h1>
                         <p>Please sign in to access the {self.title}</p>
