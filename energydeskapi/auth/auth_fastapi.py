@@ -646,3 +646,114 @@ class FastAPIOIDCAuth:
         """Dependency for optional authentication - returns None if not authenticated"""
         return self.get_current_user(request)
 
+
+# Helper function to build OIDC config from environment variables
+def get_oidc_config_from_env() -> Dict[str, Any]:
+    """
+    Build OIDC configuration dictionary from environment variables
+
+    This function reads configuration directly from environment variables
+    and returns a config dictionary that can be used to initialize FastAPIOIDCAuth.
+
+    Environment variables:
+        AZURE_CLIENT_ID: Azure AD client ID
+        AZURE_CLIENT_SECRET: Azure AD client secret
+        AZURE_TENANT: Azure AD tenant ID (defaults to 'common')
+        GOOGLE_CLIENT_ID: Google OAuth client ID
+        GOOGLE_CLIENT_SECRET: Google OAuth client secret
+        DJANGO_CLIENT_ID: Django OAuth Toolkit client ID
+        DJANGO_CLIENT_SECRET: Django OAuth Toolkit client secret
+        DJANGO_BASE_URL: Django OAuth base URL
+        DJANGO_AUTHORIZATION_ENDPOINT: Django OAuth authorization endpoint (default: /o/authorize/)
+        DJANGO_TOKEN_ENDPOINT: Django OAuth token endpoint (default: /o/token/)
+        DJANGO_USERINFO_ENDPOINT: Django OAuth userinfo endpoint (default: /o/userinfo/)
+        DJANGO_JWKS_URI: Django OAuth JWKS URI (default: /o/.well-known/jwks.json)
+
+    Returns:
+        Dictionary with provider configurations, ready to pass to FastAPIOIDCAuth
+
+    Example:
+        from energydeskapi.auth.auth_fastapi import get_oidc_config_from_env, FastAPIOIDCAuth
+
+        oidc_config = get_oidc_config_from_env()
+        if oidc_config:
+            oidc_auth = FastAPIOIDCAuth("My App", app, oidc_config, secret_key=secret_key)
+    """
+    config = {}
+
+    # Azure AD configuration
+    azure_client_id = os.environ.get('AZURE_CLIENT_ID')
+    azure_client_secret = os.environ.get('AZURE_CLIENT_SECRET')
+    if azure_client_id and azure_client_secret:
+        config['azure'] = {
+            'client_id': azure_client_id,
+            'client_secret': azure_client_secret,
+            'tenant': os.environ.get('AZURE_TENANT', 'common')
+        }
+        logger.info("Azure AD OIDC configuration loaded from environment")
+
+    # Google configuration
+    google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+    if google_client_id and google_client_secret:
+        config['google'] = {
+            'client_id': google_client_id,
+            'client_secret': google_client_secret
+        }
+        logger.info("Google OIDC configuration loaded from environment")
+
+    # Django OAuth Toolkit configuration
+    django_client_id = os.environ.get('DJANGO_CLIENT_ID')
+    django_client_secret = os.environ.get('DJANGO_CLIENT_SECRET')
+    django_base_url = os.environ.get('DJANGO_BASE_URL')
+    if django_client_id and django_client_secret and django_base_url:
+        config['django'] = {
+            'client_id': django_client_id,
+            'client_secret': django_client_secret,
+            'base_url': django_base_url,
+            'authorization_endpoint': os.environ.get('DJANGO_AUTHORIZATION_ENDPOINT', '/o/authorize/'),
+            'token_endpoint': os.environ.get('DJANGO_TOKEN_ENDPOINT', '/o/token/'),
+            'userinfo_endpoint': os.environ.get('DJANGO_USERINFO_ENDPOINT', '/o/userinfo/'),
+            'jwks_uri': os.environ.get('DJANGO_JWKS_URI', '/o/.well-known/jwks.json')
+        }
+        logger.info("Django OAuth OIDC configuration loaded from environment")
+
+    if not config:
+        logger.warning("No OIDC providers configured in environment variables")
+
+    return config
+
+
+# Helper function to create auth instance from environment variables
+def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = None) -> Optional[FastAPIOIDCAuth]:
+    """
+    Create FastAPIOIDCAuth instance from environment variables
+
+    This is a convenience function that combines config loading and auth initialization.
+
+    Args:
+        title: Application title for the login page
+        app: FastAPI application instance
+        secret_key: Optional secret key for session middleware (auto-generated if not provided)
+
+    Returns:
+        FastAPIOIDCAuth instance if any providers are configured, None otherwise
+
+    Example:
+        from energydeskapi.auth.auth_fastapi import create_auth_from_env
+
+        oidc_auth = create_auth_from_env("My App", app, secret_key="your-secret-key")
+        if oidc_auth:
+            logger.info("OIDC authentication enabled")
+        else:
+            logger.info("OIDC authentication disabled")
+    """
+    config = get_oidc_config_from_env()
+
+    if not config:
+        logger.info("OIDC authentication not configured (no providers found in environment)")
+        return None
+
+    return FastAPIOIDCAuth(title, app, config, secret_key)
+
+
