@@ -445,7 +445,7 @@ class FastAPIOIDCAuth:
                         <div class="login-modal">
                             <div class="lock-icon">
                                EnergyDesk <i class="fa fa-lock"></i>
-                               {self.title}
+                               <style="size:8px">{self.title}</style>
                             </div>
                             <h2>Authentication Required</h2>
                             <p>Please sign in via one of these services</p>
