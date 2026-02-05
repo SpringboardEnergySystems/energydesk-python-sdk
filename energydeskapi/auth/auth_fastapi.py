@@ -703,18 +703,18 @@ def get_oidc_config_from_env() -> Dict[str, Any]:
         logger.info("Google OIDC configuration loaded from environment")
 
     # Django OAuth Toolkit configuration
-    django_client_id = os.environ.get('DJANGO_CLIENT_ID')
-    django_client_secret = os.environ.get('DJANGO_CLIENT_SECRET')
-    django_base_url = os.environ.get('DJANGO_BASE_URL')
+    django_client_id = os.environ.get('DJANGO_OAUTH_CLIENT_ID')
+    django_client_secret = os.environ.get('DJANGO_OAUTH_CLIENT_SECRET')
+    django_base_url = os.environ.get('DJANGO_OAUTH_BASE_URL')
     if django_client_id and django_client_secret and django_base_url:
         config['django'] = {
             'client_id': django_client_id,
             'client_secret': django_client_secret,
             'base_url': django_base_url,
-            'authorization_endpoint': os.environ.get('DJANGO_AUTHORIZATION_ENDPOINT', '/o/authorize/'),
-            'token_endpoint': os.environ.get('DJANGO_TOKEN_ENDPOINT', '/o/token/'),
-            'userinfo_endpoint': os.environ.get('DJANGO_USERINFO_ENDPOINT', '/o/userinfo/'),
-            'jwks_uri': os.environ.get('DJANGO_JWKS_URI', '/o/.well-known/jwks.json')
+            'authorization_endpoint': os.environ.get('DJANGO_OAUTH_AUTHORIZATION_ENDPOINT', '/o/authorize/'),
+            'token_endpoint': os.environ.get('DJANGO_OAUTH_TOKEN_ENDPOINT', '/o/token/'),
+            'userinfo_endpoint': os.environ.get('DJANGO_OAUTH_USERINFO_ENDPOINT', '/o/userinfo/'),
+            'jwks_uri': os.environ.get('DJANGO_JOAUTH_WKS_URI', '/o/.well-known/jwks.json')
         }
         logger.info("Django OAuth OIDC configuration loaded from environment")
 
