@@ -561,13 +561,14 @@ class DjangoOIDCAuth:
 
     def profile_view(self, request):
         """Display user profile (protected route example)"""
+        reverse_func = _get_reverse()
         user_info = request.session.get('oidc_user')
         script_name = request.META.get('SCRIPT_NAME', '')
 
         if not user_info:
             # Store the next URL before redirecting to login
             request.session['oidc_next'] = request.get_full_path()
-            return redirect(f'{script_name}{reverse("oidc_login")}')
+            return redirect(f'{script_name}{reverse_func("oidc_login")}')
 
         html = f'''
         <!DOCTYPE html>
@@ -627,7 +628,7 @@ class DjangoOIDCAuth:
                     <span class="label">Django User:</span>
                     <span class="value">{request.user.username if request.user.is_authenticated else 'Anonymous'}</span>
                 </div>
-                <a href="{script_name}{reverse('oidc_logout')}" class="logout-btn">Logout</a>
+                <a href="{script_name}{reverse_func('oidc_logout')}" class="logout-btn">Logout</a>
             </div>
         </body>
         </html>
@@ -647,10 +648,11 @@ class DjangoOIDCAuth:
         def wrapper(request, *args, **kwargs):
             user = self.get_current_user(request)
             if not user:
+                reverse_func = _get_reverse()
                 # Store the next URL
                 request.session['oidc_next'] = request.get_full_path()
                 script_name = request.META.get('SCRIPT_NAME', '')
-                return redirect(f'{script_name}{reverse("oidc_login")}')
+                return redirect(f'{script_name}{reverse_func("oidc_login")}')
             return view_func(request, *args, **kwargs)
         return wrapper
 
@@ -668,6 +670,7 @@ class OIDCAuthMiddleware:
     """
 
     def __init__(self, get_response):
+        from django.conf import settings
         self.get_response = get_response
         self.protected_paths = getattr(settings, 'OIDC_PROTECTED_PATHS', [])
         self.exempt_paths = getattr(settings, 'OIDC_EXEMPT_PATHS', ['/admin/', '/auth/', '/static/', '/media/'])
@@ -685,9 +688,10 @@ class OIDCAuthMiddleware:
         if any(path.startswith(protected) for protected in self.protected_paths):
             user = request.session.get('oidc_user')
             if not user or not user.get('authenticated'):
+                reverse_func = _get_reverse()
                 # Store the next URL
                 request.session['oidc_next'] = request.get_full_path()
-                return redirect(f'{script_name}{reverse("oidc_login")}')
+                return redirect(f'{script_name}{reverse_func("oidc_login")}')
 
         return self.get_response(request)
 
