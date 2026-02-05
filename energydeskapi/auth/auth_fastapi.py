@@ -446,8 +446,9 @@ class FastAPIOIDCAuth:
                             <div class="lock-icon">
                                EnergyDesk <i class="fa fa-lock"></i>
                             </div>
+                            <h3>Module  {self.title}</h3>
                             <h1>Authentication Required</h1>
-                            <p>Please sign in to access the {self.title}</p>
+                            <p>Please sign in via one of these services</p>
             '''
 
             # Add provider buttons with icons
