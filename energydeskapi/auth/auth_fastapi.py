@@ -39,7 +39,7 @@ class FastAPIOIDCAuth:
         }
     }
 
-    def __init__(self, app: Optional[FastAPI] = None, config: Optional[Dict[str, Any]] = None, secret_key: Optional[str] = None):
+    def __init__(self,title:str,app: Optional[FastAPI] = None, config: Optional[Dict[str, Any]] = None, secret_key: Optional[str] = None):
         """
         Initialize OIDC Auth for FastAPI
 
@@ -69,11 +69,12 @@ class FastAPIOIDCAuth:
         self.providers = {}
         self.secret_key = secret_key or os.urandom(24).hex()
         self.app = app
+        self.title = title
 
         if app:
             self.init_app(app, config)
 
-    def init_app(self, title:str, app: FastAPI, config: Optional[Dict[str, Any]] = None):
+    def init_app(self,  app: FastAPI, config: Optional[Dict[str, Any]] = None):
         """Initialize with FastAPI app"""
 
         # Add session middleware
@@ -91,7 +92,7 @@ class FastAPIOIDCAuth:
             self._register_providers(config)
 
         # Register routes
-        self._register_routes(title=title, app=self.app)
+        self._register_routes( app=self.app)
 
     def _register_providers(self, config: Dict[str, Any]):
         """Register OAuth providers based on config"""
@@ -143,7 +144,7 @@ class FastAPIOIDCAuth:
             )
             logger.info(f"Registered OIDC provider: {provider_key}")
 
-    def _register_routes(self, title:str, app: FastAPI):
+    def _register_routes(self,  app: FastAPI):
         """Register authentication routes"""
 
         @app.get('/auth/login', response_class=HTMLResponse)
@@ -167,7 +168,7 @@ class FastAPIOIDCAuth:
             <html lang="en">
             <head>
                 <meta charset="utf-8">
-                <title>Login - {title}</title>
+                <title>Login - {self.title}</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
                 <link rel="icon" href="{root_path}/static/energydesk/images/energydesk_icon.png">
                 

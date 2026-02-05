@@ -363,6 +363,7 @@ class AssetDataApi:
         if json_res is not None:
             return json_res
         return None
+
     @staticmethod
     def calculate_maxupeak(api_connection: ApiConnection, parameters):
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/assetdata/maxpeak/', parameters)
