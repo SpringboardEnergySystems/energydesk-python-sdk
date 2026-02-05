@@ -446,9 +446,10 @@ class DjangoOIDCAuth:
                     <div class="login-modal">
                         <div class="lock-icon">
                            EnergyDesk <i class="fa fa-lock"></i>
+                           <div style="font-size: 18px; margin-top: 10px; font-weight: 400;">{self.title}</div>
                         </div>
                         <h1>Authentication Required</h1>
-                        <p>Please sign in to access the {self.title}</p>
+                        <p>Please sign in with your credentials</p>
         '''
 
         # Add provider buttons with icons
