@@ -1,7 +1,11 @@
 import logging
+from typing import Optional
+
 from energydeskapi.sdk.datetime_utils import convert_datime_to_locstr
 from dateutil import parser
 import pandas as pd
+
+from energydeskapi.types.market_enum_types import InstrumentTypeEnum, StructureTypeEnum
 
 logger = logging.getLogger(__name__)
 
@@ -30,3 +34,9 @@ def convert_productjson_dataframe(jsondata: dict) -> pd.DataFrame:
                      'delivery_until': dts_until})
     df = pd.DataFrame(data=data)
     return df
+
+def is_epad(instrument: InstrumentTypeEnum, structure_type: Optional[StructureTypeEnum]) -> bool:
+    if structure_type is not None:
+        return structure_type == StructureTypeEnum.CFD
+    else:
+        return instrument == InstrumentTypeEnum.EPAD

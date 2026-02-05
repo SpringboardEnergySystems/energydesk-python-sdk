@@ -7,6 +7,7 @@ from typing import Optional
 import environ
 
 from energydeskapi.conversions.elvizlink_api import ElvizLinksApi
+from energydeskapi.sdk.common_utils import not_nones_in_list, not_nones_in_dict_values
 
 logger = logging.getLogger(__name__)
 
@@ -22,26 +23,33 @@ class MontelApi:
         return response.text
 
     @staticmethod
-    def exec_download_historical_internally(period_from: date, period_until: date) -> dict:
+    def exec_download_historical_internally(period_from: date, period_until: date, match_ticker: Optional[str] = None) -> dict:
         server_url = MontelApi._build_server_url(f"download_historical")
-        logger.info(f"Calling montel service URL {server_url} to download historical prices internally in Montel service")
+        params = not_nones_in_dict_values({
+            "from": period_from.isoformat(),
+            "until": period_until.isoformat(),
+            "match_ticker": match_ticker
+        })
+        logger.info(f"Calling montel service URL {server_url} to download historical prices internally in Montel service with params {params}")
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
-        response = authsess.post(server_url, headers=h, data={
-            "from": period_from.isoformat(),
-            "until": period_until.isoformat()
-        })
+        response = authsess.post(server_url, headers=h, data=params)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"Response: {response}")
         return response.text
 
     @staticmethod
-    def exec_get_historical(period_from: date, period_until: date) -> dict:
-        server_url = MontelApi._build_server_url(f"historical?from={period_from.isoformat()}&until={period_until.isoformat()}")
-        logger.info(f"Calling montel service URL {server_url} to get the historical prices from the Montel service own database")
+    def exec_get_historical(period_from: date, period_until: date, match_ticker: Optional[str] = None) -> dict:
+        server_url = MontelApi._build_server_url("historical")
+        params = not_nones_in_dict_values({
+            'from': period_from.isoformat(),
+            'until': period_until.isoformat(),
+            'match_ticker': match_ticker
+        })
+        logger.info(f"Calling montel service URL {server_url} to get the historical prices from the Montel service own database with params {params}")
         h = {'Authorization': 'Bearer', 'Accept': 'application/json'}
         authsess = ElvizLinksApi.obtain_session()
-        response = authsess.get(server_url, headers=h)
+        response = authsess.get(server_url, headers=h, params=params)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"Response: {response}")
         return response.text
