@@ -3,16 +3,12 @@ Configurable OIDC Authentication Component for Django
 Supports Azure AD, Google, and Django OAuth Toolkit
 """
 
+# Import only non-model Django components at module level to avoid "apps aren't loaded yet" error
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import path, reverse
-from django.conf import settings
-from django.contrib.auth import login, logout
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.views import View
+# Note: Don't import settings here if we want to use this in settings.py
+# from django.conf import settings
 from authlib.integrations.django_client import OAuth
 from functools import wraps
 import os
@@ -20,6 +16,22 @@ from typing import Optional, Dict, Any, List
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Lazy imports for Django components that require apps to be loaded
+def _get_django_auth():
+    """Lazy import of django.contrib.auth to avoid apps loading issues"""
+    from django.contrib.auth import login, logout
+    return login, logout
+
+def _get_user_model():
+    """Lazy import of User model to avoid apps loading issues"""
+    from django.contrib.auth.models import User
+    return User
+
+def _get_reverse():
+    """Lazy import of reverse to avoid apps loading issues"""
+    from django.urls import reverse
+    return reverse
 
 
 class DjangoOIDCAuth:
@@ -143,13 +155,14 @@ class DjangoOIDCAuth:
     def login_view(self, request):
         """Show provider selection page as a modal overlay"""
         # Build URL prefix if needed
+        reverse_func = _get_reverse()
         script_name = request.META.get('SCRIPT_NAME', '')
 
         available_providers = [
             {
                 'key': key,
                 'name': self.PROVIDER_CONFIGS[key]['display_name'],
-                'login_url': f'{script_name}{reverse("oidc_login_provider", kwargs={"provider": key})}'
+                'login_url': f'{script_name}{reverse_func("oidc_login_provider", kwargs={"provider": key})}'
             }
             for key in self.providers.keys()
         ]
@@ -472,9 +485,10 @@ class DjangoOIDCAuth:
         if provider not in self.providers:
             return HttpResponse('Invalid provider', status=400)
 
+        reverse_func = _get_reverse()
         # Build redirect URI
         redirect_uri = request.build_absolute_uri(
-            reverse('oidc_authorize', kwargs={'provider': provider})
+            reverse_func('oidc_authorize', kwargs={'provider': provider})
         )
 
         logger.info(f"OAuth redirect URI: {redirect_uri}")
@@ -516,6 +530,8 @@ class DjangoOIDCAuth:
         # Optionally create/update Django user
         email = user_info.get('email')
         if email:
+            User = _get_user_model()
+            login_func, _ = _get_django_auth()
             user, created = User.objects.get_or_create(
                 username=email,
                 defaults={
@@ -525,7 +541,7 @@ class DjangoOIDCAuth:
                 }
             )
             # Log the user into Django's session
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            login_func(request, user, backend='django.contrib.auth.backends.ModelBackend')
             logger.info(f"User {email} authenticated via {provider} (created={created})")
 
         # Redirect to the original page or dashboard
@@ -536,10 +552,12 @@ class DjangoOIDCAuth:
 
     def logout_view(self, request):
         """Clear session and log out"""
+        _, logout_func = _get_django_auth()
+        reverse_func = _get_reverse()
         request.session.pop('oidc_user', None)
-        logout(request)
+        logout_func(request)
         script_name = request.META.get('SCRIPT_NAME', '')
-        return redirect(f'{script_name}{reverse("oidc_login")}')
+        return redirect(f'{script_name}{reverse_func("oidc_login")}')
 
     def profile_view(self, request):
         """Display user profile (protected route example)"""
@@ -674,28 +692,63 @@ class OIDCAuthMiddleware:
         return self.get_response(request)
 
 
-# Helper function to create auth instance from Django settings
+# Helper function to create auth instance from Django settings or environment variables
 def create_auth_from_settings(title: str = None) -> DjangoOIDCAuth:
     """
-    Create DjangoOIDCAuth instance from Django settings
+    Create DjangoOIDCAuth instance from environment variables
 
-    Add to settings.py:
-        OIDC_TITLE = "My Application"
-        OIDC_PROVIDERS = {
-            'azure': {
-                'client_id': 'your-client-id',
-                'client_secret': 'your-client-secret',
-                'tenant': 'your-tenant-id'
-            },
-            'google': {
-                'client_id': 'your-client-id',
-                'client_secret': 'your-client-secret'
-            }
-        }
+    This function reads configuration directly from environment variables
+    to avoid issues with Django apps not being loaded yet when settings are imported.
+
+    Environment variables:
+        OIDC_TITLE (optional): Application title
+        AZURE_CLIENT_ID: Azure AD client ID
+        AZURE_CLIENT_SECRET: Azure AD client secret
+        AZURE_TENANT_ID: Azure AD tenant ID (defaults to 'common')
+        GOOGLE_CLIENT_ID: Google OAuth client ID
+        GOOGLE_CLIENT_SECRET: Google OAuth client secret
+        DJANGO_OAUTH_CLIENT_ID: Django OAuth Toolkit client ID
+        DJANGO_OAUTH_CLIENT_SECRET: Django OAuth Toolkit client secret
+        DJANGO_OAUTH_BASE_URL: Django OAuth base URL
     """
     if title is None:
-        title = getattr(settings, 'OIDC_TITLE', 'Django Application')
+        title = os.environ.get('OIDC_TITLE', 'Django Application')
 
-    config = getattr(settings, 'OIDC_PROVIDERS', {})
+    # Build config from environment variables
+    config = {}
+
+    # Azure AD configuration
+    azure_client_id = os.environ.get('AZURE_CLIENT_ID')
+    azure_client_secret = os.environ.get('AZURE_CLIENT_SECRET')
+    if azure_client_id and azure_client_secret:
+        config['azure'] = {
+            'client_id': azure_client_id,
+            'client_secret': azure_client_secret,
+            'tenant': os.environ.get('AZURE_TENANT_ID', 'common')
+        }
+
+    # Google configuration
+    google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+    if google_client_id and google_client_secret:
+        config['google'] = {
+            'client_id': google_client_id,
+            'client_secret': google_client_secret
+        }
+
+    # Django OAuth Toolkit configuration
+    django_client_id = os.environ.get('DJANGO_OAUTH_CLIENT_ID')
+    django_client_secret = os.environ.get('DJANGO_OAUTH_CLIENT_SECRET')
+    django_base_url = os.environ.get('DJANGO_OAUTH_BASE_URL')
+    if django_client_id and django_client_secret and django_base_url:
+        config['django_oauth'] = {
+            'client_id': django_client_id,
+            'client_secret': django_client_secret,
+            'base_url': django_base_url,
+            'authorization_endpoint': os.environ.get('DJANGO_OAUTH_AUTHORIZATION_ENDPOINT', '/o/authorize/'),
+            'token_endpoint': os.environ.get('DJANGO_OAUTH_TOKEN_ENDPOINT', '/o/token/'),
+            'userinfo_endpoint': os.environ.get('DJANGO_OAUTH_USERINFO_ENDPOINT', '/oauth_edesk/userinfo/'),
+            'jwks_uri': os.environ.get('DJANGO_OAUTH_JWKS_URI', '/o/.well-known/jwks.json')
+        }
 
     return DjangoOIDCAuth(title=title, config=config)
