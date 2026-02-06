@@ -531,6 +531,15 @@ class DjangoOIDCAuth:
             'authenticated': True
         }
 
+        # Store access token for backend API forwarding
+        access_token = token.get('access_token')
+        if access_token:
+            # Store in both formats for compatibility
+            request.session['api_token'] = access_token
+            request.session['oidc_access_token'] = access_token
+            request.session['token_type'] = 'Bearer'
+            logger.info(f"Stored access token in session for API forwarding")
+
         # Optionally create/update Django user
         email = user_info.get('email')
         if email:
@@ -559,6 +568,9 @@ class DjangoOIDCAuth:
         _, logout_func = _get_django_auth()
         reverse_func = _get_reverse()
         request.session.pop('oidc_user', None)
+        request.session.pop('api_token', None)
+        request.session.pop('oidc_access_token', None)
+        request.session.pop('token_type', None)
         logout_func(request)
         script_name = request.META.get('SCRIPT_NAME', '')
         return redirect(f'{script_name}{reverse_func("oidc_login")}')
