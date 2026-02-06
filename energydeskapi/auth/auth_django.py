@@ -558,7 +558,9 @@ class DjangoOIDCAuth:
                 token_to_use = access_token
                 token_type = 'Token'
         else:
-            # Google and Azure use standard access_token with Bearer
+            # Google and Azure - use access_token directly
+            # Backend will validate the OAuth token
+            logger.info(f"Using access_token for {provider} provider")
             token_to_use = access_token
             token_type = 'Bearer'
 
