@@ -558,17 +558,6 @@ class DjangoOIDCAuth:
                 token_to_use = access_token
                 token_type = 'Token'
         elif provider == 'google':
-        # For Django OAuth, use access_token_jwt (JWT) with Bearer auth
-        if provider == 'django_oauth':
-            if access_token_jwt:
-                logger.info("Using access_token_jwt (JWT) for django_oauth provider")
-                token_to_use = access_token_jwt
-                token_type = 'Bearer'
-            else:
-                logger.warning("access_token_jwt not found, falling back to access_token")
-                token_to_use = access_token
-                token_type = 'Token'
-        elif provider == 'google':
             # Google - use id_token (JWT with email) not access_token (opaque)
             # The id_token is a JWT that contains user email and can be validated by backend
             if id_token:
