@@ -522,10 +522,13 @@ class DjangoOIDCAuth:
             logger.error(f"Error getting user info from {provider}: {e}", exc_info=True)
             return HttpResponse(f'Failed to get user info: {str(e)}', status=401)
 
+        # Extract email
+        email = user_info.get('email')
+
         # Store user info in session
         request.session['oidc_user'] = {
             'provider': provider,
-            'email': user_info.get('email'),
+            'email': email,
             'name': user_info.get('name', user_info.get('given_name', '')),
             'sub': user_info.get('sub'),
             'authenticated': True
@@ -540,9 +543,13 @@ class DjangoOIDCAuth:
             request.session['token_type'] = 'Bearer'
             logger.info(f"Stored access token in session for API forwarding")
 
-        # Optionally create/update Django user
-        email = user_info.get('email')
+        # Store username and email for portal compatibility
         if email:
+            request.session['username'] = email
+            request.session['email'] = email
+            logger.info(f"Stored username/email in session: {email}")
+
+            # Create/update Django user
             User = _get_user_model()
             login_func, _ = _get_django_auth()
             user, created = User.objects.get_or_create(
@@ -556,6 +563,7 @@ class DjangoOIDCAuth:
             # Log the user into Django's session
             login_func(request, user, backend='django.contrib.auth.backends.ModelBackend')
             logger.info(f"User {email} authenticated via {provider} (created={created})")
+
 
         # Redirect to the original page or dashboard
         script_name = request.META.get('SCRIPT_NAME', '')
@@ -571,6 +579,9 @@ class DjangoOIDCAuth:
         request.session.pop('api_token', None)
         request.session.pop('oidc_access_token', None)
         request.session.pop('token_type', None)
+        request.session.pop('username', None)
+        request.session.pop('email', None)
+        request.session.pop('usrprofile', None)
         logout_func(request)
         script_name = request.META.get('SCRIPT_NAME', '')
         return redirect(f'{script_name}{reverse_func("oidc_login")}')
