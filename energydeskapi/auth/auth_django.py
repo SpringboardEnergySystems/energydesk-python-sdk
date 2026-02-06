@@ -506,6 +506,7 @@ class DjangoOIDCAuth:
 
         try:
             token = self.providers[provider].authorize_access_token(request)
+            logger.info(f"Token received from {provider}: {token}")
         except Exception as e:
             logger.error(f"Error authorizing with {provider}: {e}", exc_info=True)
             return HttpResponse(f'Authorization failed: {str(e)}', status=401)
@@ -536,12 +537,19 @@ class DjangoOIDCAuth:
 
         # Store access token for backend API forwarding
         access_token = token.get('access_token')
+        logger.info(f"Access token extracted: {access_token}")
+        logger.info(f"Full token object keys: {token.keys()}")
+
         if access_token:
+            # Django OAuth uses Token authentication, not Bearer
+            # Google and Azure use Bearer
+            token_type = 'Token' if provider == 'django_oauth' else 'Bearer'
+
             # Store in both formats for compatibility
             request.session['api_token'] = access_token
             request.session['oidc_access_token'] = access_token
-            request.session['token_type'] = 'Bearer'
-            logger.info(f"Stored access token in session for API forwarding")
+            request.session['token_type'] = token_type
+            logger.info(f"Stored access token in session with token_type={token_type}")
 
         # Store username and email for portal compatibility
         if email:
