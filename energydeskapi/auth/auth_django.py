@@ -778,8 +778,8 @@ def create_auth_from_settings(title: str = None) -> DjangoOIDCAuth:
     config = {}
 
     # Azure AD configuration
-    azure_client_id = os.environ.get('AZURE_CLIENT_ID')
-    azure_client_secret = os.environ.get('AZURE_CLIENT_SECRET')
+    azure_client_id = os.environ.get('OIDC_RP_CLIENT_ID')
+    azure_client_secret = os.environ.get('OIDC_RP_CLIENT_SECRET')
     if azure_client_id and azure_client_secret:
         config['azure'] = {
             'client_id': azure_client_id,
