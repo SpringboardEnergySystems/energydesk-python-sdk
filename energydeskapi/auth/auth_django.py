@@ -536,20 +536,39 @@ class DjangoOIDCAuth:
         }
 
         # Store access token for backend API forwarding
-        access_token = token.get('access_token')
-        logger.info(f"Access token extracted: {access_token}")
-        logger.info(f"Full token object keys: {token.keys()}")
+        logger.info(f"Full token object: {token}")
+        logger.info(f"Token keys: {list(token.keys())}")
 
-        if access_token:
-            # Django OAuth uses Token authentication, not Bearer
-            # Google and Azure use Bearer
-            token_type = 'Token' if provider == 'django_oauth' else 'Bearer'
+        access_token = token.get('access_token')
+        access_token_jwt = token.get('access_token_jwt')
+        id_token = token.get('id_token')
+
+        logger.info(f"access_token: {access_token}")
+        logger.info(f"access_token_jwt: {access_token_jwt}")
+        logger.info(f"id_token: {id_token}")
+
+        # For Django OAuth, use access_token_jwt (JWT) with Bearer auth
+        if provider == 'django_oauth':
+            if access_token_jwt:
+                logger.info("Using access_token_jwt (JWT) for django_oauth provider")
+                token_to_use = access_token_jwt
+                token_type = 'Bearer'
+            else:
+                logger.warning("access_token_jwt not found, falling back to access_token")
+                token_to_use = access_token
+                token_type = 'Token'
+        else:
+            # Google and Azure use standard access_token with Bearer
+            token_to_use = access_token
+            token_type = 'Bearer'
+
+        if token_to_use:
 
             # Store in both formats for compatibility
-            request.session['api_token'] = access_token
-            request.session['oidc_access_token'] = access_token
+            request.session['api_token'] = token_to_use
+            request.session['oidc_access_token'] = token_to_use
             request.session['token_type'] = token_type
-            logger.info(f"Stored access token in session with token_type={token_type}")
+            logger.info(f"Stored token in session: {token_to_use[:50]}... with token_type={token_type}")
 
         # Store username and email for portal compatibility
         if email:
