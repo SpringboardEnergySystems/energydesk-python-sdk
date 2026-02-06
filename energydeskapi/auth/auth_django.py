@@ -557,8 +557,30 @@ class DjangoOIDCAuth:
                 logger.warning("access_token_jwt not found, falling back to access_token")
                 token_to_use = access_token
                 token_type = 'Token'
+        elif provider == 'google':
+        # For Django OAuth, use access_token_jwt (JWT) with Bearer auth
+        if provider == 'django_oauth':
+            if access_token_jwt:
+                logger.info("Using access_token_jwt (JWT) for django_oauth provider")
+                token_to_use = access_token_jwt
+                token_type = 'Bearer'
+            else:
+                logger.warning("access_token_jwt not found, falling back to access_token")
+                token_to_use = access_token
+                token_type = 'Token'
+        elif provider == 'google':
+            # Google - use id_token (JWT with email) not access_token (opaque)
+            # The id_token is a JWT that contains user email and can be validated by backend
+            if id_token:
+                logger.info(f"Using id_token (JWT) for {provider} provider")
+                token_to_use = id_token
+                token_type = 'Bearer'
+            else:
+                logger.warning(f"id_token not found for {provider}, falling back to access_token")
+                token_to_use = access_token
+                token_type = 'Bearer'
         else:
-            # Google and Azure - use access_token directly
+            # Azure - use access_token directly (it's a JWT for Azure)
             # Backend will validate the OAuth token
             logger.info(f"Using access_token for {provider} provider")
             token_to_use = access_token
