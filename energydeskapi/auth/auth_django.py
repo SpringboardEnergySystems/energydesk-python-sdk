@@ -607,7 +607,7 @@ class DjangoOIDCAuth:
             else:
                 logger.info("Using access_token (OAuth2) for django_oauth provider with Bearer type")
                 token_to_use = access_token
-                token_type = 'Bearer'  # Changed from 'Token' to 'Bearer' for OAuth2 standard
+                token_type = 'Bearer'  # Use Bearer for OAuth2 standard
         elif provider == 'google':
             # Google - use id_token (JWT with email) not access_token (opaque)
             # The id_token is a JWT that contains user email and can be validated by backend
@@ -660,6 +660,17 @@ class DjangoOIDCAuth:
         script_name = request.META.get('SCRIPT_NAME', '')
         next_url = request.session.get('oidc_next', f'{script_name}/')
         request.session.pop('oidc_next', None)
+
+        logger.info(f"[{provider.upper()}] Authentication successful!")
+        logger.info(f"[{provider.upper()}] Session data after auth:")
+        logger.info(f"  - oidc_user: {request.session.get('oidc_user')}")
+        logger.info(f"  - api_token: {request.session.get('api_token', 'N/A')[:20]}...")
+        logger.info(f"  - token_type: {request.session.get('token_type')}")
+        logger.info(f"  - username: {request.session.get('username')}")
+        logger.info(f"  - Django user authenticated: {request.user.is_authenticated}")
+        logger.info(f"  - Django user: {request.user}")
+        logger.info(f"[{provider.upper()}] Redirecting to: {next_url}")
+
         return redirect(next_url)
 
     def logout_view(self, request):
