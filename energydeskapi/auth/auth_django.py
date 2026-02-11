@@ -166,13 +166,16 @@ class DjangoOIDCAuth:
         """Show provider selection page as a modal overlay"""
         # Build URL prefix if needed
         reverse_func = _get_reverse()
+        # Note: Django's reverse() already includes the URL_PREFIX from settings
+        # so we don't need to prepend SCRIPT_NAME to reversed URLs
+        # However, static file paths in HTML DO need the script_name prefix
         script_name = request.META.get('SCRIPT_NAME', '')
 
         available_providers = [
             {
                 'key': key,
                 'name': self.PROVIDER_CONFIGS[key]['display_name'],
-                'login_url': f'{script_name}{reverse_func("oidc_login_provider", kwargs={"provider": key})}'
+                'login_url': reverse_func("oidc_login_provider", kwargs={"provider": key})
             }
             for key in self.providers.keys()
         ]
@@ -633,19 +636,17 @@ class DjangoOIDCAuth:
         request.session.pop('email', None)
         request.session.pop('usrprofile', None)
         logout_func(request)
-        script_name = request.META.get('SCRIPT_NAME', '')
-        return redirect(f'{script_name}{reverse_func("oidc_login")}')
+        return redirect(reverse_func("oidc_login"))
 
     def profile_view(self, request):
         """Display user profile (protected route example)"""
         reverse_func = _get_reverse()
         user_info = request.session.get('oidc_user')
-        script_name = request.META.get('SCRIPT_NAME', '')
 
         if not user_info:
             # Store the next URL before redirecting to login
             request.session['oidc_next'] = request.get_full_path()
-            return redirect(f'{script_name}{reverse_func("oidc_login")}')
+            return redirect(reverse_func("oidc_login"))
 
         html = f'''
         <!DOCTYPE html>
@@ -705,7 +706,7 @@ class DjangoOIDCAuth:
                     <span class="label">Django User:</span>
                     <span class="value">{request.user.username if request.user.is_authenticated else 'Anonymous'}</span>
                 </div>
-                <a href="{script_name}{reverse_func('oidc_logout')}" class="logout-btn">Logout</a>
+                <a href="{reverse_func('oidc_logout')}" class="logout-btn">Logout</a>
             </div>
         </body>
         </html>
@@ -728,8 +729,7 @@ class DjangoOIDCAuth:
                 reverse_func = _get_reverse()
                 # Store the next URL
                 request.session['oidc_next'] = request.get_full_path()
-                script_name = request.META.get('SCRIPT_NAME', '')
-                return redirect(f'{script_name}{reverse_func("oidc_login")}')
+                return redirect(reverse_func("oidc_login"))
             return view_func(request, *args, **kwargs)
         return wrapper
 
@@ -755,7 +755,9 @@ class OIDCAuthMiddleware:
     def __call__(self, request):
         # Check if path should be protected
         path = request.path_info
-        script_name = request.META.get('SCRIPT_NAME', '')
+        # Note: SCRIPT_NAME contains the URL prefix (e.g., /portal)
+        # but Django's reverse() already includes this prefix in the returned URL
+        # so we should NOT prepend script_name to avoid doubling (e.g., /portal/portal/auth/login/)
 
         # Check if path is exempt
         if any(path.startswith(exempt) for exempt in self.exempt_paths):
@@ -768,7 +770,9 @@ class OIDCAuthMiddleware:
                 reverse_func = _get_reverse()
                 # Store the next URL
                 request.session['oidc_next'] = request.get_full_path()
-                return redirect(f'{script_name}{reverse_func("oidc_login")}')
+                # Use reverse() directly - it already includes the URL prefix from settings
+                login_url = reverse_func("oidc_login")
+                return redirect(login_url)
 
         return self.get_response(request)
 
