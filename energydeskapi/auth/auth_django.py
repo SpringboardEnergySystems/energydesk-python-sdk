@@ -84,13 +84,23 @@ class DjangoOIDCAuth:
             }
         }
         """
-        self.oauth = OAuth()
+        # Use lazy initialization to avoid accessing Django settings during object creation
+        self._oauth = None  # Will be created on first access
         self.providers = {}
         self.title = title
         self.config = config or {}
+        self._providers_registered = False
 
-        if config:
-            self._register_providers(config)
+    @property
+    def oauth(self):
+        """Lazy initialization of OAuth registry to avoid Django settings access during import"""
+        if self._oauth is None:
+            self._oauth = OAuth()
+            # Register providers now that OAuth is created
+            if self.config and not self._providers_registered:
+                self._register_providers(self.config)
+                self._providers_registered = True
+        return self._oauth
 
     def _register_providers(self, config: Dict[str, Any]):
         """Register OAuth providers based on config"""
