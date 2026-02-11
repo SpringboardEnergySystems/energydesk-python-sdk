@@ -171,6 +171,12 @@ class DjangoOIDCAuth:
         # However, static file paths in HTML DO need the script_name prefix
         script_name = request.META.get('SCRIPT_NAME', '')
 
+        # Trigger provider registration by accessing oauth property
+        # This ensures self.providers is populated
+        print(f"[LOGIN_VIEW] Before oauth access - providers: {list(self.providers.keys())}")
+        _ = self.oauth
+        print(f"[LOGIN_VIEW] After oauth access - providers: {list(self.providers.keys())}")
+
         available_providers = [
             {
                 'key': key,
@@ -179,6 +185,8 @@ class DjangoOIDCAuth:
             }
             for key in self.providers.keys()
         ]
+
+        print(f"[LOGIN_VIEW] Available providers for HTML: {[p['name'] for p in available_providers]}")
 
         # Modal overlay login page on top of dashboard
         html = f'''
