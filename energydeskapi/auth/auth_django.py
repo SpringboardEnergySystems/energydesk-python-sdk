@@ -543,10 +543,21 @@ class DjangoOIDCAuth:
 
         logger.info(f"[{provider.upper()}] authorize_redirect returned: {type(response)}")
         logger.info(f"[{provider.upper()}] Response status: {response.status_code}")
-        if hasattr(response, 'url'):
-            logger.info(f"[{provider.upper()}] Redirect URL: {response.url}")
-        elif hasattr(response, 'get') and 'Location' in response:
-            logger.info(f"[{provider.upper()}] Redirect Location header: {response['Location']}")
+
+        # Get the actual redirect URL from the Location header
+        redirect_url = response.get('Location', 'NO LOCATION HEADER')
+        logger.info(f"[{provider.upper()}] Redirect Location header: {redirect_url}")
+
+        # Log full URL for debugging
+        if redirect_url != 'NO LOCATION HEADER':
+            logger.info(f"[{provider.upper()}] Full redirect URL being sent to browser:")
+            logger.info(f"  {redirect_url}")
+
+            # Check if URL looks valid
+            if redirect_url.startswith('http'):
+                logger.info(f"[{provider.upper()}] ✅ URL looks valid (starts with http)")
+            else:
+                logger.warning(f"[{provider.upper()}] ⚠️  URL may be malformed (doesn't start with http)")
 
         return response
 
