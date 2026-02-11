@@ -126,6 +126,12 @@ class DjangoOIDCAuth:
                 template['jwks_uri'] = base_url + provider_config.get('jwks_uri', '/o/.well-known/jwks.json')
                 template['server_metadata_url'] = None
 
+                logger.info(f"[DJANGO_OAUTH] Constructed URLs:")
+                logger.info(f"  - authorize_url: {template['authorize_url']}")
+                logger.info(f"  - access_token_url: {template['access_token_url']}")
+                logger.info(f"  - userinfo_endpoint: {template['userinfo_endpoint']}")
+                logger.info(f"  - jwks_uri: {template['jwks_uri']}")
+
             # Register with Authlib for Django
             oauth_config = {
                 'client_id': provider_config['client_id'],
@@ -187,6 +193,8 @@ class DjangoOIDCAuth:
         ]
 
         print(f"[LOGIN_VIEW] Available providers for HTML: {[p['name'] for p in available_providers]}")
+        for p in available_providers:
+            print(f"[LOGIN_VIEW]   - {p['name']}: {p['login_url']}")
 
         # Modal overlay login page on top of dashboard
         html = f'''
@@ -516,9 +524,31 @@ class DjangoOIDCAuth:
             reverse_func('oidc_authorize', kwargs={'provider': provider})
         )
 
-        logger.info(f"OAuth redirect URI: {redirect_uri}")
+        logger.info(f"[{provider.upper()}] OAuth callback redirect_uri: {redirect_uri}")
 
-        return self.providers[provider].authorize_redirect(request, redirect_uri)
+        # Debug: log the provider configuration
+        if provider == 'django_oauth':
+            provider_obj = self.providers[provider]
+            logger.info(f"[DJANGO_OAUTH] Provider object type: {type(provider_obj)}")
+            logger.info(f"[DJANGO_OAUTH] Provider config:")
+            for attr in ['authorize_url', 'access_token_url', 'client_id', 'client_kwargs']:
+                val = getattr(provider_obj, attr, 'N/A')
+                if attr == 'client_id':
+                    val = val[:20] + '...' if val != 'N/A' else 'N/A'
+                logger.info(f"  - {attr}: {val}")
+            logger.info(f"[DJANGO_OAUTH] About to call authorize_redirect...")
+
+        # Call authorize_redirect and log the response
+        response = self.providers[provider].authorize_redirect(request, redirect_uri)
+
+        logger.info(f"[{provider.upper()}] authorize_redirect returned: {type(response)}")
+        logger.info(f"[{provider.upper()}] Response status: {response.status_code}")
+        if hasattr(response, 'url'):
+            logger.info(f"[{provider.upper()}] Redirect URL: {response.url}")
+        elif hasattr(response, 'get') and 'Location' in response:
+            logger.info(f"[{provider.upper()}] Redirect Location header: {response['Location']}")
+
+        return response
 
     def authorize_view(self, request, provider):
         """Handle OAuth callback"""
@@ -568,16 +598,16 @@ class DjangoOIDCAuth:
         logger.info(f"access_token_jwt: {access_token_jwt}")
         logger.info(f"id_token: {id_token}")
 
-        # For Django OAuth, use access_token_jwt (JWT) with Bearer auth
+        # For Django OAuth, use access_token with Bearer auth (OAuth2 standard)
         if provider == 'django_oauth':
             if access_token_jwt:
                 logger.info("Using access_token_jwt (JWT) for django_oauth provider")
                 token_to_use = access_token_jwt
                 token_type = 'Bearer'
             else:
-                logger.warning("access_token_jwt not found, falling back to access_token")
+                logger.info("Using access_token (OAuth2) for django_oauth provider with Bearer type")
                 token_to_use = access_token
-                token_type = 'Token'
+                token_type = 'Bearer'  # Changed from 'Token' to 'Bearer' for OAuth2 standard
         elif provider == 'google':
             # Google - use id_token (JWT with email) not access_token (opaque)
             # The id_token is a JWT that contains user email and can be validated by backend
