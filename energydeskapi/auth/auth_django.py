@@ -805,26 +805,35 @@ def create_auth_from_settings(title: str = None) -> DjangoOIDCAuth:
     # Azure AD configuration
     azure_client_id = os.environ.get('OIDC_RP_CLIENT_ID')
     azure_client_secret = os.environ.get('OIDC_RP_CLIENT_SECRET')
+    print(f"[DEBUG] Azure - client_id: {azure_client_id[:20] if azure_client_id else 'None'}..., client_secret: {'SET' if azure_client_secret else 'None'}")
     if azure_client_id and azure_client_secret:
         config['azure'] = {
             'client_id': azure_client_id,
             'client_secret': azure_client_secret,
             'tenant': os.environ.get('AZURE_TENANT_ID', 'common')
         }
+        print(f"[DEBUG] ✅ Azure provider added to config")
+    else:
+        print(f"[DEBUG] ❌ Azure provider NOT added - missing credentials")
 
     # Google configuration
     google_client_id = os.environ.get('GOOGLE_CLIENT_ID')
     google_client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+    print(f"[DEBUG] Google - client_id: {google_client_id[:20] if google_client_id else 'None'}..., client_secret: {'SET' if google_client_secret else 'None'}")
     if google_client_id and google_client_secret:
         config['google'] = {
             'client_id': google_client_id,
             'client_secret': google_client_secret
         }
+        print(f"[DEBUG] ✅ Google provider added to config")
+    else:
+        print(f"[DEBUG] ❌ Google provider NOT added - missing credentials")
 
     # Django OAuth Toolkit configuration
     django_client_id = os.environ.get('DJANGO_OAUTH_CLIENT_ID')
     django_client_secret = os.environ.get('DJANGO_OAUTH_CLIENT_SECRET')
     django_base_url = os.environ.get('DJANGO_OAUTH_BASE_URL')
+    print(f"[DEBUG] Django OAuth - client_id: {django_client_id[:20] if django_client_id else 'None'}..., client_secret: {'SET' if django_client_secret else 'None'}, base_url: {django_base_url}")
     if django_client_id and django_client_secret and django_base_url:
         config['django_oauth'] = {
             'client_id': django_client_id,
@@ -835,5 +844,9 @@ def create_auth_from_settings(title: str = None) -> DjangoOIDCAuth:
             'userinfo_endpoint': os.environ.get('DJANGO_OAUTH_USERINFO_ENDPOINT', '/oauth_edesk/userinfo/'),
             'jwks_uri': os.environ.get('DJANGO_OAUTH_JWKS_URI', '/o/.well-known/jwks.json')
         }
+        print(f"[DEBUG] ✅ Django OAuth provider added to config")
+    else:
+        print(f"[DEBUG] ❌ Django OAuth provider NOT added - missing credentials")
 
+    print(f"[DEBUG] Final config has {len(config)} provider(s): {list(config.keys())}")
     return DjangoOIDCAuth(title=title, config=config)
