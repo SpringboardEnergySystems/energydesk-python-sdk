@@ -304,7 +304,7 @@ class ApiConnection(object):
     def validate_jwt_token( base_url: str, token: str, backend: str="google-oauth2") -> Optional[str]:
         return _api_connection.validate_jwt_token( base_url, token, backend)
 
-    def exec_get_url(self, trailing_url: str, parameters: dict={}, extra_headers: dict={}) -> dict | str | None:
+    def exec_get_url(self, trailing_url: str, parameters: dict={}, extra_headers: dict={}) -> dict | list | str | None:
         return self.api_connection.exec_get_url(trailing_url, parameters, extra_headers)
     def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}) -> tuple[bool, Optional[list|str], int, Optional[str]]:
         return self.api_connection.exec_post_url(trailing_url, payload, extra_headers)

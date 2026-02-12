@@ -1,10 +1,12 @@
 import json
 import logging
-from typing import Optional
+from typing import Optional, Any
 
 import pandas as pd
 
 import ast
+
+import pendulum
 
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.types.clearing_enum_types import ReconciliationStatusEnum, ClearingHouse, ClearingReportTypeEnum, \
@@ -321,3 +323,23 @@ class ClearingApi:
     @staticmethod
     def get_clearing_report_house_url(api_connection: ApiConnection, key):
         return api_connection.get_base_url() + '/api/clearing/reporthouse/' + str(key) + "/"
+
+    @staticmethod
+    def get_reconciled_contracts_status_by_date(api_connection: ApiConnection, clearing_date_from: pendulum.Date, clearing_date_until: pendulum.Date, additonal_parameters: dict[str, Any] = {}) -> Optional[list[dict[str, Any]]]:
+        """
+        Output:
+        [
+          { "clearing_date": "2025-02-01", "reconciliation_status_day": 2 },
+            ...
+          { "clearing_date": "2026-01-30", "reconciliation_status_day": 1 }
+        ]
+        """
+        logger.info(f"Fetching reconciled contracts status by date for the period {clearing_date_from} {clearing_date_until}")
+        params = {
+                    'clearing_date_from': clearing_date_from.isoformat(),
+                    'clearing_date_until': clearing_date_until.isoformat()
+        } | additonal_parameters
+        json_res = api_connection.exec_get_url('/api/clearing/reconciled-contracts-status-by-date/', params)
+        if json_res is None:
+            return None
+        return json_res
