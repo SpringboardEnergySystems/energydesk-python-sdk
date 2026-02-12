@@ -108,6 +108,8 @@ class UsersApi:
         :type api_connection: str, required
         """
         logger.info("Fetching user profile")
+        auth_header = api_connection.get_authorization_header()
+        logger.info(f"Authorization header: {auth_header}")
         json_res=api_connection.exec_get_url('/api/energydesk/get-user-profile/')
         if json_res is not None:
             return json_res

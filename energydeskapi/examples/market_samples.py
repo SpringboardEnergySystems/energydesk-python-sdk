@@ -60,12 +60,14 @@ def query_market_types(api_conn):
     print(CommodityTypeEnum.CURRENCY, url)
     url=MarketsApi.get_instrument_type_url(api_conn, InstrumentTypeEnum.FWD)
     print(InstrumentTypeEnum.FWD, url)
+
 def get_spot_prices(api_conn):
     today = pendulum.today('Europe/Oslo')
-    period_from = today.add(days=-400)
-    params={"period_from": str(period_from),"period_until": str(today), 'currency_code':'EUR', 'resolution':'h','area':'NO1','market':'NORDIC_POWER','page_size':1000}
+    period_from = pendulum.parse("2025-12-31", tz="UTC")
+    params={"period_from": str(period_from),"period_until": str(today), 'currency_code':'NOK', 'resolution':'h','area':'NO1','market':'NORDIC_POWER','page_size':1000}
     df=SpotPricesApi.get_spot_prices_df(api_conn, params)
     df_no1=df['NO1']
+    pd.set_option('display.max_rows', None)
     print(df_no1)
 def manage_market_products(api_conn, ticker):
     res=ProductsApi.get_market_products(api_conn, {'market_ticker':ticker})
@@ -122,7 +124,7 @@ if __name__ == '__main__':
     context = {}
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     #print(df)
-    market_products(api_conn)
+    get_spot_prices(api_conn)
     #query_product_prices(api_conn, ['ENOFUTBLYR-26','ENOFUTBLYR-27'])
     ##success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
