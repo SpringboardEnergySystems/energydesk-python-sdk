@@ -109,7 +109,7 @@ class UsersApi:
         """
         logger.info("Fetching user profile")
         auth_header = api_connection.get_authorization_header()
-        logger.info(f"Authorization header: {auth_header}")
+        logger.debug(f"Authorization header: {auth_header}")
         json_res=api_connection.exec_get_url('/api/energydesk/get-user-profile/')
         if json_res is not None:
             return json_res
@@ -292,6 +292,7 @@ class UsersApi:
         dict = UsersApi.__extract_primary_usergroup(dict)
         df = pd.json_normalize(dict, max_level=1)
         return UsersApi.process_dataframe(df)
+
     @staticmethod
     def get_users_df(api_connection: ApiConnection, parameters: dict={}):
         #json_res=UsersApi.get_users(api_connection, parameters)
@@ -299,7 +300,7 @@ class UsersApi:
         if json_res is not None:
             dict=json.loads(json.dumps(json_res['results']))
             dict=UsersApi.__extract_primary_usergroup(dict)
-            logger.info(f"Primary user group {dict}")
+            #logger.debug(f"Primary user group {dict}")
             df = pd.json_normalize(dict, max_level=1)
             return UsersApi.process_dataframe(df)
         return None
