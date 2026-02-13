@@ -118,6 +118,12 @@ class FastAPIOIDCAuth:
                 template['jwks_uri'] = base_url + provider_config.get('jwks_uri', '/o/.well-known/jwks.json')
                 template['server_metadata_url'] = None
 
+                logger.info(f"[DJANGO] Constructed URLs:")
+                logger.info(f"  - authorize_url: {template['authorize_url']}")
+                logger.info(f"  - access_token_url: {template['access_token_url']}")
+                logger.info(f"  - userinfo_endpoint: {template['userinfo_endpoint']}")
+                logger.info(f"  - jwks_uri: {template['jwks_uri']}")
+
             # Register with Authlib for Starlette
             oauth_config = {
                 'client_id': provider_config['client_id'],
@@ -524,7 +530,20 @@ class FastAPIOIDCAuth:
 
             # Get user info
             try:
-                if provider == 'google':
+                # For django provider, manually call the userinfo endpoint to ensure correct URL
+                if provider == 'django':
+                    import httpx
+                    provider_config = self.config.get(provider, {})
+                    userinfo_url = provider_config.get('base_url', '').rstrip('/') + provider_config.get('userinfo_endpoint', '/oauth_edesk/userinfo/')
+                    logger.info(f"[DJANGO] Manually calling userinfo endpoint: {userinfo_url}")
+                    headers = {'Authorization': f"Bearer {token['access_token']}"}
+                    async with httpx.AsyncClient() as client:
+                        response = await client.get(userinfo_url, headers=headers)
+                        logger.info(f"[DJANGO] Userinfo response status: {response.status_code}")
+                        response.raise_for_status()
+                        user_info = response.json()
+                    logger.info(f"[DJANGO] Userinfo received: {user_info}")
+                elif provider == 'google':
                     user_info = token.get('userinfo')
                     if not user_info:
                         user_info = await self.providers[provider].userinfo(token=token)
@@ -713,7 +732,7 @@ def get_oidc_config_from_env() -> Dict[str, Any]:
             'base_url': django_base_url,
             'authorization_endpoint': os.environ.get('DJANGO_OAUTH_AUTHORIZATION_ENDPOINT', '/o/authorize/'),
             'token_endpoint': os.environ.get('DJANGO_OAUTH_TOKEN_ENDPOINT', '/o/token/'),
-            'userinfo_endpoint': os.environ.get('DJANGO_OAUTH_USERINFO_ENDPOINT', '/o/userinfo/'),
+            'userinfo_endpoint': os.environ.get('DJANGO_OAUTH_USERINFO_ENDPOINT', '/oauth_edesk/userinfo/'),  # FIXED: was /o/userinfo/
             'jwks_uri': os.environ.get('DJANGO_JOAUTH_WKS_URI', '/o/.well-known/jwks.json')
         }
         logger.info("Django OAuth OIDC configuration loaded from environment")
