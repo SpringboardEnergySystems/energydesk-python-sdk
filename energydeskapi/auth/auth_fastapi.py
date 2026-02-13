@@ -89,6 +89,7 @@ class FastAPIOIDCAuth:
         self.app = app
 
         if config:
+            self.config = config  # Store config for later use
             self._register_providers(config)
 
         # Register routes

@@ -39,9 +39,26 @@ This meant:
 'userinfo_endpoint': os.environ.get('DJANGO_OAUTH_USERINFO_ENDPOINT', '/oauth_edesk/userinfo/'),
 ```
 
-### Fix 2: Manual Userinfo Call
+### Fix 2: Store Config in self.config
 
-**File**: `energydeskapi/auth/auth_fastapi.py` lines 525-535
+**File**: `energydeskapi/auth/auth_fastapi.py` line 70 & 92
+
+**Problem**: The manual userinfo call tried to access `self.config` which didn't exist!
+
+**Fixed by**:
+```python
+# In __init__:
+self.config = config or {}  # Store config for later use
+
+# In init_app:
+if config:
+    self.config = config  # Store config for later use
+    self._register_providers(config)
+```
+
+### Fix 3: Manual Userinfo Call
+
+**File**: `energydeskapi/auth/auth_fastapi.py` lines 525-545
 
 Added explicit userinfo call for `django` provider:
 
@@ -60,7 +77,7 @@ if provider == 'django':
     logger.info(f"[DJANGO] Userinfo received: {user_info}")
 ```
 
-### Fix 3: Enhanced Logging
+### Fix 4: Enhanced Logging
 
 **File**: `energydeskapi/auth/auth_fastapi.py` lines 113-121
 
