@@ -2,7 +2,11 @@
 
 ## Issue Found and Fixed ✅
 
-### The Problem
+### The Problems
+
+FastAPI had **TWO CRITICAL BUGS**:
+
+**Bug #1: Wrong Default Endpoint**
 
 Both FastAPI and Django portals were configured with **DIFFERENT** default userinfo endpoints:
 
@@ -10,6 +14,17 @@ Both FastAPI and Django portals were configured with **DIFFERENT** default useri
 |-------------|---------------------------|--------|
 | **FastAPI** (`auth_fastapi.py`) | `/o/userinfo/` | ❌ **WRONG!** |
 | **Django** (`auth_django.py`) | `/oauth_edesk/userinfo/` | ✅ **CORRECT!** |
+
+**Bug #2: Missing self.config**
+
+The manual userinfo call code in FastAPI tried to access `self.config.get(provider, {})` but `self.config` was **NEVER STORED** in the `__init__` or `init_app` methods!
+
+Django portal already had this: `self.config = config or {}`  
+FastAPI was missing it entirely!
+
+**Impact**: FastAPI would fail with `'FastAPIOIDCAuth' object has no attribute 'config'` error.
+
+---
 
 The correct endpoint on the appserver is: `/appserver/oauth_edesk/userinfo/`
 
