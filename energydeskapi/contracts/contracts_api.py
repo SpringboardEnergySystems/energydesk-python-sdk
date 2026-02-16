@@ -711,6 +711,12 @@ class ContractsApi:
         return json_res
 
     @staticmethod
+    def get_contracts_ifs(api_connection: ApiConnection, parameters: dict={}):
+        logger.info("Listing contracts as flat structure")
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/ifs/', parameters)
+        return json_res
+
+    @staticmethod
     def list_contracts_csv(api_connection: ApiConnection, parameters: dict={}):
         logger.info("Listing contracts as CSV")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/csv/', parameters)
