@@ -46,3 +46,6 @@ def is_epad_from_trade_values(instrument_name: str, structure_type_value: Option
         return structure_type_value == StructureTypeEnum.CFD.value
     else:
         return instrument_name == InstrumentTypeEnum.EPAD.name
+
+def is_epad_from_series(instrument_name: pd.Series[str], structure_type_value: pd.Series[int]) -> pd.Series[bool]:
+    return instrument_name == InstrumentTypeEnum.EPAD.name | structure_type_value == StructureTypeEnum.CFD.value
