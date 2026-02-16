@@ -40,3 +40,9 @@ def is_epad(instrument: InstrumentTypeEnum, structure_type: Optional[StructureTy
         return structure_type == StructureTypeEnum.CFD
     else:
         return instrument == InstrumentTypeEnum.EPAD
+
+def is_epad_from_trade_values(instrument_value: str, structure_type_value: Optional[int]) -> bool:
+    if structure_type_value is not None:
+        return structure_type_value == StructureTypeEnum.CFD.value
+    else:
+        return instrument_value == InstrumentTypeEnum.EPAD.name
