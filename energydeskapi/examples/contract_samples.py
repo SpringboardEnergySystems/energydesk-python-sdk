@@ -208,6 +208,12 @@ def load_contracts_emir(api_conn):
     data=ContractsApi.list_contracts_emir(api_conn, {'portfolio_id':13})
     print(data)
 
+def get_contracts_ifs(api_conn):
+
+    parameters={'marketplace_product__market_place__name': [MarketPlaceEnum.EURONEXT.name]}
+    data=ContractsApi.get_contracts_ifs(api_conn, parameters)
+    print(json.dumps(data,indent=2))
+
 def test_gos(api_conn):
     #res=GosApi.register_certificate(api_conn, "Bl¨ått valg", "Et test cert")
     #print(res)
@@ -260,7 +266,7 @@ def get_fixedprice_contracts(api_conn):
             print(json.dumps(rec, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contracts_flat(api_conn)
+    get_contracts_ifs(api_conn)
     #load_contracts_csv(api_conn)
     #cancel_contract(api_conn)
     #get_contract_filters(api_conn)

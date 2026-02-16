@@ -152,6 +152,12 @@ class DjangoOIDCAuth:
                 if template.get('jwks_uri'):
                     oauth_config['jwks_uri'] = template['jwks_uri']
 
+            logger.info(f"[{provider_key.upper()}] Registering OAuth provider with config:")
+            logger.info(f"  - client_id: {oauth_config['client_id'][:20]}...")
+            for key, value in oauth_config.items():
+                if key not in ['client_id', 'client_secret']:
+                    logger.info(f"  - {key}: {value}")
+
             self.providers[provider_key] = self.oauth.register(
                 name=provider_key,
                 **oauth_config
@@ -575,6 +581,15 @@ class DjangoOIDCAuth:
 
         # Get user info
         try:
+            # Debug: Log the userinfo endpoint being used
+            provider_obj = self.providers[provider]
+            if hasattr(provider_obj, 'server_metadata'):
+                metadata = provider_obj.server_metadata
+                userinfo_url = metadata.get('userinfo_endpoint') if metadata else 'NOT FOUND'
+                logger.info(f"[{provider.upper()}] Userinfo endpoint from metadata: {userinfo_url}")
+            elif hasattr(provider_obj, 'userinfo_endpoint'):
+                logger.info(f"[{provider.upper()}] Userinfo endpoint configured: {provider_obj.userinfo_endpoint}")
+
             if provider == 'google':
                 user_info = token.get('userinfo')
                 if not user_info:
