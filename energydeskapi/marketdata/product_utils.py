@@ -1,6 +1,8 @@
 import logging
 from typing import Optional
 
+import numpy as np
+
 from energydeskapi.sdk.datetime_utils import convert_datime_to_locstr
 from dateutil import parser
 import pandas as pd
@@ -40,3 +42,18 @@ def is_epad(instrument: InstrumentTypeEnum, structure_type: Optional[StructureTy
         return structure_type == StructureTypeEnum.CFD
     else:
         return instrument == InstrumentTypeEnum.EPAD
+
+def is_epad_from_trade_values(instrument_name: str, structure_type_value: Optional[int]) -> bool:
+    if structure_type_value is not None:
+        return structure_type_value == StructureTypeEnum.CFD.value
+    else:
+        return instrument_name == InstrumentTypeEnum.EPAD.name
+
+def is_epad_from_series(instrument_name: pd.Series, structure_type_value: pd.Series) -> pd.Series:
+    if structure_type_value.notna().all():
+        return structure_type_value == StructureTypeEnum.CFD.value
+    else:
+        structure_type_from_instrument_type = np.where(instrument_name == InstrumentTypeEnum.EPAD.name, StructureTypeEnum.CFD.value, StructureTypeEnum.PLAIN.value)
+        structure_type_value_no_none = structure_type_value.fillna(pd.Series(structure_type_from_instrument_type)) == StructureTypeEnum.CFD.value
+        return structure_type_value_no_none
+
