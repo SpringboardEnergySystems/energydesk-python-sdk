@@ -862,9 +862,12 @@ def create_auth_from_settings(title: str = None) -> DjangoOIDCAuth:
 
     Environment variables:
         OIDC_TITLE (optional): Application title
-        AZURE_CLIENT_ID: Azure AD client ID
-        AZURE_CLIENT_SECRET: Azure AD client secret
-        AZURE_TENANT_ID: Azure AD tenant ID (defaults to 'common')
+        OIDC_RP_CLIENT_ID: Azure AD client ID (reusing OIDC variable for Azure)
+        OIDC_RP_CLIENT_SECRET: Azure AD client secret (reusing OIDC variable for Azure)
+        AZURE_TENANT_ID (optional): Azure AD tenant ID
+        OIDC_OP_AUTHORIZATION_ENDPOINT (optional): If AZURE_TENANT_ID is not set,
+            the tenant will be extracted from this URL (e.g.,
+            https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize)
         GOOGLE_CLIENT_ID: Google OAuth client ID
         GOOGLE_CLIENT_SECRET: Google OAuth client secret
         DJANGO_OAUTH_CLIENT_ID: Django OAuth Toolkit client ID
@@ -880,14 +883,33 @@ def create_auth_from_settings(title: str = None) -> DjangoOIDCAuth:
     # Azure AD configuration
     azure_client_id = os.environ.get('OIDC_RP_CLIENT_ID')
     azure_client_secret = os.environ.get('OIDC_RP_CLIENT_SECRET')
-    print(f"[DEBUG] Azure - client_id: {azure_client_id[:20] if azure_client_id else 'None'}..., client_secret: {'SET' if azure_client_secret else 'None'}")
+
+    # Determine Azure tenant: check AZURE_TENANT_ID first, then parse from OIDC_OP_AUTHORIZATION_ENDPOINT
+    azure_tenant = os.environ.get('AZURE_TENANT_ID')
+    if not azure_tenant:
+        # Try to extract tenant from OIDC_OP_AUTHORIZATION_ENDPOINT
+        # Format: https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize
+        auth_endpoint = os.environ.get('OIDC_OP_AUTHORIZATION_ENDPOINT', '')
+        if 'login.microsoftonline.com/' in auth_endpoint:
+            # Extract tenant ID from URL (capture alphanumeric, hyphens, until next / or whitespace)
+            import re
+            match = re.search(r'login\.microsoftonline\.com/([a-zA-Z0-9-]+)', auth_endpoint)
+            if match:
+                azure_tenant = match.group(1)
+                print(f"[DEBUG] Extracted Azure tenant from OIDC_OP_AUTHORIZATION_ENDPOINT: {azure_tenant}")
+
+    if not azure_tenant:
+        azure_tenant = 'common'  # Fallback to 'common' if nothing found
+
+    print(f"[DEBUG] Azure - client_id: {azure_client_id[:20] if azure_client_id else 'None'}..., client_secret: {'SET' if azure_client_secret else 'None'}, tenant: {azure_tenant}")
+
     if azure_client_id and azure_client_secret:
         config['azure'] = {
             'client_id': azure_client_id,
             'client_secret': azure_client_secret,
-            'tenant': os.environ.get('AZURE_TENANT_ID', 'common')
+            'tenant': azure_tenant
         }
-        print(f"[DEBUG] ✅ Azure provider added to config")
+        print(f"[DEBUG] ✅ Azure provider added to config with tenant: {azure_tenant}")
     else:
         print(f"[DEBUG] ❌ Azure provider NOT added - missing credentials")
 
