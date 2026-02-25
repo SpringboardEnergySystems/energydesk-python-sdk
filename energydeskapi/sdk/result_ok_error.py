@@ -10,9 +10,9 @@ class Ok(Generic[T]):
     is_ok: bool = True
 
 @dataclass(frozen=True)
-class Err(Generic[E]):
+class Error(Generic[E]):
     error: E
     is_ok: bool = False
 
 # A type alias for easier usage
-Result = Union[Ok[T], Err[E]]
+Result = Union[Ok[T], Error[E]]
