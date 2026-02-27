@@ -186,7 +186,19 @@ class RiskApi:
 
     @staticmethod
     def upsert_rolling_product(api_connection: ApiConnection, products: RollingProduct | list[RollingProduct]) -> tuple[bool, dict, int, str]:
-        payload = products.__dict__ if isinstance(products, RollingProduct) else [product.__dict__ for product in products]
+        def convert_rolling_product_to_dictionary(product: RollingProduct) -> dict[str, Any]:
+            dc = product.__dict__
+            force_date_to_string(dc, "trading_date")
+            force_date_to_string(dc, "delivery_from")
+            force_date_to_string(dc, "delivery_until")
+            return dc
+
+        def force_date_to_string(dc: dict[str, Any], field_name):
+            value = dc[field_name]
+            if isinstance(value, date) or isinstance(value, datetime):
+                dc[field_name] = value.isoformat()
+
+        payload = api_connection.convert_rolling_product_to_dictionary(products) if isinstance(products, RollingProduct) else [convert_rolling_product_to_dictionary(product) for product in products]
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/markets/rollingproducts/', payload)
         return success, json_res, status_code, error_msg
 
