@@ -18,6 +18,7 @@ class FeeRate:
     commodity_type: str # URL
     instrument_type: str  # URL
     market: str  # URL
+    market_place: str # URL
     participant: str  # URL
     valid_from: datetime
     valid_until: datetime
@@ -80,12 +81,10 @@ class FeesApi:
     def upsert_feerates(api_connection: ApiConnection, data: FeeRate):
         logger.debug("Upserting feerates")
         payload = json.loads(data.json)
-
         if data.pk > 0:
-            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/feerates/' + str(data.pk) + "/", payload)
+            return api_connection.exec_patch_url(
+                f"/api/portfoliomanager/feerates/{data.pk}", payload)
         else:
-            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
+            return api_connection.exec_post_url(
                 '/api/portfoliomanager/feerates/', payload)
-        return success, returned_data, status_code, error_msg
 
