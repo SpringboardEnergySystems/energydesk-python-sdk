@@ -14,6 +14,7 @@ from energydeskapi.moneymarkets.moneymarkets_api import MoneyMarketsApi
 from datetime import datetime
 import pendulum
 from energydeskapi.types.market_enum_types import MarketEnum, CommodityTypeEnum, InstrumentTypeEnum
+from energydeskapi.types.market_enum_types import BlockSizeEnum,StructureTypeEnum,CommodityTypeEnum, DeliveryTypeEnum, InstrumentTypeEnum, MarketPlaceEnum
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -80,7 +81,13 @@ def manage_market_products(api_conn, ticker):
 
 
 def market_products(api_conn):
-    res=ProductsApi.get_market_products_flat(api_conn, {'page_size':500, 'market_place__in':[MarketPlaceEnum.EURONEXT.value]})
+    params={'page_size':500, 'market_place__in':[ MarketPlaceEnum.EURONEXT.value]}
+    params['commodity_definition__structure_type__code']=StructureTypeEnum.CFD.name
+    params['commodity_definition__commodity_type__code']=CommodityTypeEnum.POWER.name
+    params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.FUT.name
+    params['commodity_definition__delivery_type__code']=DeliveryTypeEnum.FINANCIAL.name
+    params['commodity_definition__block_size_category__code'] = BlockSizeEnum.MONTH.name
+    res=ProductsApi.get_market_products_embedded(api_conn, params)
 
     df=pd.DataFrame(data=res['results'])
     #print(df.columns)
@@ -124,7 +131,7 @@ if __name__ == '__main__':
     context = {}
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     #print(df)
-    get_spot_prices(api_conn)
+    market_products(api_conn)
     #query_product_prices(api_conn, ['ENOFUTBLYR-26','ENOFUTBLYR-27'])
     ##success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
