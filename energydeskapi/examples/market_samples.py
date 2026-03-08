@@ -87,6 +87,10 @@ def market_products(api_conn):
     params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.FUT.name
     params['commodity_definition__delivery_type__code']=DeliveryTypeEnum.FINANCIAL.name
     params['commodity_definition__block_size_category__code'] = BlockSizeEnum.MONTH.name
+    params['market_ticker'] = "ENOMFUTMAY-26"
+    res=ProductsApi.get_market_products_embedded(api_conn, params)
+
+    params['commodity_definition__block_size_category__code'] = BlockSizeEnum.MONTH.name
     res=ProductsApi.get_market_products_embedded(api_conn, params)
 
     df=pd.DataFrame(data=res['results'])
