@@ -17,12 +17,12 @@ logging.basicConfig(level=logging.INFO,
 
 def get_period_view(api_conn):
     params = {
-        'groupby__in': ['area', 'trade_id'],
+        'portfolio': "21",
+        'groupby__in': ['area'],
         'resolution': 'Monthly',
-        'contract_type': 5,
-        'view_currency': 'NOK',
-        'view_period_from__gte': '2025-01-01',
-        'view_period_until__lt': '2025-04-01'
+        'view_currency': 'EUR',
+        'view_period_from__gte': '2026-01-01',
+        'view_period_until__lt': '2026-04-01'
     }
     #pd.set_option('display.max_rows', None)
     #view_id, data = PortfolioViewsApi.get_period_view_df(api_conn, params)
@@ -77,23 +77,22 @@ def get_period_view_test(api_conn):
 def get_period_view_records(api_conn):
 
     periodview_params={
-        'portfolio': "37",
+        'portfolio': "36",
         'view_currency': 'EUR',
-        "view_period_from__gte":'2025-11-01',
-        "view_period_until__lt": '2036-01-01',
-        "resolution":"Daily",
-        "groupby__in": ['trading_book','counterpart','area', 'instrument']
+        "view_period_from__gte":'2025-01-01',
+        "view_period_until__lt": '2027-01-01',
+        "resolution":"Monthly",
+        "groupby__in": ['contract_owner']
     }
-    print(periodview_params)
-    output= PortfolioViewsApi.get_period_view_records(api_conn, periodview_params)
-    df=pd.DataFrame(data=output)
+    json_res = PortfolioViewsApi.get_period_view_records(api_conn, periodview_params)
+    df=pd.DataFrame(data=json_res)
     print(df)
 
 
 def get_product_view(api_conn):
 
-    filter={'portfolio': "36", "view_currency":"EUR",
-            "trade_date__lte":"2025-08-13",
+    filter={'portfolio': "21", "view_currency":"EUR",
+            "trade_date__lte":"2025-08-13","groupby__in": ['trading_book'],
             "commodity__delivery_until__gt":"2025-01-01",
             "commodity__cascaded_date__gte":"2025-01-01"}
     print(filter)
@@ -118,4 +117,4 @@ def get_product_view(api_conn):
 if __name__ == '__main__':
     pd.set_option('display.max_rows', None)
     api_conn=init_api()
-    get_period_view_records(api_conn)
+    get_product_view(api_conn)

@@ -18,6 +18,7 @@ class MarketPlaceEnum(Enum):
     NORDPOOL_SPOT = 2
     EEX = 3
     EURONEXT = 4
+    OTC = 5
 
 
 class DeliveryTypeEnum(Enum):
@@ -125,4 +126,5 @@ def market_place_description(x):
         MarketPlaceEnum.NORDPOOL_SPOT: "Nord Pool Spot",
         MarketPlaceEnum.EEX: "EEX",
         MarketPlaceEnum.EURONEXT: MarketPlaceEnum.EURONEXT.name,
+        MarketPlaceEnum.OTC: "OTC (Over the Counter)",
     }[x]

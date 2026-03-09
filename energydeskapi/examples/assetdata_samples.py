@@ -236,15 +236,24 @@ def load_meterdata(api_conn,period_from="2024-10-01",period_until="2024-12-01"):
     print(grouped_values)
     grouped_values.to_excel("hourdata.xlsx")
 
+def load_forecast_data(api_conn,period_from="2026-01-01",period_until="2029-12-01"):
+
+    params={'id__in': [12,13], 'time_series_type__id': TimeSeriesTypesEnum.FORECASTS.value, 'resolution': PeriodResolutionEnum.MONTHLY.value}
+    jsdata = AssetDataApi.get_asset_timeseries(api_conn, params)
+    if type(jsdata) == str:
+        jsdata = json.loads(jsdata)
+    df = pd.DataFrame(data=jsdata)
+
+    print(df)
 
 if __name__ == '__main__':
 
     api_conn = init_api()
     #add_expressions(api_conn, "Asset group - B2C")
     #query_assetdata_types(api_conn)
-    #pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_rows', None)
     #load_assetdata(api_conn)
-    debug_asset_data(api_conn)
+    load_forecast_data(api_conn)
     #load_adjustments(api_conn, [4])
     #print(AssetDataApi.get_timeseries_adjustments(api_conn))
     #print(AssetDataApi.get_timeseries_adjustment_types(api_conn))
