@@ -129,7 +129,7 @@ def contract_type_description(x):
         ContractTypeEnum.POSITION_TRANSFER: "Position Transfer",
         ContractTypeEnum.INTERNAL: "Internal Contract",
         ContractTypeEnum.FLEX_ACTIVATION: "Flex Activation",
-        ContractTypeEnum.EURONEX: "Euronext"
+        ContractTypeEnum.EURONEXT: "Euronext"
     }[x]
 
 def contract_status_description(x):
