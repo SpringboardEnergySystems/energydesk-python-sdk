@@ -55,6 +55,7 @@ class ContractTypeEnum(Enum):
     POSITION_TRANSFER = 10
     INTERNAL = 11
     FLEX_ACTIVATION = 12
+    EURONEXT = 13
 
 def is_contract_with_profile(contract_type: ContractTypeEnum) -> bool:
     return contract_type in [
