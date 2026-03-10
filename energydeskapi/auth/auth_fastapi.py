@@ -474,7 +474,20 @@ class FastAPIOIDCAuth:
                             </a>
                 '''
 
+            # "Continue as Guest" — go to wherever they came from, or the portal home
+            next_url = request.query_params.get('next', f'{root_path}/portal/')
             html += f'''
+                            <div style="margin-top:20px; border-top:1px solid #e0e0e0; padding-top:16px; text-align:center;">
+                                <a href="{next_url}"
+                                   style="display:inline-block; padding:10px 24px; background:#6c757d;
+                                          color:white; border-radius:5px; text-decoration:none;
+                                          font-size:14px; font-weight:500;">
+                                    <i class="fa fa-user-o"></i> Continue as Guest
+                                </a>
+                                <div style="margin-top:6px; font-size:12px; color:#999;">
+                                    Public programs and API docs only
+                                </div>
+                            </div>
                             <div class="footer-text">
                                 <i class="fa fa-shield"></i> Secure authentication powered by OIDC
                             </div>
@@ -571,10 +584,10 @@ class FastAPIOIDCAuth:
 
         @app.get('/auth/logout')
         async def logout(request: Request):
-            """Clear session"""
+            """Clear session and return to portal as guest"""
             request.session.clear()
             root_path = request.scope.get("root_path", "")
-            return RedirectResponse(url=f'{root_path}/auth/login')
+            return RedirectResponse(url=f'{root_path}/portal/')
 
         @app.get('/auth/profile', response_class=HTMLResponse)
         async def profile(request: Request):
