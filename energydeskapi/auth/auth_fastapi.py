@@ -481,7 +481,7 @@ class FastAPIOIDCAuth:
                                 <i class="fa {icon}"></i> {provider["name"]}
                             </a>
                 '''
-
+            logger.info(f"Login with guest allowance:{allow_guest}")
             # "Continue as Guest" — go to wherever they came from, or the portal home
             if allow_guest:
                 next_url = request.query_params.get('next', f'{root_path}/portal/')
