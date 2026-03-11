@@ -39,9 +39,16 @@ class FastAPIOIDCAuth:
         }
     }
 
-    def __init__(self,title:str,app: Optional[FastAPI] = None, config: Optional[Dict[str, Any]] = None, secret_key: Optional[str] = None):
+    def __init__(self,title:str,app: Optional[FastAPI] = None, config: Optional[Dict[str, Any]] = None, secret_key: Optional[str] = None, allow_guest: bool = False):
         """
         Initialize OIDC Auth for FastAPI
+
+        Args:
+            title: Application title for the login page
+            app: FastAPI application instance
+            config: OIDC provider configuration dictionary
+            secret_key: Secret key for session middleware
+            allow_guest: Allow unauthenticated guest access (default: False)
 
         Config structure:
         {
@@ -70,6 +77,7 @@ class FastAPIOIDCAuth:
         self.secret_key = secret_key or os.urandom(24).hex()
         self.app = app
         self.title = title
+        self.allow_guest = allow_guest
 
         if app:
             self.init_app(app, config)
@@ -93,7 +101,7 @@ class FastAPIOIDCAuth:
             self._register_providers(config)
 
         # Register routes
-        self._register_routes( app=self.app)
+        self._register_routes(app=self.app, allow_guest=self.allow_guest)
 
     def _register_providers(self, config: Dict[str, Any]):
         """Register OAuth providers based on config"""
@@ -151,7 +159,7 @@ class FastAPIOIDCAuth:
             )
             logger.info(f"Registered OIDC provider: {provider_key}")
 
-    def _register_routes(self,  app: FastAPI):
+    def _register_routes(self, app: FastAPI, allow_guest: bool = False):
         """Register authentication routes"""
 
         @app.get('/auth/login', response_class=HTMLResponse)
@@ -475,8 +483,9 @@ class FastAPIOIDCAuth:
                 '''
 
             # "Continue as Guest" — go to wherever they came from, or the portal home
-            next_url = request.query_params.get('next', f'{root_path}/portal/')
-            html += f'''
+            if allow_guest:
+                next_url = request.query_params.get('next', f'{root_path}/portal/')
+                html += f'''
                             <div style="margin-top:20px; border-top:1px solid #e0e0e0; padding-top:16px; text-align:center;">
                                 <a href="{next_url}"
                                    style="display:inline-block; padding:10px 24px; background:#6c757d;
@@ -488,6 +497,9 @@ class FastAPIOIDCAuth:
                                     Public programs and API docs only
                                 </div>
                             </div>
+                '''
+
+            html += f'''
                             <div class="footer-text">
                                 <i class="fa fa-shield"></i> Secure authentication powered by OIDC
                             </div>
@@ -758,7 +770,7 @@ def get_oidc_config_from_env() -> Dict[str, Any]:
 
 
 # Helper function to create auth instance from environment variables
-def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = None) -> Optional[FastAPIOIDCAuth]:
+def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = None, allow_guest: bool = False) -> Optional[FastAPIOIDCAuth]:
     """
     Create FastAPIOIDCAuth instance from environment variables
 
@@ -768,6 +780,7 @@ def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = N
         title: Application title for the login page
         app: FastAPI application instance
         secret_key: Optional secret key for session middleware (auto-generated if not provided)
+        allow_guest: Allow unauthenticated guest access (default: False)
 
     Returns:
         FastAPIOIDCAuth instance if any providers are configured, None otherwise
@@ -775,7 +788,7 @@ def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = N
     Example:
         from energydeskapi.auth.auth_fastapi import create_auth_from_env
 
-        oidc_auth = create_auth_from_env("My App", app, secret_key="your-secret-key")
+        oidc_auth = create_auth_from_env("My App", app, secret_key="your-secret-key", allow_guest=False)
         if oidc_auth:
             logger.info("OIDC authentication enabled")
         else:
@@ -787,6 +800,6 @@ def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = N
         logger.info("OIDC authentication not configured (no providers found in environment)")
         return None
 
-    return FastAPIOIDCAuth(title, app, config, secret_key)
+    return FastAPIOIDCAuth(title, app, config, secret_key, allow_guest)
 
 
