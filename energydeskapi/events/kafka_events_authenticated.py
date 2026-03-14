@@ -1,17 +1,22 @@
+
 import json
 import logging
-import traceback
-from datetime import datetime
-from typing import Optional, Any
+from typing import Optional
 
 # Confluent Kafka is more tricky to install on Windows; hence using Apache version
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+import json
+import logging
+import traceback
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+
 from kafka.producer.future import FutureRecordMetadata
 
-from energydeskapi.events.event_subscriber import EventClient
+from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 from energydeskapi.events.kafka_utils import decode_message
-
+from energydeskapi.sdk.common_utils import init_api
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
                     handlers=[logging.FileHandler("energydesk_client.log"),
@@ -19,22 +24,22 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 class KafkaClientAuthenticated(EventClient):
-    SECURITY_PROTOCOL = "SASL_SSL"
-    SASL_MECHANISM = "SCRAM-SHA-512"
-    API_VERSION = None
+    SECURITY_PROTOCOL = "SASL_PLAINTEXT"
+    SASL_MECHANISM = "PLAIN"
+    API_VERSION = (3, 6, 0)
 
-    def __init__(self, kafka_host: str, kafka_port: str, kafka_user: str, kafka_password: str) -> None:
+    def __init__(self, kafka_host, kafka_port, kafka_user, kafka_password):
         super().__init__()
-        self.kafka_host = kafka_host
-        self.kafka_port = kafka_port
-        self.kafka_user = kafka_user
-        self.kafka_password = kafka_password
+        self.kafka_host=kafka_host
+        self.kafka_port=kafka_port
+        self.kafka_user=kafka_user
+        self.kafka_password=kafka_password
         self.client = None
 
 
     def connect_producer(self, log_error=True):
         try:
-            logger.info(f"Connecting to kafka with security protocol {self.SECURITY_PROTOCOL} and security_mechanism {self.SASL_MECHANISM} and user {self.kafka_user}")
+
             self.producer = KafkaProducer(bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
                                           value_serializer=lambda v: json.dumps(v).encode('utf-8'),
                                           security_protocol=self.SECURITY_PROTOCOL,
@@ -48,12 +53,11 @@ class KafkaClientAuthenticated(EventClient):
             return False
 
     # if timeout_seconds is an integer it will wait for the acknowledge, otherwise it is meant as "fire and forget"
-    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None) -> Any:
+    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None):
         logger.info(f"Sending to {topic}")
         future_result : FutureRecordMetadata = self.producer.send(topic, value=msg, headers=headers)
         if timeout_seconds is None:
             logger.info("Sent to kafka")
-            return None
         else:
             try:
                 result = future_result.get(timeout_seconds) # throws exception if something went wrong
@@ -63,7 +67,7 @@ class KafkaClientAuthenticated(EventClient):
                 raise Exception(f"Sending {str(msg)[:300]} to kafka topic {topic} got {traceback.format_exc()}")
 
 
-    def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000) -> bool:
+    def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000):
         try:
             logger.info("Refreshing subscriber with max poll interval " + str(poll_interval))
             if poll_interval>1800000:
@@ -90,7 +94,7 @@ class KafkaClientAuthenticated(EventClient):
             logger.error("Error refreshing connection " + str(e))
             return False
 
-    def disconnect(self) -> None:
+    def disconnect(self):
         logger.info("Closing consumer and producer.")
         if self.consumer is not None:
             logger.info("Closing consumer and Unsubscribing from topics:")
@@ -161,3 +165,17 @@ class KafkaClientAuthenticated(EventClient):
 def on_test_callback(topic, data):
     print("Got callback from Kafka",topic, data)
 
+
+import time, environ
+
+if __name__ == '__main__':
+    api_conn = init_api()
+    env = environ.Env()
+    mqtt_broker = env.str('KAFKA_HOST')
+    mqtt_port= env.str('KAFKA_PORT')
+    mqttcli=KafkaClientAuthenticated(mqtt_broker,mqtt_port)
+    es=EventSubscriber("marketdata.nordicpower.nasdaqomx",on_test_callback)
+    mqttcli.connect( [es], "Feed Consumer")
+    mqttcli.start_listener()
+    while 1==1:
+        time.sleep(1)
