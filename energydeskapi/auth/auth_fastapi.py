@@ -85,22 +85,17 @@ class FastAPIOIDCAuth:
     def init_app(self,  app: FastAPI, config: Optional[Dict[str, Any]] = None):
         """Initialize with FastAPI app"""
 
-        # Add session middleware
-        # same_site="none" is required for OAuth redirects from external providers
-        # (e.g. Azure AD → app callback). SameSite=lax (the default) blocks the
-        # session cookie from being sent on the cross-site POST-redirect-GET flow,
-        # causing the user to be immediately redirected back to login after a
-        # successful Azure authentication.
-        # https_only=False is needed because TLS terminates at the ingress —
-        # the pod receives plain HTTP internally — but the browser sees HTTPS,
-        # so the Secure cookie attribute is handled correctly end-to-end.
+        # Add session middleware.
+        # NOTE: Do NOT use same_site="none" without https_only=True — browsers reject
+        # SameSite=None cookies that lack the Secure flag.
+        # SameSite=lax is correct here: Azure/Google redirect back to the SAME domain
+        # (e.g. hafslund.energydesk.no → hafslund.energydesk.no/clearing/auth/authorize/azure)
+        # which is a same-site top-level navigation, so lax allows the cookie to be sent.
         app.add_middleware(
             SessionMiddleware,
             secret_key=self.secret_key,
             session_cookie="clearing_session",
             max_age=3600 * 24,  # 24 hours
-            same_site="none",
-            https_only=False,
         )
 
         # Store app reference for OAuth
