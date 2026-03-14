@@ -589,15 +589,24 @@ class FastAPIOIDCAuth:
                 logger.error(f"Error getting user info from {provider}: {e}")
                 raise HTTPException(status_code=401, detail=f'Failed to get user info: {str(e)}')
 
-            # Store user info in session
-            request.session['user'] = {
+            # Store user info in session.
+            # IMPORTANT: Only store the access_token for Django provider.
+            # Azure/Google JWT access tokens are very large (often >2KB) and storing
+            # them in the session cookie can push it over the 4096-byte browser limit,
+            # silently dropping the entire cookie and breaking the session.
+            # The access_token is only needed for authorize_user_etrm() which calls
+            # the Django backend — and that only works with a Django-issued token anyway.
+            session_data = {
                 'provider': provider,
                 'email': user_info.get('email'),
                 'name': user_info.get('name', user_info.get('given_name', '')),
                 'sub': user_info.get('sub'),
                 'authenticated': True,
-                'access_token': token.get('access_token')  # Store the access token
             }
+            if provider == 'django':
+                session_data['access_token'] = token.get('access_token')
+
+            request.session['user'] = session_data
 
             logger.info(f"User {user_info.get('email')} authenticated via {provider}")
 
