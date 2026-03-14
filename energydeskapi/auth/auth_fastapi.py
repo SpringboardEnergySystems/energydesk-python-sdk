@@ -11,7 +11,7 @@ from functools import wraps
 import os
 from typing import Optional, Dict, Any, Callable
 import logging
-
+from energydeskapi.auth.etrm_authorize import authorize_user_etrm
 logger = logging.getLogger(__name__)
 
 
@@ -39,9 +39,16 @@ class FastAPIOIDCAuth:
         }
     }
 
-    def __init__(self,title:str,app: Optional[FastAPI] = None, config: Optional[Dict[str, Any]] = None, secret_key: Optional[str] = None):
+    def __init__(self,title:str,app: Optional[FastAPI] = None, config: Optional[Dict[str, Any]] = None, secret_key: Optional[str] = None, allow_guest: bool = False):
         """
         Initialize OIDC Auth for FastAPI
+
+        Args:
+            title: Application title for the login page
+            app: FastAPI application instance
+            config: OIDC provider configuration dictionary
+            secret_key: Secret key for session middleware
+            allow_guest: Allow unauthenticated guest access (default: False)
 
         Config structure:
         {
@@ -70,6 +77,7 @@ class FastAPIOIDCAuth:
         self.secret_key = secret_key or os.urandom(24).hex()
         self.app = app
         self.title = title
+        self.allow_guest = allow_guest
 
         if app:
             self.init_app(app, config)
@@ -93,7 +101,7 @@ class FastAPIOIDCAuth:
             self._register_providers(config)
 
         # Register routes
-        self._register_routes( app=self.app)
+        self._register_routes(app=self.app, allow_guest=self.allow_guest)
 
     def _register_providers(self, config: Dict[str, Any]):
         """Register OAuth providers based on config"""
@@ -151,7 +159,7 @@ class FastAPIOIDCAuth:
             )
             logger.info(f"Registered OIDC provider: {provider_key}")
 
-    def _register_routes(self,  app: FastAPI):
+    def _register_routes(self, app: FastAPI, allow_guest: bool = False):
         """Register authentication routes"""
 
         @app.get('/auth/login', response_class=HTMLResponse)
@@ -473,6 +481,23 @@ class FastAPIOIDCAuth:
                                 <i class="fa {icon}"></i> {provider["name"]}
                             </a>
                 '''
+            logger.info(f"Login with guest allowance:{allow_guest}")
+            # "Continue as Guest" — go to wherever they came from, or the portal home
+            if allow_guest:
+                next_url = request.query_params.get('next', f'{root_path}/portal/')
+                html += f'''
+                            <div style="margin-top:20px; border-top:1px solid #e0e0e0; padding-top:16px; text-align:center;">
+                                <a href="{next_url}"
+                                   style="display:inline-block; padding:10px 24px; background:#6c757d;
+                                          color:white; border-radius:5px; text-decoration:none;
+                                          font-size:14px; font-weight:500;">
+                                    <i class="fa fa-user-o"></i> Continue as Guest
+                                </a>
+                                <div style="margin-top:6px; font-size:12px; color:#999;">
+                                    Public programs and API docs only
+                                </div>
+                            </div>
+                '''
 
             html += f'''
                             <div class="footer-text">
@@ -560,7 +585,8 @@ class FastAPIOIDCAuth:
                 'email': user_info.get('email'),
                 'name': user_info.get('name', user_info.get('given_name', '')),
                 'sub': user_info.get('sub'),
-                'authenticated': True
+                'authenticated': True,
+                'access_token': token.get('access_token')  # Store the access token
             }
 
             logger.info(f"User {user_info.get('email')} authenticated via {provider}")
@@ -571,10 +597,10 @@ class FastAPIOIDCAuth:
 
         @app.get('/auth/logout')
         async def logout(request: Request):
-            """Clear session"""
+            """Clear session and return to portal as guest"""
             request.session.clear()
             root_path = request.scope.get("root_path", "")
-            return RedirectResponse(url=f'{root_path}/auth/login')
+            return RedirectResponse(url=f'{root_path}/portal/')
 
         @app.get('/auth/profile', response_class=HTMLResponse)
         async def profile(request: Request):
@@ -650,6 +676,42 @@ class FastAPIOIDCAuth:
         if not user or not user.get('authenticated'):
             return None
         return user
+
+    def get_current_user_role(self, request: Request) -> Optional[Dict[str, Any]]:
+        """
+        Dependency to get current authenticated user's ETRM role information
+
+        The backend authenticates Django OAuth tokens but authorizes users from all providers
+        (Azure, Google, Django) by looking up their email in the ETRM user database.
+
+        Returns:
+            Dict with role_pk, role_name, and email if authorization successful,
+            None otherwise
+        """
+        user = self.get_current_user(request)
+        if not user:
+            return None
+
+        token = user.get('access_token')
+        if not token:
+            logger.error("No access token found in user session")
+            return None
+
+        try:
+            role_pk, role_name = authorize_user_etrm(token)
+            if role_pk is None or role_name is None:
+                logger.warning(f"No ETRM role found for user {user.get('email')} (provider: {user.get('provider')})")
+                return None
+
+            return {
+                'role_pk': role_pk,
+                'role_name': role_name,
+                'email': user.get('email'),
+                'provider': user.get('provider')
+            }
+        except Exception as e:
+            logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {user.get('provider')}): {e}")
+            return None
 
     def require_auth(self, request: Request) -> Dict[str, Any]:
         """Dependency to require authentication - raises exception if not authenticated"""
@@ -745,7 +807,7 @@ def get_oidc_config_from_env() -> Dict[str, Any]:
 
 
 # Helper function to create auth instance from environment variables
-def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = None) -> Optional[FastAPIOIDCAuth]:
+def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = None, allow_guest: bool = False) -> Optional[FastAPIOIDCAuth]:
     """
     Create FastAPIOIDCAuth instance from environment variables
 
@@ -755,6 +817,7 @@ def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = N
         title: Application title for the login page
         app: FastAPI application instance
         secret_key: Optional secret key for session middleware (auto-generated if not provided)
+        allow_guest: Allow unauthenticated guest access (default: False)
 
     Returns:
         FastAPIOIDCAuth instance if any providers are configured, None otherwise
@@ -762,7 +825,7 @@ def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = N
     Example:
         from energydeskapi.auth.auth_fastapi import create_auth_from_env
 
-        oidc_auth = create_auth_from_env("My App", app, secret_key="your-secret-key")
+        oidc_auth = create_auth_from_env("My App", app, secret_key="your-secret-key", allow_guest=False)
         if oidc_auth:
             logger.info("OIDC authentication enabled")
         else:
@@ -774,6 +837,6 @@ def create_auth_from_env(title: str, app: FastAPI, secret_key: Optional[str] = N
         logger.info("OIDC authentication not configured (no providers found in environment)")
         return None
 
-    return FastAPIOIDCAuth(title, app, config, secret_key)
+    return FastAPIOIDCAuth(title, app, config, secret_key, allow_guest)
 
 
