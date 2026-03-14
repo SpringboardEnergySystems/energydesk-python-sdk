@@ -11,7 +11,7 @@ from functools import wraps
 import os
 from typing import Optional, Dict, Any, Callable
 import logging
-
+from energydeskapi.auth.etrm_authorize import authorize_user_etrm
 logger = logging.getLogger(__name__)
 
 
@@ -585,7 +585,8 @@ class FastAPIOIDCAuth:
                 'email': user_info.get('email'),
                 'name': user_info.get('name', user_info.get('given_name', '')),
                 'sub': user_info.get('sub'),
-                'authenticated': True
+                'authenticated': True,
+                'access_token': token.get('access_token')  # Store the access token
             }
 
             logger.info(f"User {user_info.get('email')} authenticated via {provider}")
@@ -675,6 +676,42 @@ class FastAPIOIDCAuth:
         if not user or not user.get('authenticated'):
             return None
         return user
+
+    def get_current_user_role(self, request: Request) -> Optional[Dict[str, Any]]:
+        """
+        Dependency to get current authenticated user's ETRM role information
+
+        The backend authenticates Django OAuth tokens but authorizes users from all providers
+        (Azure, Google, Django) by looking up their email in the ETRM user database.
+
+        Returns:
+            Dict with role_pk, role_name, and email if authorization successful,
+            None otherwise
+        """
+        user = self.get_current_user(request)
+        if not user:
+            return None
+
+        token = user.get('access_token')
+        if not token:
+            logger.error("No access token found in user session")
+            return None
+
+        try:
+            role_pk, role_name = authorize_user_etrm(token)
+            if role_pk is None or role_name is None:
+                logger.warning(f"No ETRM role found for user {user.get('email')} (provider: {user.get('provider')})")
+                return None
+
+            return {
+                'role_pk': role_pk,
+                'role_name': role_name,
+                'email': user.get('email'),
+                'provider': user.get('provider')
+            }
+        except Exception as e:
+            logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {user.get('provider')}): {e}")
+            return None
 
     def require_auth(self, request: Request) -> Dict[str, Any]:
         """Dependency to require authentication - raises exception if not authenticated"""
