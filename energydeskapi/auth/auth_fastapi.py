@@ -9,10 +9,17 @@ from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
 from functools import wraps
 import os
+import threading
 from typing import Optional, Dict, Any, Callable
 import logging
 from energydeskapi.auth.etrm_authorize import authorize_user_etrm
 logger = logging.getLogger(__name__)
+
+# Server-side token store: sub → access_token
+# Keeps large Azure/Google JWTs out of the session cookie while still making
+# them available for backend API calls (authorize_user_etrm, trade approval, etc.)
+_token_store: Dict[str, str] = {}
+_token_store_lock = threading.Lock()
 
 
 class FastAPIOIDCAuth:
@@ -585,21 +592,31 @@ class FastAPIOIDCAuth:
                 raise HTTPException(status_code=401, detail=f'Failed to get user info: {str(e)}')
 
             # Store user info in session.
-            # IMPORTANT: Only store the access_token for Django provider.
-            # Azure/Google JWT access tokens are very large (often >2KB) and storing
-            # them in the session cookie can push it over the 4096-byte browser limit,
-            # silently dropping the entire cookie and breaking the session.
-            # The access_token is only needed for authorize_user_etrm() which calls
-            # the Django backend — and that only works with a Django-issued token anyway.
+            # IMPORTANT: Azure/Google JWT access tokens are very large (often >2KB).
+            # Storing them directly in the session cookie would push it over the
+            # 4096-byte browser limit, silently dropping the cookie and breaking
+            # the session. Instead we keep ALL access tokens in a server-side
+            # in-memory store (keyed by sub) and only put a 'token_ref' (= sub)
+            # in the lightweight session cookie. get_current_user_role() resolves
+            # the actual token from the store when needed.
+            sub = user_info.get('sub', '')
+            access_token = token.get('access_token')
+            if access_token and sub:
+                with _token_store_lock:
+                    _token_store[sub] = access_token
+                logger.debug(f"Stored access_token server-side for sub={sub} provider={provider}")
+
             session_data = {
                 'provider': provider,
                 'email': user_info.get('email'),
                 'name': user_info.get('name', user_info.get('given_name', '')),
-                'sub': user_info.get('sub'),
+                'sub': sub,
                 'authenticated': True,
+                'token_ref': sub,  # reference key into _token_store
             }
+            # Also keep the token in-session for Django (small token, backward compat)
             if provider == 'django':
-                session_data['access_token'] = token.get('access_token')
+                session_data['access_token'] = access_token
 
             request.session['user'] = session_data
 
@@ -706,9 +723,16 @@ class FastAPIOIDCAuth:
         if not user:
             return None
 
+        # Resolve access token: prefer in-session token (Django, backward compat),
+        # then fall back to server-side token store via token_ref (Azure/Google).
         token = user.get('access_token')
         if not token:
-            logger.error("No access token found in user session")
+            token_ref = user.get('token_ref') or user.get('sub')
+            if token_ref:
+                with _token_store_lock:
+                    token = _token_store.get(token_ref)
+        if not token:
+            logger.error(f"No access token found for user {user.get('email')} (provider: {user.get('provider')})")
             return None
 
         try:
