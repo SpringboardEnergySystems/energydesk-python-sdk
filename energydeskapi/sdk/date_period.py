@@ -16,6 +16,6 @@ class DatetimePeriod:
 
 
 @dataclass(frozen=True)
-class :
+class DatetimePeriodQuery:
     from_datetime: Optional[datetime]
     until_datetime: Optional[datetime]
