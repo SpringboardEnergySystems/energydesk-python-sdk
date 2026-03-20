@@ -1,7 +1,6 @@
 import json
 import logging
-from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any
 
 import environ
 
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 #  Change
 class ClearingGatewayApi:
     @staticmethod
-    def exec_fetch_deal_data(trading_date: Optional[str]) -> list[dict[str,any]]:
+    def exec_fetch_deal_data(trading_date: Optional[str]) -> list[dict[str,Any]]:
         env = environ.Env()
         server_url = None if 'ELVIZ_PROXY' not in env else f"{env.str('ELVIZ_PROXY')}/clearinggateway/api/clearinggateway/get_deal_data"
         logger.info(f"Calling clearing gateway URL {server_url}")

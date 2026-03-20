@@ -179,7 +179,7 @@ class CustomersApi:
         return df
 
     @staticmethod
-    def get_company(api_connection: ApiConnection, key: int):
+    def get_company(api_connection: ApiConnection, key: int) -> Optional[dict[str, Any]]:
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -191,7 +191,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies(api_connection: ApiConnection, parameters: dict={}):
+    def get_companies(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict]]:
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
@@ -203,7 +203,7 @@ class CustomersApi:
         return json_res
 
     @staticmethod
-    def get_companies_compact(api_connection: ApiConnection, parameters: dict={}):
+    def get_companies_compact(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict]]:
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
