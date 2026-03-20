@@ -1,4 +1,6 @@
 import logging
+from typing import Optional
+
 import pandas as pd
 from energydeskapi.sdk.api_connection import ApiConnection
 
@@ -10,14 +12,14 @@ class SpotPricesApi:
     """
 
     @staticmethod
-    def get_spot_prices(api_connection: ApiConnection, parameters: dict={}):
+    def get_spot_prices(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict]]:
         json_res = api_connection.exec_get_url('/api/markets/spotprices/', parameters)
         if json_res is None:
             return None
         return json_res
 
     @staticmethod
-    def get_spot_prices_df(api_connection: ApiConnection, parameters: dict={}):
+    def get_spot_prices_df(api_connection: ApiConnection, parameters: dict={}) -> Optional[pd.DataFrame]:
         json_res = api_connection.exec_get_url('/api/markets/spotprices/', parameters)
         if json_res is None:
             return None
