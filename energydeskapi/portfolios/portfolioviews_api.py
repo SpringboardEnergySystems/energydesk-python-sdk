@@ -6,7 +6,7 @@ import pandas as pd
 import json
 
 from energydeskapi.sdk.api_connection import ApiConnection
-
+import io
 logger = logging.getLogger(__name__)
 #  Change
 
@@ -167,7 +167,7 @@ class PortfolioViewsApi:
         if type(json_res)!=str:
             json_res=json.dumps(json_res)
 
-        df = pd.read_json(json_res, orient="table")
+        df = pd.read_json(io.StringIO(json_res), orient="table")
         #df = pd.DataFrame(data=eval(json_res), orient)
 
         return id, df

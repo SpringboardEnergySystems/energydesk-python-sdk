@@ -55,9 +55,9 @@ from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
 
 def query_forward_curves(api_conn):
 
-    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.HOURLY.value,
-                                                     'area':"NO1",'currency_code':"NOK",
-                                                     'forward_curve_type': FwdCurveTypesEnum.PRICEIT.value})
+    res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
+                                                     'area':"Croatian_Power",'currency_code':"NOK",
+                                                     'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD.value})
     if len(res)==0:
         print("No curves returned")
     else:
