@@ -11,6 +11,7 @@ from energydeskapi.types.common_enum_types import get_month_list,get_weekdays_li
 from decimal import Decimal
 import pendulum
 from energydeskapi.sdk.datetime_utils import conv_from_pendulum
+import io
 def make_none_tz( utc_dt):
     tmp =str(utc_dt)[:19]
     return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S')
@@ -25,6 +26,21 @@ def check_convert_datetime(d, timezone=None):
         d = timezone.localize(d)
         d = d.astimezone(pytz.UTC)
         return d
+
+# Helper function to safely convert JSON data to DataFrame
+def safe_load_json(data, orient=None):
+    """Safely load JSON data regardless of whether it's a string, dict, or already parsed."""
+    if data is None:
+        return None
+    # If it's already a dict or list, use pd.DataFrame or pd.json_normalize
+    if isinstance(data, (dict, list)):
+        return pd.DataFrame(data) if isinstance(data, list) else pd.json_normalize(data)
+    # If it's a string, use io.StringIO to ensure pandas treats it as data, not a file path
+    if isinstance(data, str):
+        kwargs = {'orient': orient} if orient else {}
+        return pd.read_json(io.StringIO(data), **kwargs)
+    # Fallback for other types
+    return pd.DataFrame(data)
 
 # Can take any column and convert datetime regardless of index .
 # Usage df['report_date'] = df.apply(convert_date_column, axis=1, args=("report_date",))
