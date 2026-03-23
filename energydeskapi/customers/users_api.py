@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Any
 
 import pandas as pd
 
@@ -84,7 +84,7 @@ class UsersApi:
     """
 
     @staticmethod
-    def update_userprofile(api_connection: ApiConnection, user: User):
+    def update_userprofile(api_connection: ApiConnection, user: User) -> tuple[bool, Optional[list | str], int, Optional[str]]:
         """Updates user profiles
 
         :param api_connection: class with API token for use with API
@@ -101,7 +101,7 @@ class UsersApi:
         return success, json_res, status_code, error_msg
 
     @staticmethod
-    def get_user_profile(api_connection: ApiConnection):
+    def get_user_profile(api_connection: ApiConnection) -> Optional[dict[str, Any]]:
         """Fetches user profile
 
         :param api_connection: class with API token for use with API

@@ -1,4 +1,6 @@
 import logging
+from typing import Optional
+
 import pandas as pd
 from energydeskapi.sdk.api_connection import ApiConnection
 
@@ -10,7 +12,7 @@ class CountriesApi:
 
     """
     @staticmethod
-    def get_countries(api_connection: ApiConnection, parameters: dict={}):
+    def get_countries(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict]]:
         """Fetches all companies
 
         :param api_connection: class with API token for use with API
