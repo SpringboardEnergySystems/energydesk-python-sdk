@@ -116,7 +116,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_api_token(api_connection: ApiConnection):
+    def get_api_token(api_connection: ApiConnection) -> Optional[dict[str, Any]]:
         """Fetches API token
 
         :param api_connection: class with API token for use with API
@@ -599,7 +599,7 @@ class UsersApi:
         return None
 
     @staticmethod
-    def get_user_url(api_connection: ApiConnection, user_pk: int):
+    def get_user_url(api_connection: ApiConnection, user_pk: int) -> str:
         """Fetches user from url
 
         :param api_connection: class with API token for use with API
@@ -610,7 +610,7 @@ class UsersApi:
         return api_connection.get_base_url() + '/api/customers/profiles/' + str(user_pk) + "/"
 
     @staticmethod
-    def send_password_reset_email(api_connection: ApiConnection, email):
+    def send_password_reset_email(api_connection: ApiConnection, email: str) -> tuple[bool, Optional[list | str], int, Optional[str]]:
         """ Sends email to user with instructions for resetting password
 
         :param api_connection: class with API token for use with API
@@ -622,7 +622,7 @@ class UsersApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def reset_password(api_connection: ApiConnection, payload):
+    def reset_password(api_connection: ApiConnection, payload: dict[str, Any]) -> tuple[bool, Optional[list | str], int, Optional[str]]:
         """ Resets password for users
 
         :param api_connection: class with API token for use with API
@@ -634,7 +634,7 @@ class UsersApi:
         return success, returned_data, status_code, error_msg
 
     @staticmethod
-    def validate_reset_token(api_connection: ApiConnection, token):
+    def validate_reset_token(api_connection: ApiConnection, token: str) -> tuple[bool, Optional[list | str], int, Optional[str]]:
         """ Checks if token for resetting password is valid
 
         :param api_connection: class with API token for use with API
