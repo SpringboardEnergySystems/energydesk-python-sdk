@@ -127,6 +127,7 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
 def create_logstash_from_environment():
     env=environ.Env()
     enabled = False if "LOGSTASH_ENABLED" not in env else env.str("LOGSTASH_ENABLED").upper() == "TRUE"
+    logger.info(f"Logstash enabled: {enabled}")
     if enabled:
         host = None if "LOGSTASH_HOST" not in env else env.str("LOGSTASH_HOST")
         port = None if "LOGSTASH_PORT" not in env else env.int("LOGSTASH_PORT")

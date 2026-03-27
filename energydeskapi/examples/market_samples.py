@@ -65,10 +65,20 @@ def query_market_types(api_conn):
 
 def get_spot_prices(api_conn):
     today = pendulum.today('Europe/Oslo')
-    period_from = pendulum.parse("2025-12-31", tz="UTC")
-    params={"period_from": str(period_from),"period_until": str(today), 'currency_code':'NOK', 'resolution':'h','area':'NO1','market':'NORDIC_POWER','page_size':1000}
-    df=SpotPricesApi.get_spot_prices_df(api_conn, params)
-    df_no1=df['NO1']
+    period_from = pendulum.parse("2026-01-21", tz="Europe/Oslo")
+    period_until = pendulum.parse("2026-01-23", tz="Europe/Oslo")
+    #params={"period_from": str(period_from),"period_until": str(today), 'currency_code':'NOK', 'resolution':'h','area':'NO1','market':'NORDIC_POWER','page_size':1000}
+    parameters = {
+        'period_from': str(pendulum.parse(str(period_from), tz="Europe/Oslo")) if period_from else None,
+        'period_until': str(pendulum.parse(str(period_until), tz="Europe/Oslo")) if period_from else None,
+        'resolution': "h",
+        'currency_code': "NOK",
+        'market': "NORDIC_POWER",
+        'area': "SYS"
+    }
+
+    df=SpotPricesApi.get_spot_prices_df(api_conn, parameters)
+    df_no1=df['SYS']
     pd.set_option('display.max_rows', None)
     print(df_no1)
 
@@ -160,7 +170,7 @@ if __name__ == '__main__':
     context = {}
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
     #print(df)
-    compare_spot_prices(api_conn)
+    get_spot_prices(api_conn)
     #query_product_prices(api_conn, ['ENOFUTBLYR-26','ENOFUTBLYR-27'])
     ##success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
