@@ -6,7 +6,7 @@ import environ
 from logging.handlers import TimedRotatingFileHandler
 from dataclasses import dataclass
 from energydeskapi.sdk.common_utils import load_class_from_string
-
+from energydeskapi.sdk.ssl_logstash_handler import SSLTCPLogstashHandler
 logger = logging.getLogger(__name__)
 
 
@@ -72,33 +72,74 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
 
     def create_tcp_handler(host, port):
         try:
-            env = environ.Env()
-            loglev = "INFO" if "LOGSTASH_LOGLEVEL" not in env else env.str("LOGSTASH_LOGLEVEL")
-
             # Get timeout from environment or use default of 3 seconds
-            timeout = 3 if "LOGSTASH_TIMEOUT" not in env else env.int("LOGSTASH_TIMEOUT")
+            timeout = int(os.environ.get('LOGSTASH_TIMEOUT', '3'))
+            loglev = os.environ.get('LOGSTASH_LOGLEVEL', 'INFO')
+            
+            # Check if SSL is enabled (default to True for security)
+            ssl_enabled = os.environ.get('LOGSTASH_SSL_ENABLE', 'true').upper() == 'TRUE'
+            ssl_verify = os.environ.get('LOGSTASH_SSL_VERIFY', 'false').upper() == 'TRUE'
 
-            handler_class = load_class_from_string("logstash.TCPLogstashHandler")
-            handler = handler_class(
-                host,
-                port,
-                version=1,
-                timeout=timeout  # Add connection timeout
-            )
+            if ssl_enabled:
+                # Use SSL-enabled handler with explicit fields
+                print(f"  Creating SSL/TLS logstash handler (verify={ssl_verify}, timeout={timeout}s)")
+                handler = SSLTCPLogstashHandler(
+                    host=host,
+                    port=port,
+                    version=1,
+                    message_type='python-logstash',
+                    tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
+                    ssl_enable=True,
+                    ssl_verify=ssl_verify,
+                    timeout=timeout,
+                    fqdn=False,
+                    customer=enable_logstash_conf.customer,
+                    environment=enable_logstash_conf.environment,
+                    appname=enable_logstash_conf.appname,
+                )
+            else:
+                # Use standard TCP handler (lazy loading for compatibility)
+                print(f"  Creating plain TCP logstash handler (timeout={timeout}s)")
+                handler_class = load_class_from_string("logstash.TCPLogstashHandler")
+                
+                # Try to create handler with timeout, fall back without it if not supported
+                try:
+                    handler = handler_class(
+                        host,
+                        port,
+                        version=1,
+                        timeout=timeout
+                    )
+                except TypeError:
+                    # Older version doesn't support timeout parameter
+                    print(f"    Note: python-logstash version doesn't support timeout parameter")
+                    handler = handler_class(
+                        host,
+                        port,
+                        version=1
+                    )
+                
+                # Use python-logstash's built-in formatter
+                LogstashFormatterVersion1 = load_class_from_string("logstash.formatter.LogstashFormatterVersion1")
+                formatter = LogstashFormatterVersion1(
+                    message_type='python-logstash',
+                    tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
+                    fqdn=False
+                )
+                handler.setFormatter(formatter)
+                
+                # Note: Plain TCP handler doesn't support explicit fields
+                print(f"    Note: Using plain TCP - explicit fields not available (use SSL for explicit fields)")
+            
             handler.setLevel(get_loglevel_from_str(loglev))
-
-            # Use python-logstash's built-in formatter
-            LogstashFormatterVersion1 = load_class_from_string("logstash.formatter.LogstashFormatterVersion1")
-            formatter = LogstashFormatterVersion1(
-                message_type='python-logstash',
-                tags=[enable_logstash_conf.customer, enable_logstash_conf.environment, enable_logstash_conf.appname],
-                fqdn=False
-            )
-            handler.setFormatter(formatter)
-            logger.info(f"Logstash handler created successfully for {host}:{port}")
+            print(f"  ✓ Logstash handler created for {host}:{port}")
+            print(f"    Tags: {enable_logstash_conf.customer}, {enable_logstash_conf.environment}, {enable_logstash_conf.appname}")
+            if ssl_enabled:
+                print(f"    Explicit fields: customer={enable_logstash_conf.customer}, environment={enable_logstash_conf.environment}, appname={enable_logstash_conf.appname}")
             return handler
         except Exception as e:
-            logger.warning(f"Failed to create Logstash handler for {host}:{port}: {e}. Logging will continue without Logstash.")
+            print(f"  ✗ Failed to create Logstash handler for {host}:{port}: {e}")
+            print(f"    Logging will continue without Logstash.")
             return None
 
     def create_file_handler()-> TimedRotatingFileHandler:
