@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Optional
+from typing import Optional, Any
 
 from energydeskapi.sdk.api_connection import ApiConnection
 from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum, InstrumentTypeEnum, \
@@ -63,8 +63,8 @@ class MarketsApi:
         return json_res
 
     @staticmethod
-    def get_market_places(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict]]:
-        """Fetches all markets objects with URL relations. Will only return markets for which the user has rights
+    def get_market_places(api_connection: ApiConnection, parameters: dict={}) -> Optional[dict[str, Any]]:
+        """Fetches all markets objects with URL relations. Will only return markets for which the user has rights. The data is in the "results" field
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
@@ -79,6 +79,7 @@ class MarketsApi:
 
         :param api_connection: class with API token for use with API
         :type api_connection: str, required
+
         """
 
         json_res=MarketsApi.get_markets(api_connection, parameters)
