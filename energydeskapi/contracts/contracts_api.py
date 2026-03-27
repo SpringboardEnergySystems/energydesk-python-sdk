@@ -4,12 +4,6 @@ from typing import Dict, Any, Optional
 
 import pandas as pd
 
-from energydeskapi.sdk.api_connection import ApiConnection
-from energydeskapi.sdk.common_utils import parse_enum_type,convert_loc_datetime_to_utcstr
-from energydeskapi.sdk.money_utils import gen_json_money, gen_money_from_json
-from energydeskapi.types.market_enum_types import DeliveryTypeEnum, ProfileTypeEnum, MarketPlaceEnum
-from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
-from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.assets.assets_api import AssetsApi
 from energydeskapi.customers.customers_api import CustomersApi
 from energydeskapi.customers.users_api import UsersApi
@@ -595,7 +589,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(contract_status_enum)) + "/"
 
     @staticmethod
-    def load_tradingbook_by_pk(api_connection: ApiConnection, pk: int):
+    def load_tradingbook_by_pk(api_connection: ApiConnection, pk: int) -> dict[str, Any]:
         """Fetches tradingbooks from pk
 
         :param api_connection: class with API token for use with API
@@ -611,7 +605,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def query_contracts(api_connection: ApiConnection, query_payload: dict={"trading_book_key":0, "last_trades_count": 10}):
+    def query_contracts(api_connection: ApiConnection, query_payload: dict={"trading_book_key":0, "last_trades_count": 10}) -> list[dict]:
         """Queries contracts
 
         :param api_connection: class with API token for use with API
@@ -623,10 +617,10 @@ class ContractsApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/query-contracts/', query_payload)
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"Contracts fetched: {json_res})")
-        return None
+        return json_res
 
     @staticmethod
-    def query_contracts_df(api_connection: ApiConnection, query_payload: dict={"trading_book_key":0, "last_trades_count": 10}):
+    def query_contracts_df(api_connection: ApiConnection, query_payload: dict={"trading_book_key":0, "last_trades_count": 10}) -> pd.DataFrame:
         """Queries contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -640,7 +634,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def get_contract(api_connection: ApiConnection, contract_pk: int):
+    def get_contract(api_connection: ApiConnection, contract_pk: int) -> dict[str, Any]:
         """Fetches contract from pk
 
         :param api_connection: class with API token for use with API
@@ -654,7 +648,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def get_contract_tag(api_connection: ApiConnection, pk: int):
+    def get_contract_tag(api_connection: ApiConnection, pk: int) -> dict[str, Any]:
         """Fetches contract tags
 
         :param api_connection: class with API token for use with API
@@ -681,7 +675,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def list_contracts(api_connection: ApiConnection, parameters: dict={}):
+    def list_contracts(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         """Lists contracts
 
         :param api_connection: class with API token for use with API
@@ -693,7 +687,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts', parameters)
         return json_res
     @staticmethod
-    def list_contracts_embedded(api_connection: ApiConnection, parameters: dict={}):
+    def list_contracts_embedded(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -705,7 +699,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/embedded/', parameters)
         return json_res
     @staticmethod
-    def get_contracts_flat(api_connection: ApiConnection, parameters: dict={}):
+    def get_contracts_flat(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         logger.info("Listing contracts as flat structure")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/flat/', parameters)
         return json_res
@@ -723,13 +717,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def list_contracts_emir(api_connection: ApiConnection, parameters: dict={}):
+    def list_contracts_emir(api_connection: ApiConnection, parameters: dict={}) -> list[dict]:
         logger.info("Listing contracts on format for EMIR reporting")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/emir/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_xml(api_connection: ApiConnection, parameters: dict={}):
+    def list_contracts_xml(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> str:
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -741,7 +735,7 @@ class ContractsApi:
         xmlres = api_connection.exec_get_url('/api/portfoliomanager/contracts/xmlelviz/', parameters)
         return xmlres
     @staticmethod
-    def list_contracts_compact(api_connection: ApiConnection, parameters: dict={}):
+    def list_contracts_compact(api_connection: ApiConnection, parameters: dict[str, Any]={}):
         """Lists contracts with embedding
 
         :param api_connection: class with API token for use with API
@@ -754,13 +748,13 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_current_counterparts(api_connection: ApiConnection, parameters: dict={}):
+    def get_current_counterparts(api_connection: ApiConnection, parameters: dict[str, Any]={}):
         logger.info("Listing contracts counterparts")
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contracts/counterparts/', parameters)
         return json_res
 
     @staticmethod
-    def list_contracts_df(api_connection: ApiConnection, parameters: dict={}):
+    def list_contracts_df(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> Optional[pd.DataFrame]:
         """Lists contracts and displays in a dataframe
 
         :param api_connection: class with API token for use with API
@@ -776,7 +770,7 @@ class ContractsApi:
         return None
 
     @staticmethod
-    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum: ContractTypeEnum):
+    def get_commodity_type_url(api_connection: ApiConnection, commodity_type_enum: ContractTypeEnum) -> str:
         """Fetches url for a commodity type from enum value
 
         :param api_connection: class with API token for use with API
@@ -788,7 +782,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contractstatuses/' + str(parse_enum_type(commodity_type_enum)) + "/"
 
     @staticmethod
-    def get_contract_url(api_connection: ApiConnection, contract_pk: int):
+    def get_contract_url(api_connection: ApiConnection, contract_pk: int) -> str:
         """Fetches url for contracts from pk
 
         :param api_connection: class with API token for use with API
@@ -799,7 +793,7 @@ class ContractsApi:
         return api_connection.get_base_url() + '/api/portfoliomanager/contracts/' + str(contract_pk) + "/"
 
     @staticmethod
-    def list_contract_statuses(api_connection: ApiConnection):
+    def list_contract_statuses(api_connection: ApiConnection) ->  pd.DataFrame:
         """Lists the statuses of contracts
 
         :param api_connection: class with API token for use with API
@@ -811,7 +805,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def get_contract_status(api_connection: ApiConnection, enum):
+    def get_contract_status(api_connection: ApiConnection, enum: int) -> dict[str, Any]:
         """Gets contract status from enum
 
         :param api_connection: class with API token for use with API
@@ -824,7 +818,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def get_contract_filters(api_connection: ApiConnection, parameters: dict={}):
+    def get_contract_filters(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> list[dict[str, Any]]:
         """Fetches contract filters
 
         :param api_connection: class with API token for use with API
@@ -832,7 +826,8 @@ class ContractsApi:
         :param parameters: parameters to filter contract filters
         :type parameters: str
         """
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilters/', parameters)
+        parameters_with_page_size = parameters | {'page_size' : '30'} if "page_size" not in parameters else parameters
+        json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilters/', parameters_with_page_size)
         return json_res
 
     @staticmethod
@@ -849,7 +844,7 @@ class ContractsApi:
         return json_res
 
     @staticmethod
-    def list_contract_types(api_connection: ApiConnection):
+    def list_contract_types(api_connection: ApiConnection) -> pd.DataFrame:
         """Lists the types of contracts
 
         :param api_connection: class with API token for use with API
@@ -861,7 +856,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def list_commodity_types(api_connection: ApiConnection):
+    def list_commodity_types(api_connection: ApiConnection) -> pd.DataFrame:
         """Lists the types of commodities
 
         :param api_connection: class with API token for use with API
@@ -873,7 +868,7 @@ class ContractsApi:
         return df
 
     @staticmethod
-    def list_instrument_types(api_connection: ApiConnection):
+    def list_instrument_types(api_connection: ApiConnection) -> pd.DataFrame:
         """Lists the types of instruments
 
         :param api_connection: class with API token for use with API
@@ -884,7 +879,8 @@ class ContractsApi:
         df = pd.DataFrame(data=json_res)
         return df
 
-    def fetch_standard_contract(api_connection: ApiConnection, contract_pk: int):
+    @staticmethod
+    def fetch_standard_contract(api_connection: ApiConnection, contract_pk: int) -> list[dict[str, Any]]:
         """Fetches standard contracts
 
         :param api_connection: class with API token for use with API
@@ -897,7 +893,8 @@ class ContractsApi:
 
         return json_res
 
-    def fetch_bilateral_contract(api_connection: ApiConnection, contract_pk: int):
+    @staticmethod
+    def fetch_bilateral_contract(api_connection: ApiConnection, contract_pk: int) -> dict[str, Any]:
         """Fetches bilateral contracts
 
         :param api_connection: class with API token for use with API
@@ -909,6 +906,7 @@ class ContractsApi:
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contract-details/' + str(contract_pk) + "/")
         return json_res
 
+    @staticmethod
     def generate_second_leg_contract(api_connection: ApiConnection, contract: Contract, external_tb: int):
         """Generate a second leg contract for internal trades
         
@@ -928,6 +926,7 @@ class ContractsApi:
         json_res = api_connection.exec_post_url('/api/portfoliomanager/contract-secondleg/', contract_dict)
         return json_res
     
+    @staticmethod
     def generate_position_transfer_contract(api_connection: ApiConnection, contract: Contract, exchange: int):
         """Generate a position transfer contract
         
