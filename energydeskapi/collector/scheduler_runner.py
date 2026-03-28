@@ -168,12 +168,20 @@ async def run_scheduler(
     )
 
     watcher = await bus.kv_watch(config.registry_kv_bucket)
-    async for entry in watcher:
-        if entry is None:
-            # Some NATS client versions send None as an end-of-initial-values sentinel.
+    while True:
+        try:
+            entry = await watcher.updates(timeout=5.0)
+        except Exception:
+            # nats.errors.TimeoutError on idle, or transient errors — keep polling.
             continue
 
-        if entry.operation not in (KV_DEL, KV_PURGE):
+        if entry is None:
+            # Explicit None: bucket was empty at watch-creation time (init done).
+            continue
+
+        if entry.operation in (KV_DEL, KV_PURGE):
+            _stop(entry.key)
+        else:
             try:
                 reg = WorkerRegistration.model_validate_json(entry.value)
             except Exception:
@@ -183,6 +191,4 @@ async def run_scheduler(
                 continue
             _start(reg)
 
-        elif entry.operation in (KV_DEL, KV_PURGE):
-            _stop(entry.key)
 
