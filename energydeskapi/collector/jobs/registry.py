@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Awaitable, Callable, Dict, List, Optional
 
-from collector.models import JobMessage, JobSchedule
+from energydeskapi.collector.models import JobMessage, JobSchedule
 
 JobHandler = Callable[[JobMessage], Awaitable[dict]]
 
