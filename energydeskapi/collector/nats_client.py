@@ -99,7 +99,7 @@ class NatsBus:
         """
         assert self.js is not None
         kv = await self.js.key_value(bucket)
-        return await kv.watch(">")
+        return await kv.watchall()
 
     async def publish_json(self, subject: str, payload: Any) -> None:
         assert self.js is not None

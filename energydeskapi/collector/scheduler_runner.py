@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from typing import Dict, Optional
 from uuid import uuid4
 
-from nats.js.kv import KeyValueOp
+from nats.js.kv import KV_DEL, KV_PURGE
 
 from energydeskapi.collector.config import SchedulerConfig
 from energydeskapi.collector.models import JobMessage, JobSchedule, WorkerRegistration
@@ -173,7 +173,7 @@ async def run_scheduler(
             # Some NATS client versions send None as an end-of-initial-values sentinel.
             continue
 
-        if entry.operation in (None, KeyValueOp.PUT):
+        if entry.operation not in (KV_DEL, KV_PURGE):
             try:
                 reg = WorkerRegistration.model_validate_json(entry.value)
             except Exception:
@@ -183,6 +183,6 @@ async def run_scheduler(
                 continue
             _start(reg)
 
-        elif entry.operation in (KeyValueOp.DEL, KeyValueOp.PURGE):
+        elif entry.operation in (KV_DEL, KV_PURGE):
             _stop(entry.key)
 
