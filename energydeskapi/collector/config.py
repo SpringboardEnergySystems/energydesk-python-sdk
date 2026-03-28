@@ -20,6 +20,9 @@ class SchedulerConfig(BaseSettings):
     js_stream_jobs: str = Field(default="INGEST_JOBS", alias="JS_STREAM_JOBS")
     subject_jobs: str = Field(default="ingest.jobs.>", alias="SUBJECT_JOBS")
 
+    # KV bucket where workers publish their cron registrations.
+    registry_kv_bucket: str = Field(default="COLLECTOR_REGISTRY", alias="REGISTRY_KV_BUCKET")
+
 
 class WorkerConfig(SchedulerConfig):
     """Config for a worker pod.

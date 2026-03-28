@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import datetime as _dt
 import json
 import logging
-from typing import Any, Callable, Optional
+from typing import Any
 
 from nats.aio.client import Client as NATS
-from nats.js.api import RetentionPolicy, StorageType, StreamConfig
+from nats.js.api import KeyValueConfig, RetentionPolicy, StorageType, StreamConfig
 from nats.js.errors import NotFoundError
 
 logger = logging.getLogger(__name__)
@@ -55,6 +56,50 @@ class NatsBus:
         logger.info(
             "Created stream %s for subjects=%s retention=%s", name, subjects, retention
         )
+
+    async def ensure_kv_bucket(
+        self, bucket: str, *, ttl_seconds: int = 0
+    ) -> None:
+        """Create the KV bucket if it does not already exist.
+
+        Args:
+            bucket:      Bucket name, e.g. ``"COLLECTOR_REGISTRY"``.
+            ttl_seconds: If > 0, entries expire after this many seconds.
+                         Use 0 (default) for no expiry.
+        """
+        assert self.js is not None
+        try:
+            await self.js.key_value(bucket)
+            return
+        except NotFoundError:
+            pass
+
+        ttl = _dt.timedelta(seconds=ttl_seconds) if ttl_seconds > 0 else None
+        cfg = KeyValueConfig(bucket=bucket, history=1, ttl=ttl)
+        await self.js.create_key_value(cfg)
+        logger.info("Created KV bucket %s ttl_seconds=%s", bucket, ttl_seconds or "none")
+
+    async def kv_put(self, bucket: str, key: str, payload: Any) -> None:
+        """Serialise *payload* as JSON and store it under *key* in *bucket*."""
+        assert self.js is not None
+        kv = await self.js.key_value(bucket)
+        data = json.dumps(payload, default=str).encode("utf-8")
+        await kv.put(key, data)
+
+    async def kv_watch(self, bucket: str):
+        """Return a KV watcher that yields all current entries then live updates.
+
+        Yields :class:`nats.js.kv.KeyValueEntry` objects.  The caller should
+        inspect ``entry.operation`` to distinguish puts from deletes:
+
+            from nats.js.kv import KeyValueOp
+            async for entry in await bus.kv_watch("MY_BUCKET"):
+                if entry.operation != KeyValueOp.DEL:
+                    ...  # new / updated value
+        """
+        assert self.js is not None
+        kv = await self.js.key_value(bucket)
+        return await kv.watch(">")
 
     async def publish_json(self, subject: str, payload: Any) -> None:
         assert self.js is not None

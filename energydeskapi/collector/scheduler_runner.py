@@ -3,13 +3,13 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Dict, Optional
 from uuid import uuid4
 
+from nats.js.kv import KeyValueOp
+
 from energydeskapi.collector.config import SchedulerConfig
-from energydeskapi.collector.jobs import registry as job_registry
-from energydeskapi.collector.jobs.registry import JobDef
-from energydeskapi.collector.models import JobMessage
+from energydeskapi.collector.models import JobMessage, JobSchedule, WorkerRegistration
 from energydeskapi.collector.nats_client import NatsBus
 from energydeskapi.collector.protocols import ScheduleTracker
 
@@ -31,18 +31,19 @@ async def _publish_job(
     bus: NatsBus,
     config: SchedulerConfig,
     run_tracker: Optional[ScheduleTracker],
-    job_def: JobDef,
+    job_type: str,
+    source: str,
     scheduled_for: datetime,
 ) -> None:
     run_id = str(uuid4())
     created_at = _utcnow()
     partition = "system"
-    idem = _idempotency_key(job_def.job_type, partition, scheduled_for)
+    idem = _idempotency_key(job_type, partition, scheduled_for)
 
     if run_tracker:
         await run_tracker.create_scheduled(
             run_id=run_id,
-            job_type=job_def.job_type,
+            job_type=job_type,
             partition_key=partition,
             scheduled_for=scheduled_for,
             created_at=created_at,
@@ -51,8 +52,8 @@ async def _publish_job(
 
     msg = JobMessage(
         run_id=run_id,
-        job_type=job_def.job_type,
-        source=job_def.source,
+        job_type=job_type,
+        source=source,
         scheduled_for=scheduled_for,
         created_at=created_at,
         partition_key=partition,
@@ -60,7 +61,7 @@ async def _publish_job(
         params={},
     )
 
-    subject = f"ingest.jobs.{job_def.job_type}"
+    subject = f"ingest.jobs.{job_type}"
     payload = msg.model_dump() if hasattr(msg, "model_dump") else msg.dict()
     await bus.publish_json(subject, payload)
     logger.info(
@@ -72,14 +73,15 @@ async def _job_loop(
     bus: NatsBus,
     config: SchedulerConfig,
     run_tracker: Optional[ScheduleTracker],
-    job_def: JobDef,
+    registration: WorkerRegistration,
 ) -> None:
-    schedule = job_def.schedule
+    """Cron loop for a single registered job type.  Runs until cancelled."""
+    schedule = JobSchedule(cron=registration.cron, timezone=registration.timezone)
     logger.info(
-        "Job loop started: job_type=%s cron=%r tz=%s",
-        job_def.job_type,
-        schedule.cron,
-        schedule.timezone,
+        "Cron loop started: job_type=%s cron=%r tz=%s",
+        registration.job_type,
+        registration.cron,
+        registration.timezone,
     )
     while True:
         now = _utcnow()
@@ -87,15 +89,24 @@ async def _job_loop(
         wait_secs = schedule.seconds_until_next(now)
         logger.debug(
             "Next run for %s in %.1f s at %s",
-            job_def.job_type,
+            registration.job_type,
             wait_secs,
             scheduled_for.isoformat(),
         )
         await asyncio.sleep(wait_secs)
         try:
-            await _publish_job(bus, config, run_tracker, job_def, scheduled_for)
+            await _publish_job(
+                bus,
+                config,
+                run_tracker,
+                registration.job_type,
+                registration.source,
+                scheduled_for,
+            )
+        except asyncio.CancelledError:
+            raise
         except Exception:
-            logger.exception("Failed to publish job %s", job_def.job_type)
+            logger.exception("Failed to publish job %s", registration.job_type)
 
 
 async def run_scheduler(
@@ -104,37 +115,74 @@ async def run_scheduler(
     *,
     run_tracker: Optional[ScheduleTracker] = None,
 ) -> None:
-    """Cron-based scheduler loop.
+    """Dynamic cron scheduler — driven by NATS KV worker registrations.
 
-    ``bus`` must already be connected by the caller.  The caller is also
-    responsible for closing ``bus`` (and ``run_tracker``) on shutdown.
+    Watches the ``COLLECTOR_REGISTRY`` KV bucket (configured via
+    ``config.registry_kv_bucket``).  For every ``WorkerRegistration`` entry
+    it finds (or receives as a live update) it starts a dedicated
+    :func:`_job_loop` asyncio task.  Deleting a KV entry cancels the
+    corresponding loop.
 
-    Args:
-        bus:         Connected ``NatsBus`` instance.
-        config:      NATS/stream parameters — no storage credentials.
-        run_tracker: Optional store that records every scheduled intent
-                     (e.g. ``PgStore``).  When ``None`` jobs are published
-                     without a durable record.
+    Workers in any language write their registration JSON into the bucket
+    on startup; see :mod:`energydeskapi.collector.worker_registration` for
+    the Python helper.
+
+    ``bus`` must already be connected by the caller.
     """
     await bus.ensure_stream(
         config.js_stream_jobs, [config.subject_jobs], retention="workqueue"
     )
+    await bus.ensure_kv_bucket(config.registry_kv_bucket)
 
-    scheduled_jobs = [
-        job_registry.get(jt)
-        for jt in job_registry.list_job_types()
-        if job_registry.get(jt) and job_registry.get(jt).schedule is not None
-    ]
+    # job_type → running asyncio Task
+    _tasks: Dict[str, asyncio.Task] = {}
 
-    if not scheduled_jobs:
-        logger.warning(
-            "No jobs with a schedule are registered. "
-            "Attach a JobSchedule to your JobDef entries in the registry."
+    def _start(reg: WorkerRegistration) -> None:
+        job_type = reg.job_type
+        existing = _tasks.get(job_type)
+        if existing and not existing.done():
+            # Re-registration: restart only if cron or tz changed.
+            # For simplicity always restart to pick up any update.
+            logger.info(
+                "Re-registration received for job_type=%s — restarting cron loop",
+                job_type,
+            )
+            existing.cancel()
+        _tasks[job_type] = asyncio.create_task(
+            _job_loop(bus, config, run_tracker, reg),
+            name=f"cron-{job_type}",
         )
-        while True:
-            await asyncio.sleep(60)
+        logger.info(
+            "Cron loop task created: job_type=%s cron=%s", job_type, reg.cron
+        )
 
-    await asyncio.gather(
-        *[_job_loop(bus, config, run_tracker, jd) for jd in scheduled_jobs]
+    def _stop(job_type: str) -> None:
+        task = _tasks.pop(job_type, None)
+        if task and not task.done():
+            task.cancel()
+            logger.info("Cron loop cancelled for job_type=%s (KV entry removed)", job_type)
+
+    logger.info(
+        "Scheduler watching KV bucket %r for worker registrations …",
+        config.registry_kv_bucket,
     )
+
+    watcher = await bus.kv_watch(config.registry_kv_bucket)
+    async for entry in watcher:
+        if entry is None:
+            # Some NATS client versions send None as an end-of-initial-values sentinel.
+            continue
+
+        if entry.operation in (None, KeyValueOp.PUT):
+            try:
+                reg = WorkerRegistration.model_validate_json(entry.value)
+            except Exception:
+                logger.exception(
+                    "Invalid WorkerRegistration in KV key=%s — skipping", entry.key
+                )
+                continue
+            _start(reg)
+
+        elif entry.operation in (KeyValueOp.DEL, KeyValueOp.PURGE):
+            _stop(entry.key)
 
