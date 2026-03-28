@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Awaitable, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Awaitable, Callable, Dict, List, Optional
 
 from energydeskapi.collector.models import JobMessage, JobSchedule
 
-JobHandler = Callable[[JobMessage], Awaitable[dict]]
+if TYPE_CHECKING:
+    from energydeskapi.collector.sinks import SinkBundle
+
+# Second arg defaults to SinkBundle() so handlers that ignore it need no change.
+JobHandler = Callable[["JobMessage", "SinkBundle"], Awaitable[dict]]
 
 @dataclass(frozen=True)
 class JobDef:
