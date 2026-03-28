@@ -4,7 +4,7 @@ import asyncio
 import logging
 import time as _time
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Optional
 
 from energydeskapi.collector.config import WorkerConfig
 from energydeskapi.collector.jobs.registry import get, list_job_types
@@ -30,7 +30,10 @@ try:
         ["job_type"],
     )
 except ImportError:
-    class _Noop:  # type: ignore[no-redef]
+    Counter = None   # type: ignore[assignment,misc]
+    Histogram = None  # type: ignore[assignment,misc]
+
+    class _Noop:
         def labels(self, **_kw: object) -> "_Noop": return self
         def inc(self, _n: float = 1) -> None: pass
         def observe(self, _v: float) -> None: pass
@@ -102,7 +105,7 @@ async def run_worker(
 
     sem = asyncio.Semaphore(config.worker_concurrency)
 
-    async def handle_one(msg: object) -> None:
+    async def handle_one(msg: Any) -> None:
         async with sem:
             # ── parse ──────────────────────────────────────────────────
             try:

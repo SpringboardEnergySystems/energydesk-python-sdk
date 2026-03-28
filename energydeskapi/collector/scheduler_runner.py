@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from energydeskapi.collector.config import SchedulerConfig
 from energydeskapi.collector.jobs import registry as job_registry
+from energydeskapi.collector.jobs.registry import JobDef
 from energydeskapi.collector.models import JobMessage
 from energydeskapi.collector.nats_client import NatsBus
 from energydeskapi.collector.protocols import ScheduleTracker
@@ -30,7 +31,7 @@ async def _publish_job(
     bus: NatsBus,
     config: SchedulerConfig,
     run_tracker: Optional[ScheduleTracker],
-    job_def: object,
+    job_def: JobDef,
     scheduled_for: datetime,
 ) -> None:
     run_id = str(uuid4())
@@ -71,7 +72,7 @@ async def _job_loop(
     bus: NatsBus,
     config: SchedulerConfig,
     run_tracker: Optional[ScheduleTracker],
-    job_def: object,
+    job_def: JobDef,
 ) -> None:
     schedule = job_def.schedule
     logger.info(
