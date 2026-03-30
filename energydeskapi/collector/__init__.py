@@ -10,6 +10,12 @@ from energydeskapi.collector.nats_client import NatsBus
 from energydeskapi.collector.config import WorkerConfig, SchedulerConfig
 from energydeskapi.collector.worker_runner import run_worker
 from energydeskapi.collector.scheduler_runner import run_scheduler
+from energydeskapi.collector.metrics import (
+    JOBS_TOTAL,
+    JOB_DURATION,
+    WORKER_ALIVE,
+    start_metrics_server,
+)
 
 __all__ = [
     "ApiSink",
@@ -23,5 +29,10 @@ __all__ = [
     "SchedulerConfig",
     "run_worker",
     "run_scheduler",
+    # Metrics
+    "JOBS_TOTAL",
+    "JOB_DURATION",
+    "WORKER_ALIVE",
+    "start_metrics_server",
 ]
 

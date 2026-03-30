@@ -44,3 +44,8 @@ class WorkerConfig(SchedulerConfig):
 
     # Comma-separated list of job_types to handle; empty = all registered.
     job_types: str = Field(default="", alias="JOB_TYPES")
+
+    # Port for the Prometheus /metrics scrape endpoint.
+    # Set to 0 to disable (useful in test / local runs without a scraper).
+    metrics_port: int = Field(default=8000, alias="METRICS_PORT")
+

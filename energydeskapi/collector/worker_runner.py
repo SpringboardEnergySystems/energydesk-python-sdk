@@ -8,6 +8,7 @@ from typing import Any, Optional
 
 from energydeskapi.collector.config import WorkerConfig
 from energydeskapi.collector.jobs.registry import get, list_job_types
+from energydeskapi.collector.metrics import JOB_DURATION, JOBS_TOTAL, WORKER_ALIVE
 from energydeskapi.collector.models import JobMessage, RunEvent
 from energydeskapi.collector.nats_client import NatsBus
 from energydeskapi.collector.protocols import RunTracker
@@ -15,32 +16,6 @@ from energydeskapi.collector.sinks import SinkBundle
 
 logger = logging.getLogger(__name__)
 
-# ── Prometheus (optional — silent no-op if not installed) ─────────────────
-try:
-    from prometheus_client import Counter, Histogram
-
-    _JOBS_TOTAL = Counter(
-        "collector_jobs_total",
-        "Total jobs processed by the worker",
-        ["job_type", "status"],
-    )
-    _JOB_DURATION = Histogram(
-        "collector_job_duration_seconds",
-        "Job handler execution duration in seconds",
-        ["job_type"],
-    )
-except ImportError:
-    Counter = None   # type: ignore[assignment,misc]
-    Histogram = None  # type: ignore[assignment,misc]
-
-    class _Noop:
-        def labels(self, **_kw: object) -> "_Noop": return self
-        def inc(self, _n: float = 1) -> None: pass
-        def observe(self, _v: float) -> None: pass
-
-    _JOBS_TOTAL = _Noop()   # type: ignore[assignment]
-    _JOB_DURATION = _Noop()  # type: ignore[assignment]
-# ──────────────────────────────────────────────────────────────────────────
 
 
 def _utcnow() -> datetime:
@@ -163,8 +138,8 @@ async def run_worker(
                 metrics = await jobdef.handler(job, sinks)
                 duration = _time.monotonic() - t0
 
-                _JOBS_TOTAL.labels(job_type=job.job_type, status="succeeded").inc()
-                _JOB_DURATION.labels(job_type=job.job_type).observe(duration)
+                JOBS_TOTAL.labels(job_type=job.job_type, status="succeeded").inc()
+                JOB_DURATION.labels(job_type=job.job_type).observe(duration)
 
                 finished = _utcnow()
                 if run_tracker:
@@ -187,8 +162,8 @@ async def run_worker(
             except Exception as exc:
                 duration = _time.monotonic() - t0
 
-                _JOBS_TOTAL.labels(job_type=job.job_type, status="failed").inc()
-                _JOB_DURATION.labels(job_type=job.job_type).observe(duration)
+                JOBS_TOTAL.labels(job_type=job.job_type, status="failed").inc()
+                JOB_DURATION.labels(job_type=job.job_type).observe(duration)
 
                 logger.exception(
                     "Job failed run_id=%s job_type=%s", job.run_id, job.job_type
@@ -216,6 +191,7 @@ async def run_worker(
 
     # ── main pull loop ─────────────────────────────────────────────────────
     while True:
+        WORKER_ALIVE.set_to_current_time()
         try:
             msgs = await sub.fetch(batch=50, timeout=1.0)
         except (asyncio.TimeoutError, TimeoutError):
