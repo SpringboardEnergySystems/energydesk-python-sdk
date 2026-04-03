@@ -49,3 +49,10 @@ class WorkerConfig(SchedulerConfig):
     # Set to 0 to disable (useful in test / local runs without a scraper).
     metrics_port: int = Field(default=8000, alias="METRICS_PORT")
 
+    # When True, all pending messages for this worker's consumer are ACK'd
+    # (discarded) before the main processing loop starts.  Useful for workers
+    # that should only act on *new* triggers — not a week of stale cron jobs
+    # that built up while the pod was down.
+    # Override per-deployment with:  PURGE_ON_STARTUP=true
+    purge_on_startup: bool = Field(default=False, alias="PURGE_ON_STARTUP")
+

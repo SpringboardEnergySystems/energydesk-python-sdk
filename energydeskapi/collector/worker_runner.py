@@ -78,6 +78,14 @@ async def run_worker(
         stream=config.js_stream_jobs,
     )
 
+    if config.purge_on_startup:
+        logger.info(
+            "PURGE_ON_STARTUP=true — draining stale messages for consumer=%s",
+            config.durable_name,
+        )
+        discarded = await drain_consumer(bus, sub, config)
+        logger.info("Startup purge complete: %d messages discarded", discarded)
+
     sem = asyncio.Semaphore(config.worker_concurrency)
 
     async def handle_one(msg: Any) -> None:
