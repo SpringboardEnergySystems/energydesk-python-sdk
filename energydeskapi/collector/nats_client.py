@@ -17,9 +17,25 @@ class NatsBus:
         self.url = url
         self.nc = NATS()
         self.js = None
+        # Tracks every stream we have ensured so they can be re-created
+        # automatically after a NATS reconnect (e.g. pod restart).
+        self._known_streams: dict[str, tuple[list[str], str]] = {}
 
     async def connect(self) -> None:
-        await self.nc.connect(servers=[self.url])
+        async def _reconnected_cb() -> None:
+            logger.warning(
+                "NATS reconnected — re-creating %d known streams", len(self._known_streams)
+            )
+            for name, (subjects, retention) in list(self._known_streams.items()):
+                try:
+                    await self._create_stream(name, subjects, retention=retention)
+                    logger.info("Re-created stream %s after reconnect", name)
+                except Exception as exc:
+                    logger.warning(
+                        "Failed to re-create stream %s after reconnect: %s", name, exc
+                    )
+
+        await self.nc.connect(servers=[self.url], reconnected_cb=_reconnected_cb)
         self.js = self.nc.jetstream()
 
     async def close(self) -> None:
@@ -28,16 +44,11 @@ class NatsBus:
         finally:
             await self.nc.close()
 
-    async def ensure_stream(
+    async def _create_stream(
         self, name: str, subjects: list[str], *, retention: str = "limits"
     ) -> None:
+        """Low-level stream creation — always attempts to create, ignores AlreadyExists."""
         assert self.js is not None
-        try:
-            await self.js.stream_info(name)
-            return
-        except NotFoundError:
-            pass
-
         rp = (
             RetentionPolicy.LIMITS
             if retention == "limits"
@@ -52,10 +63,32 @@ class NatsBus:
             max_bytes=-1,
             max_age=0,
         )
-        await self.js.add_stream(cfg)
-        logger.info(
-            "Created stream %s for subjects=%s retention=%s", name, subjects, retention
-        )
+        try:
+            await self.js.add_stream(cfg)
+            logger.info(
+                "Created stream %s subjects=%s retention=%s", name, subjects, retention
+            )
+        except Exception as exc:
+            # Stream may already exist — that's fine
+            if "already in use" in str(exc).lower() or "exists" in str(exc).lower():
+                logger.debug("Stream %s already exists", name)
+            else:
+                raise
+
+    async def ensure_stream(
+        self, name: str, subjects: list[str], *, retention: str = "limits"
+    ) -> None:
+        assert self.js is not None
+        # Remember this stream so we can re-create it after a reconnect
+        self._known_streams[name] = (subjects, retention)
+        try:
+            await self.js.stream_info(name)
+            return
+        except NotFoundError:
+            pass
+
+        await self._create_stream(name, subjects, retention=retention)
+
 
     async def ensure_kv_bucket(
         self, bucket: str, *, ttl_seconds: int = 0
