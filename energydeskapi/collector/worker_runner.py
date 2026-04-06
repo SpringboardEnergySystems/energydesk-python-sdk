@@ -3,8 +3,10 @@ from __future__ import annotations
 import asyncio
 import logging
 import time as _time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
+
+from nats.js.api import ConsumerConfig
 
 from energydeskapi.collector.config import WorkerConfig
 from energydeskapi.collector.jobs.registry import get, list_job_types
@@ -70,8 +72,8 @@ async def run_worker(
         config.js_stream_events,
         ["ingest.runs.*", "ingest.dlq"],
         retention="limits",
-        max_age_seconds=604_800,     # 7 days — run history / DLQ
-        max_bytes=2_147_483_648,     # 2 GiB
+        max_age_seconds=86_400,      # 1 day  — was 7 days; keeps disk use bounded
+        max_bytes=268_435_456,       # 256 MiB — was 2 GiB; prevent PVC saturation
     )
 
     js = bus.js
@@ -81,6 +83,13 @@ async def run_worker(
         subject=config.subject_jobs,
         durable=config.durable_name,
         stream=config.js_stream_jobs,
+        config=ConsumerConfig(
+            # Workers must ACK within this window or NATS redelivers.
+            # Must be longer than the slowest expected job (forward-curve ~2 min).
+            ack_wait=timedelta(seconds=config.ack_wait_seconds),
+            # Stop redelivering after this many attempts; message goes to DLQ.
+            max_deliver=config.max_deliver,
+        ),
     )
 
     if config.purge_on_startup:
@@ -198,7 +207,11 @@ async def run_worker(
                     ).model_dump(),
                 )
                 try:
-                    await msg.nak()
+                    # Delay redelivery to prevent a tight CPU spin when a job
+                    # keeps failing (e.g. bad credentials, unreachable API).
+                    # 30 s gives the external service time to recover without
+                    # hammering NATS or flooding the events stream.
+                    await msg.nak(delay=timedelta(seconds=30))
                 except Exception:
                     await msg.ack()
 
@@ -210,4 +223,3 @@ async def run_worker(
         except (asyncio.TimeoutError, TimeoutError):
             continue
         await asyncio.gather(*(handle_one(m) for m in msgs))
-

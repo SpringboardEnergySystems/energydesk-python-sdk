@@ -87,6 +87,42 @@ class NatsBus:
             else:
                 raise
 
+    async def _update_stream(
+        self,
+        name: str,
+        subjects: list[str],
+        *,
+        retention: str = "limits",
+        max_age_seconds: int = 0,
+        max_bytes: int = -1,
+    ) -> None:
+        """Update an existing stream's limits.  Silently ignores failures so a
+        permission error or a version of NATS that rejects the update does not
+        prevent the worker from starting."""
+        assert self.js is not None
+        rp = (
+            RetentionPolicy.LIMITS
+            if retention == "limits"
+            else RetentionPolicy.WORK_QUEUE
+        )
+        cfg = StreamConfig(
+            name=name,
+            subjects=subjects,
+            retention=rp,
+            storage=StorageType.FILE,
+            max_msgs=-1,
+            max_bytes=max_bytes,
+            max_age=_dt.timedelta(seconds=max_age_seconds) if max_age_seconds > 0 else _dt.timedelta(0),
+        )
+        try:
+            await self.js.update_stream(cfg)
+            logger.info(
+                "Updated stream %s max_age_seconds=%s max_bytes=%s",
+                name, max_age_seconds or "unlimited", max_bytes if max_bytes > 0 else "unlimited",
+            )
+        except Exception as exc:
+            logger.warning("Could not update stream %s config: %s", name, exc)
+
     async def ensure_stream(
         self,
         name: str,
@@ -101,16 +137,21 @@ class NatsBus:
         self._known_streams[name] = (subjects, retention, max_age_seconds, max_bytes)
         try:
             await self.js.stream_info(name)
-            return
+            # Stream exists — update it so new limits (e.g. tighter max_bytes /
+            # max_age) are applied immediately rather than only after deletion.
+            await self._update_stream(
+                name, subjects,
+                retention=retention,
+                max_age_seconds=max_age_seconds,
+                max_bytes=max_bytes,
+            )
         except NotFoundError:
-            pass
-
-        await self._create_stream(
-            name, subjects,
-            retention=retention,
-            max_age_seconds=max_age_seconds,
-            max_bytes=max_bytes,
-        )
+            await self._create_stream(
+                name, subjects,
+                retention=retention,
+                max_age_seconds=max_age_seconds,
+                max_bytes=max_bytes,
+            )
 
 
     async def ensure_kv_bucket(
