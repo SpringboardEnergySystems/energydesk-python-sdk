@@ -24,6 +24,32 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+async def drain_consumer(bus: NatsBus, sub: Any, config: WorkerConfig) -> int:
+    """ACK and discard every pending message for this consumer.
+
+    Used on startup to throw away a backlog of stale / repeatedly-failed jobs
+    so the worker enters the main loop with a clean slate.  Only appropriate
+    for workers whose jobs are time-sensitive and should not be processed after
+    a delay (e.g. forward-curve generation).
+
+    Returns:
+        Number of messages discarded.
+    """
+    discarded = 0
+    while True:
+        try:
+            msgs = await sub.fetch(batch=100, timeout=1.0)
+            for msg in msgs:
+                try:
+                    await msg.ack()
+                except Exception:
+                    pass
+                discarded += 1
+        except (asyncio.TimeoutError, TimeoutError):
+            break
+    return discarded
+
+
 async def run_worker(
     bus: NatsBus,
     config: WorkerConfig,
