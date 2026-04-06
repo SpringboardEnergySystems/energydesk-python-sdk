@@ -19,16 +19,21 @@ class NatsBus:
         self.js = None
         # Tracks every stream we have ensured so they can be re-created
         # automatically after a NATS reconnect (e.g. pod restart).
-        self._known_streams: dict[str, tuple[list[str], str]] = {}
+        self._known_streams: dict[str, tuple[list[str], str, int, int]] = {}
 
     async def connect(self) -> None:
         async def _reconnected_cb() -> None:
             logger.warning(
                 "NATS reconnected — re-creating %d known streams", len(self._known_streams)
             )
-            for name, (subjects, retention) in list(self._known_streams.items()):
+            for name, (subjects, retention, max_age_seconds, max_bytes) in list(self._known_streams.items()):
                 try:
-                    await self._create_stream(name, subjects, retention=retention)
+                    await self._create_stream(
+                        name, subjects,
+                        retention=retention,
+                        max_age_seconds=max_age_seconds,
+                        max_bytes=max_bytes,
+                    )
                     logger.info("Re-created stream %s after reconnect", name)
                 except Exception as exc:
                     logger.warning(
@@ -45,7 +50,13 @@ class NatsBus:
             await self.nc.close()
 
     async def _create_stream(
-        self, name: str, subjects: list[str], *, retention: str = "limits"
+        self,
+        name: str,
+        subjects: list[str],
+        *,
+        retention: str = "limits",
+        max_age_seconds: int = 0,
+        max_bytes: int = -1,
     ) -> None:
         """Low-level stream creation — always attempts to create, ignores AlreadyExists."""
         assert self.js is not None
@@ -60,13 +71,14 @@ class NatsBus:
             retention=rp,
             storage=StorageType.FILE,
             max_msgs=-1,
-            max_bytes=-1,
-            max_age=0,
+            max_bytes=max_bytes,
+            max_age=_dt.timedelta(seconds=max_age_seconds) if max_age_seconds > 0 else _dt.timedelta(0),
         )
         try:
             await self.js.add_stream(cfg)
             logger.info(
-                "Created stream %s subjects=%s retention=%s", name, subjects, retention
+                "Created stream %s subjects=%s retention=%s max_age_seconds=%s max_bytes=%s",
+                name, subjects, retention, max_age_seconds or "unlimited", max_bytes if max_bytes > 0 else "unlimited",
             )
         except Exception as exc:
             # Stream may already exist — that's fine
@@ -76,18 +88,29 @@ class NatsBus:
                 raise
 
     async def ensure_stream(
-        self, name: str, subjects: list[str], *, retention: str = "limits"
+        self,
+        name: str,
+        subjects: list[str],
+        *,
+        retention: str = "limits",
+        max_age_seconds: int = 0,
+        max_bytes: int = -1,
     ) -> None:
         assert self.js is not None
-        # Remember this stream so we can re-create it after a reconnect
-        self._known_streams[name] = (subjects, retention)
+        # Remember this stream (with limits) so it can be re-created after a NATS reconnect
+        self._known_streams[name] = (subjects, retention, max_age_seconds, max_bytes)
         try:
             await self.js.stream_info(name)
             return
         except NotFoundError:
             pass
 
-        await self._create_stream(name, subjects, retention=retention)
+        await self._create_stream(
+            name, subjects,
+            retention=retention,
+            max_age_seconds=max_age_seconds,
+            max_bytes=max_bytes,
+        )
 
 
     async def ensure_kv_bucket(

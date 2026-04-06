@@ -61,12 +61,17 @@ async def run_worker(
         )
 
     await bus.ensure_stream(
-        config.js_stream_jobs, [config.subject_jobs], retention="workqueue"
+        config.js_stream_jobs, [config.subject_jobs],
+        retention="workqueue",
+        max_age_seconds=86_400,      # 24 h  — jobs are consumed immediately
+        max_bytes=536_870_912,       # 512 MiB
     )
     await bus.ensure_stream(
         config.js_stream_events,
         ["ingest.runs.*", "ingest.dlq"],
         retention="limits",
+        max_age_seconds=604_800,     # 7 days — run history / DLQ
+        max_bytes=2_147_483_648,     # 2 GiB
     )
 
     js = bus.js
