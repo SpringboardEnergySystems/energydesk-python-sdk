@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time as _time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from nats.js.api import ConsumerConfig
@@ -112,7 +112,8 @@ async def run_worker(
         config=ConsumerConfig(
             # Workers must ACK within this window or NATS redelivers.
             # Must be longer than the slowest expected job (forward-curve ~2 min).
-            ack_wait=timedelta(seconds=config.ack_wait_seconds),
+            # Pass as plain seconds (int); nats-py _to_nanoseconds expects a number, not timedelta.
+            ack_wait=config.ack_wait_seconds,
             # Stop redelivering after this many attempts; message goes to DLQ.
             max_deliver=config.max_deliver,
         ),
@@ -237,7 +238,7 @@ async def run_worker(
                     # keeps failing (e.g. bad credentials, unreachable API).
                     # 30 s gives the external service time to recover without
                     # hammering NATS or flooding the events stream.
-                    await msg.nak(delay=timedelta(seconds=30))
+                    await msg.nak(delay=30)
                 except Exception:
                     await msg.ack()
 
