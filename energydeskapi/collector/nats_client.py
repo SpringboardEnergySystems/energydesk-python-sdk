@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime as _dt
 import json
 import logging
 from typing import Any
@@ -72,7 +71,7 @@ class NatsBus:
             storage=StorageType.FILE,
             max_msgs=-1,
             max_bytes=max_bytes,
-            max_age=_dt.timedelta(seconds=max_age_seconds) if max_age_seconds > 0 else _dt.timedelta(0),
+            max_age=max_age_seconds,  # seconds as int; 0 = unlimited
         )
         try:
             await self.js.add_stream(cfg)
@@ -112,7 +111,7 @@ class NatsBus:
             storage=StorageType.FILE,
             max_msgs=-1,
             max_bytes=max_bytes,
-            max_age=_dt.timedelta(seconds=max_age_seconds) if max_age_seconds > 0 else _dt.timedelta(0),
+            max_age=max_age_seconds,  # seconds as int; 0 = unlimited
         )
         try:
             await self.js.update_stream(cfg)
