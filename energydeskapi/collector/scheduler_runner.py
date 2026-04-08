@@ -109,6 +109,22 @@ async def _job_loop(
             logger.exception("Failed to publish job %s", registration.job_type)
 
 
+async def _persist_registration(
+    run_tracker: Optional[ScheduleTracker],
+    reg: WorkerRegistration,
+) -> None:
+    """Persist a WorkerRegistration to durable storage if supported."""
+    if run_tracker is None:
+        return
+    upsert = getattr(run_tracker, "upsert_registration", None)
+    if upsert is None:
+        return
+    try:
+        await upsert(reg)
+    except Exception:
+        logger.exception("Failed to persist registration for job_type=%s", reg.job_type)
+
+
 async def run_scheduler(
     bus: NatsBus,
     config: SchedulerConfig,
@@ -189,6 +205,7 @@ async def run_scheduler(
                     "Invalid WorkerRegistration in KV key=%s — skipping", entry.key
                 )
                 continue
+            asyncio.create_task(_persist_registration(run_tracker, reg))
             _start(reg)
 
 

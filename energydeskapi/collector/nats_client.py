@@ -197,6 +197,27 @@ class NatsBus:
         kv = await self.js.key_value(bucket)
         return await kv.watchall()
 
+    async def kv_get_all(self, bucket: str) -> list[dict]:
+        """Return all current (non-deleted) entries in *bucket* as parsed JSON dicts.
+
+        Returns an empty list if the bucket does not exist or is empty.
+        """
+        assert self.js is not None
+        try:
+            kv = await self.js.key_value(bucket)
+            keys = await kv.keys()
+        except Exception:
+            return []
+        results = []
+        for key in keys:
+            try:
+                entry = await kv.get(key)
+                if entry and entry.value:
+                    results.append(json.loads(entry.value.decode("utf-8")))
+            except Exception:
+                logger.debug("Could not read KV entry %s/%s", bucket, key)
+        return results
+
     async def publish_json(self, subject: str, payload: Any) -> None:
         assert self.js is not None
         data = json.dumps(payload, default=str).encode("utf-8")
