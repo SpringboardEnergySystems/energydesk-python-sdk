@@ -129,6 +129,17 @@ class CurveApi:
             return None
         return json_res
 
+    @staticmethod
+    def get_available_areas(api_connection: ApiConnection, parameters: dict={}):
+        """Fetches all companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=api_connection.exec_get_url('/api/curvemanager/forwardcurves/availableareas/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def retrieve_rolling_products(api_connection , price_area, days_back=40):
