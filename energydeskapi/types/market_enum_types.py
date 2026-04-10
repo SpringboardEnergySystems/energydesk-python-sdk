@@ -19,6 +19,7 @@ class MarketPlaceEnum(Enum):
     EEX = 3
     EURONEXT = 4
     OTC = 5
+    ICE = 6
 
 
 class DeliveryTypeEnum(Enum):
@@ -127,4 +128,5 @@ def market_place_description(x):
         MarketPlaceEnum.EEX: "EEX",
         MarketPlaceEnum.EURONEXT: MarketPlaceEnum.EURONEXT.name,
         MarketPlaceEnum.OTC: "OTC (Over the Counter)",
+        MarketPlaceEnum.ICE: "ICE (Intercontinental Exchange)",
     }[x]
