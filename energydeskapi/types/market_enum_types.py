@@ -49,6 +49,9 @@ class StructureTypeEnum(Enum):
     PLAIN = 1
     CFD = 2
 
+class OptionTypeEnum(Enum):
+    CALL = 1
+    PUT = 2
 
 class BlockSizeEnum(Enum):
     SPOT = 1
@@ -71,6 +74,13 @@ def delivery_type_description(x):
         DeliveryTypeEnum.FINANCIAL: "Financial Delivery",
         DeliveryTypeEnum.PHYSICAL: "Physical Delivery",
     }[x]
+
+def option_type_description(x):
+    return {
+        OptionTypeEnum.CALL: "Call Option",
+        OptionTypeEnum.PUT: "Put Option",
+    }[x]
+
 
 def commodity_type_description(x):
     return {
