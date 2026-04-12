@@ -12,6 +12,7 @@ class MarketEnum(Enum):
     CARBON_EMISSIONS = 3
     CURRENCY_MARKET = 4
     GOs_MARKET = 5
+    FUELS_MARKET = 6
 
 class MarketPlaceEnum(Enum):
     NASDAQ_OMX = 1
@@ -34,6 +35,7 @@ class CommodityTypeEnum(Enum):
     GOs = 5
     CURRENCY = 6
     GRID_CAPACITY = 7
+    COAL = 8
 
 class InstrumentTypeEnum(Enum):
     FUT = 1
@@ -75,10 +77,11 @@ def commodity_type_description(x):
         CommodityTypeEnum.POWER: "Power",
         CommodityTypeEnum.EUA: "EUA",
         CommodityTypeEnum.ELCERT: "Elcertificate",
-        CommodityTypeEnum.GAS: "Gas",
+        CommodityTypeEnum.GAS: "Natural Gas",
         CommodityTypeEnum.GOs: "Guarantees of Origin",
         CommodityTypeEnum.CURRENCY: "Currency",
         CommodityTypeEnum.GRID_CAPACITY: "Grid Capacity",
+        CommodityTypeEnum.COAL: "Coal",
     }[x]
 
 def blocksize_description(x):
@@ -119,6 +122,7 @@ def market_description(x):
         MarketEnum.CARBON_EMISSIONS: "European Carbon Market",
         MarketEnum.CURRENCY_MARKET: "Currency Market",
         MarketEnum.GOs_MARKET: "European GoO Market",
+        MarketEnum.FUELS_MARKET: "European Fuels Market",
     }[x]
 
 def market_place_description(x):
