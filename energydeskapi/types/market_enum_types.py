@@ -36,6 +36,7 @@ class CommodityTypeEnum(Enum):
     CURRENCY = 6
     GRID_CAPACITY = 7
     COAL = 8
+    CRUDE_OIL = 9
 
 class InstrumentTypeEnum(Enum):
     FUT = 1
@@ -92,6 +93,7 @@ def commodity_type_description(x):
         CommodityTypeEnum.CURRENCY: "Currency",
         CommodityTypeEnum.GRID_CAPACITY: "Grid Capacity",
         CommodityTypeEnum.COAL: "Coal",
+        CommodityTypeEnum.CRUDE_OIL: "Brent Crude Oil",
     }[x]
 
 def blocksize_description(x):
