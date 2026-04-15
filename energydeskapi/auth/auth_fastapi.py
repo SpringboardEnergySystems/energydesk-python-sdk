@@ -85,6 +85,8 @@ class FastAPIOIDCAuth:
         self.app = app
         self.title = title
         self.allow_guest = allow_guest
+        # Optional post-auth hook — see set_post_auth_hook() for details.
+        self.post_auth_hook = None
 
         if app:
             self.init_app(app, config)
@@ -618,6 +620,18 @@ class FastAPIOIDCAuth:
             if provider == 'django':
                 session_data['access_token'] = access_token
 
+            # Application-level gate (e.g. registration check).
+            # If a hook is registered and returns a Response, the session is NOT
+            # written — the user stays as an anonymous guest and sees whatever
+            # the hook redirects to (e.g. portal home with an error notice).
+            if self.post_auth_hook is not None:
+                override = self.post_auth_hook(request, session_data)
+                if override is not None:
+                    logger.info(
+                        f"post_auth_hook blocked session for {session_data.get('email')}"
+                    )
+                    return override
+
             request.session['user'] = session_data
 
             logger.info(f"User {user_info.get('email')} authenticated via {provider}")
@@ -700,6 +714,47 @@ class FastAPIOIDCAuth:
             </body>
             </html>
             '''
+
+    def set_post_auth_hook(self, hook: Callable) -> None:
+        """
+        Register an application-level gate that runs after OAuth succeeds but
+        *before* the session is written.
+
+        The hook is called as ``hook(request, session_data_dict)`` where
+        ``session_data_dict`` is the dict that *would* be stored in the session.
+
+        Return values
+        -------------
+        ``None``
+            Proceed normally — write the session and redirect to the portal.
+        A ``Response`` (e.g. ``RedirectResponse``)
+            Abort the login.  The session is **not** written, so the user
+            continues as an anonymous guest.  Typically redirect to the portal
+            home with a query param like ``?auth_error=not_registered``.
+
+        Example (registration gate in server.py)::
+
+            def _check_registered(request, session_user):
+                from flexgateway.authorization import lookup_user
+                from flexgateway.database.session import SessionLocal
+                email = (session_user.get("email") or "").lower()
+                db = SessionLocal()
+                try:
+                    if lookup_user(email, db) is not None:
+                        return None   # registered → proceed
+                finally:
+                    db.close()
+                from urllib.parse import quote
+                from starlette.responses import RedirectResponse
+                root = request.scope.get("root_path", "")
+                return RedirectResponse(
+                    f"{root}/portal/?auth_error=not_registered&email={quote(email)}"
+                )
+
+            oidc_auth.set_post_auth_hook(_check_registered)
+        """
+        self.post_auth_hook = hook
+        logger.info("post_auth_hook registered on FastAPIOIDCAuth")
 
     def get_current_user(self, request: Request) -> Optional[Dict[str, Any]]:
         """Dependency to get current authenticated user"""

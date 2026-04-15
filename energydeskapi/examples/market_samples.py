@@ -38,11 +38,11 @@ def query_market_prices(api_conn):
     df=pd.DataFrame(data=json.loads(jd))
     print(df)
 
-def query_product_prices(api_conn, products=['ENOFUTBLYR-26','ENOFUTBLYR-27']):
+def query_product_prices(api_conn, products=['FEUA042026P086','FEUA042026']):
     today = pendulum.today('Europe/Oslo')
     period_from = today.add(days=-150)
     period_until = today.add(days=-110)
-    params={"price_date__gte": str(period_from),"price_date__lt": str(period_until), 'product__market_ticker__in':products,'page_size':1000}
+    params={ 'product__market_ticker__in':products,'page_size':1000}
     data=DerivativesApi.get_closing_prices(api_conn, params)
     print(json.dumps(data['results'], indent=2))
 
@@ -65,22 +65,23 @@ def query_market_types(api_conn):
 
 def get_spot_prices(api_conn):
     today = pendulum.today('Europe/Oslo')
-    period_from = pendulum.parse("2026-01-21", tz="Europe/Oslo")
-    period_until = pendulum.parse("2026-01-23", tz="Europe/Oslo")
+    period_from = pendulum.parse("2026-03-01", tz="Europe/Oslo")
+    period_until = pendulum.parse("2026-04-01", tz="Europe/Oslo")
     #params={"period_from": str(period_from),"period_until": str(today), 'currency_code':'NOK', 'resolution':'h','area':'NO1','market':'NORDIC_POWER','page_size':1000}
     parameters = {
         'period_from': str(pendulum.parse(str(period_from), tz="Europe/Oslo")) if period_from else None,
         'period_until': str(pendulum.parse(str(period_until), tz="Europe/Oslo")) if period_from else None,
-        'resolution': "h",
+        'resolution': "D",
         'currency_code': "NOK",
         'market': "NORDIC_POWER",
-        'area': "SYS"
+        'area': "NO1"
     }
 
     df=SpotPricesApi.get_spot_prices_df(api_conn, parameters)
-    df_no1=df['SYS']
-    pd.set_option('display.max_rows', None)
-    print(df_no1)
+    if df is not None:
+        df_no1=df['NO1']
+        pd.set_option('display.max_rows', None)
+        print(df_no1)
 
 
 
@@ -96,24 +97,15 @@ def manage_market_products(api_conn, ticker):
 
 
 def market_products(api_conn):
-    params={'page_size':500, 'market_place__in':[ MarketPlaceEnum.EURONEXT.value]}
-    params['commodity_definition__structure_type__code']=StructureTypeEnum.CFD.name
-    params['commodity_definition__commodity_type__code']=CommodityTypeEnum.POWER.name
-    params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.FUT.name
-    params['commodity_definition__delivery_type__code']=DeliveryTypeEnum.FINANCIAL.name
-    params['commodity_definition__block_size_category__code'] = BlockSizeEnum.MONTH.name
-    params['market_ticker'] = "ENOMFUTMAY-26"
+    params={'page_size':500, 'market_place__in':[ MarketPlaceEnum.ICE.value]}
+    params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
+
     res=ProductsApi.get_market_products_embedded(api_conn, params)
 
-    params['commodity_definition__block_size_category__code'] = BlockSizeEnum.MONTH.name
-    res=ProductsApi.get_market_products_embedded(api_conn, params)
-
-    df=pd.DataFrame(data=res['results'])
-    #print(df.columns)
     #pd.set_option('display.max_rows', None)
-    print(df)
+    #print(df)
     #print(df[['product_code','generic_product_code','price_basis_code']])
-    #print(json.dumps(res['results'], indent=2))
+    print(json.dumps(res['results'], indent=2))
 
 
 def get_market_types(api_conn):
@@ -168,9 +160,11 @@ if __name__ == '__main__':
     api_conn=init_api()
 
     context = {}
-    #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__delivery_until__gt':'2025-01-01'})
-    #print(df)
+    #market_products(api_conn)
     get_spot_prices(api_conn)
+    #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__instrument':'2025-01-01'})
+    #print(df)
+    #get_spot_prices(api_conn)
     #query_product_prices(api_conn, ['ENOFUTBLYR-26','ENOFUTBLYR-27'])
     ##success, returned_data, status_code, error_msg=BilateralApi.load_profiled_volume(api_conn, "PROF3_NO1_5YR", 72000)
     #context['price_area']=returned_data['area']
