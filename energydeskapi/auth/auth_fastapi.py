@@ -21,6 +21,12 @@ logger = logging.getLogger(__name__)
 _token_store: Dict[str, str] = {}
 _token_store_lock = threading.Lock()
 
+# Server-side id_token store: sub → id_token
+# Google ID tokens are used for appserver identity verification. Too large
+# for the session cookie so stored server-side keyed by sub.
+_id_token_store: Dict[str, str] = {}
+_id_token_store_lock = threading.Lock()
+
 
 class FastAPIOIDCAuth:
     """Multi-provider OIDC authentication handler for FastAPI"""
@@ -608,6 +614,13 @@ class FastAPIOIDCAuth:
                     _token_store[sub] = access_token
                 logger.debug(f"Stored access_token server-side for sub={sub} provider={provider}")
 
+            # Store id_token server-side (Google — used for appserver verification)
+            id_token = token.get('id_token')
+            if id_token and sub and provider == 'google':
+                with _id_token_store_lock:
+                    _id_token_store[sub] = id_token
+                logger.debug(f"Stored id_token server-side for sub={sub}")
+
             session_data = {
                 'provider': provider,
                 'email': user_info.get('email'),
@@ -805,6 +818,26 @@ class FastAPIOIDCAuth:
         except Exception as e:
             logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {user.get('provider')}): {e}")
             return None
+
+    def get_google_id_token(self, request: Request) -> Optional[str]:
+        """
+        Return the Google ID token for the currently-authenticated user.
+
+        The id_token is stored server-side in _id_token_store (keyed by sub)
+        during the OAuth callback. It is NOT stored in the session cookie to
+        avoid exceeding the 4096-byte cookie limit.
+
+        Returns None if not authenticated, not a Google session, or the
+        server-side store has been cleared (e.g. server restart).
+        """
+        user = self.get_current_user(request)
+        if not user or user.get('provider') != 'google':
+            return None
+        sub = user.get('sub') or user.get('token_ref')
+        if not sub:
+            return None
+        with _id_token_store_lock:
+            return _id_token_store.get(sub)
 
     def require_auth(self, request: Request) -> Dict[str, Any]:
         """Dependency to require authentication - raises exception if not authenticated"""
