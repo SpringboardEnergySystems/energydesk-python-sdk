@@ -46,6 +46,7 @@ class CounterpartTypeEnum(Enum):
     NASDAQ = 5
     EEX = 6
     INTERNAL = 7
+    ICE = 8
 
 def counterpart_type_description(x):
     return {
@@ -55,7 +56,8 @@ def counterpart_type_description(x):
         CounterpartTypeEnum.GOO: "Guarantee Of Origin Contract",
         CounterpartTypeEnum.NASDAQ: "Nasdaq Contract",
         CounterpartTypeEnum.EEX: "EEX Contract",
-        CounterpartTypeEnum.INTERNAL: "Internal Contract"
+        CounterpartTypeEnum.INTERNAL: "Internal Contract",
+        CounterpartTypeEnum.ICE: "ICE Contract",
     }[x]
 
 
