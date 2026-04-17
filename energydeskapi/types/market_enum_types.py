@@ -37,6 +37,24 @@ class CommodityTypeEnum(Enum):
     GRID_CAPACITY = 7
     COAL = 8
     CRUDE_OIL = 9
+    NATURAL_GAS = 10
+
+
+class UnitEnum(Enum):
+    MWH = 1
+    BARREL = 2
+    MMBTU = 3
+    TONNE = 4
+    LOT = 5
+
+
+
+class CountryEnum(Enum):
+    UK = 1
+    DE = 2
+    NO = 3
+    US = 4
+    FR = 5
 
 class InstrumentTypeEnum(Enum):
     FUT = 1
@@ -88,12 +106,34 @@ def commodity_type_description(x):
         CommodityTypeEnum.POWER: "Power",
         CommodityTypeEnum.EUA: "EUA",
         CommodityTypeEnum.ELCERT: "Elcertificate",
-        CommodityTypeEnum.GAS: "Natural Gas",
+        CommodityTypeEnum.GAS: "Gas",
         CommodityTypeEnum.GOs: "Guarantees of Origin",
         CommodityTypeEnum.CURRENCY: "Currency",
         CommodityTypeEnum.GRID_CAPACITY: "Grid Capacity",
         CommodityTypeEnum.COAL: "Coal",
         CommodityTypeEnum.CRUDE_OIL: "Brent Crude Oil",
+        CommodityTypeEnum.NATURAL_GAS: "Natural Gas (ICE)",
+    }[x]
+
+
+def unit_description(x):
+    return {
+        UnitEnum.MWH: "MWh",
+        UnitEnum.BARREL: "Barrel",
+        UnitEnum.MMBTU: "MMBtu",
+        UnitEnum.TONNE: "Tonne",
+        UnitEnum.LOT: "Lot",
+    }[x]
+
+
+
+def country_description(x):
+    return {
+        CountryEnum.UK: "United Kingdom",
+        CountryEnum.DE: "Germany",
+        CountryEnum.NO: "Norway",
+        CountryEnum.US: "United States",
+        CountryEnum.FR: "France",
     }[x]
 
 def blocksize_description(x):
@@ -139,10 +179,10 @@ def market_description(x):
 
 def market_place_description(x):
     return {
-        MarketPlaceEnum.NASDAQ_OMX: MarketPlaceEnum.NASDAQ_OMX.name,
+        MarketPlaceEnum.NASDAQ_OMX: "Nasdaq OMX",
         MarketPlaceEnum.NORDPOOL_SPOT: "Nord Pool Spot",
-        MarketPlaceEnum.EEX: "EEX",
-        MarketPlaceEnum.EURONEXT: MarketPlaceEnum.EURONEXT.name,
+        MarketPlaceEnum.EEX: "EEX (European Energy Exchange)",
+        MarketPlaceEnum.EURONEXT: "Euronext",
         MarketPlaceEnum.OTC: "OTC (Over the Counter)",
         MarketPlaceEnum.ICE: "ICE (Intercontinental Exchange)",
     }[x]
