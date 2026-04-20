@@ -26,6 +26,9 @@ class QuantityUnitEnum(Enum):
     EUR = 4
     LOTS = 5
     DECIMALS = 6
+    BARREL = 7
+    MMBTU = 8
+    TONNE = 9
 
 class GosTechnologyEnum(Enum):
     HYDRO = 1
@@ -98,7 +101,10 @@ def quantity_unit_description(x):
         QuantityUnitEnum.GW: "Gwh",
         QuantityUnitEnum.EUR: "EUR amount",
         QuantityUnitEnum.LOTS: "Lots",
-        QuantityUnitEnum.DECIMALS: "Decimals"
+        QuantityUnitEnum.DECIMALS: "Decimals",
+        QuantityUnitEnum.BARREL: "Barrel",
+        QuantityUnitEnum.MMBTU: "MMBtu",
+        QuantityUnitEnum.TONNE: "Tonne",
     }[x]
 
 def go_technology_description(x):
