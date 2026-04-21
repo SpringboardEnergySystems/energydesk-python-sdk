@@ -137,7 +137,7 @@ def get_settlement_view(api_conn):
     clist=[int(x) for x in list(contracts)]
     print({'page_size':1000, 'id__in':clist})
     reso=ContractsApi.list_contracts_compact(api_conn, {'page_size':1000, 'id__in':clist})
-    contracts=pd.DataFrame(data=eval(reso['results']))
+    contracts=pd.DataFrame(data=eval(reso['results']))  
     print(df_inv.columns)
     print(contracts.columns)
     def fill_in_contract_info(row):
