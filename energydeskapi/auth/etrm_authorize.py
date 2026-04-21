@@ -25,6 +25,33 @@ def authorize_user_etrm(token: str) -> Tuple[Optional[int], Optional[str]]:
     has a Django-compatible bearer token.
     """
     logger.info(f"[authorize_user_etrm] Received token: {token[:20]}... (length: {len(token)})")
+    
+    # Check if it's a JWT (has 3 parts separated by dots)
+    is_jwt = token.count('.') == 2
+    logger.info(f"[authorize_user_etrm] Token format: {'JWT' if is_jwt else 'Opaque'}")
+    
+    # If it's a JWT, try to decode the header to see the issuer
+    if is_jwt:
+        try:
+            import base64
+            import json
+            # Decode header (first part before first dot)
+            header_b64 = token.split('.')[0]
+            # Add padding if needed
+            header_b64 += '=' * (4 - len(header_b64) % 4)
+            header = json.loads(base64.urlsafe_b64decode(header_b64))
+            logger.info(f"[authorize_user_etrm] JWT header: {header}")
+            
+            # Decode payload (second part)
+            payload_b64 = token.split('.')[1]
+            payload_b64 += '=' * (4 - len(payload_b64) % 4)
+            payload = json.loads(base64.urlsafe_b64decode(payload_b64))
+            logger.info(f"[authorize_user_etrm] JWT payload (issuer): {payload.get('iss', 'N/A')}")
+            logger.info(f"[authorize_user_etrm] JWT payload (audience): {payload.get('aud', 'N/A')}")
+            logger.info(f"[authorize_user_etrm] JWT payload (email): {payload.get('email', 'N/A')}")
+        except Exception as e:
+            logger.warning(f"[authorize_user_etrm] Failed to decode JWT: {e}")
+    
     usrprofile = _get_users_api_profile(token)
     if usrprofile is not None:
         logger.info(f"[authorize_user_etrm] User profile found: {usrprofile}")
