@@ -24,10 +24,12 @@ def authorize_user_etrm(token: str) -> Tuple[Optional[int], Optional[str]]:
     Django appserver.  Used by clearing-service and any service that already
     has a Django-compatible bearer token.
     """
+    logger.info(f"[authorize_user_etrm] Received token: {token[:20]}... (length: {len(token)})")
     usrprofile = _get_users_api_profile(token)
     if usrprofile is not None:
+        logger.info(f"[authorize_user_etrm] User profile found: {usrprofile}")
         return usrprofile['role_pk'], usrprofile['role']
-    logger.warning("authorize_user_etrm: no user profile returned from appserver")
+    logger.warning("[authorize_user_etrm] No user profile returned from appserver")
     return None, None
 
 
@@ -47,18 +49,32 @@ def authorize_user_google(id_token: str) -> Tuple[Optional[str], Optional[int], 
     env = environ.Env()
     try:
         api_base_url = env.str('ENERGYDESK_URL').rstrip('/')
-    except Exception:
-        logger.error("ENERGYDESK_URL not configured — cannot resolve Google token against appserver")
+    except Exception as exc:
+        logger.error(f"[appserver] ❌ ENERGYDESK_URL not configured — cannot resolve Google token: {exc}")
         return None, None, False
 
     url = f"{api_base_url}/api/energydesk/resolve-google-token/"
+    token_preview = id_token[:20] + "..." if id_token and len(id_token) > 20 else id_token
+    logger.info(f"[appserver] 🔍 Resolving Google token against appserver")
+    logger.info(f"[appserver]    ENERGYDESK_URL = {api_base_url}")
+    logger.info(f"[appserver]    POST {url}")
+    logger.info(f"[appserver]    id_token preview = {token_preview} (len={len(id_token) if id_token else 0})")
+
     try:
         resp = requests.post(url, json={"id_token": id_token}, timeout=10)
+        logger.info(f"[appserver]    Response status: {resp.status_code}")
+        logger.info(f"[appserver]    Response headers: {dict(resp.headers)}")
+        try:
+            response_body = resp.text[:500]  # cap at 500 chars to avoid flooding logs
+            logger.info(f"[appserver]    Response body (first 500 chars): {response_body}")
+        except Exception:
+            pass
+
         if resp.status_code == 404:
-            logger.info("[appserver] resolve-google-token: user not found (404)")
+            logger.info("[appserver] resolve-google-token: user not found (404) — user is NOT registered in Django DB")
             return None, None, False
         if resp.status_code == 401:
-            logger.warning("[appserver] resolve-google-token: token rejected (401)")
+            logger.warning("[appserver] resolve-google-token: token rejected (401) — id_token may be expired or invalid")
             return None, None, False
         resp.raise_for_status()
         data = resp.json()
@@ -66,10 +82,13 @@ def authorize_user_google(id_token: str) -> Tuple[Optional[str], Optional[int], 
         role_pk = data.get('role_pk')
         is_platform_admin = bool(data.get('is_platform_admin', False))
         logger.info(
-            f"[appserver] resolved user: role={role}, role_pk={role_pk}, "
+            f"[appserver] ✅ resolved user: role={role}, role_pk={role_pk}, "
             f"is_platform_admin={is_platform_admin}"
         )
+        logger.info(f"[appserver]    Full response data: {data}")
         return role, role_pk, is_platform_admin
     except requests.RequestException as exc:
-        logger.error(f"[appserver] resolve-google-token call failed: {exc}")
+        logger.error(f"[appserver] ❌ resolve-google-token call failed: {exc}")
+        logger.error(f"[appserver]    URL attempted: {url}")
+        logger.error(f"[appserver]    Exception type: {type(exc).__name__}")
         return None, None, False

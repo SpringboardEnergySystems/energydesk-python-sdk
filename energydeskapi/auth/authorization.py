@@ -301,29 +301,44 @@ def make_registration_gate(root_path_fallback: str = ""):
 
         email = (session_user.get("email") or "").lower()
         sub = session_user.get("sub") or ""
+        provider = session_user.get("provider", "unknown")
+
+        logger.info(f"[auth-gate] ── Registration check ──────────────────────────")
+        logger.info(f"[auth-gate]    email    = {email}")
+        logger.info(f"[auth-gate]    sub      = {sub}")
+        logger.info(f"[auth-gate]    provider = {provider}")
+        logger.info(f"[auth-gate]    session keys = {list(session_user.keys())}")
 
         if not email:
+            logger.warning(f"[auth-gate] No email claim in session — letting through")
             return None  # no email claim — let through for a clear error later
 
         with _id_token_store_lock:
             id_token = _id_token_store.get(sub)
+            store_keys = list(_id_token_store.keys())
+
+        logger.info(f"[auth-gate]    id_token found = {bool(id_token)}")
+        logger.info(f"[auth-gate]    id_token_store has {len(store_keys)} entries")
 
         if not id_token:
             logger.warning(f"[auth-gate] No id_token for sub={sub} email={email} — allowing through")
             return None  # fail open; authorization deps will catch it on next page load
 
         try:
+            logger.info(f"[auth-gate]    Calling authorize_user_google for {email} ...")
             role, role_pk, is_platform_admin = authorize_user_google(id_token)
+            logger.info(f"[auth-gate]    Result: role={role}, role_pk={role_pk}, is_platform_admin={is_platform_admin}")
         except Exception as exc:
             logger.warning(f"[auth-gate] appserver call failed for {email}: {exc} — allowing through")
             return None  # fail open on network errors
 
         if role is not None:
-            logger.info(f"[auth-gate] {email} registered — role={role}")
+            logger.info(f"[auth-gate] ✅ {email} registered — role={role}, role_pk={role_pk}")
             return None  # registered → proceed with session creation
 
         root_path = request.scope.get("root_path", root_path_fallback)
-        logger.info(f"[auth-gate] Rejected unregistered login attempt: {email}")
+        logger.info(f"[auth-gate] ❌ Rejected unregistered login attempt: {email}")
+        logger.info(f"[auth-gate]    Redirecting to: {root_path}/portal/?auth_error=not_registered")
         from starlette.responses import RedirectResponse as _RR
         return _RR(
             url=f"{root_path}/portal/?auth_error=not_registered&email={_quote(email)}",
