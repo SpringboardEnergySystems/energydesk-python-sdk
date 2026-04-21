@@ -612,7 +612,9 @@ class FastAPIOIDCAuth:
             if access_token and sub:
                 with _token_store_lock:
                     _token_store[sub] = access_token
-                logger.debug(f"Stored access_token server-side for sub={sub} provider={provider}")
+                logger.info(f"[OAuth callback] Stored access_token server-side for sub={sub} provider={provider}, token length={len(access_token)}, starts with: {access_token[:30]}...")
+            else:
+                logger.warning(f"[OAuth callback] Missing access_token or sub for {provider}: access_token={access_token is not None}, sub={sub}")
 
             # Store id_token server-side (Google — used for appserver verification)
             id_token = token.get('id_token')

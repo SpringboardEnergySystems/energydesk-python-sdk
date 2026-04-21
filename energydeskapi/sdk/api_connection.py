@@ -128,8 +128,11 @@ class _api_connection:
         """Returns the authorization header
         """
         if self.token is None or self.token=="":
+            logger.debug("[api_connection] No token available, returning empty auth header")
             return {}
-        return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
+        auth_value = str(self.token_type) + ' ' + str(self.token)
+        logger.info(f"[api_connection] Authorization header: {self.token_type} {self.token[:30]}... (total length: {len(self.token)})")
+        return {'Authorization': auth_value}
 
     def exec_post_url_binary(self, trailing_url: str, payload: dict, extra_headers: dict={}) -> Response:
         headers=self.get_authorization_header()
