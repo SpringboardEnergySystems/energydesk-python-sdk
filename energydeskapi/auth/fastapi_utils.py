@@ -116,3 +116,107 @@ def setup_oidc(title: str, app: FastAPI) -> Optional[FastAPIOIDCAuth]:
         logger.error("Error initialising OIDC: %s", exc, exc_info=True)
         return None
 
+
+# ---------------------------------------------------------------------------
+# ETRM API connection helpers
+# ---------------------------------------------------------------------------
+
+def get_user_bearer_token(request: Request) -> Optional[str]:
+    """
+    Return the logged-in user's bearer token from a Starlette/FastAPI request,
+    suitable for forwarding to the EnergyDesk appserver.
+
+    Resolution order
+    ----------------
+    1. **Google OIDC** — returns the Google *ID token* (a signed JWT) from the
+       SDK's ``_id_token_store``.  Django validates JWTs locally via Google's
+       public keys, so this works for every appserver endpoint.
+       The Google *access* token (``ya29.a0…``) is opaque and Django can only
+       validate it on a subset of endpoints — we never send it here.
+    2. **Django / password auth** — token stored directly in
+       ``session['user']['token']``.
+    3. **Azure / other OIDC** — access token from the SDK's ``_token_store``
+       keyed by ``sub`` / ``token_ref``.
+
+    Returns ``None`` for anonymous or expired sessions; callers should fall
+    back to the system ``ENERGYDESK_TOKEN`` via :func:`build_api_conn`.
+    """
+    user = (getattr(request, "session", None) or {}).get("user") or {}
+    provider = user.get("provider", "")
+
+    if provider == "google":
+        sub = user.get("sub") or user.get("token_ref")
+        if sub:
+            try:
+                from energydeskapi.auth.auth_fastapi import (
+                    _id_token_store,
+                    _id_token_store_lock,
+                )
+                with _id_token_store_lock:
+                    id_token = _id_token_store.get(sub)
+                if id_token:
+                    logger.debug("[etrm_auth] Google ID token resolved for sub=%s…", sub[:8])
+                    return id_token
+                logger.warning(
+                    "[etrm_auth] Google ID token not found for sub=%s… — user may need to re-login.",
+                    sub[:8],
+                )
+            except Exception as exc:
+                logger.debug("[etrm_auth] Could not retrieve Google ID token: %s", exc)
+
+    token = user.get("token") or user.get("access_token")
+    if token:
+        return token
+
+    token_ref = user.get("token_ref") or user.get("sub")
+    if token_ref:
+        try:
+            from energydeskapi.auth.auth_fastapi import _token_store, _token_store_lock
+            with _token_store_lock:
+                token = _token_store.get(token_ref)
+            if token:
+                return token
+        except Exception as exc:
+            logger.debug("[etrm_auth] Could not retrieve token from _token_store: %s", exc)
+
+    return None
+
+
+def build_api_conn(bearer_token: Optional[str] = None):
+    """
+    Build an ``ApiConnection`` to the EnergyDesk appserver.
+
+    bearer_token
+        When supplied (e.g. from :func:`get_user_bearer_token`) uses
+        ``Authorization: Bearer <token>`` — the logged-in user's Google ID
+        token, Azure token, or Django access token.
+
+        When ``None`` (background / scheduler tasks) falls back to the
+        ``ENERGYDESK_TOKEN`` env var with Django ``Token`` auth.
+
+    Usage — web request::
+
+        token    = get_user_bearer_token(request)
+        api_conn = build_api_conn(token)
+        data     = SomeApi.some_method(api_conn)
+
+    Usage — background task::
+
+        api_conn = build_api_conn()   # system token picked up automatically
+    """
+    from energydeskapi.sdk.api_connection import ApiConnection
+    import environ
+
+    env = environ.Env()
+    url = env.str("ENERGYDESK_URL", default=None)
+    api_conn = ApiConnection(url)
+
+    if bearer_token:
+        api_conn.set_token(bearer_token, "Bearer")
+        logger.debug("[etrm_auth] ApiConnection built with user Bearer token")
+    else:
+        api_conn.set_token(env.str("ENERGYDESK_TOKEN", default=None), "Token")
+        logger.debug("[etrm_auth] ApiConnection built with system Token (background task)")
+
+    return api_conn
+
