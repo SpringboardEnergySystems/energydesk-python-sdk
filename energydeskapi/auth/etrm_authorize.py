@@ -2,15 +2,14 @@ import environ
 import logging
 import requests
 from typing import Optional, Tuple
-
+from energydeskapi.customers.users_api import UsersApi
+from energydeskapi.sdk.api_connection import ApiConnection
 logger = logging.getLogger(__name__)
 
 
 # Heavy SDK dependencies are imported lazily so this module stays importable
 # in venvs that don't have pandas/pendulum (e.g. the flexgateway service).
 def _get_users_api_profile(token: str) -> Optional[dict]:
-    from energydeskapi.customers.users_api import UsersApi
-    from energydeskapi.sdk.api_connection import ApiConnection
     env = environ.Env()
     api_base_url = env.str('ENERGYDESK_URL')
     api_conn = ApiConnection(api_base_url)
