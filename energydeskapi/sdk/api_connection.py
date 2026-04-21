@@ -275,6 +275,7 @@ class _api_connection:
         else:
             logger.error(f"Problems calling get EnergyDesk API {server_url} {result} ")
             if result.status_code==401:
+                logger.error(f"[exec_get_url] 401 Unauthorized response body: {result.text[:500]}")
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
                 raise AuthorizationFailedException("Not authorized: {}".format(result.text))
