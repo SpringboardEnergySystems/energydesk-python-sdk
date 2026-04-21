@@ -250,6 +250,7 @@ class _api_connection:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info(f"Calling GET URL {server_url}")
+        logger.info(f"[exec_get_url] Headers: Authorization={headers.get('Authorization', 'MISSING')[:50]}...")
         logger.debug(f"...with headers {headers}")
         if len(parameters.keys())>0:
             req = requests.Request('GET', server_url, headers=headers, params=parameters)
@@ -258,6 +259,8 @@ class _api_connection:
             result = requests.get(server_url,  headers=headers, params=parameters)
         else:
             result = requests.get(server_url, headers=headers)
+        
+        logger.info(f"[exec_get_url] Response status: {result.status_code}")
 
         if result.status_code<202:
             try:
