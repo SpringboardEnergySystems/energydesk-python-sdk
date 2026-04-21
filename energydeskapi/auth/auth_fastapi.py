@@ -793,18 +793,20 @@ class FastAPIOIDCAuth:
         if not user:
             return None
 
-        # Resolve access token: prefer in-session token (Django, backward compat),
-        # then fall back to server-side token store via token_ref (Azure/Google).
-        token = user.get('access_token')
-        if not token:
-            token_ref = user.get('token_ref') or user.get('sub')
-            if token_ref:
-                with _token_store_lock:
-                    token = _token_store.get(token_ref)
-        if not token:
-            logger.error(f"No access token found for user {user.get('email')} (provider: {user.get('provider')})")
-            return None
-
+        provider = user.get('provider')
+        
+        # Google uses ID token (JWT) for authentication, not access token (opaque)
+        # Google access tokens are opaque OAuth2 tokens that only work with Google APIs,
+        # but ID tokens are JWTs that contain user identity claims and can be validated
+        # by the Django appserver's JWTEnergydeskAuthentication backend.
+        if provider == 'google':
+            id_token = self.get_google_id_token(request)
+            if not id_token:
+                logger.error(f"No Google ID token found for user {user.get('email')}")
+                return None
+            
+            logger.info(f"[get_current_user_role] Using Google ID token for {user.get('email')}, length: {len(id_token)}, starts with: {id_token[:30]}...")
+            
             try:
                 role_pk, role_name = authorize_user_etrm(id_token)
                 if role_pk is None or role_name is None:
