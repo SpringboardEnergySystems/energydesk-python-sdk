@@ -805,20 +805,55 @@ class FastAPIOIDCAuth:
             logger.error(f"No access token found for user {user.get('email')} (provider: {user.get('provider')})")
             return None
 
+            try:
+                role_pk, role_name = authorize_user_etrm(id_token)
+                if role_pk is None or role_name is None:
+                    logger.warning(f"No ETRM role found for Google user {user.get('email')}")
+                    return None
+
+                return {
+                    'role_pk': role_pk,
+                    'role_name': role_name,
+                    'email': user.get('email'),
+                    'provider': provider
+                }
+            except Exception as e:
+                logger.error(f"Error getting ETRM role for Google user {user.get('email')}: {e}")
+                return None
+        
+        # For Azure and Django, use access token (JWT for Azure, Django OAuth token for Django)
+        # Resolve access token: prefer in-session token (Django, backward compat),
+        # then fall back to server-side token store via token_ref (Azure).
+        token = user.get('access_token')
+        logger.info(f"[get_current_user_role] Session token present: {token is not None}")
+        if not token:
+            token_ref = user.get('token_ref') or user.get('sub')
+            logger.info(f"[get_current_user_role] Looking up token by token_ref: {token_ref}")
+            if token_ref:
+                with _token_store_lock:
+                    token = _token_store.get(token_ref)
+                    logger.info(f"[get_current_user_role] Token store contains {len(_token_store)} tokens")
+                    logger.info(f"[get_current_user_role] Retrieved token from store: {token[:30] + '...' if token else 'None'}")
+        if not token:
+            logger.error(f"No access token found for user {user.get('email')} (provider: {provider})")
+            return None
+        
+        logger.info(f"[get_current_user_role] Using token for {user.get('email')} (provider: {provider}), length: {len(token)}, starts with: {token[:30]}...")
+
         try:
             role_pk, role_name = authorize_user_etrm(token)
             if role_pk is None or role_name is None:
-                logger.warning(f"No ETRM role found for user {user.get('email')} (provider: {user.get('provider')})")
+                logger.warning(f"No ETRM role found for user {user.get('email')} (provider: {provider})")
                 return None
 
             return {
                 'role_pk': role_pk,
                 'role_name': role_name,
                 'email': user.get('email'),
-                'provider': user.get('provider')
+                'provider': provider
             }
         except Exception as e:
-            logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {user.get('provider')}): {e}")
+            logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {provider}): {e}")
             return None
 
     def get_google_id_token(self, request: Request) -> Optional[str]:
