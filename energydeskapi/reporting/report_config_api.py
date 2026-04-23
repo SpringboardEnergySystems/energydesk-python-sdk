@@ -88,3 +88,17 @@ class ReportConfigApi:
             success, returned_data, status_code, error_msg = api_connection.exec_post_url(
                 '/api/reporting/reportconfig/', report_config.get_dict(api_connection))
         return success, returned_data, status_code, error_msg
+
+    @staticmethod
+    def generate_reports(api_connection: ApiConnection):
+        """Registers/Updates asset
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param asset: asset object
+        :type asset: str, required
+        """
+        logger.info("Generate reports")
+        success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
+                '/api/reporting/generatereports/' , {})
+        return success, returned_data, status_code, error_msg

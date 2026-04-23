@@ -13,8 +13,8 @@ logging.basicConfig(level=logging.INFO,
 def fetch_counterparts(api_conn):
     json_counterparts = CounterPartsApi.get_counterparts(api_conn)
     print(json_counterparts)
-    ratings=CounterPartsApi.get_credit_ratings_df(api_conn)
-    print(ratings)
+    #ratings=CounterPartsApi.get_credit_ratings_df(api_conn)
+    #print(ratings)
 
 def fetch_counterpart(api_conn):
     pk = 1
@@ -60,6 +60,6 @@ if __name__ == '__main__':
     #register_counterparts(api_conn)
     #query_exposure(api_conn)
     #fetch_counterpart_limits(api_conn)
-    fetch_counterpart(api_conn)
+    fetch_counterparts(api_conn)
     #fetch_counterpart_limits_by_key(api_conn)
     #register_counterpart_limits(api_conn)

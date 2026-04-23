@@ -266,11 +266,11 @@ def get_fixedprice_contracts(api_conn):
             print(json.dumps(rec, indent=2))
 if __name__ == '__main__':
     api_conn=init_api()
-    get_contracts_ifs(api_conn)
+    #get_contracts_ifs(api_conn)
     #load_contracts_csv(api_conn)
     #cancel_contract(api_conn)
     #get_contract_filters(api_conn)
-    #get_contract_filter_pk(api_conn)
+    get_contract_counterparts(api_conn)
     #register_contract_filters(api_conn)
     #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)

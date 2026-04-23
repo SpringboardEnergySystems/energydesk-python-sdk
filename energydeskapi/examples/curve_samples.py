@@ -1,4 +1,7 @@
 import logging, os
+
+import pendulum
+
 from energydeskapi.sdk.common_utils import init_api
 from energydeskapi.curves.curve_api import CurveApi
 from energydeskapi.types.common_enum_types import PeriodResolutionEnum
@@ -54,9 +57,17 @@ from energydeskapi.types.common_enum_types import PeriodResolutionEnum
 from energydeskapi.types.fwdcurve_enum_types import FwdCurveTypesEnum
 
 def query_forward_curves(api_conn):
+    cutoff=pendulum.today(tz="Europe/Oslo").to_date_string()
+    yester = pendulum.yesterday(tz="Europe/Oslo").to_date_string()
+
+    data=CurveApi.get_available_areas(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
+                                                 'price_date__gte': yester, 'currency_code':"EUR",
+                                                 'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD.value})
+
 
     res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
-                                                     'area':"Croatian_Power",'currency_code':"NOK",
+                                                     'area':"Danish_DK2_Power",'currency_code':"EUR",
+                                                     'price_date__lte':cutoff,
                                                      'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD.value})
     if len(res)==0:
         print("No curves returned")
@@ -73,7 +84,7 @@ def query_forward_curves(api_conn):
 
         #pd.set_option('display.max_rows', None)
         print(df)
-        df.to_excel("priskurve.xlsx")
+        #df.to_excel("priskurve.xlsx")
 
 def query_spot_forward_curves(api_conn):
     success, df, status_code, error_msg =CurveApi.get_spotforward_curve_df(api_conn,currency_code="EUR", price_area="NO1",period_resolution=PeriodResolutionEnum.HOURLY.value )

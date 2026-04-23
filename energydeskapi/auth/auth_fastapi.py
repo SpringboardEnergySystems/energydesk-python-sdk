@@ -21,6 +21,12 @@ logger = logging.getLogger(__name__)
 _token_store: Dict[str, str] = {}
 _token_store_lock = threading.Lock()
 
+# Server-side id_token store: sub → id_token
+# Google ID tokens are used for appserver identity verification. Too large
+# for the session cookie so stored server-side keyed by sub.
+_id_token_store: Dict[str, str] = {}
+_id_token_store_lock = threading.Lock()
+
 
 class FastAPIOIDCAuth:
     """Multi-provider OIDC authentication handler for FastAPI"""
@@ -85,6 +91,8 @@ class FastAPIOIDCAuth:
         self.app = app
         self.title = title
         self.allow_guest = allow_guest
+        # Optional post-auth hook — see set_post_auth_hook() for details.
+        self.post_auth_hook = None
 
         if app:
             self.init_app(app, config)
@@ -604,7 +612,16 @@ class FastAPIOIDCAuth:
             if access_token and sub:
                 with _token_store_lock:
                     _token_store[sub] = access_token
-                logger.debug(f"Stored access_token server-side for sub={sub} provider={provider}")
+                logger.info(f"[OAuth callback] Stored access_token server-side for sub={sub} provider={provider}, token length={len(access_token)}, starts with: {access_token[:30]}...")
+            else:
+                logger.warning(f"[OAuth callback] Missing access_token or sub for {provider}: access_token={access_token is not None}, sub={sub}")
+
+            # Store id_token server-side (Google — used for appserver verification)
+            id_token = token.get('id_token')
+            if id_token and sub and provider == 'google':
+                with _id_token_store_lock:
+                    _id_token_store[sub] = id_token
+                logger.debug(f"Stored id_token server-side for sub={sub}")
 
             session_data = {
                 'provider': provider,
@@ -617,6 +634,18 @@ class FastAPIOIDCAuth:
             # Also keep the token in-session for Django (small token, backward compat)
             if provider == 'django':
                 session_data['access_token'] = access_token
+
+            # Application-level gate (e.g. registration check).
+            # If a hook is registered and returns a Response, the session is NOT
+            # written — the user stays as an anonymous guest and sees whatever
+            # the hook redirects to (e.g. portal home with an error notice).
+            if self.post_auth_hook is not None:
+                override = self.post_auth_hook(request, session_data)
+                if override is not None:
+                    logger.info(
+                        f"post_auth_hook blocked session for {session_data.get('email')}"
+                    )
+                    return override
 
             request.session['user'] = session_data
 
@@ -701,6 +730,47 @@ class FastAPIOIDCAuth:
             </html>
             '''
 
+    def set_post_auth_hook(self, hook: Callable) -> None:
+        """
+        Register an application-level gate that runs after OAuth succeeds but
+        *before* the session is written.
+
+        The hook is called as ``hook(request, session_data_dict)`` where
+        ``session_data_dict`` is the dict that *would* be stored in the session.
+
+        Return values
+        -------------
+        ``None``
+            Proceed normally — write the session and redirect to the portal.
+        A ``Response`` (e.g. ``RedirectResponse``)
+            Abort the login.  The session is **not** written, so the user
+            continues as an anonymous guest.  Typically redirect to the portal
+            home with a query param like ``?auth_error=not_registered``.
+
+        Example (registration gate in server.py)::
+
+            def _check_registered(request, session_user):
+                from flexgateway.authorization import lookup_user
+                from flexgateway.database.session import SessionLocal
+                email = (session_user.get("email") or "").lower()
+                db = SessionLocal()
+                try:
+                    if lookup_user(email, db) is not None:
+                        return None   # registered → proceed
+                finally:
+                    db.close()
+                from urllib.parse import quote
+                from starlette.responses import RedirectResponse
+                root = request.scope.get("root_path", "")
+                return RedirectResponse(
+                    f"{root}/portal/?auth_error=not_registered&email={quote(email)}"
+                )
+
+            oidc_auth.set_post_auth_hook(_check_registered)
+        """
+        self.post_auth_hook = hook
+        logger.info("post_auth_hook registered on FastAPIOIDCAuth")
+
     def get_current_user(self, request: Request) -> Optional[Dict[str, Any]]:
         """Dependency to get current authenticated user"""
         user = request.session.get('user')
@@ -723,33 +793,90 @@ class FastAPIOIDCAuth:
         if not user:
             return None
 
+        provider = user.get('provider')
+        
+        # Google uses ID token (JWT) for authentication, not access token (opaque)
+        # Google access tokens are opaque OAuth2 tokens that only work with Google APIs,
+        # but ID tokens are JWTs that contain user identity claims and can be validated
+        # by the Django appserver's JWTEnergydeskAuthentication backend.
+        if provider == 'google':
+            id_token = self.get_google_id_token(request)
+            if not id_token:
+                logger.error(f"No Google ID token found for user {user.get('email')}")
+                return None
+            
+            logger.info(f"[get_current_user_role] Using Google ID token for {user.get('email')}, length: {len(id_token)}, starts with: {id_token[:30]}...")
+            
+            try:
+                role_pk, role_name = authorize_user_etrm(id_token)
+                if role_pk is None or role_name is None:
+                    logger.warning(f"No ETRM role found for Google user {user.get('email')}")
+                    return None
+
+                return {
+                    'role_pk': role_pk,
+                    'role_name': role_name,
+                    'email': user.get('email'),
+                    'provider': provider
+                }
+            except Exception as e:
+                logger.error(f"Error getting ETRM role for Google user {user.get('email')}: {e}")
+                return None
+        
+        # For Azure and Django, use access token (JWT for Azure, Django OAuth token for Django)
         # Resolve access token: prefer in-session token (Django, backward compat),
-        # then fall back to server-side token store via token_ref (Azure/Google).
+        # then fall back to server-side token store via token_ref (Azure).
         token = user.get('access_token')
+        logger.info(f"[get_current_user_role] Session token present: {token is not None}")
         if not token:
             token_ref = user.get('token_ref') or user.get('sub')
+            logger.info(f"[get_current_user_role] Looking up token by token_ref: {token_ref}")
             if token_ref:
                 with _token_store_lock:
                     token = _token_store.get(token_ref)
+                    logger.info(f"[get_current_user_role] Token store contains {len(_token_store)} tokens")
+                    logger.info(f"[get_current_user_role] Retrieved token from store: {token[:30] + '...' if token else 'None'}")
         if not token:
-            logger.error(f"No access token found for user {user.get('email')} (provider: {user.get('provider')})")
+            logger.error(f"No access token found for user {user.get('email')} (provider: {provider})")
             return None
+        
+        logger.info(f"[get_current_user_role] Using token for {user.get('email')} (provider: {provider}), length: {len(token)}, starts with: {token[:30]}...")
 
         try:
             role_pk, role_name = authorize_user_etrm(token)
             if role_pk is None or role_name is None:
-                logger.warning(f"No ETRM role found for user {user.get('email')} (provider: {user.get('provider')})")
+                logger.warning(f"No ETRM role found for user {user.get('email')} (provider: {provider})")
                 return None
 
             return {
                 'role_pk': role_pk,
                 'role_name': role_name,
                 'email': user.get('email'),
-                'provider': user.get('provider')
+                'provider': provider
             }
         except Exception as e:
-            logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {user.get('provider')}): {e}")
+            logger.error(f"Error getting ETRM role for user {user.get('email')} (provider: {provider}): {e}")
             return None
+
+    def get_google_id_token(self, request: Request) -> Optional[str]:
+        """
+        Return the Google ID token for the currently-authenticated user.
+
+        The id_token is stored server-side in _id_token_store (keyed by sub)
+        during the OAuth callback. It is NOT stored in the session cookie to
+        avoid exceeding the 4096-byte cookie limit.
+
+        Returns None if not authenticated, not a Google session, or the
+        server-side store has been cleared (e.g. server restart).
+        """
+        user = self.get_current_user(request)
+        if not user or user.get('provider') != 'google':
+            return None
+        sub = user.get('sub') or user.get('token_ref')
+        if not sub:
+            return None
+        with _id_token_store_lock:
+            return _id_token_store.get(sub)
 
     def require_auth(self, request: Request) -> Dict[str, Any]:
         """Dependency to require authentication - raises exception if not authenticated"""

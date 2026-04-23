@@ -1,4 +1,9 @@
 python-dotenv>=0.19.0
+# Collector runner dependencies
+nats-py==2.13.1
+pydantic>=2.6
+pydantic-settings>=2.2
+croniter>=2.0
 pandas
 pytz
 django-environ

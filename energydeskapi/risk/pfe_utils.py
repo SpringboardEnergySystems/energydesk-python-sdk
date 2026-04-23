@@ -2,6 +2,10 @@
 import pandas as pd
 import numpy as np
 
+# Canonical portfolio ID used for all PFE calculations across services.
+# Change this value here when the PFE portfolio changes.
+PFE_PORTFOLIO_ID: int = 35
+
 def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataFrame:
     """
     Re-calculate SYS per area by extracting EPAD-volum in a SYS-leg with price 0.

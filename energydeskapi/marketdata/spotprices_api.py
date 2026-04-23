@@ -29,6 +29,10 @@ class SpotPricesApi:
             df = pd.read_json(io.StringIO(json_res), orient='records')
         else:
             df = pd.DataFrame(json_res)
+        if len(df)==0:
+            logger.error("No spot prices found")
+            return None
+    
         df.index = pd.to_datetime(df["datetimehour"])
         df.index = df.index.tz_convert('Europe/Oslo')
         df.datetimehour=df.index

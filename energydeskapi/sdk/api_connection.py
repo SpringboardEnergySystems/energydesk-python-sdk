@@ -128,8 +128,11 @@ class _api_connection:
         """Returns the authorization header
         """
         if self.token is None or self.token=="":
+            logger.debug("[api_connection] No token available, returning empty auth header")
             return {}
-        return {'Authorization':  str(self.token_type) + ' ' + str(self.token)}
+        auth_value = str(self.token_type) + ' ' + str(self.token)
+        logger.info(f"[api_connection] Authorization header: {self.token_type} {self.token[:30]}... (total length: {len(self.token)})")
+        return {'Authorization': auth_value}
 
     def exec_post_url_binary(self, trailing_url: str, payload: dict, extra_headers: dict={}) -> Response:
         headers=self.get_authorization_header()
@@ -247,6 +250,7 @@ class _api_connection:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info(f"Calling GET URL {server_url}")
+        logger.info(f"[exec_get_url] Headers: Authorization={headers.get('Authorization', 'MISSING')[:50]}...")
         logger.debug(f"...with headers {headers}")
         if len(parameters.keys())>0:
             req = requests.Request('GET', server_url, headers=headers, params=parameters)
@@ -255,6 +259,8 @@ class _api_connection:
             result = requests.get(server_url,  headers=headers, params=parameters)
         else:
             result = requests.get(server_url, headers=headers)
+        
+        logger.info(f"[exec_get_url] Response status: {result.status_code}")
 
         if result.status_code<202:
             try:
@@ -269,6 +275,7 @@ class _api_connection:
         else:
             logger.error(f"Problems calling get EnergyDesk API {server_url} {result} ")
             if result.status_code==401:
+                logger.error(f"[exec_get_url] 401 Unauthorized response body: {result.text[:500]}")
                 raise TokenException("Token is invalid")
             elif result.status_code==403:
                 raise AuthorizationFailedException("Not authorized: {}".format(result.text))

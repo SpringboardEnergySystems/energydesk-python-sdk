@@ -129,6 +129,17 @@ class CurveApi:
             return None
         return json_res
 
+    @staticmethod
+    def get_available_areas(api_connection: ApiConnection, parameters: dict={}):
+        """Fetches all companies
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        """
+        json_res=api_connection.exec_get_url('/api/curvemanager/forwardcurves/availableareas/', parameters)
+        if json_res is None:
+            return None
+        return json_res
 
     @staticmethod
     def retrieve_rolling_products(api_connection , price_area, days_back=40):
@@ -144,7 +155,7 @@ class CurveApi:
     def retrieve_latest_forward_curve(api_connection , price_area,
                                 currency_code, forward_curve_model,
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
-                               market_name=MarketEnum.NORDIC_POWER.name):
+                               market_name=MarketEnum.NORDIC_POWER.name, cutoff_date=None):
 
         payload={
             'market_name': market_name,
@@ -153,6 +164,8 @@ class CurveApi:
             'forward_curve_model': forward_curve_model,
             'currency_code':currency_code,
         }
+        if cutoff_date is not None:
+            payload['price_date']=str(cutoff_date)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/retrieve-forwardcurve/', payload)
         return success, json_res, status_code, error_msg
 
@@ -182,11 +195,11 @@ class CurveApi:
     def retrieve_latest_forward_curve_df(api_connection , price_area,
                                 currency_code, forward_curve_model,
                                 period_resolution=PeriodResolutionEnum.DAILY.value,
-                               market_name=MarketEnum.NORDIC_POWER.name):
+                               market_name=MarketEnum.NORDIC_POWER.name, cutoff_date=None):
 
 
         success, json_res, status_code, error_msg = CurveApi.retrieve_latest_forward_curve(api_connection, price_area,
-                                currency_code, forward_curve_model,period_resolution,market_name)
+                                currency_code, forward_curve_model,period_resolution,market_name,cutoff_date=cutoff_date)
         if success:
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f"latest forward curve data: {json_res}")
