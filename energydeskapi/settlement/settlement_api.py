@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import json
-
+import io
 from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
@@ -46,12 +46,13 @@ class SettlementApi:
     def get_settlement_view_df(api_connection: ApiConnection, parameters: dict={}):
 
 
-        id, json_res = SettlementApi.get_settlement_view(api_connection, parameters)
+        id, data = SettlementApi.get_settlement_view(api_connection, parameters)
 
-        if json_res is None:
+        if data is None:
             return None, None
-
-        df = pd.read_json(json_res, orient="table")
+        if isinstance(data, str):
+            return id, pd.read_json(io.StringIO(data), orient="table")
+        df = pd.read_json(data, orient="table")
         return id, df
 
     @staticmethod
