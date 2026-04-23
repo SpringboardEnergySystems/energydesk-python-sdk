@@ -36,7 +36,7 @@ def get_cache() -> redis.StrictRedis:
     return connect_to_redis()
 
 
-def get_memcache_value(cache_name, cache_key):
+def get_memcache_value(cache_name: str, cache_key: str):
     mc=MemCache()
     if cache_name not in mc.mem_cache:
         logger.info(f"Creating mem cache for {cache_name}")
@@ -46,12 +46,19 @@ def get_memcache_value(cache_name, cache_key):
     return mc.mem_cache[cache_name][cache_key]
 
 
-def set_memcache_value(cache_name, cache_key, cache_value):
+def set_memcache_value(cache_name: str, cache_key: str, cache_value):
     mc=MemCache()
     if cache_name not in mc.mem_cache:
         logger.info(f"Creating mem cache for {cache_name}")
         mc.mem_cache[cache_name]={}
     mc.mem_cache[cache_name][cache_key]=cache_value
+
+def remove_memcache_value(cache_name: str, cache_key: str):
+    mc = MemCache()
+    if cache_name in mc.mem_cache:
+        logger.info(f"Removing mem cache for {cache_name}")
+        mem_cache = mc.mem_cache[cache_name]
+        del mem_cache[cache_key]
 
 
 def get_cache_value(cache_name: str, cache_key: str):
@@ -123,7 +130,7 @@ def loadfrom_datecache(cache_name: str, date_resolution="%Y/W%V"):
         logger.error("Exception loading from REDIS " + str(execstr))
         return None
 
-def saveto_datecache(cache_name: str,  value: any, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None):
+def saveto_datecache(cache_name: str,  value: any, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None) -> bool:
     datekey = current_date_localtime_dt().strftime(date_resolution)
     if is_redis_disabled():
         set_memcache_value(cache_name, datekey, value)
@@ -133,9 +140,20 @@ def saveto_datecache(cache_name: str,  value: any, date_resolution="%Y/W%V", exp
         set_cache_value(cache_name, datekey, compressed_data, expiration_time)
         return True
     except:
-        execstr = traceback.format_exc()
-        logger.error("Exception saving to REDIS " + str(execstr))
+        logger.error(f"Exception saving to REDIS {traceback.format_exc()}")
+        return False
 
+def removefrom_datecache(cache_name: str,  date_resolution="%Y/W%V") -> bool:
+    datekey = current_date_localtime_dt().strftime(date_resolution)
+    if is_redis_disabled():
+        remove_memcache_value(cache_name, datekey)
+        return True
+    try:
+        remove_cache_value(cache_name, datekey)
+        return True
+    except:
+        logger.error(f"Exception removing {cache_name} from REDIS {traceback.format_exc()}")
+        return False
 
 def saveto_datecache_str(cache_name: str, value: str, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None) -> bool:
     datekey = current_date_localtime_dt().strftime(date_resolution)
