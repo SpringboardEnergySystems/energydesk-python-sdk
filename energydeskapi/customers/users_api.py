@@ -40,7 +40,7 @@ class User:
         if self.first_name is not None: dict['first_name'] = self.first_name
         if self.last_name is not None: dict['last_name'] = self.last_name
         if self.alias is not None: dict['external_username'] = self.alias
-        if self.user_role is not None: dict['user_role'] = self.user_role
+        if self.user_role is not None: dict['user_role'] = self.user_role if isinstance(self.user_role, int) else self.user_role.value
         if self.password is not None and self.password!="": dict['password'] = self.password
         if self.company is not None: dict['company'] = self.company
         if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
