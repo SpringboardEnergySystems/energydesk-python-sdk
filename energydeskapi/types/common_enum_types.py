@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta
 import calendar as cal
 
-def get_weekdays_list(start=0) -> list[str]:
+def get_weekdays_list(start: int=0) -> list[str]:
     #start = 0#[d for d in cal.day_name].index(weekday)
     return [cal.day_name[(i+start) % 7] for i in range(7)]
 def get_month_list() -> list[str]:
@@ -33,7 +33,7 @@ class PeriodResolutionEnum(Enum):
 
 
 # Numeric to represent resolution
-def period_resolution_key(instance):
+def period_resolution_key(instance: PeriodResolutionEnum) -> int:
     return list(PeriodResolutionEnum).index(instance) + 1
 
 PERIOD_CHOICES=[el.value for el in PeriodResolutionEnum]
