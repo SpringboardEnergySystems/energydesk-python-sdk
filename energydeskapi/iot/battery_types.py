@@ -228,3 +228,57 @@ def vebus_active_input_to_ac_status(active_input: int) -> AcInputStatus:
     """Map a raw VE.Bus active_input register value to AcInputStatus."""
     return _VEBUS_ACTIVE_INPUT_MAP.get(active_input, AcInputStatus.DISCONNECTED)
 
+
+# ---------------------------------------------------------------------------
+# Ekoda ESS status word → generic type mappers
+#
+# The ESS status word is a bitmask (register 0):
+#   Bit 0 – Fault
+#   Bit 1 – Running
+#   Bit 2 – Starting
+#   Bit 3 – Stopping
+#   Bit 6 – Local/Remote  (0=Local, 1=Remote)
+#
+# Priority order: Fault > Starting > Stopping > Running > Off/Standby
+# ---------------------------------------------------------------------------
+
+def ekoda_status_to_operation_mode(
+    status_word: int,
+    grid_active_power_kw: float | None = None,
+    dead_band_kw: float = 0.05,
+) -> BatteryOperationMode:
+    """
+    Map an Ekoda ESS status word bitmask to the generic BatteryOperationMode.
+
+    Priority: Fault > Starting > Stopping > Running (with direction) > Off
+
+    When the unit is running, grid_active_power_kw (register 7, signed kW) is
+    used to determine direction:
+        > +dead_band_kw  → CHARGING   (importing from grid)
+        < -dead_band_kw  → INVERTING  (exporting to grid / discharging)
+        within dead band → ESS        (grid-parallel, near zero exchange)
+
+    If grid_active_power_kw is not provided the mode defaults to ESS whenever
+    the running bit is set.
+    """
+    fault    = bool(status_word & (1 << 0))
+    running  = bool(status_word & (1 << 1))
+    starting = bool(status_word & (1 << 2))
+    stopping = bool(status_word & (1 << 3))
+
+    if fault:
+        return BatteryOperationMode.FAULT
+    if starting:
+        return BatteryOperationMode.STANDBY
+    if stopping:
+        return BatteryOperationMode.STANDBY
+    if running:
+        if grid_active_power_kw is not None:
+            if grid_active_power_kw > dead_band_kw:
+                return BatteryOperationMode.CHARGING
+            if grid_active_power_kw < -dead_band_kw:
+                return BatteryOperationMode.INVERTING
+        return BatteryOperationMode.ESS
+    return BatteryOperationMode.OFF
+
+
