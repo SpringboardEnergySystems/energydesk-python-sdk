@@ -15,6 +15,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def generate_curve(api_conn):
+
     fromd="2022-10-01"
     untild = "2024-10-01"
     def process_dframe(df, name):
