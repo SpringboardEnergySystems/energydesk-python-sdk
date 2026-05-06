@@ -179,11 +179,15 @@ class NatsBus:
         # Remember this stream (with limits) so it can be re-created after a NATS reconnect
         self._known_streams[name] = (subjects, retention, max_age_seconds, max_bytes)
         try:
-            await self.js.stream_info(name)
-            # Stream exists — update it so new limits (e.g. tighter max_bytes /
-            # max_age) are applied immediately rather than only after deletion.
+            info = await self.js.stream_info(name)
+            # Stream exists — update limits (e.g. tighter max_bytes / max_age)
+            # but PRESERVE the existing subjects so a worker with a narrow
+            # subject filter (e.g. "ingest.jobs.weatherforecasts.yr.web") does
+            # not accidentally overwrite a wildcard ("ingest.jobs.>") that was
+            # set when the stream was first created.
+            existing_subjects = (info.config.subjects or subjects) if info.config else subjects
             await self._update_stream(
-                name, subjects,
+                name, existing_subjects,
                 retention=retention,
                 max_age_seconds=max_age_seconds,
                 max_bytes=max_bytes,
