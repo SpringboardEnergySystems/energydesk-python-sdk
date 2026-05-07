@@ -180,14 +180,19 @@ class NatsBus:
         self._known_streams[name] = (subjects, retention, max_age_seconds, max_bytes)
         try:
             info = await self.js.stream_info(name)
-            # Stream exists — update limits (e.g. tighter max_bytes / max_age)
-            # but PRESERVE the existing subjects so a worker with a narrow
-            # subject filter (e.g. "ingest.jobs.weatherforecasts.yr.web") does
-            # not accidentally overwrite a wildcard ("ingest.jobs.>") that was
-            # set when the stream was first created.
-            existing_subjects = (info.config.subjects or subjects) if info.config else subjects
+            # Stream exists — update limits (e.g. tighter max_bytes / max_age).
+            # MERGE new subjects into the existing list so that a new worker
+            # can register its subject without losing subjects already in the
+            # stream.  An existing wildcard (e.g. "ingest.jobs.>") is preserved
+            # because merging keeps all existing entries; a specific subject
+            # that is already covered by the wildcard is redundant but harmless.
+            existing = list((info.config.subjects or []) if info.config else [])
+            merged = existing.copy()
+            for s in subjects:
+                if s not in merged:
+                    merged.append(s)
             await self._update_stream(
-                name, existing_subjects,
+                name, merged,
                 retention=retention,
                 max_age_seconds=max_age_seconds,
                 max_bytes=max_bytes,
