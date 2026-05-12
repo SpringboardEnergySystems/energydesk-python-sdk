@@ -6,17 +6,27 @@ import numpy as np
 # Change this value here when the PFE portfolio changes.
 PFE_PORTFOLIO_ID: int = 35
 
+# Tiny nudge applied to netvol when buys exactly cancel sells (netvol == 0) but
+# cost != 0. Without it, avgcost falls back to 0 and the cost is silently lost
+# from M2M downstream. With it, avgcost becomes huge but
+# M2M = netvol*(price - avgcost) = eps*price - cost ≈ -cost is preserved.
+_NETVOL_EPS: float = 1e-9
+
+
 def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataFrame:
     """
     Re-calculate SYS per area by extracting EPAD-volum in a SYS-leg with price 0.
 
     For every period t:
       Q_sys_new(t) = Q_sys_old(t) - sum_{EPAD, area!=SYS} q_epad(t)
-      K_sys_new(t) = (Q_sys_old(t)*K_sys_old(t)) / Q_sys_new(t)   (0 if Q_sys_new == 0)
+      K_sys_new(t) = (Q_sys_old(t)*K_sys_old(t)) / Q_sys_new(t)
 
     - Output: one row per (period, area, type) with volum-weighted avgcost.
     - If a period has EPAD but no SYS: Q_sys_new = -sum_EPAD, K_sys_new = 0.
     - If a period only has AREA (no EPAD, no SYS): Q_sys_new = 0, K_sys_new = 0.
+    - If Q == 0 but cost != 0 (perfect buy/sell cancellation), Q is nudged by
+      _NETVOL_EPS so cost survives in M2M (the resulting avgcost is large but
+      M2M = Q*(price - K) ≈ -cost is correct).
 
     If you sell a 50 MWh NO1 EPAD at 10 EUR/MWh, do the following:
     Sell 50 MWh NO1 at 10 EUR/MWh
@@ -44,6 +54,9 @@ def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataF
         x.groupby(["period", "area", "type"], as_index=False)
          .agg(netvol=("netvol", "sum"), cost=(" _cost".strip(), "sum"))
     )
+    collapsed["netvol"] = collapsed["netvol"].astype(float)
+    zero_with_cost = (collapsed["netvol"] == 0) & (collapsed["cost"] != 0)
+    collapsed.loc[zero_with_cost, "netvol"] = _NETVOL_EPS
     nz = collapsed["netvol"] != 0
     collapsed["avgcost"] = 0.0
     collapsed.loc[nz, "avgcost"] = collapsed.loc[nz, "cost"] / collapsed.loc[nz, "netvol"]
@@ -81,9 +94,13 @@ def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataF
     # Volume: extract EPAD volume (SYS contribution from EPAD = -q_epad)
     sys_new["netvol"] = sys_old["sys_netvol"] - epad_sum["epad_sum"]
 
+    # Nudge netvol when SYS volume cancels exactly but cost remains, so the
+    # cost isn't dropped from M2M downstream.
+    zero_with_cost = (sys_new["netvol"] == 0) & (sys_old["sys_cost"] != 0)
+    sys_new.loc[zero_with_cost, "netvol"] = _NETVOL_EPS
+
     # Price: only cost from old SYS contracts; EPAD contributions have price 0
     with np.errstate(divide="ignore", invalid="ignore"):
-        # handle division by zero
         sys_new["avgcost"] = np.where(
             sys_new["netvol"] != 0,
             sys_old["sys_cost"] / sys_new["netvol"],
@@ -104,6 +121,9 @@ def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataF
             non_sys.groupby(["period", "area"], as_index=False)
                    .agg(netvol=("netvol", "sum"), cost=("_cost", "sum"))
         )
+        area_tot["netvol"] = area_tot["netvol"].astype(float)
+        zero_with_cost = (area_tot["netvol"] == 0) & (area_tot["cost"] != 0)
+        area_tot.loc[zero_with_cost, "netvol"] = _NETVOL_EPS
         area_tot["avgcost"] = 0.0
         nz = area_tot["netvol"] != 0
         area_tot.loc[nz, "avgcost"] = area_tot.loc[nz, "cost"] / area_tot.loc[nz, "netvol"]
