@@ -55,8 +55,8 @@ def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataF
          .agg(netvol=("netvol", "sum"), cost=(" _cost".strip(), "sum"))
     )
     collapsed["netvol"] = collapsed["netvol"].astype(float)
-    zero_with_cost = (collapsed["netvol"] == 0) & (collapsed["cost"] != 0)
-    collapsed.loc[zero_with_cost, "netvol"] = _NETVOL_EPS
+    collapsed_cancel = (collapsed["netvol"] == 0) & (collapsed["cost"] != 0)
+    collapsed.loc[collapsed_cancel, "netvol"] = _NETVOL_EPS
     nz = collapsed["netvol"] != 0
     collapsed["avgcost"] = 0.0
     collapsed.loc[nz, "avgcost"] = collapsed.loc[nz, "cost"] / collapsed.loc[nz, "netvol"]
@@ -96,8 +96,8 @@ def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataF
 
     # Nudge netvol when SYS volume cancels exactly but cost remains, so the
     # cost isn't dropped from M2M downstream.
-    zero_with_cost = (sys_new["netvol"] == 0) & (sys_old["sys_cost"] != 0)
-    sys_new.loc[zero_with_cost, "netvol"] = _NETVOL_EPS
+    sys_cancel = (sys_new["netvol"] == 0) & (sys_old["sys_cost"] != 0)
+    sys_new.loc[sys_cancel, "netvol"] = _NETVOL_EPS
 
     # Price: only cost from old SYS contracts; EPAD contributions have price 0
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -122,8 +122,8 @@ def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataF
                    .agg(netvol=("netvol", "sum"), cost=("_cost", "sum"))
         )
         area_tot["netvol"] = area_tot["netvol"].astype(float)
-        zero_with_cost = (area_tot["netvol"] == 0) & (area_tot["cost"] != 0)
-        area_tot.loc[zero_with_cost, "netvol"] = _NETVOL_EPS
+        area_tot_cancel = (area_tot["netvol"] == 0) & (area_tot["cost"] != 0)
+        area_tot.loc[area_tot_cancel, "netvol"] = _NETVOL_EPS
         area_tot["avgcost"] = 0.0
         nz = area_tot["netvol"] != 0
         area_tot.loc[nz, "avgcost"] = area_tot.loc[nz, "cost"] / area_tot.loc[nz, "netvol"]
