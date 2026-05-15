@@ -67,6 +67,14 @@ def is_contract_with_profile(contract_type: ContractTypeEnum) -> bool:
         ContractTypeEnum.PPA
     ]
 
+def is_standard_contract(contract_type: ContractTypeEnum) -> bool:
+    return contract_type in [
+        ContractTypeEnum.NASDAQ,
+        ContractTypeEnum.EEX,
+        ContractTypeEnum.EURONEXT
+    ]
+
+
 
 class FeeTypeEnum(Enum):
     TRADING_FEE = 1
