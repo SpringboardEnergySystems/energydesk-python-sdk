@@ -1,6 +1,8 @@
 import json
 import logging
-import pandas as pd
+from datetime import date
+from typing import Any, Optional
+
 from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
@@ -70,7 +72,7 @@ class PortfoliosApi:
       """
 
     @staticmethod
-    def get_portfolios(api_connection: ApiConnection, parameters: dict={}):
+    def get_portfolios(api_connection: ApiConnection, parameters: dict={}) -> Optional[list]:
         """Fetches all portfolios
 
         :param api_connection: class with API token for use with API
@@ -81,9 +83,9 @@ class PortfoliosApi:
         if json_res is None:
             return None
         return json_res
-    @staticmethod
 
-    def get_portfolios_embedded(api_connection: ApiConnection, parameters: dict={}):
+    @staticmethod
+    def get_portfolios_embedded(api_connection: ApiConnection, parameters: dict={}) -> Optional[list]:
         """Fetches all portfolios
 
         :param api_connection: class with API token for use with API
@@ -97,7 +99,7 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def get_portfolio_by_pk(api_connection: ApiConnection, pk: int):
+    def get_portfolio_by_pk(api_connection: ApiConnection, pk: int) -> dict[int, Any]:
         """Loads portfolios from key
 
         :param api_connection: class with API token for use with API
@@ -106,11 +108,11 @@ class PortfoliosApi:
         :type pk: str, required
         """
         logger.info("Fetching portfolio " + str(pk))
-        dict = api_connection.exec_get_url('/api/portfoliomanager/portfolios/' + str(pk) + "/")
-        return dict
+        dc = api_connection.exec_get_url('/api/portfoliomanager/portfolios/' + str(pk) + "/")
+        return dc
 
     @staticmethod
-    def get_portfolio_url(api_connection: ApiConnection, portfolio_pk: int):
+    def get_portfolio_url(api_connection: ApiConnection, portfolio_pk: int) -> str:
         """Fetches url for portfolio from pk
 
         :param api_connection: class with API token for use with API
@@ -122,7 +124,7 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def upsert_portfolio(api_connection: ApiConnection, portfolio: PortfolioNode):
+    def upsert_portfolio(api_connection: ApiConnection, portfolio: PortfolioNode) -> None:
         """Insefrts or updates a tradingbook
 
         :param api_connection: class with API token for use with API
@@ -143,3 +145,18 @@ class PortfoliosApi:
             logger.error("Problems saving portfolio "  + str(portfolio.description))
         else:
             logger.info("Portfolio updated " + str(portfolio.description))
+
+
+    @staticmethod
+    def get_equivalent_tickers(api_connection: ApiConnection, target_date: date, tickers_to_map: list[str]) -> dict[str, str]:
+        """Loads equivalent tickers (e.g. SYOSLMFEB-26 => OSBMFEB-26
+        """
+        success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/equivalent-tickers/', {
+            'target_date': target_date.isoformat(),
+            'tickers_to_map': tickers_to_map
+        })
+        if success:
+            dc: dict[str, Any] = json.loads(json_res)
+            return {m['ticker_to_map']: m['equivalent_ticker'] for m in dc['mapped_tickers']}
+        else:
+            raise Exception(f"Error getting equivalent tickers for date {target_date} and tickers {tickers_to_map}:{status_code} {error_msg}")
