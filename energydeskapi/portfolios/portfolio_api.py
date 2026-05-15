@@ -156,7 +156,6 @@ class PortfoliosApi:
             'tickers_to_map': tickers_to_map
         })
         if success:
-            dc: dict[str, Any] = json.loads(json_res)
-            return {m['ticker_to_map']: m['equivalent_ticker'] for m in dc['mapped_tickers']}
+            return {m['ticker_to_map']: m['equivalent_ticker'] for m in json_res['mapped_tickers']}
         else:
             raise Exception(f"Error getting equivalent tickers for date {target_date} and tickers {tickers_to_map}:{status_code} {error_msg}")
