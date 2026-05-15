@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import Any
@@ -20,7 +21,26 @@ class NatsBus:
         # automatically after a NATS reconnect (e.g. pod restart).
         self._known_streams: dict[str, tuple[list[str], str, int, int]] = {}
 
-    async def connect(self) -> None:
+    async def connect(
+        self,
+        *,
+        max_attempts: int = 12,
+        base_delay: float = 5.0,
+        max_delay: float = 60.0,
+    ) -> None:
+        """Connect to NATS with exponential-backoff retry.
+
+        DNS resolution failures (``socket.gaierror``) and general
+        ``OSError`` / ``TimeoutError`` exceptions that occur on the *initial*
+        connection attempt are retried up to *max_attempts* times so that
+        transient network blips at pod-startup time do not crash the worker.
+
+        Args:
+            max_attempts: Maximum number of connection attempts (default 12,
+                          i.e. ~10 minutes total with the default delays).
+            base_delay:   Initial back-off delay in seconds (default 5 s).
+            max_delay:    Maximum back-off delay in seconds (default 60 s).
+        """
         async def _reconnected_cb() -> None:
             logger.warning(
                 "NATS reconnected — re-creating %d known streams", len(self._known_streams)
@@ -39,8 +59,32 @@ class NatsBus:
                         "Failed to re-create stream %s after reconnect: %s", name, exc
                     )
 
-        await self.nc.connect(servers=[self.url], reconnected_cb=_reconnected_cb)
-        self.js = self.nc.jetstream()
+        attempt = 0
+        delay = base_delay
+        while True:
+            attempt += 1
+            try:
+                await self.nc.connect(servers=[self.url], reconnected_cb=_reconnected_cb)
+                self.js = self.nc.jetstream()
+                if attempt > 1:
+                    logger.info("NATS connected after %d attempt(s)", attempt)
+                return
+            except Exception as exc:
+                if attempt >= max_attempts:
+                    logger.error(
+                        "NATS connection failed after %d attempt(s), giving up: %s",
+                        attempt, exc,
+                    )
+                    raise
+                logger.warning(
+                    "NATS connection attempt %d/%d failed (%s: %s) — retrying in %.0f s",
+                    attempt, max_attempts, type(exc).__name__, exc, delay,
+                )
+                await asyncio.sleep(delay)
+                # Re-create the underlying NATS client instance because the
+                # nats-py client may be in a broken state after a failed connect.
+                self.nc = NATS()
+                delay = min(delay * 2, max_delay)
 
     async def close(self) -> None:
         try:
@@ -135,11 +179,20 @@ class NatsBus:
         # Remember this stream (with limits) so it can be re-created after a NATS reconnect
         self._known_streams[name] = (subjects, retention, max_age_seconds, max_bytes)
         try:
-            await self.js.stream_info(name)
-            # Stream exists — update it so new limits (e.g. tighter max_bytes /
-            # max_age) are applied immediately rather than only after deletion.
+            info = await self.js.stream_info(name)
+            # Stream exists — update limits (e.g. tighter max_bytes / max_age).
+            # MERGE new subjects into the existing list so that a new worker
+            # can register its subject without losing subjects already in the
+            # stream.  An existing wildcard (e.g. "ingest.jobs.>") is preserved
+            # because merging keeps all existing entries; a specific subject
+            # that is already covered by the wildcard is redundant but harmless.
+            existing = list((info.config.subjects or []) if info.config else [])
+            merged = existing.copy()
+            for s in subjects:
+                if s not in merged:
+                    merged.append(s)
             await self._update_stream(
-                name, subjects,
+                name, merged,
                 retention=retention,
                 max_age_seconds=max_age_seconds,
                 max_bytes=max_bytes,

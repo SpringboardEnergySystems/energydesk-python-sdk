@@ -76,12 +76,16 @@ def get_spot_prices(api_conn):
         'market': "NORDIC_POWER",
         'area': "NO1"
     }
-
+    print(parameters)
     df=SpotPricesApi.get_spot_prices_df(api_conn, parameters)
     if df is not None:
-        df_no1=df['NO1']
+        df_no1=df['SYS']
         pd.set_option('display.max_rows', None)
         print(df_no1)
+        # Print average price for each day
+        print("Average price for each day:")
+        print(df_no1.mean())
+
 
 
 

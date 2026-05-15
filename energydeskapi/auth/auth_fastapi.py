@@ -929,13 +929,15 @@ def get_oidc_config_from_env() -> Dict[str, Any]:
     config = {}
 
     # Azure AD configuration
-    azure_client_id = os.environ.get('AZURE_CLIENT_ID')
-    azure_client_secret = os.environ.get('AZURE_CLIENT_SECRET')
+    # Accept either explicit AZURE_CLIENT_ID/SECRET or Django-style OIDC_RP_CLIENT_ID/SECRET
+    azure_client_id = os.environ.get('AZURE_CLIENT_ID') or os.environ.get('OIDC_RP_CLIENT_ID')
+    azure_client_secret = os.environ.get('AZURE_CLIENT_SECRET') or os.environ.get('OIDC_RP_CLIENT_SECRET')
     if azure_client_id and azure_client_secret:
         config['azure'] = {
             'client_id': azure_client_id,
             'client_secret': azure_client_secret,
-            'tenant': os.environ.get('AZURE_TENANT', 'common')
+            # AZURE_TENANT_ID is the Django-mozilla style name; AZURE_TENANT is the SDK style
+            'tenant': os.environ.get('AZURE_TENANT') or os.environ.get('AZURE_TENANT_ID', 'common')
         }
         logger.info("Azure AD OIDC configuration loaded from environment")
 

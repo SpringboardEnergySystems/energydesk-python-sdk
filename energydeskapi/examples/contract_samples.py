@@ -58,12 +58,10 @@ def get_contracts_flat(api_conn):
 
 
 def get_contracts(api_conn):
-    parameters={"page_size":10, "portfolio__in":[36, 94,48, 54,55 ]}
-    json_data = ContractsApi.list_contracts_embedded(api_conn,parameters)
-    print("Returned {} contracts".format(len(json_data['results'])))
+    parameters={"page_size":100, "id":53440}
+    json_data = ContractsApi.list_contracts_compact(api_conn,parameters)
     for rec in json_data['results']:
-        pass#print(rec['ticker'],rec['generic_ticker'])
-        print(json.dumps(rec, indent=2))
+        open("./sample_fixprice_contract_compact.json", "w").write(json.dumps(rec, indent=2))
 
 
 
@@ -232,6 +230,7 @@ def query_sources(api_conn):
     #x=json.loads(x)
     #x=GosApi.get_source_data(api_conn)
 def currcontr(api_conn):
+
     res=ContractsApi.list_contracts_compact(api_conn,
                                         {"page_size": 100, "commodity__commodity_type": CommodityTypeEnum.CURRENCY.value})
     df=pd.DataFrame(json.loads(res['results']))
@@ -270,7 +269,7 @@ if __name__ == '__main__':
     #load_contracts_csv(api_conn)
     #cancel_contract(api_conn)
     #get_contract_filters(api_conn)
-    get_contract_counterparts(api_conn)
+    get_contracts(api_conn)
     #register_contract_filters(api_conn)
     #bilateral_dealcapture(api_conn)
     #get_contract_tags(api_conn)

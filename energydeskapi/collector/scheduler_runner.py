@@ -150,20 +150,34 @@ async def run_scheduler(
     )
     await bus.ensure_kv_bucket(config.registry_kv_bucket)
 
-    # job_type → running asyncio Task
+    # job_type → (running asyncio Task, last WorkerRegistration)
     _tasks: Dict[str, asyncio.Task] = {}
+    _registrations: Dict[str, WorkerRegistration] = {}
 
     def _start(reg: WorkerRegistration) -> None:
         job_type = reg.job_type
         existing = _tasks.get(job_type)
+        prev = _registrations.get(job_type)
+
         if existing and not existing.done():
-            # Re-registration: restart only if cron or tz changed.
-            # For simplicity always restart to pick up any update.
+            # Only restart the cron loop if the schedule actually changed.
+            # Heartbeat refreshes update registered_at every 2 minutes — we
+            # must NOT restart for those or the sleep timer resets and jobs
+            # can be skipped.
+            if prev and prev.cron == reg.cron and prev.timezone == reg.timezone:
+                logger.debug(
+                    "Heartbeat for job_type=%s — cron unchanged, keeping loop",
+                    job_type,
+                )
+                _registrations[job_type] = reg
+                return
             logger.info(
-                "Re-registration received for job_type=%s — restarting cron loop",
-                job_type,
+                "Re-registration received for job_type=%s (cron changed: %r → %r) — restarting cron loop",
+                job_type, prev.cron if prev else None, reg.cron,
             )
             existing.cancel()
+
+        _registrations[job_type] = reg
         _tasks[job_type] = asyncio.create_task(
             _job_loop(bus, config, run_tracker, reg),
             name=f"cron-{job_type}",
@@ -174,6 +188,7 @@ async def run_scheduler(
 
     def _stop(job_type: str) -> None:
         task = _tasks.pop(job_type, None)
+        _registrations.pop(job_type, None)
         if task and not task.done():
             task.cancel()
             logger.info("Cron loop cancelled for job_type=%s (KV entry removed)", job_type)
