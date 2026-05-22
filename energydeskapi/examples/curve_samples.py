@@ -63,13 +63,13 @@ def query_forward_curves(api_conn):
 
     data=CurveApi.get_available_areas(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
                                                  'price_date__gte': yester, 'currency_code':"EUR",
-                                                 'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD.value})
+                                                 'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD_JULIA.value})
 
 
     res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
                                                      'area':"Danish_DK2_Power",'currency_code':"EUR",
                                                      'price_date__lte':cutoff,
-                                                     'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD.value})
+                                                     'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD_JULIA.value})
     if len(res)==0:
         print("No curves returned")
     else:
