@@ -164,16 +164,19 @@ async def run_worker(
             if run_tracker:
                 await run_tracker.mark_started(job.run_id, started)
 
-            await bus.publish_json(
-                "ingest.runs.started",
-                RunEvent(
-                    run_id=job.run_id,
-                    job_type=job.job_type,
-                    partition_key=job.partition_key,
-                    status="started",
-                    ts=started,
-                ).model_dump(),
-            )
+            try:
+                await bus.publish_json(
+                    "ingest.runs.started",
+                    RunEvent(
+                        run_id=job.run_id,
+                        job_type=job.job_type,
+                        partition_key=job.partition_key,
+                        status="started",
+                        ts=started,
+                    ).model_dump(),
+                )
+            except Exception as pub_exc:
+                logger.warning("Could not publish ingest.runs.started: %s", pub_exc)
 
             # ── dispatch ───────────────────────────────────────────────
             jobdef = get(job.job_type)
@@ -195,17 +198,20 @@ async def run_worker(
                     await run_tracker.mark_finished(
                         job.run_id, finished, "succeeded", metrics=metrics
                     )
-                await bus.publish_json(
-                    "ingest.runs.succeeded",
-                    RunEvent(
-                        run_id=job.run_id,
-                        job_type=job.job_type,
-                        partition_key=job.partition_key,
-                        status="succeeded",
-                        ts=finished,
-                        metrics=metrics,
-                    ).model_dump(),
-                )
+                try:
+                    await bus.publish_json(
+                        "ingest.runs.succeeded",
+                        RunEvent(
+                            run_id=job.run_id,
+                            job_type=job.job_type,
+                            partition_key=job.partition_key,
+                            status="succeeded",
+                            ts=finished,
+                            metrics=metrics,
+                        ).model_dump(),
+                    )
+                except Exception as pub_exc:
+                    logger.warning("Could not publish ingest.runs.succeeded: %s", pub_exc)
                 await msg.ack()
 
             except Exception as exc:
@@ -222,17 +228,20 @@ async def run_worker(
                     await run_tracker.mark_finished(
                         job.run_id, finished, "failed", error=str(exc)
                     )
-                await bus.publish_json(
-                    "ingest.runs.failed",
-                    RunEvent(
-                        run_id=job.run_id,
-                        job_type=job.job_type,
-                        partition_key=job.partition_key,
-                        status="failed",
-                        ts=finished,
-                        error=str(exc),
-                    ).model_dump(),
-                )
+                try:
+                    await bus.publish_json(
+                        "ingest.runs.failed",
+                        RunEvent(
+                            run_id=job.run_id,
+                            job_type=job.job_type,
+                            partition_key=job.partition_key,
+                            status="failed",
+                            ts=finished,
+                            error=str(exc),
+                        ).model_dump(),
+                    )
+                except Exception as pub_exc:
+                    logger.warning("Could not publish ingest.runs.failed: %s", pub_exc)
                 try:
                     # Delay redelivery to prevent a tight CPU spin when a job
                     # keeps failing (e.g. bad credentials, unreachable API).
@@ -248,5 +257,19 @@ async def run_worker(
         try:
             msgs = await sub.fetch(batch=50, timeout=1.0)
         except (asyncio.TimeoutError, TimeoutError):
+            # Normal: no messages arrived within the polling window.
+            continue
+        except Exception as exc:
+            # NATS connection errors (ErrConnectionReconnecting,
+            # ErrConnectionClosed, ErrStaleConnection, OSError, …) surface
+            # here while the nats-py client is mid-reconnect or the server is
+            # temporarily unreachable.  Log and back off briefly — the
+            # built-in auto-reconnect loop (max_reconnect_attempts=-1) will
+            # restore the connection and fetch() will succeed again.
+            logger.warning(
+                "NATS fetch error (%s: %s) — backing off 5 s before retry",
+                type(exc).__name__, exc,
+            )
+            await asyncio.sleep(5)
             continue
         await asyncio.gather(*(handle_one(m) for m in msgs))

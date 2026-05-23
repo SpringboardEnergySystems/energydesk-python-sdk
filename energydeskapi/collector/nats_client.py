@@ -59,12 +59,39 @@ class NatsBus:
                         "Failed to re-create stream %s after reconnect: %s", name, exc
                     )
 
+        async def _disconnected_cb() -> None:
+            logger.warning("NATS disconnected — waiting for auto-reconnect")
+
+        async def _closed_cb() -> None:
+            logger.warning("NATS connection fully closed")
+
+        async def _error_cb(exc: Exception) -> None:
+            logger.warning("NATS client error: %s: %s", type(exc).__name__, exc)
+
         attempt = 0
         delay = base_delay
         while True:
             attempt += 1
             try:
-                await self.nc.connect(servers=[self.url], reconnected_cb=_reconnected_cb)
+                await self.nc.connect(
+                    servers=[self.url],
+                    reconnected_cb=_reconnected_cb,
+                    disconnected_cb=_disconnected_cb,
+                    closed_cb=_closed_cb,
+                    error_cb=_error_cb,
+                    # Allow more time for DNS resolution inside pods (default 2 s is
+                    # too short when kube-dns is briefly overloaded).
+                    connect_timeout=5,
+                    # Retry auto-reconnect indefinitely instead of giving up after
+                    # the default 60 attempts (~2 min); the worker must stay alive.
+                    max_reconnect_attempts=-1,
+                    reconnect_time_wait=2,
+                    # Detect dead connections faster: ping every 20 s, allow 3
+                    # missed pings before declaring the connection stale
+                    # (was 120 s / 2 pings — i.e. up to 4 min before detection).
+                    ping_interval=20,
+                    max_outstanding_pings=3,
+                )
                 self.js = self.nc.jetstream()
                 if attempt > 1:
                     logger.info("NATS connected after %d attempt(s)", attempt)
