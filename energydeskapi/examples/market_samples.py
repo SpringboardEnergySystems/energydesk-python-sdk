@@ -103,7 +103,6 @@ def manage_market_products(api_conn, ticker):
 def market_products(api_conn):
     params={'page_size':500, 'market_place__in':[ MarketPlaceEnum.ICE.value]}
     params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
-
     res=ProductsApi.get_market_products_embedded(api_conn, params)
 
     #pd.set_option('display.max_rows', None)
@@ -164,8 +163,8 @@ if __name__ == '__main__':
     api_conn=init_api()
 
     context = {}
-    #market_products(api_conn)
-    get_spot_prices(api_conn)
+    market_products(api_conn)
+    #get_spot_prices(api_conn)
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__instrument':'2025-01-01'})
     #print(df)
     #get_spot_prices(api_conn)
