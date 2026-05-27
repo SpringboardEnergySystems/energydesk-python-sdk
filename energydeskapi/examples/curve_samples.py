@@ -65,7 +65,7 @@ def query_forward_curves(api_conn):
                                                  'price_date__gte': yester, 'currency_code':"EUR",
                                                  'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD_JULIA.value})
 
-
+    print(data)
     res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
                                                      'area':"Danish_DK2_Power",'currency_code':"EUR",
                                                      'price_date__lte':cutoff,
