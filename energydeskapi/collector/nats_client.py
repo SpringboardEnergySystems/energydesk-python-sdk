@@ -193,6 +193,31 @@ class NatsBus:
         except Exception as exc:
             logger.warning("Could not update stream %s config: %s", name, exc)
 
+    @staticmethod
+    def _subject_covered(subject: str, existing: list[str]) -> bool:
+        """Return True if *subject* is already covered by *existing*.
+
+        A subject is covered if it appears in the list verbatim OR if any
+        existing entry is a NATS wildcard that matches it:
+          - ``prefix.>``  matches any subject that starts with ``prefix.``
+          - ``prefix.*``  matches exactly one token after ``prefix.``
+        """
+        for e in existing:
+            if e == subject:
+                return True
+            # ">" wildcard — matches the subject if it starts with the prefix
+            if e.endswith(".>"):
+                prefix = e[:-1]  # strip the trailing ">"
+                if subject.startswith(prefix):
+                    return True
+            # "*" wildcard — matches a single token
+            if "*" in e:
+                import re as _re
+                pattern = _re.escape(e).replace(r"\*", "[^.]+") + "$"
+                if _re.match(pattern, subject):
+                    return True
+        return False
+
     async def ensure_stream(
         self,
         name: str,
@@ -211,15 +236,24 @@ class NatsBus:
             # MERGE new subjects into the existing list so that a new worker
             # can register its subject without losing subjects already in the
             # stream.  An existing wildcard (e.g. "ingest.jobs.>") is preserved
-            # because merging keeps all existing entries; a specific subject
-            # that is already covered by the wildcard is redundant but harmless.
+            # because merging keeps all existing entries.
+            #
+            # IMPORTANT: if the new subject is already covered by an existing
+            # wildcard we skip the subjects update entirely.  This avoids a
+            # read-modify-write race condition where multiple workers start
+            # simultaneously, each reads the same snapshot, each appends its
+            # own subject, and the last writer silently overwrites the subjects
+            # added by all earlier writers.
             existing = list((info.config.subjects or []) if info.config else [])
             merged = existing.copy()
+            needs_subject_update = False
             for s in subjects:
-                if s not in merged:
+                if not self._subject_covered(s, existing):
                     merged.append(s)
+                    needs_subject_update = True
+
             await self._update_stream(
-                name, merged,
+                name, merged if needs_subject_update else existing,
                 retention=retention,
                 max_age_seconds=max_age_seconds,
                 max_bytes=max_bytes,
