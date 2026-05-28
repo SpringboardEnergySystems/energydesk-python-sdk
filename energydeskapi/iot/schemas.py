@@ -11,7 +11,7 @@ def utcnow() -> datetime:
 
 class Command(BaseModel):
     command_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    type: Literal["setpoint", "read"]
+    type: Literal["setpoint", "read", "tune"]
     site: str
     device: str
     payload: Dict[str, Any] = Field(default_factory=dict)
