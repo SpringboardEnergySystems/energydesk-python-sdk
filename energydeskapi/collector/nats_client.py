@@ -43,20 +43,22 @@ class NatsBus:
         """
         async def _reconnected_cb() -> None:
             logger.warning(
-                "NATS reconnected — re-creating %d known streams", len(self._known_streams)
+                "NATS reconnected — re-ensuring %d known streams", len(self._known_streams)
             )
             for name, (subjects, retention, max_age_seconds, max_bytes) in list(self._known_streams.items()):
                 try:
-                    await self._create_stream(
+                    # Use ensure_stream (not _create_stream) so that subject-merging
+                    # and config updates run correctly after a server restart.
+                    await self.ensure_stream(
                         name, subjects,
                         retention=retention,
                         max_age_seconds=max_age_seconds,
                         max_bytes=max_bytes,
                     )
-                    logger.info("Re-created stream %s after reconnect", name)
+                    logger.info("Re-ensured stream %s after reconnect", name)
                 except Exception as exc:
                     logger.warning(
-                        "Failed to re-create stream %s after reconnect: %s", name, exc
+                        "Failed to re-ensure stream %s after reconnect: %s", name, exc
                     )
 
         async def _disconnected_cb() -> None:
@@ -332,8 +334,44 @@ class NatsBus:
                 logger.debug("Could not read KV entry %s/%s", bucket, key)
         return results
 
-    async def publish_json(self, subject: str, payload: Any) -> None:
+    async def publish_json(
+        self,
+        subject: str,
+        payload: Any,
+        *,
+        retries: int = 3,
+        retry_delay: float = 2.0,
+    ) -> None:
+        """Publish *payload* as JSON to *subject* via JetStream.
+
+        Retries up to *retries* times on ``NoStreamResponseError`` /
+        ``NoRespondersError`` (which occur when the NATS server was just
+        restarted and JetStream is not yet fully initialised).  Each retry
+        is separated by *retry_delay* seconds.
+        """
         assert self.js is not None
         data = json.dumps(payload, default=str).encode("utf-8")
-        await self.js.publish(subject, data)
+        last_exc: Exception | None = None
+        for attempt in range(1, retries + 1):
+            try:
+                await self.js.publish(subject, data)
+                return
+            except Exception as exc:
+                last_exc = exc
+                msg_lower = str(exc).lower()
+                is_no_stream = (
+                    "no stream" in msg_lower
+                    or "no responders" in msg_lower
+                    or type(exc).__name__ in ("NoStreamResponseError", "NoRespondersError")
+                )
+                if is_no_stream and attempt < retries:
+                    logger.warning(
+                        "publish_json: no stream for subject %s (attempt %d/%d)"
+                        " — retrying in %.1f s",
+                        subject, attempt, retries, retry_delay,
+                    )
+                    await asyncio.sleep(retry_delay)
+                else:
+                    raise
+        raise last_exc  # unreachable, but satisfies type checkers
 
