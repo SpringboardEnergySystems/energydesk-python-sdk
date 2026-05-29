@@ -11,7 +11,7 @@ from nats.js.api import ConsumerConfig
 from energydeskapi.collector.config import WorkerConfig
 from energydeskapi.collector.jobs.registry import get, list_job_types
 from energydeskapi.collector.metrics import JOB_DURATION, JOBS_TOTAL, WORKER_ALIVE
-from energydeskapi.collector.models import JobMessage, RunEvent
+from energydeskapi.collector.models import JobMessage, JobResult, RunEvent
 from energydeskapi.collector.nats_client import NatsBus
 from energydeskapi.collector.protocols import RunTracker
 from energydeskapi.collector.sinks import SinkBundle
@@ -162,7 +162,13 @@ async def run_worker(
             # ── start ──────────────────────────────────────────────────
             started = _utcnow()
             if run_tracker:
-                await run_tracker.mark_started(job.run_id, started)
+                # Fire-and-forget: pre-creates the ingest_run row with status=running
+                # so the portal shows the job is in progress.  Failures here are
+                # non-fatal — the event listener will upsert on finish regardless.
+                try:
+                    await run_tracker.mark_started(job.run_id, started)
+                except Exception as _tr_exc:
+                    logger.warning("mark_started failed (non-fatal): %s", _tr_exc)
 
             try:
                 await bus.publish_json(
@@ -187,17 +193,23 @@ async def run_worker(
 
             t0 = _time.monotonic()
             try:
-                metrics = await jobdef.handler(job, sinks)
+                result = await jobdef.handler(job, sinks)
                 duration = _time.monotonic() - t0
+
+                # Accept both JobResult and plain dict from handlers.
+                if isinstance(result, JobResult):
+                    metrics = result.to_metrics()
+                else:
+                    metrics = result or {}
 
                 JOBS_TOTAL.labels(job_type=job.job_type, status="succeeded").inc()
                 JOB_DURATION.labels(job_type=job.job_type).observe(duration)
 
                 finished = _utcnow()
-                if run_tracker:
-                    await run_tracker.mark_finished(
-                        job.run_id, finished, "succeeded", metrics=metrics
-                    )
+                # NOTE: mark_finished is intentionally NOT called here.
+                # Status updates are handled exclusively by the scheduler's
+                # run_event_listener, which subscribes to ingest.runs.* over NATS.
+                # This keeps workers loosely coupled — NATS only, no DB credentials.
                 try:
                     await bus.publish_json(
                         "ingest.runs.succeeded",
@@ -224,10 +236,7 @@ async def run_worker(
                     "Job failed run_id=%s job_type=%s", job.run_id, job.job_type
                 )
                 finished = _utcnow()
-                if run_tracker:
-                    await run_tracker.mark_finished(
-                        job.run_id, finished, "failed", error=str(exc)
-                    )
+                # NOTE: mark_finished is intentionally NOT called here — see above.
                 try:
                     await bus.publish_json(
                         "ingest.runs.failed",
