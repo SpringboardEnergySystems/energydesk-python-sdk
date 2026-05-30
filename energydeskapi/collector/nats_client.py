@@ -262,6 +262,20 @@ class NatsBus:
             needs_subject_update = False
             for s in subjects:
                 if not self._subject_covered(s, existing):
+                    # Remove any existing specific subjects that are already
+                    # covered BY s (e.g. when a wildcard "ingest.jobs.>" is
+                    # added to a stream that already has individual subjects
+                    # like "ingest.jobs.imbalance_imports").  Without this,
+                    # NATS rejects the update with err_code=10052
+                    # (subject overlap) because both the wildcard and the
+                    # specific it covers appear in the merged list.
+                    covered_by_s = [e for e in merged if self._subject_covered(e, [s])]
+                    if covered_by_s:
+                        merged = [e for e in merged if not self._subject_covered(e, [s])]
+                        logger.debug(
+                            "ensure_stream %s: pruning %d specific subject(s) covered by new wildcard %r: %s",
+                            name, len(covered_by_s), s, covered_by_s,
+                        )
                     merged.append(s)
                     needs_subject_update = True
 
