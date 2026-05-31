@@ -34,6 +34,7 @@ class TelemetryEvent(BaseModel):
     device: str
     worker_id: str
     points: Dict[str, float]
+    resource_type: Optional[str] = None   # ResourceType value → InfluxDB measurement name
     ts: datetime = Field(default_factory=utcnow)
 
 class HeartbeatEvent(BaseModel):
