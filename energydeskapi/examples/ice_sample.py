@@ -5,15 +5,27 @@ Demonstrates querying ICE option underlyings and their options via the
 Energydesk REST API using two focused, lightweight calls:
 
   Step 1 – GET /api/markets/marketproducts/
-            ?market_place__name=ICE
-            &commodity_definition__instrument_type__code=FUT
-            Simple (non-embedded) list of ICE futures.  Fast, small payload.
+Single-query strategy (fast)
+────────────────────────────
+Step 1: GET /api/markets/marketproducts/embedded/
+        ?market_place__name=ICE
+        &commodity_definition__instrument_type__code=FUT
+
+The embedded commodity_definition already contains an ``underlying_of_option``
+list for every futures product.  Each entry in that list is a CommodityOption
+record with: option_type, exercise_style, strike_price, expiration_date and a
+minimal commodity_definition for the option product itself.
 
   Step 2 – For each underlying ticker:
-            GET /api/markets/marketproducts/embedded/
-            ?market_place__name=ICE
-            &commodity_definition__instrument_type__code__in=EUROPT&...=ASIOPT
-            &commodity_definition__parameters_for_option__underlying_commodity__product_code=<ticker>
+→ No second round-trip needed.  We iterate the list once and print options for
+  each underlying as we go.
+
+Per-underlying query strategy (explicit, one call per underlying)
+─────────────────────────────────────────────────────────────────
+Alternatively, ``get_option_market_products_for_underlying()`` queries
+/api/markets/marketproducts/embedded/ filtered to EUROPT/ASIOPT for ICE and
+filters client-side by underlying ticker.  Use this when you need the
+MarketProduct pk for deal-capture.
             Returns only the options for that specific underlying – not 1800 records.
 
 REST filter reference (market products):
