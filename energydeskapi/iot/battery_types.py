@@ -58,6 +58,7 @@ class BatteryMetric:
     BATTERY_VOLTAGE          = "battery_voltage"           # V DC
     BATTERY_CURRENT          = "battery_current"           # A DC
     BATTERY_POWER            = "battery_power"             # W  (derived: V * A)
+    BATTERY_POWER_KW         = "battery_power_kw"          # kW (derived: V * A / 1000); positive = discharge, negative = charge
     DEVICE_STATE             = "device_state"              # raw vendor state int
     DEVICE_ERROR             = "device_error"              # raw vendor error code
     SWITCH_POSITION          = "switch_position"           # raw vendor int

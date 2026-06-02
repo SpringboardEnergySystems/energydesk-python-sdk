@@ -47,6 +47,7 @@ class AmsMainMeterMetric:
     # ── Active power ──────────────────────────────────────────────────────────
     ACTIVE_POWER          = "active_power"          # W   – instantaneous active import power
     ACTIVE_POWER_EXPORT   = "active_power_export"   # W   – instantaneous active export power
+    ACTIVE_POWER_KW       = "active_power_kw"       # kW  – net grid power (import − export); positive = import, negative = export
 
     # ── Reactive power ────────────────────────────────────────────────────────
     REACTIVE_POWER        = "reactive_power"        # VAr – reactive import power
