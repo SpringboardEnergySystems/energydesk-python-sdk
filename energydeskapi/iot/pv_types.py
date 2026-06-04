@@ -134,6 +134,7 @@ class PvGrowattMetric:
 
     # ── AC output — total ──────────────────────────────────────────────────
     AC_POWER_OUT             = "pvpowerout"                # W  – total AC power delivered to grid
+    SOLAR_KW                 = "solar_kw"                  # kW – AC output power (pvpowerout / 1000); non-negative
     GRID_FREQUENCY           = "pvfrequentie"              # Hz – grid frequency
 
     # ── AC output — phase L1 ──────────────────────────────────────────────

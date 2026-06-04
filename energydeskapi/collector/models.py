@@ -78,6 +78,44 @@ class RunEvent(BaseModel):
     error: Optional[str] = None
 
 
+class JobResult(BaseModel):
+    """Structured result returned by job handlers.
+
+    Workers return this from their ``run()`` handler.  The SDK worker runner
+    serialises it into ``RunEvent.metrics`` before publishing over NATS.
+
+    Handlers that still return a plain ``dict`` continue to work — the worker
+    runner accepts both and stores the raw dict in ``metrics`` unchanged.
+
+    Attributes
+    ----------
+    records_written:
+        Number of records successfully written to the destination sink.
+    records_skipped:
+        Records skipped (already existed, out-of-range, etc.).
+    records_failed:
+        Records that failed to write (parse error, API rejection, etc.).
+    extra:
+        Any additional handler-specific counters or labels (e.g. ``api_calls``,
+        ``areas_ok``, ``points_written``).  Shown verbatim in the history portal.
+    """
+
+    records_written: int = 0
+    records_skipped: int = 0
+    records_failed: int = 0
+    extra: Dict[str, Any] = Field(default_factory=dict)
+
+    def to_metrics(self) -> Dict[str, Any]:
+        """Serialise to a flat dict suitable for ``RunEvent.metrics``."""
+        d: Dict[str, Any] = {
+            "records_written": self.records_written,
+            "records_skipped": self.records_skipped,
+            "records_failed": self.records_failed,
+        }
+        d.update(self.extra)
+        return d
+
+
 def _default_worker_id() -> str:
     """Stable within a process: hostname + PID."""
     return f"{socket.gethostname()}-{os.getpid()}"

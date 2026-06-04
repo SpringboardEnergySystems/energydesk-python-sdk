@@ -43,21 +43,34 @@ class NatsBus:
         """
         async def _reconnected_cb() -> None:
             logger.warning(
-                "NATS reconnected — re-creating %d known streams", len(self._known_streams)
+                "NATS reconnected — re-ensuring %d known streams", len(self._known_streams)
             )
+            # JetStream may take a few seconds to become ready after a server
+            # restart.  Retry each stream up to 5 times with a short backoff so
+            # a slow JetStream init does not silently leave streams missing.
             for name, (subjects, retention, max_age_seconds, max_bytes) in list(self._known_streams.items()):
-                try:
-                    await self._create_stream(
-                        name, subjects,
-                        retention=retention,
-                        max_age_seconds=max_age_seconds,
-                        max_bytes=max_bytes,
-                    )
-                    logger.info("Re-created stream %s after reconnect", name)
-                except Exception as exc:
-                    logger.warning(
-                        "Failed to re-create stream %s after reconnect: %s", name, exc
-                    )
+                for _attempt in range(1, 6):
+                    try:
+                        await self.ensure_stream(
+                            name, subjects,
+                            retention=retention,
+                            max_age_seconds=max_age_seconds,
+                            max_bytes=max_bytes,
+                        )
+                        logger.info("Re-ensured stream %s after reconnect (attempt %d)", name, _attempt)
+                        break
+                    except Exception as exc:
+                        if _attempt < 5:
+                            logger.warning(
+                                "Re-ensure stream %s attempt %d/5 failed: %s — retrying in 3 s",
+                                name, _attempt, exc,
+                            )
+                            await asyncio.sleep(3)
+                        else:
+                            logger.error(
+                                "Failed to re-ensure stream %s after reconnect (all 5 attempts): %s",
+                                name, exc,
+                            )
 
         async def _disconnected_cb() -> None:
             logger.warning("NATS disconnected — waiting for auto-reconnect")
@@ -249,6 +262,20 @@ class NatsBus:
             needs_subject_update = False
             for s in subjects:
                 if not self._subject_covered(s, existing):
+                    # Remove any existing specific subjects that are already
+                    # covered BY s (e.g. when a wildcard "ingest.jobs.>" is
+                    # added to a stream that already has individual subjects
+                    # like "ingest.jobs.imbalance_imports").  Without this,
+                    # NATS rejects the update with err_code=10052
+                    # (subject overlap) because both the wildcard and the
+                    # specific it covers appear in the merged list.
+                    covered_by_s = [e for e in merged if self._subject_covered(e, [s])]
+                    if covered_by_s:
+                        merged = [e for e in merged if not self._subject_covered(e, [s])]
+                        logger.debug(
+                            "ensure_stream %s: pruning %d specific subject(s) covered by new wildcard %r: %s",
+                            name, len(covered_by_s), s, covered_by_s,
+                        )
                     merged.append(s)
                     needs_subject_update = True
 
@@ -332,8 +359,70 @@ class NatsBus:
                 logger.debug("Could not read KV entry %s/%s", bucket, key)
         return results
 
-    async def publish_json(self, subject: str, payload: Any) -> None:
+    async def publish_json(
+        self,
+        subject: str,
+        payload: Any,
+        *,
+        retries: int = 6,
+        retry_delay: float = 3.0,
+    ) -> None:
+        """Publish *payload* as JSON to *subject* via JetStream.
+
+        Retries up to *retries* times on ``NoStreamResponseError`` /
+        ``NoRespondersError`` (which occur when the NATS server was just
+        restarted and JetStream is not yet fully initialised).  Each retry
+        is separated by *retry_delay* seconds.
+
+        On each ``no stream`` retry, the method also attempts to re-ensure
+        any known stream whose subject list covers *subject*, so a NATS
+        restart does not permanently break the publish path.
+        """
         assert self.js is not None
         data = json.dumps(payload, default=str).encode("utf-8")
-        await self.js.publish(subject, data)
+        last_exc: Exception | None = None
+        for attempt in range(1, retries + 1):
+            try:
+                await self.js.publish(subject, data)
+                return
+            except Exception as exc:
+                last_exc = exc
+                msg_lower = str(exc).lower()
+                is_no_stream = (
+                    "no stream" in msg_lower
+                    or "no responders" in msg_lower
+                    or type(exc).__name__ in ("NoStreamResponseError", "NoRespondersError")
+                )
+                if is_no_stream and attempt < retries:
+                    logger.warning(
+                        "publish_json: no stream for subject %s (attempt %d/%d)"
+                        " — re-ensuring stream then retrying in %.1f s",
+                        subject, attempt, retries, retry_delay,
+                    )
+                    # Actively try to recreate any known stream that should cover
+                    # this subject.  This self-heals after a NATS server restart
+                    # where the reconnect callback may have run before JetStream
+                    # was fully ready.
+                    for sname, (ssubjects, sret, sage, sbytes) in list(self._known_streams.items()):
+                        if self._subject_covered(subject, ssubjects):
+                            try:
+                                await self.ensure_stream(
+                                    sname, ssubjects,
+                                    retention=sret,
+                                    max_age_seconds=sage,
+                                    max_bytes=sbytes,
+                                )
+                                logger.info(
+                                    "publish_json: re-ensured stream %s for subject %s",
+                                    sname, subject,
+                                )
+                            except Exception as re_exc:
+                                logger.warning(
+                                    "publish_json: failed to re-ensure stream %s: %s",
+                                    sname, re_exc,
+                                )
+                    await asyncio.sleep(retry_delay)
+                else:
+                    raise
+        raise last_exc  # unreachable, but satisfies type checkers
 

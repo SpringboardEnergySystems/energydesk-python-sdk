@@ -628,6 +628,8 @@ class FastAPIOIDCAuth:
                 'email': user_info.get('email'),
                 'name': user_info.get('name', user_info.get('given_name', '')),
                 'sub': sub,
+                # Profile photo URL — present for Google, may be absent for Azure/Django
+                'picture': user_info.get('picture') or user_info.get('avatar'),
                 'authenticated': True,
                 'token_ref': sub,  # reference key into _token_store
             }
@@ -877,6 +879,49 @@ class FastAPIOIDCAuth:
             return None
         with _id_token_store_lock:
             return _id_token_store.get(sub)
+
+    def get_google_picture(self, request: Request) -> Optional[str]:
+        """
+        Return the Google profile picture URL for the current user.
+
+        Tries, in order:
+        1. 'picture' key already in the session (set since the picture-capture
+           change was deployed and the user last logged in).
+        2. Decode the server-side stored Google ID token (JWT) without
+           signature verification — safe for UI display only.
+        3. Return None (caller can fall back to a default avatar).
+        """
+        user = self.get_current_user(request)
+        if not user:
+            return None
+
+        # Fast path — picture already in session
+        if user.get('picture'):
+            return user['picture']
+
+        # Fallback — decode the stored ID token payload
+        id_token = self.get_google_id_token(request)
+        if id_token:
+            try:
+                import base64, json as _json
+                # JWT payload is the second segment (base64url-encoded)
+                payload_b64 = id_token.split('.')[1]
+                # Restore base64 padding
+                payload_b64 += '=' * (-len(payload_b64) % 4)
+                claims = _json.loads(base64.urlsafe_b64decode(payload_b64))
+                picture = claims.get('picture')
+                if picture:
+                    # Backfill session so future calls hit the fast path
+                    user['picture'] = picture
+                    try:
+                        request.session['user'] = user
+                    except Exception:
+                        pass
+                    return picture
+            except Exception as exc:
+                logger.debug("Could not decode ID token for picture: %s", exc)
+
+        return None
 
     def require_auth(self, request: Request) -> Dict[str, Any]:
         """Dependency to require authentication - raises exception if not authenticated"""
