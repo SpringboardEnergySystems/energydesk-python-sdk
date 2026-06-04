@@ -1,7 +1,9 @@
-import logging
-import pandas as pd
-import json
 import io
+import logging
+from typing import Any, Optional
+
+import pandas as pd
+
 from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
@@ -14,7 +16,7 @@ class SettlementApi:
 
 
     @staticmethod
-    def get_settlement_data(api_connection: ApiConnection, parameters: dict={}):
+    def get_settlement_data(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> list[dict]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -26,7 +28,7 @@ class SettlementApi:
         return res
 
     @staticmethod
-    def get_settlement_view(api_connection: ApiConnection, parameters: dict={}):
+    def get_settlement_view(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[str]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -43,7 +45,7 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
-    def get_settlement_view_df(api_connection: ApiConnection, parameters: dict={}):
+    def get_settlement_view_df(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[pd.DataFrame]]:
 
 
         id, data = SettlementApi.get_settlement_view(api_connection, parameters)
@@ -56,7 +58,7 @@ class SettlementApi:
         return id, df
 
     @staticmethod
-    def get_period_result_view(api_connection: ApiConnection, parameters: dict={}):
+    def get_period_result_view(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[str]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -73,7 +75,7 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
-    def get_period_position_and_result_view(api_connection: ApiConnection, parameters: dict={}):
+    def get_period_position_and_result_view(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[str], Optional[str]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -96,7 +98,7 @@ class SettlementApi:
         return data
 
     @staticmethod
-    def get_period_result_view_df(api_connection: ApiConnection, parameters: dict={}):
+    def get_period_result_view_df(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[pd.DataFrame]]:
 
         id, json_res = SettlementApi.get_period_result_view(api_connection, parameters)
         if json_res is None:
@@ -105,7 +107,7 @@ class SettlementApi:
         return id, df
 
     @staticmethod
-    def get_product_result_view(api_connection: ApiConnection, parameters: dict={}):
+    def get_product_result_view(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[str]]:
         """Fetches specific product view
 
         :param api_connection: class with API token for use with API
@@ -122,12 +124,9 @@ class SettlementApi:
         return view_id, view_data
 
     @staticmethod
-    def get_product_result_view_df(api_connection: ApiConnection, parameters: dict={}):
-
+    def get_product_result_view_df(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> tuple[Optional[str], Optional[pd.DataFrame]]:
         id, json_res = SettlementApi.get_product_result_view(api_connection, parameters)
-
         if json_res is None:
             return None, None
-
         df = pd.read_json(json_res, orient="table")
         return id, df
