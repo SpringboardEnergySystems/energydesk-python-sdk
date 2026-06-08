@@ -5,15 +5,19 @@ from dateutil import parser
 from datetime import date, datetime, timedelta
 import pendulum
 from pandas import Timestamp
+
+from energydeskapi.sdk.locale_utils import OSLO_TIMEZONE
+
+
 # WIll convert both naive and datetimes that were previously localized
-def localize_datetime_safe(dt, tz=pytz.timezone("UTC")):
+def localize_datetime_safe(dt: datetime, tz=pytz.timezone("UTC")):
     try:
         loc_dt=tz.localize(dt)
     except:
         loc_dt=dt.astimezone(tz)
     return loc_dt
 
-def localize_datetime(dt,  loczone="UTC"):
+def localize_datetime(dt: datetime,  loczone="UTC"):
     timezone = pytz.timezone(loczone)
     try:
         d_aware = timezone.localize(dt)
@@ -21,12 +25,12 @@ def localize_datetime(dt,  loczone="UTC"):
         return convert_timezone(dt, loczone)
     return d_aware
 
-def convert_timezone(dt,  loczone="UTC"):
+def convert_timezone(dt: datetime,  loczone="UTC"):
     timezone = pytz.timezone(loczone)
     converted = dt.astimezone(timezone)
     return converted
 
-def localize_strtime(strtime, loczone="Europe/Oslo"):
+def localize_strtime(strtime: str, loczone=OSLO_TIMEZONE):
     unaware_dt = parser.isoparse(strtime) if type(strtime)==str else strtime
     return localize_datetime(unaware_dt, loczone)
 
@@ -35,7 +39,7 @@ def localize_strtime(strtime, loczone="Europe/Oslo"):
 def tz_aware(dt):
     return dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None
 
-def convert_loc_datetime_to_utcstr(naive_local_dt, loczone="Europe/Oslo"):
+def convert_loc_datetime_to_utcstr(naive_local_dt, loczone: str=OSLO_TIMEZONE):
     local_tz = pytz.timezone(loczone)
     if not tz_aware(naive_local_dt):
         d_aware = local_tz.localize(naive_local_dt)
@@ -53,7 +57,7 @@ def convert_tzaware_datetime_to_utcstr(tzaware_local_dt):
     s_dt_utc = d_utc.strftime('%Y-%m-%dT%H:%M:%S+00:00')
     return s_dt_utc
 
-def convert_datime_to_locstr(dt, loczone="Europe/Oslo"):
+def convert_datime_to_locstr(dt, loczone: str=OSLO_TIMEZONE):
     tz=pytz.timezone(loczone)
     dtutc=localize_datetime_safe(dt, tz)
     s_dt = dtutc.strftime('%Y-%m-%dT%H:%M:%S%z')
@@ -63,7 +67,7 @@ def convert_datime_to_locstr(dt, loczone="Europe/Oslo"):
     )
     return timestamp_string
 
-def localized_datetimestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
+def localized_datetimestr_from_datetime(datetime_val, loczone: str=OSLO_TIMEZONE):
     """ Converts datetime from UTC
     """
     print("Asked to convert", datetime_val)
@@ -79,7 +83,7 @@ def localized_datetimestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
 
 # Make sure we are in normal time when getting date part
 # I.e. 2024-12-31T23:00:00+00:00  becomes 2025-01-01 in Europe/Oslo
-def localized_datestr_from_datetime(datetime_val, loczone="Europe/Oslo"):
+def localized_datestr_from_datetime(datetime_val, loczone: str=OSLO_TIMEZONE):
     tmp=localized_datetimestr_from_datetime(datetime_val, loczone)
     return tmp[:10]
 
@@ -101,7 +105,7 @@ def get_latest_business_date(before_this_date:pendulum):
 
 # Data retrieved from server are in UTC time ("GMT without daylight savings time")
 # This function converts to local time
-def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
+def convert_datetime_from_utc(utc_str, loczone: str=OSLO_TIMEZONE):
     """ Converts datetime from UTC
     """
     timezone = pytz.timezone(loczone)
@@ -109,7 +113,7 @@ def convert_datetime_from_utc(utc_str, loczone="Europe/Oslo"):
     d_loc = utc_dt.astimezone(timezone)
     return d_loc
 
-def conv_from_pendulum(pendulum_dt, tz="UTC"):
+def conv_from_pendulum(pendulum_dt: datetime|Timestamp|str, tz: str="UTC"):
     if type(pendulum_dt)== datetime or type(pendulum_dt)==Timestamp:
         return pendulum_dt
     timezone = pytz.timezone(tz) if type(tz)==str else tz
@@ -118,14 +122,14 @@ def conv_from_pendulum(pendulum_dt, tz="UTC"):
         return parsed_dt
     return parsed_dt.astimezone(timezone)
 
-def safe_set_utc(indate):
+def safe_set_utc(indate: datetime):
     try:
         outdate=indate.astimezone(pytz.utc)
     except:
         outdate = indate
     return outdate
 
-def calc_seconds(date1, date2):
+def calc_seconds(date1: datetime, date2: datetime) -> float:
     duration=date2-date1
     return float(duration.total_seconds())
 
@@ -154,7 +158,7 @@ def prev_weekday(d: datetime, weekday: int) -> datetime:
     if days < 0:
         days += 7
     previous_date = d - timedelta(days=days)
-    previous_date=localize_datetime(previous_date, "Europe/Oslo")
+    previous_date=localize_datetime(previous_date, OSLO_TIMEZONE)
     return previous_date#date(previous_date.year, previous_date.month, previous_date.day)
 
 def next_weekday(d: datetime, weekday: int) -> datetime:
