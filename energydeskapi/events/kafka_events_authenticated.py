@@ -11,6 +11,7 @@ from kafka.producer.future import FutureRecordMetadata
 
 from energydeskapi.events.event_subscriber import EventClient, EventSubscriber
 from energydeskapi.events.kafka_utils import decode_message
+import time
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(message)s',
@@ -19,11 +20,10 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 class KafkaClientAuthenticated(EventClient):
-    API_VERSION = (3, 6, 0)
-
     def __init__(self, kafka_host: str, kafka_port: str, kafka_user: str, kafka_password: str,
                  security_protocol: str = "SASL_PLAINTEXT",
-                 sasl_mechanism: str = "PLAIN"
+                 sasl_mechanism: str = "SCRAM-SHA-512",
+                 api_version: tuple = (4, 1, 0)
                  ):
         super().__init__()
         self.kafka_host=kafka_host
@@ -32,26 +32,28 @@ class KafkaClientAuthenticated(EventClient):
         self.kafka_password=kafka_password
         self.security_protocol = security_protocol
         self.sasl_mechanism = sasl_mechanism
+        self.api_version = api_version
         self.client = None
 
 
     def connect_producer(self, log_error: bool=True):
         try:
-
-            self.producer = KafkaProducer(bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
+            server = f"{self.kafka_host}:{self.kafka_port}"
+            logger.debug(f"Connecting producer to {server} with protocol {self.security_protocol}, mechanism {self.sasl_mechanism}, user {self.kafka_user}, password {self.kafka_password} and api version {self.api_version}")
+            self.producer = KafkaProducer(bootstrap_servers=[server],
                                           value_serializer=lambda v: json.dumps(v).encode('utf-8'),
                                           security_protocol=self.security_protocol,
                                           sasl_mechanism=self.sasl_mechanism,
                                           sasl_plain_username=self.kafka_user,
                                           sasl_plain_password=self.kafka_password,
-                                          api_version=self.API_VERSION)
+                                          api_version=self.api_version)
             return True
         except Exception as e:
             logger.error(f"Error refreshing connection {traceback.format_exc()}")
             return False
 
     # if timeout_seconds is an integer it will wait for the acknowledge, otherwise it is meant as "fire and forget"
-    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None):
+    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None) -> None:
         logger.info(f"Sending to {topic}")
         future_result : FutureRecordMetadata = self.producer.send(topic, value=msg, headers=headers)
         if timeout_seconds is None:
@@ -65,25 +67,27 @@ class KafkaClientAuthenticated(EventClient):
                 raise Exception(f"Sending {str(msg)[:300]} to kafka topic {topic} got {traceback.format_exc()}")
 
 
-    def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000):
+    def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000) -> bool:
         try:
             logger.info("Refreshing subscriber with max poll interval " + str(poll_interval))
+            server = f"{self.kafka_host}:{self.kafka_port}"
+            logger.debug(f"Connecting consumer to {server} with protocol {self.security_protocol}, mechanism {self.sasl_mechanism}, user {self.kafka_user}, password {self.kafka_password} and api version {self.api_version}")
             if poll_interval>1800000:
                 self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
-                                  bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
+                                  bootstrap_servers=[server],
                                   security_protocol=self.security_protocol,
                                   sasl_mechanism=self.sasl_mechanism,
                                   sasl_plain_username=self.kafka_user,
                                   sasl_plain_password=self.kafka_password,
-                                  api_version=self.API_VERSION)
+                                  api_version=self.api_version)
             else:
                 self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,
-                                  bootstrap_servers=[self.kafka_host + ":" + str(self.kafka_port)],
+                                  bootstrap_servers=[server],
                                   security_protocol=self.security_protocol,
                                   sasl_mechanism=self.sasl_mechanism,
                                   sasl_plain_username=self.kafka_user,
                                   sasl_plain_password=self.kafka_password,
-                                  api_version=self.API_VERSION)
+                                  api_version=self.api_version)
             logger.info("Subscribing Kafka to topics " + str(topics))
             # NB KafkaConsumer does not work with consumer.subscribe([list]). This will only subscribe to the last item in the list
             # I found that a list can be based by converting the list to arguments *list in the constructor instead. This subscribes to all
@@ -101,7 +105,7 @@ class KafkaClientAuthenticated(EventClient):
             logger.info("Closing producer connection and waiting for it to close..")
             self.producer.close()
 
-    def connect(self, subscriberlist: list[EventSubscriber],  consumer_group: str="default producer", log_error: bool=True):
+    def connect(self, subscriberlist: list[EventSubscriber],  consumer_group: str="default producer", log_error: bool=True) -> bool:
         self.consumer_group = consumer_group
         if self.connect_producer():
             if subscriberlist:
@@ -116,7 +120,7 @@ class KafkaClientAuthenticated(EventClient):
             return False
 
 
-    def start_listener(self,handler_pool_size: int=5, max_poll_interval_ms: int=1800000, async_listening: bool=False):
+    def start_listener(self,handler_pool_size: int=5, max_poll_interval_ms: int=1800000, async_listening: bool=False) -> None:
         logger.info("********** In listener **********")
         self._stop_listener = False
         try:
