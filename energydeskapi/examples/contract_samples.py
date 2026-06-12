@@ -58,10 +58,11 @@ def get_contracts_flat(api_conn):
 
 
 def get_contracts(api_conn):
-    parameters={"page_size":100, "id":53440}
-    json_data = ContractsApi.list_contracts_compact(api_conn,parameters)
+    parameters={"page_size":100, "commodity__instrument_type__in":[5]}
+    json_data = ContractsApi.list_contracts_embedded(api_conn,parameters)
     for rec in json_data['results']:
-        open("./sample_fixprice_contract_compact.json", "w").write(json.dumps(rec, indent=2))
+        print(json.dumps(rec, indent=2))
+        open("./optioncontracts.json", "w").write(json.dumps(rec, indent=2))
 
 
 
@@ -237,6 +238,7 @@ def currcontr(api_conn):
     print(df)
 
 def load_contract(api_conn, contract_key=2128):
+
     res = ContractsApi.get_contract(api_conn,
                                                   contract_pk=contract_key)
     print(res)
