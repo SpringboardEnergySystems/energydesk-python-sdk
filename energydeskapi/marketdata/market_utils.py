@@ -3,7 +3,7 @@ from energydeskapi.types.market_enum_types import MarketPlaceEnum, MarketEnum
 
 def get_markets_and_areas(market:MarketEnum):
     if market == MarketEnum.NORDIC_POWER:
-        return ["NO1","NO2","NO3", "NO4","NO5","SE1","SE2","SE3","SE4","DK1","DK2", "FI"]
+        return ["SYS", "NO1","NO2","NO3", "NO4","NO5","SE1","SE2","SE3","SE4","DK1","DK2", "FI"]
     elif market == MarketEnum.GERMAN_POWER:
         return ["DE"]
     elif market == MarketEnum.GOs_MARKET:
@@ -13,7 +13,7 @@ def get_markets_and_areas(market:MarketEnum):
 
 def get_marketplaces_and_areas(market_place:MarketPlaceEnum):
     if market_place == MarketPlaceEnum.EURONEXT:
-        return ["NO1","NO2","NO3", "NO4","NO5","SE1","SE2","SE3","SE4","DK1","DK2", "FI"]
+        return ["SYS", "NO1","NO2","NO3", "NO4","NO5","SE1","SE2","SE3","SE4","DK1","DK2", "FI"]
     elif market_place == MarketPlaceEnum.EEX:
         return ["DE"]
     elif market_place == MarketPlaceEnum.ICE:
