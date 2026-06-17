@@ -63,11 +63,12 @@ class KafkaClientAuthenticated(EventClient):
                 f"Connecting {connection_type} to {server} with protocol {self.security_protocol}, mechanism {self.sasl_mechanism}, user {self.kafka_user} and api version {self.api_version}")
 
     # if timeout_seconds is an integer it will wait for the acknowledge, otherwise it is meant as "fire and forget"
-    def publish(self,topic: str, msg: Any, headers=[], timeout_seconds: Optional[int] = None) -> None:
+    def publish(self,topic: str, msg: Any, headers: list[Any]=[], timeout_seconds: Optional[int] = None) -> Any:
         logger.info(f"Sending to {topic}")
         future_result : FutureRecordMetadata = self.producer.send(topic, value=msg, headers=headers)
         if timeout_seconds is None:
             logger.info("Sent to kafka")
+            return None
         else:
             try:
                 result = future_result.get(timeout_seconds) # throws exception if something went wrong
