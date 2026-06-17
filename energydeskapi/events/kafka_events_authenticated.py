@@ -2,7 +2,7 @@ import json
 import logging
 import traceback
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 
 # Confluent Kafka is more tricky to install on Windows; hence using Apache version
 from kafka import KafkaConsumer
@@ -19,6 +19,7 @@ logging.basicConfig(level=logging.INFO,
                               logging.StreamHandler()])
 logger = logging.getLogger(__name__)
 
+# this uses Apache kafka for python
 class KafkaClientAuthenticated(EventClient):
     def __init__(self, kafka_host: str, kafka_port: str, kafka_user: str, kafka_password: str,
                  security_protocol: str = "SASL_PLAINTEXT",
@@ -38,8 +39,8 @@ class KafkaClientAuthenticated(EventClient):
 
     def connect_producer(self, log_error: bool=True):
         try:
-            server = f"{self.kafka_host}:{self.kafka_port}"
-            logger.debug(f"Connecting producer to {server} with protocol {self.security_protocol}, mechanism {self.sasl_mechanism}, user {self.kafka_user}, password {self.kafka_password} and api version {self.api_version}")
+            server = self._build_server_address()
+            self._log_connection("producer", server)
             self.producer = KafkaProducer(bootstrap_servers=[server],
                                           value_serializer=lambda v: json.dumps(v).encode('utf-8'),
                                           security_protocol=self.security_protocol,
@@ -52,8 +53,16 @@ class KafkaClientAuthenticated(EventClient):
             logger.error(f"Error refreshing connection {traceback.format_exc()}")
             return False
 
+    def _build_server_address(self) -> str:
+        return f"{self.kafka_host}:{self.kafka_port}"
+
+    def _log_connection(self, connection_type: str, server: str) -> None:
+        # , password {self.kafka_password}
+        logger.debug(
+            f"Connecting {connection_type} to {server} with protocol {self.security_protocol}, mechanism {self.sasl_mechanism}, user {self.kafka_user} and api version {self.api_version}")
+
     # if timeout_seconds is an integer it will wait for the acknowledge, otherwise it is meant as "fire and forget"
-    def publish(self,topic, msg, headers=[], timeout_seconds: Optional[int] = None) -> None:
+    def publish(self,topic: str, msg: Any, headers=[], timeout_seconds: Optional[int] = None) -> None:
         logger.info(f"Sending to {topic}")
         future_result : FutureRecordMetadata = self.producer.send(topic, value=msg, headers=headers)
         if timeout_seconds is None:
@@ -67,11 +76,11 @@ class KafkaClientAuthenticated(EventClient):
                 raise Exception(f"Sending {str(msg)[:300]} to kafka topic {topic} got {traceback.format_exc()}")
 
 
-    def connecnt_subscribers(self, topics, log_error=False, poll_interval=1800000) -> bool:
+    def connecnt_subscribers(self, topics: list[str], log_error=False, poll_interval=1800000) -> bool:
         try:
             logger.info("Refreshing subscriber with max poll interval " + str(poll_interval))
-            server = f"{self.kafka_host}:{self.kafka_port}"
-            logger.debug(f"Connecting consumer to {server} with protocol {self.security_protocol}, mechanism {self.sasl_mechanism}, user {self.kafka_user}, password {self.kafka_password} and api version {self.api_version}")
+            server = self._build_server_address()
+            self._log_connection("consumer", server)
             if poll_interval>1800000:
                 self.consumer = KafkaConsumer(*topics, group_id=self.consumer_group,max_poll_interval_ms=poll_interval,session_timeout_ms=120000,request_timeout_ms=120001,connections_max_idle_ms=120002,
                                   bootstrap_servers=[server],
@@ -158,8 +167,8 @@ class KafkaClientAuthenticated(EventClient):
             self.consumer.unsubscribe()
             self.consumer.close()
         except Exception as e:
-            logger.error("Error in subscriber " + str(e))
-            traceback.print_exc()
+            logger.error(f"Error in subscriber {e} {traceback.print_exc()}")
+
 
 
 
