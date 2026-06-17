@@ -111,6 +111,6 @@ def get_product_view(api_conn):
 
 
 if __name__ == '__main__':
-    pd.set_option('display.max_rows', None)
+    #pd.set_option('display.max_rows', None)
     api_conn=init_api()
     get_period_view(api_conn)
