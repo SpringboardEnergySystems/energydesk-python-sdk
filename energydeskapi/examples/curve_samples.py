@@ -61,11 +61,11 @@ def query_forward_curves(api_conn):
     cutoff=pendulum.today(tz="Europe/Oslo").to_date_string()
     yester = pendulum.yesterday(tz="Europe/Oslo").to_date_string()
 
-    data=CurveApi.get_available_areas(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
-                                                 'price_date__gte': yester, 'currency_code':"EUR",
-                                                 'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD_JULIA.value})
+    # data=CurveApi.get_available_areas(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
+    #                                              'price_date__gte': yester, 'currency_code':"EUR",
+    #                                              'forward_curve_type': FwdCurveTypesEnum.SMOOTH_FORWARD_JULIA.value})
+    #
 
-    print(data)
     res=CurveApi.get_latest_forward_curve(api_conn, {'resolution':PeriodResolutionEnum.DAILY.value,
                                                      'area':"Danish_DK2_Power",'currency_code':"EUR",
                                                      'price_date__lte':cutoff,
@@ -75,8 +75,8 @@ def query_forward_curves(api_conn):
     else:
         curve_data=res
         print(curve_data.keys())
-        print(curve_data['currency_date'])
-        print(curve_data['price_date'])
+        print("curve_data['currency_date'] ", curve_data['currency_date'])
+        print("curve_data['price_date'] : ", curve_data['price_date'])
         df = pd.DataFrame(data=safe_prepare_json(curve_data['curve_data']))
         df.index=df['period_from']
         df.index = pd.to_datetime(df.index)
