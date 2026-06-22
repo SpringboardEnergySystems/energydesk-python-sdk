@@ -42,7 +42,9 @@ def query_product_prices(api_conn, products=['FEUA042026P086','FEUA042026']):
     today = pendulum.today('Europe/Oslo')
     period_from = today.add(days=-150)
     period_until = today.add(days=-110)
-    params={ 'product__market_ticker__in':products,'page_size':1000}
+    params={ 'page_size':1000}
+    #params = {'product__commodity_definition__instrument_type__code': "EUROPT",'product__market_place__description': "ICE (Intercontinental Exchange)", 'page_size': 1000}
+    params['product__market_ticker'] = "IEUA112026"
     data=DerivativesApi.get_closing_prices(api_conn, params)
     print(json.dumps(data['results'], indent=2))
 
@@ -101,8 +103,9 @@ def manage_market_products(api_conn, ticker):
 
 
 def market_products(api_conn):
-    params={'page_size':500, 'market_place__in':[ MarketPlaceEnum.ICE.value]}
-    params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
+    params={'page_size':500}
+    #params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
+    params['market_ticker']= "IEUA112026"
     res=ProductsApi.get_market_products_embedded(api_conn, params)
 
     #pd.set_option('display.max_rows', None)
@@ -163,7 +166,8 @@ if __name__ == '__main__':
     api_conn=init_api()
 
     context = {}
-    market_products(api_conn)
+    #market_products(api_conn)
+    query_product_prices(api_conn)
     #get_spot_prices(api_conn)
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__instrument':'2025-01-01'})
     #print(df)
