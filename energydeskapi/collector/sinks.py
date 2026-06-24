@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
+    from energydeskapi.collector.nats_client import NatsBus
     from energydeskapi.collector.protocols import ApiSink, InfluxSink, PostgresSink
 
 
@@ -15,9 +16,8 @@ class SinkBundle:
     second argument to every handler call.  Fields that are ``None`` mean the
     sink is not available in this deployment.
 
-    All three fields are typed against thin Protocols so handlers get IDE
-    autocomplete without the SDK importing ``influxdb-client``, ``asyncpg``,
-    or ``requests`` directly.
+    All typed fields use thin Protocols or forward references so the SDK does
+    not import influxdb-client, asyncpg, requests, or nats-py at module level.
 
     Typical factory setups
     ----------------------
@@ -25,15 +25,13 @@ class SinkBundle:
 
         sinks = SinkBundle(influx=influx_store, postgres=pg_store)
 
-    *Syncer* (API only)::
+    *Syncer* (API + NATS bus for metric events)::
 
-        api_conn = ApiConnection(url)
-        api_conn.set_token(tok, "Token")
-        sinks = SinkBundle(api=api_conn)
+        sinks = SinkBundle(api=api_conn, bus=bus)
 
-    *Hybrid* (all three)::
+    *Hybrid* (all)::
 
-        sinks = SinkBundle(influx=influx_store, postgres=pg_store, api=api_conn)
+        sinks = SinkBundle(influx=influx_store, postgres=pg_store, api=api_conn, bus=bus)
     """
 
     influx: "InfluxSink | None" = None
@@ -41,3 +39,7 @@ class SinkBundle:
     postgres: "PostgresSink | None" = None
     # ApiConnection / ApiTempConnection — for writing via the Energydesk REST API.
     api: "ApiSink | None" = None
+    # NatsBus — for publishing NormalizedOpsEvent from within job handlers.
+    # Workers that want to emit metrics after a run should use this rather than
+    # creating their own NATS connection.
+    bus: "NatsBus | None" = None
