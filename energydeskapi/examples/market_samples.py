@@ -45,8 +45,6 @@ def query_product_prices(api_conn, products=['FEUA042026P086','FEUA042026']):
     period_from = today.add(days=-200)
     period_until = today
     params={ 'page_size':50}
-    #params = {'product__commodity_definition__instrument_type__code': "EUROPT",'product__market_place__description': "ICE (Intercontinental Exchange)", 'page_size': 1000}
-    #params['product__market_ticker'] = "IEUA112026"
     params['price_date__gte'] = str(period_from)[:10]
     params['price_date__lt'] = str(period_until)[:10]
     params['product__commodity_definition__instrument_type__code__in'] = ["FUT", 'FWD']
