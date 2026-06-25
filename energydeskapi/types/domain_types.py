@@ -26,32 +26,47 @@ class RpiNamespace(str, Enum):
     """
     Sub-namespaces within the RPI domain.
 
-    Each namespace maps to one functional layer of the Raspberry Pi edge
-    platform.  The values are used as the second segment of a metric key
-    (e.g. rpi.worker.telemetry_published_today) and as the scope_namespace
-    tag on NormalizedOpsEvent rows in the AIOps database.
+    The second segment of a metric key is the concrete worker type, not a
+    generic functional layer.  This matches the NATS subject convention already
+    in use (evt.sim.*, evt.ekoda.*, evt.victron.*, …) and makes Grafana
+    filtering straightforward — each panel can select a single namespace to
+    show exactly one worker type.
 
-    WORKER      — Per-worker-id counters for publish attempts, command
-                  handling and heartbeats.  One metric set per worker_id.
-                  Source: device workers (simulation, ekoda, victron, ams …)
+    Per-worker-type namespaces
+    ──────────────────────────
+    SIM         — Simulation worker (synthetic resources, no hardware).
+                  Source: workers/simulation-worker
+    EKODA       — EKODA battery workers (Modbus, power-based setpoints only).
+                  Source: energydesk-rpi-ekodabattery
+    VICTRON     — Victron battery workers (Modbus/VE.Bus).
+                  Source: energydesk-rpi-victronbattery
+    AMS         — AMS electricity meter reader.
+                  Source: future energydesk-rpi-ams repo
 
-    SINK        — Per-source-worker counters for messages confirmed written
-                  to InfluxDB.  The gap between WORKER and SINK values is
+    Cross-cutting namespaces
+    ────────────────────────
+    SINK        — influx-sink confirmed-write counters, keyed per source
+                  worker_id.  The gap between a worker namespace and SINK is
                   the silent-data-loss signal.
-                  Source: influx-sink worker
-
-    VENSERVER   — VEN server resource registrations, setpoint lifecycle
-                  events and API health.
+                  Source: workers/influx-sink
+    DISPATCHER  — Regulation-dispatcher setpoint lifecycle, watchdog, re-opt.
+                  Source: workers/regulation-dispatcher
+    VENSERVER   — VEN server resource registrations and API health.
                   Source: venserver FastAPI application
-
-    EDGE        — RPi host-level health: CPU temperature, memory pressure,
-                  k3s/k3d cluster stability, SQLite WAL size.
+    EDGE        — RPi host-level health: CPU temp, memory, k3s/SQLite.
                   Source: node-exporter / future host-metrics worker
     """
-    WORKER    = "worker"     # Device worker publish/command/heartbeat counters
-    SINK      = "sink"       # Influx-sink confirmed-write counters
-    VENSERVER = "venserver"  # VEN server registration and setpoint events
-    EDGE      = "edge"       # RPi host / cluster health metrics
+    # ── Per-worker-type ───────────────────────────────────────────────────
+    SIM         = "sim"         # Simulation worker
+    EKODA       = "ekoda"       # EKODA battery worker
+    VICTRON     = "victron"     # Victron battery worker
+    AMS         = "ams"         # AMS electricity meter worker
+
+    # ── Cross-cutting ─────────────────────────────────────────────────────
+    SINK        = "sink"        # influx-sink confirmed-write counters
+    DISPATCHER  = "dispatcher"  # Regulation-dispatcher lifecycle counters
+    VENSERVER   = "venserver"   # VEN server registration and setpoint events
+    EDGE        = "edge"        # RPi host / cluster health metrics
 
 
 class DashboardRole(str, Enum):
@@ -85,11 +100,18 @@ DASHBOARD_ROLE_SCOPES: dict = {
         (MetricDomain.INFRA, InfraNamespace.STORAGE),
     ],
     DashboardRole.BSP_OPS: [
-        (MetricDomain.RPI, RpiNamespace.WORKER),
+        # All concrete worker types
+        (MetricDomain.RPI, RpiNamespace.SIM),
+        (MetricDomain.RPI, RpiNamespace.EKODA),
+        (MetricDomain.RPI, RpiNamespace.VICTRON),
+        (MetricDomain.RPI, RpiNamespace.AMS),
+        # Cross-cutting
         (MetricDomain.RPI, RpiNamespace.SINK),
+        (MetricDomain.RPI, RpiNamespace.DISPATCHER),
         (MetricDomain.RPI, RpiNamespace.VENSERVER),
         (MetricDomain.RPI, RpiNamespace.EDGE),
-        (MetricDomain.INFRA, InfraNamespace.MESSAGING),  # NATS health relevant to BSP operators
+        # NATS health relevant to BSP operators
+        (MetricDomain.INFRA, InfraNamespace.MESSAGING),
     ],
 }
 
