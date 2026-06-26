@@ -4,7 +4,6 @@ Usage
 -----
 from energydeskapi.timeseries.influxwriter import build_influx_sink
 
-# Using env vars (INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_ORG)
 writer = build_influx_sink(bucket="mycustomer_assetdata")
 try:
     writer.ping()   # raises RuntimeError if unreachable / wrong token
@@ -14,19 +13,36 @@ finally:
 
 Environment variables
 ---------------------
-INFLUXDB_URL    InfluxDB base URL (default: http://localhost:8086)
-INFLUXDB_TOKEN  Authentication token (required)
-INFLUXDB_ORG    Organisation name (default: springboard)
-INFLUXDB_BUCKET Fallback bucket name used when build_influx_sink() is called
-                without an explicit bucket argument
-                (default: springboard_assetdata)
+URL resolution (first match wins):
+  INFLUXDB_URL          Full base URL, e.g. http://linux67-dbserver:8086
+  INFLUXDB_HOST +
+  INFLUXDB_PORT         Assembled into http://{host}:{port}  (port default: 8086)
+  (neither set)         Falls back to http://localhost:8086
+
+Authentication:
+  INFLUXDB_TOKEN        API token (required for InfluxDB 2.x)
+
+Organisation:
+  INFLUXDB_ORG          Organisation name (default: springboard)
+
+Bucket (first match wins):
+  explicit bucket=      Passed directly to build_influx_sink()
+  INFLUXDB_BUCKET       Env var
+  INFLUXDB_DATABASE     Alias used by InfluxDB 1.x / docker-compose setups
+  (none set)            Falls back to springboard_assetdata
+
+Note on INFLUXDB_USER / INFLUXDB_PASSWORD
+-----------------------------------------
+These are the InfluxDB 1.x basic-auth credentials.  The influxdb-client v2
+library used here authenticates via token only.  If you are running InfluxDB
+2.x (which uses tokens) your INFLUXDB_TOKEN is what matters.  If you are
+running InfluxDB 1.8 in compatibility mode, your token is typically
+"{INFLUXDB_USER}:{INFLUXDB_PASSWORD}" — set INFLUXDB_TOKEN to that value.
 
 Bucket naming convention
 ------------------------
 Production and sales forecast data for a customer are written to a single
-bucket named ``{customer_name}_assetdata``.  This bucket is shared between
-both forecast types; the ``forecast_type`` tag on each point distinguishes
-them.  Pass the bucket name to ``build_influx_sink()`` explicitly::
+bucket named ``{customer_name}_assetdata``.  Pass the bucket name explicitly::
 
     writer = build_influx_sink(bucket="aademo_assetdata")
 
@@ -66,43 +82,38 @@ class _InfluxWriter:
     def ping(self) -> None:
         """Verify connectivity and token validity.
 
-        Calls the InfluxDB ``/health`` endpoint (no auth required) to check
-        the server is reachable, then calls ``/api/v2/buckets`` with the
-        configured token to verify the token is accepted.
+        Calls the InfluxDB ``/health`` endpoint (no auth required) to confirm
+        the server is reachable, then calls ``/api/v2/buckets?limit=1`` with
+        the configured token to confirm the token is accepted.
 
         Raises
         ------
         RuntimeError
-            With a human-readable message describing what failed:
+            With a human-readable message describing exactly what failed:
             unreachable server, authentication error, or unexpected response.
-            Intended to be called once before starting a write loop so
-            misconfigurations are caught immediately rather than silently
-            producing zero writes.
         """
         import urllib.request
         import urllib.error
         import json as _json
 
-        # 1. Health check — no token needed, just confirms the server is up.
+        # 1. Reachability — /health needs no token
         health_url = self._url.rstrip("/") + "/health"
         try:
             with urllib.request.urlopen(health_url, timeout=5) as resp:
                 body = _json.loads(resp.read())
                 if body.get("status") != "pass":
                     raise RuntimeError(
-                        "InfluxDB at {} reports unhealthy status: {}".format(
+                        "InfluxDB at {} reports unhealthy status: {!r}".format(
                             self._url, body.get("status")
                         )
                     )
         except urllib.error.URLError as exc:
             raise RuntimeError(
-                "Cannot reach InfluxDB at {} — is it running? ({})".format(
-                    self._url, exc.reason
-                )
+                "Cannot reach InfluxDB at {} — is the server running and the "
+                "hostname/port correct? ({})".format(self._url, exc.reason)
             ) from exc
 
-        # 2. Auth check — a GET /api/v2/buckets?limit=1 with the token.
-        # A 401/403 means bad token; a 200 means we're in.
+        # 2. Token check — GET /api/v2/buckets?limit=1
         buckets_url = self._url.rstrip("/") + "/api/v2/buckets?limit=1"
         req = urllib.request.Request(
             buckets_url,
@@ -116,14 +127,20 @@ class _InfluxWriter:
                 raise RuntimeError(
                     "InfluxDB token rejected (HTTP {}). "
                     "Check INFLUXDB_TOKEN and that the token has write "
-                    "permissions on org '{}'.".format(exc.code, self.org)
+                    "permissions on org '{}'.  "
+                    "If running InfluxDB 1.8 in compatibility mode, "
+                    "INFLUXDB_TOKEN should be 'user:password'.".format(
+                        exc.code, self.org
+                    )
                 ) from exc
             raise RuntimeError(
-                "Unexpected HTTP {} from InfluxDB auth check.".format(exc.code)
+                "Unexpected HTTP {} from InfluxDB token check at {}.".format(
+                    exc.code, buckets_url
+                )
             ) from exc
 
         logger.info(
-            "InfluxDB ping OK — url=%s org=%s bucket=%s",
+            "InfluxDB ping OK — url=%s  org=%s  bucket=%s",
             self._url, self.org, self.bucket,
         )
 
@@ -138,34 +155,79 @@ class _InfluxWriter:
         self.close()
 
 
+def _resolve_url() -> str:
+    """Build the InfluxDB base URL from environment variables.
+
+    Resolution order:
+    1. ``INFLUXDB_URL``              e.g. ``http://linux67-dbserver:8086``
+    2. ``INFLUXDB_HOST`` + ``INFLUXDB_PORT``   assembled into ``http://{host}:{port}``
+    3. ``http://localhost:8086``     hard fallback
+    """
+    url = env.str("INFLUXDB_URL", default="")
+    if url:
+        return url
+    host = env.str("INFLUXDB_HOST", default="")
+    if host:
+        port = env.str("INFLUXDB_PORT", default="8086")
+        return "http://{}:{}".format(host, port)
+    return "http://localhost:8086"
+
+
+def _resolve_bucket(explicit: str | None) -> str:
+    """Resolve the target bucket name.
+
+    Resolution order:
+    1. ``explicit``           passed directly to ``build_influx_sink()``
+    2. ``INFLUXDB_BUCKET``    env var
+    3. ``INFLUXDB_DATABASE``  alias used by InfluxDB 1.x / docker-compose
+    4. ``springboard_assetdata``   hard fallback
+    """
+    if explicit:
+        return explicit
+    bucket = env.str("INFLUXDB_BUCKET", default="")
+    if bucket:
+        return bucket
+    database = env.str("INFLUXDB_DATABASE", default="")
+    if database:
+        return database
+    return "springboard_assetdata"
+
+
 def build_influx_sink(bucket: str | None = None) -> _InfluxWriter:
     """Build an ``_InfluxWriter`` from environment variables.
+
+    See module docstring for the full list of accepted env vars and their
+    resolution order.
 
     Parameters
     ----------
     bucket:
-        Target bucket name.  When provided this overrides the
-        ``INFLUXDB_BUCKET`` environment variable.  The recommended naming
-        convention is ``"{customer_name}_assetdata"``.
+        Target bucket name.  When provided this overrides all env vars.
+        The recommended naming convention is ``"{customer_name}_assetdata"``.
 
     Returns
     -------
     _InfluxWriter
-        A ready-to-use writer.  The caller is responsible for calling
-        ``.close()`` (or using it as a context manager) when finished.
+        A ready-to-use writer.  Call ``.ping()`` before writing to verify
+        connectivity and token validity.  The caller is responsible for
+        calling ``.close()`` (or using it as a context manager) when done.
 
     Raises
     ------
     environ.ImproperlyConfigured
         If ``INFLUXDB_TOKEN`` is not set in the environment.
     """
-    resolved_bucket = bucket or env.str("INFLUXDB_BUCKET", default="springboard_assetdata")
-    return _InfluxWriter(
-        url=env.str("INFLUXDB_URL", default="http://localhost:8086"),
-        token=env.str("INFLUXDB_TOKEN"),
-        org=env.str("INFLUXDB_ORG", default="springboard"),
-        bucket=resolved_bucket,
+    url = _resolve_url()
+    org = env.str("INFLUXDB_ORG", default="springboard")
+    resolved_bucket = _resolve_bucket(bucket)
+    token = env.str("INFLUXDB_TOKEN")   # raises ImproperlyConfigured if absent
+
+    logger.info(
+        "InfluxDB config — url=%s  org=%s  bucket=%s",
+        url, org, resolved_bucket,
     )
+
+    return _InfluxWriter(url=url, token=token, org=org, bucket=resolved_bucket)
 
 
 def ensure_bucket_exists(
@@ -187,34 +249,30 @@ def ensure_bucket_exists(
 
     Raises
     ------
-    RuntimeError
-        If the token does not have permission to list or create buckets.
     influxdb_client.rest.ApiException
-        On other unexpected HTTP errors (422 "bucket already exists" is
-        silently ignored).
+        On unexpected HTTP errors (422 "bucket already exists" is silently
+        ignored as a no-op).
     """
     from influxdb_client import InfluxDBClient, BucketRetentionRules
     from influxdb_client.rest import ApiException
 
     logger.info(
-        "Ensuring InfluxDB bucket exists — url=%s org='%s' bucket='%s'",
+        "Ensuring InfluxDB bucket exists — url=%s  org='%s'  bucket='%s'",
         writer._url, writer.org, writer.bucket,
     )
 
-    client = InfluxDBClient(
-        url=writer._url,
-        token=writer._token,
-        org=writer.org,
-    )
+    client = InfluxDBClient(url=writer._url, token=writer._token, org=writer.org)
     buckets_api = client.buckets_api()
     try:
         existing = buckets_api.find_buckets(name=writer.bucket)
         if existing and existing.buckets:
             logger.info("InfluxDB bucket '%s' already exists — skipping creation.", writer.bucket)
             return
-        retention = [
-            BucketRetentionRules(type="expire", every_seconds=retention_seconds)
-        ] if retention_seconds > 0 else []
+        retention = (
+            [BucketRetentionRules(type="expire", every_seconds=retention_seconds)]
+            if retention_seconds > 0
+            else []
+        )
         buckets_api.create_bucket(
             bucket_name=writer.bucket,
             org=writer.org,
@@ -224,8 +282,7 @@ def ensure_bucket_exists(
     except ApiException as exc:
         if exc.status == 422:
             logger.info(
-                "InfluxDB bucket '%s' already exists (422) — skipping.",
-                writer.bucket,
+                "InfluxDB bucket '%s' already exists (422) — skipping.", writer.bucket
             )
         else:
             raise
