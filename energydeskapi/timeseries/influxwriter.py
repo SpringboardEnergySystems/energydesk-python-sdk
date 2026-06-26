@@ -7,6 +7,7 @@ from energydeskapi.timeseries.influxwriter import build_influx_sink
 # Using env vars (INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_ORG)
 writer = build_influx_sink(bucket="mycustomer_assetdata")
 try:
+    writer.ping()   # raises RuntimeError if unreachable / wrong token
     writer.write_api.write(bucket=writer.bucket, org=writer.org, record=point)
 finally:
     writer.close()
@@ -61,6 +62,70 @@ class _InfluxWriter:
         self.org = org
         self._url = url
         self._token = token
+
+    def ping(self) -> None:
+        """Verify connectivity and token validity.
+
+        Calls the InfluxDB ``/health`` endpoint (no auth required) to check
+        the server is reachable, then calls ``/api/v2/buckets`` with the
+        configured token to verify the token is accepted.
+
+        Raises
+        ------
+        RuntimeError
+            With a human-readable message describing what failed:
+            unreachable server, authentication error, or unexpected response.
+            Intended to be called once before starting a write loop so
+            misconfigurations are caught immediately rather than silently
+            producing zero writes.
+        """
+        import urllib.request
+        import urllib.error
+        import json as _json
+
+        # 1. Health check — no token needed, just confirms the server is up.
+        health_url = self._url.rstrip("/") + "/health"
+        try:
+            with urllib.request.urlopen(health_url, timeout=5) as resp:
+                body = _json.loads(resp.read())
+                if body.get("status") != "pass":
+                    raise RuntimeError(
+                        "InfluxDB at {} reports unhealthy status: {}".format(
+                            self._url, body.get("status")
+                        )
+                    )
+        except urllib.error.URLError as exc:
+            raise RuntimeError(
+                "Cannot reach InfluxDB at {} — is it running? ({})".format(
+                    self._url, exc.reason
+                )
+            ) from exc
+
+        # 2. Auth check — a GET /api/v2/buckets?limit=1 with the token.
+        # A 401/403 means bad token; a 200 means we're in.
+        buckets_url = self._url.rstrip("/") + "/api/v2/buckets?limit=1"
+        req = urllib.request.Request(
+            buckets_url,
+            headers={"Authorization": "Token {}".format(self._token)},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=5):
+                pass  # 200 OK — token accepted
+        except urllib.error.HTTPError as exc:
+            if exc.code in (401, 403):
+                raise RuntimeError(
+                    "InfluxDB token rejected (HTTP {}). "
+                    "Check INFLUXDB_TOKEN and that the token has write "
+                    "permissions on org '{}'.".format(exc.code, self.org)
+                ) from exc
+            raise RuntimeError(
+                "Unexpected HTTP {} from InfluxDB auth check.".format(exc.code)
+            ) from exc
+
+        logger.info(
+            "InfluxDB ping OK — url=%s org=%s bucket=%s",
+            self._url, self.org, self.bucket,
+        )
 
     def close(self) -> None:
         """Close the underlying HTTP client.  Call when done writing."""
@@ -122,12 +187,19 @@ def ensure_bucket_exists(
 
     Raises
     ------
+    RuntimeError
+        If the token does not have permission to list or create buckets.
     influxdb_client.rest.ApiException
-        On unexpected HTTP errors (not raised for 422 "bucket already
-        exists" responses, which are silently ignored).
+        On other unexpected HTTP errors (422 "bucket already exists" is
+        silently ignored).
     """
     from influxdb_client import InfluxDBClient, BucketRetentionRules
     from influxdb_client.rest import ApiException
+
+    logger.info(
+        "Ensuring InfluxDB bucket exists — url=%s org='%s' bucket='%s'",
+        writer._url, writer.org, writer.bucket,
+    )
 
     client = InfluxDBClient(
         url=writer._url,
@@ -136,7 +208,6 @@ def ensure_bucket_exists(
     )
     buckets_api = client.buckets_api()
     try:
-        # list_buckets returns all buckets; filter by name
         existing = buckets_api.find_buckets(name=writer.bucket)
         if existing and existing.buckets:
             logger.info("InfluxDB bucket '%s' already exists — skipping creation.", writer.bucket)
@@ -149,13 +220,11 @@ def ensure_bucket_exists(
             org=writer.org,
             retention_rules=retention,
         )
-        logger.info("Created InfluxDB bucket '%s'.", writer.bucket)
+        logger.info("Created InfluxDB bucket '%s' in org '%s'.", writer.bucket, writer.org)
     except ApiException as exc:
-        # 422 Unprocessable Entity is returned when the bucket already exists
-        # in some InfluxDB versions — treat it as a no-op.
         if exc.status == 422:
             logger.info(
-                "InfluxDB bucket '%s' already exists (422 response) — skipping.",
+                "InfluxDB bucket '%s' already exists (422) — skipping.",
                 writer.bucket,
             )
         else:
