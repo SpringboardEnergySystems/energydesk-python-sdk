@@ -1,113 +1,152 @@
 """
-InfluxDB line-protocol schema definitions for all measurements.
+InfluxDB line-protocol schema definitions for asset forecast measurements.
 
 Measurements
 ------------
-production_forecast
-    Tags  : source, currency_pair, base_currency, quote_currency, resolution
-    Fields: rate (float)
+asset_forecast
+    A single measurement covering both production and sales forecasts.
+    The ``forecast_type`` tag distinguishes them so cross-type aggregations
+    (e.g. net position = production - sales) can be done with a single Flux
+    query using ``pivot()`` on the tag.
 
-Design decisions
-----------------
-* All tag values are strings.
-* All field values are **explicitly cast to float** — InfluxDB rejects writes
-  when the same field has been stored as int in one line and float in another.
-  Every factory here calls ``float()`` unconditionally before building the
-  ``Point``, so mixed-type errors are impossible at the write layer.
-* Currency information is carried exclusively as a ``currency`` tag.
-  There are **no** per-currency field aliases (e.g. ``price_eur``).
-  Use ``|> filter(fn: (r) => r.currency == "EUR")`` in Flux instead.
-* ``reserve_type`` uses singular form for consistency with all other tag names.
-  (Legacy writes used the plural ``reserves_type`` — re-index or alias in Flux
-  if you need to join old and new data.)
-* ``resolution`` describes the duration of each data point starting at
-  ``timestamp``, e.g. ``"15min"`` for ENTSOE quarter-hourly data,
-  ``"hour"`` for hourly spot prices, ``"day"`` for daily cross-rates.
-  Callers may override the default by passing the ``resolution`` keyword.
+Tag design decisions
+--------------------
+* ``asset_id`` (string form of the Postgres PK) is the stable join key back
+  to the appserver database.  Always present.
+* ``asset_name``, ``asset_type``, ``owner`` are denormalised here for
+  convenience in dashboard label queries.  They may be stale if the asset
+  is renamed; treat the ``asset_id`` as authoritative.
+* ``lat`` / ``lon`` are NOT stored as raw floats — high-cardinality float
+  tags bloat the InfluxDB series index.  Instead they are bucketed into
+  1-degree band strings: ``lat_band="58-59N"``, ``lon_band="7-8E"``.
+  This supports regional roll-ups in Flux with a simple filter while
+  keeping series cardinality bounded.
+* ``bidzone`` (e.g. ``"NO1"``, ``"NO2"``) enables price-weighted calculations
+  when joined against spot-price measurements.  Pass ``""`` when unknown;
+  it can be backfilled once grid-area mapping is available.
+* ``forecast_type``: ``"production"`` | ``"sales"``.  Using one measurement
+  rather than two makes net-position queries trivial:
+      |> filter(fn: r => r._measurement == "asset_forecast")
+      |> pivot(rowKey: ["_time","asset_id"], columnKey: ["forecast_type"], valueColumn: "_value")
+      |> map(fn: r => ({ r with net_mwh: r.production - r.sales }))
+* ``scenario``: ``"median"`` | ``"high"`` | ``"low"`` (P50/P90/P10 or
+  equivalent).  Write three points at the same timestamp when all three
+  are available; write only ``"median"`` when a single-scenario forecast is
+  stored.  This keeps the schema consistent and makes fan-chart queries easy:
+      |> filter(fn: r => r.scenario == "median")
+* ``resolution``: duration of each data point, e.g. ``"month"``.
+  Callers may pass ``"hour"`` or ``"day"`` for higher-frequency forecasts.
+
+Field design decisions
+----------------------
+* ``value_mwh`` (float) — the forecast energy in MWh for the period starting
+  at ``_time`` and lasting ``resolution``.
+* ``capacity_mw`` (float) — the rated capacity of the asset in MW, stored as
+  a field (not a tag) so Flux can compute capacity factors inline:
+      |> map(fn: r => ({ r with cf: r.value_mwh / (r.capacity_mw * 720.0) }))
+  It is repeated on every point for simplicity; the value is small and
+  compresses well in InfluxDB's column store.
+* All field values are explicitly cast to ``float`` before building the
+  Point — InfluxDB rejects writes when the same field has been stored as
+  int in one line and float in another.
 """
 
 from __future__ import annotations
 
 from influxdb_client import Point
 
-# ── Measurement names ─────────────────────────────────────────────────────────
+# ── Measurement name ──────────────────────────────────────────────────────────
 
-PRODUCTION_FORECAST = "production_forecast"
-SALES_FORECAST = "sales_forecast"
-
-
-# ── Point factories ───────────────────────────────────────────────────────────
+ASSET_FORECAST = "asset_forecast"
 
 
-def production_forecast_point(
+# ── Tag helpers ───────────────────────────────────────────────────────────────
+
+def _lat_band(lat: float) -> str:
+    """Bucket a latitude into a 1-degree band string, e.g. 58.46 -> '58-59N'."""
+    lo = int(lat)
+    return f"{lo}-{lo + 1}N"
+
+
+def _lon_band(lon: float) -> str:
+    """Bucket a longitude into a 1-degree band string, e.g. 7.92 -> '7-8E'."""
+    lo = int(lon)
+    return f"{lo}-{lo + 1}E"
+
+
+# ── Point factory ─────────────────────────────────────────────────────────────
+
+def asset_forecast_point(
     *,
-    currency_pair: str,
-    rate: float,
+    asset_id: int,
+    asset_name: str,
+    asset_type: str,
+    owner: str,
+    forecast_type: str,
+    value_mwh: float,
     timestamp,
-    source: str = "norges_bank",
-    resolution: str = "day",
+    capacity_mw: float = 0.0,
+    lat: float = 0.0,
+    lon: float = 0.0,
+    bidzone: str = "",
+    scenario: str = "median",
+    resolution: str = "month",
 ) -> Point:
-    """Return an InfluxDB ``Point`` for the ``cross_rates`` measurement.
+    """Return an InfluxDB ``Point`` for the ``asset_forecast`` measurement.
 
     Parameters
     ----------
-    currency_pair:
-        Six-character ISO string, e.g. ``"EURNOK"``.
-    rate:
-        Exchange rate (base → quote), stored as float.
+    asset_id:
+        Integer PK from the appserver Postgres database.  Stored as a string
+        tag (InfluxDB tags are always strings).
+    asset_name:
+        Human-readable asset description, e.g. ``"Iveland kraftverk"``.
+    asset_type:
+        Asset type description, e.g. ``"hydro"`` or ``"wind"``.
+    owner:
+        Company name of the asset owner.
+    forecast_type:
+        ``"production"`` or ``"sales"``.
+    value_mwh:
+        Forecast energy in MWh for the period starting at ``timestamp``.
     timestamp:
-        Any value accepted by ``influxdb_client.Point.time()``.
-    source:
-        Data source tag (default ``"norges_bank"``).
+        Any value accepted by ``influxdb_client.Point.time()``.  Should be
+        UTC start-of-period (e.g. first second of the month for monthly data).
+    capacity_mw:
+        Rated capacity in MW.  Used for capacity-factor normalisation in Flux.
+    lat:
+        Latitude of the asset (decimal degrees).  Bucketed into a band tag.
+    lon:
+        Longitude of the asset (decimal degrees).  Bucketed into a band tag.
+    bidzone:
+        Elspot/bidding-zone code, e.g. ``"NO1"``.  Pass ``""`` when unknown.
+    scenario:
+        Forecast scenario: ``"median"``, ``"high"``, or ``"low"``.
     resolution:
-        Duration of each data point, e.g. ``"day"`` (default).
+        Duration of each data point, e.g. ``"month"`` (default), ``"day"``,
+        ``"hour"``.
     """
-    return (
-        Point(PRODUCTION_FORECAST)
-        .tag("source", source)
-        .tag("currency_pair", currency_pair)
-        .tag("base_currency", currency_pair[:3])
-        .tag("quote_currency", currency_pair[3:])
+    point = (
+        Point(ASSET_FORECAST)
+        # --- identity tags (always set) ---
+        .tag("asset_id", str(asset_id))
+        .tag("asset_name", asset_name)
+        .tag("asset_type", asset_type)
+        .tag("owner", owner)
+        # --- classification tags ---
+        .tag("forecast_type", forecast_type)
+        .tag("scenario", scenario)
         .tag("resolution", resolution)
-        .field("rate", float(rate))
+        # --- geo tags (bounded cardinality) ---
+        .tag("bidzone", bidzone)
+        # --- fields ---
+        .field("value_mwh", float(value_mwh))
+        .field("capacity_mw", float(capacity_mw))
         .time(timestamp)
     )
-
-
-def sales_forecast_point(
-    *,
-    area: str,
-    price: float,
-    currency: str,
-    timestamp,
-    resolution: str = "hour",
-    status: str = "official",
-) -> Point:
-    """Return an InfluxDB ``Point`` for the ``spot_prices`` measurement.
-
-    Parameters
-    ----------
-    area:
-        Bidding-zone code, e.g. ``"NO1"``.
-    price:
-        Spot price, stored as float.
-    currency:
-        ISO currency code, e.g. ``"EUR"`` or ``"NOK"``.
-    timestamp:
-        Any value accepted by ``influxdb_client.Point.time()``.
-    resolution:
-        Duration of each data point, e.g. ``"hour"`` (default).
-    status:
-        ``"official"`` (from EnergyDesk API / auction results) or
-        ``"preliminary"`` (from web-scraped Nord Pool data).
-    """
-    return (
-        Point(SALES_FORECAST)
-        .tag("area", area)
-        .tag("currency", currency)
-        .tag("resolution", resolution)
-        .tag("status", status)
-        .field("price", float(price))
-        .time(timestamp)
-    )
-
+    # Only add geo band tags when coordinates are meaningful
+    if lat != 0.0:
+        point = point.tag("lat_band", _lat_band(lat))
+    if lon != 0.0:
+        point = point.tag("lon_band", _lon_band(lon))
+    return point
