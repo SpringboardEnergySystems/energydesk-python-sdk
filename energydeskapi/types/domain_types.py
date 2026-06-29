@@ -1,25 +1,68 @@
-from enum import Enum
-from typing import List, Tuple
+"""
+domain_types.py — Shared metric domain and namespace taxonomy.
 
+Single source of truth for how operational metrics, events, and dashboard
+query_ids are named across all Energydesk services.  Both emitting services
+(SDK clients) and consuming services (aiops) import from here so identifiers
+never drift.
+
+Hierarchy
+---------
+  <domain>.<namespace>.<metric_name>
+
+  domain      — top-level functional area (MetricDomain)
+  namespace   — sub-area within a domain; for RPI maps 1:1 to worker type
+  metric_name — free-form string owned by the emitting service
+
+Examples
+--------
+  etrm.trading.order_fill_latency_p95
+  etrm.datasync.contracts_synced_total
+  infra.messaging.consumer_lag
+  rpi.ekoda.battery_soc_percent
+  rpi.sink.writes_confirmed_total
+  backoffice.reconciliation.auto_approval_rate
+"""
+from __future__ import annotations
+
+from enum import Enum
+
+
+# ---------------------------------------------------------------------------
+# Top-level domains
+# ---------------------------------------------------------------------------
 
 class MetricDomain(str, Enum):
-    ETRM  = "etrm"
-    INFRA = "infra"
-    RPI   = "rpi"   # Raspberry Pi edge platform — IoT workers, influx-sink, VEN server
+    INFRA       = "infra"       # Infrastructure — NATS, compute, storage, k8s
+    ETRM        = "etrm"        # Energy Trading & Risk Management
+    BACKOFFICE  = "backoffice"  # Back-office — reconciliation, settlement, reporting
+    RPI         = "rpi"         # Raspberry Pi edge platform — IoT workers, influx-sink, VEN server
+
+
+# ---------------------------------------------------------------------------
+# Namespaces per domain
+# ---------------------------------------------------------------------------
+
+class InfraNamespace(str, Enum):
+    PLATFORM  = "platform"   # Kubernetes / container-level metrics (CPU, memory, restarts)
+    NETWORK   = "network"    # Network I/O, latency between services
+    STORAGE   = "storage"    # Disk I/O, database size, partition health
+    MESSAGING = "messaging"  # NATS JetStream consumer lag, publish rate
 
 
 class EtrmNamespace(str, Enum):
-    TRADING    = "trading"
-    COMPLIANCE = "compliance"
-    RISK       = "risk"
-    MARKETDATA = "marketdata"
-    DATASYNC   = "datasync"
+    TRADING    = "trading"    # Order flow, fill rate, exchange connectivity
+    COMPLIANCE = "compliance" # Pre-trade compliance checks — pass/fail rates, breach counts
+    RISK       = "risk"       # Position limits, VaR utilisation, credit exposure
+    MARKETDATA = "marketdata" # Price feed freshness, gap counts, source health
+    DATASYNC   = "datasync"   # Portal ↔ exchange data synchronisation counters
 
 
-class InfraNamespace(str, Enum):
-    MESSAGING = "messaging"
-    COMPUTE   = "compute"
-    STORAGE   = "storage"
+class BackofficeNamespace(str, Enum):
+    RECONCILIATION = "reconciliation"  # Auto-approval rate, manual queue depth, break counts
+    SETTLEMENT     = "settlement"      # Settlement instruction status, failed payments
+    REPORTING      = "reporting"       # Regulatory report submission status, latency
+    CLEARING       = "clearing"        # Clearing house connectivity, margin call status
 
 
 class RpiNamespace(str, Enum):
@@ -57,28 +100,37 @@ class RpiNamespace(str, Enum):
                   Source: node-exporter / future host-metrics worker
     """
     # ── Per-worker-type ───────────────────────────────────────────────────
-    SIM         = "sim"         # Simulation worker
-    EKODA       = "ekoda"       # EKODA battery worker
-    VICTRON     = "victron"     # Victron battery worker
-    AMS         = "ams"         # AMS electricity meter worker
+    SIM        = "sim"        # Simulation worker
+    EKODA      = "ekoda"      # EKODA battery worker
+    VICTRON    = "victron"    # Victron battery worker
+    AMS        = "ams"        # AMS electricity meter worker
 
     # ── Cross-cutting ─────────────────────────────────────────────────────
-    SINK        = "sink"        # influx-sink confirmed-write counters
-    DISPATCHER  = "dispatcher"  # Regulation-dispatcher lifecycle counters
-    VENSERVER   = "venserver"   # VEN server registration and setpoint events
-    EDGE        = "edge"        # RPi host / cluster health metrics
+    SINK       = "sink"       # influx-sink confirmed-write counters
+    DISPATCHER = "dispatcher" # Regulation-dispatcher lifecycle counters
+    VENSERVER  = "venserver"  # VEN server registration and setpoint events
+    EDGE       = "edge"       # RPi host / cluster health metrics
 
+
+# ---------------------------------------------------------------------------
+# Dashboard roles
+# ---------------------------------------------------------------------------
 
 class DashboardRole(str, Enum):
-    TRADING_DESK    = "trading_desk"
-    RISK_MANAGER    = "risk_manager"
-    COMPLIANCE      = "compliance"
-    INFRA_OPS       = "infra_ops"
-    BSP_OPS         = "bsp_ops"   # Edge / BSP operators — full RPI domain visibility
+    INFRA_OPS    = "infra_ops"    # Platform / SRE team — full infra domain
+    TRADING_DESK = "trading_desk" # Front office traders — etrm.trading + etrm.marketdata
+    RISK_MANAGER = "risk_manager" # Risk — etrm.risk + etrm.trading
+    COMPLIANCE   = "compliance"   # Compliance — etrm.compliance + etrm.trading
+    BACK_OFFICE  = "back_office"  # Settlement / recon — full backoffice domain
+    BSP_OPS      = "bsp_ops"      # Edge / BSP operators — full RPI domain
 
 
-# Scopes visible to each dashboard role: list of (MetricDomain, namespace) pairs.
-DASHBOARD_ROLE_SCOPES: dict = {
+# Scopes visible to each dashboard role: list of (MetricDomain, namespace | None) pairs.
+# None as namespace means "all namespaces in this domain".
+DASHBOARD_ROLE_SCOPES: dict[DashboardRole, list[tuple[MetricDomain, str | None]]] = {
+    DashboardRole.INFRA_OPS: [
+        (MetricDomain.INFRA, None),
+    ],
     DashboardRole.TRADING_DESK: [
         (MetricDomain.ETRM, EtrmNamespace.TRADING),
         (MetricDomain.ETRM, EtrmNamespace.MARKETDATA),
@@ -94,35 +146,81 @@ DASHBOARD_ROLE_SCOPES: dict = {
         (MetricDomain.ETRM, EtrmNamespace.COMPLIANCE),
         (MetricDomain.ETRM, EtrmNamespace.TRADING),
     ],
-    DashboardRole.INFRA_OPS: [
-        (MetricDomain.INFRA, InfraNamespace.MESSAGING),
-        (MetricDomain.INFRA, InfraNamespace.COMPUTE),
-        (MetricDomain.INFRA, InfraNamespace.STORAGE),
+    DashboardRole.BACK_OFFICE: [
+        (MetricDomain.BACKOFFICE, None),
     ],
     DashboardRole.BSP_OPS: [
-        # All concrete worker types
         (MetricDomain.RPI, RpiNamespace.SIM),
         (MetricDomain.RPI, RpiNamespace.EKODA),
         (MetricDomain.RPI, RpiNamespace.VICTRON),
         (MetricDomain.RPI, RpiNamespace.AMS),
-        # Cross-cutting
         (MetricDomain.RPI, RpiNamespace.SINK),
         (MetricDomain.RPI, RpiNamespace.DISPATCHER),
         (MetricDomain.RPI, RpiNamespace.VENSERVER),
         (MetricDomain.RPI, RpiNamespace.EDGE),
-        # NATS health relevant to BSP operators
         (MetricDomain.INFRA, InfraNamespace.MESSAGING),
     ],
 }
 
 
-def metric_key(domain: MetricDomain, namespace: str | Enum, name: str) -> str:
-    """Build a dot-separated metric key: <domain>.<namespace>.<name>"""
-    ns = namespace.value if isinstance(namespace, Enum) else namespace
-    return f"{domain.value}.{ns}.{name}"
+# ---------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------
+
+def metric_key(domain: MetricDomain, namespace: Enum, metric_name: str) -> str:
+    """Compose a canonical metric key: <domain>.<namespace>.<metric_name>.
+
+    Example::
+
+        metric_key(MetricDomain.ETRM, EtrmNamespace.DATASYNC, "contracts_synced_total")
+        # -> "etrm.datasync.contracts_synced_total"
+
+        metric_key(MetricDomain.RPI, RpiNamespace.EKODA, "battery_soc_percent")
+        # -> "rpi.ekoda.battery_soc_percent"
+    """
+    if not metric_name or "." in metric_name:
+        raise ValueError(
+            f"metric_name must be a non-empty string without dots, got: {metric_name!r}"
+        )
+    return f"{domain.value}.{namespace.value}.{metric_name}"
 
 
-def nats_subject(domain: MetricDomain, namespace: str | Enum, event: str) -> str:
-    """Build a NATS subject: ops.event.<domain>.<namespace>.<event>"""
-    ns = namespace.value if isinstance(namespace, Enum) else namespace
-    return f"ops.event.{domain.value}.{ns}.{event}"
+def metric_key_prefix(domain: MetricDomain, namespace: Enum | None = None) -> str:
+    """Return the dot-terminated prefix for filtering metric keys by domain/namespace.
+
+    Example::
+
+        metric_key_prefix(MetricDomain.ETRM)
+        # -> "etrm."
+
+        metric_key_prefix(MetricDomain.RPI, RpiNamespace.EKODA)
+        # -> "rpi.ekoda."
+    """
+    if namespace is None:
+        return f"{domain.value}."
+    return f"{domain.value}.{namespace.value}."
+
+
+def nats_subject(domain: MetricDomain, namespace: Enum, event_type: str) -> str:
+    """Compose a NATS subject: ops.event.<domain>.<namespace>.<event_type>.
+
+    Example::
+
+        nats_subject(MetricDomain.RPI, RpiNamespace.VENSERVER, "registration.ok")
+        # -> "ops.event.rpi.venserver.registration.ok"
+    """
+    return f"ops.event.{domain.value}.{namespace.value}.{event_type}"
+
+
+def dashboard_scope_prefixes(role: DashboardRole) -> list[str]:
+    """Return all metric_key prefixes a dashboard role is entitled to see.
+
+    Example::
+
+        dashboard_scope_prefixes(DashboardRole.TRADING_DESK)
+        # -> ["etrm.trading.", "etrm.marketdata.", "etrm.datasync.", "infra.messaging."]
+    """
+    return [
+        metric_key_prefix(domain, ns)
+        for domain, ns in DASHBOARD_ROLE_SCOPES[role]
+    ]

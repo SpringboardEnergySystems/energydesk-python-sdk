@@ -21,9 +21,17 @@ Tag design decisions
   1-degree band strings: ``lat_band="58-59N"``, ``lon_band="7-8E"``.
   This supports regional roll-ups in Flux with a simple filter while
   keeping series cardinality bounded.
-* ``bidzone`` (e.g. ``"NO1"``, ``"NO2"``) enables price-weighted calculations
-  when joined against spot-price measurements.  Pass ``""`` when unknown;
-  it can be backfilled once grid-area mapping is available.
+* ``price_area`` (e.g. ``"NO1"``, ``"NO2"``, ``"DE"``) is the spot-market
+  price area — the zone in which a single clearing price is published.
+  In Germany there is one price area (``"DE"``); in the Nordics each
+  bidding zone typically maps 1:1 to a price area.  This is the primary
+  tag for market-price joins and dashboard filtering.  Pass ``""`` when
+  unknown.
+* ``bidzone`` (e.g. ``"DE-TenneT"``, ``"DE-Amprion"``) is the TSO
+  balancing/control zone — distinct from the spot price area.  Germany
+  has four bidzones under one price area; the Nordics are mostly 1:1.
+  Useful for grid-constraint analysis and congestion modelling.  Pass
+  ``""`` when unknown or not relevant.
 * ``forecast_type``: ``"production"`` | ``"sales"``.  Using one measurement
   rather than two makes net-position queries trivial:
       |> filter(fn: r => r._measurement == "asset_forecast")
@@ -88,6 +96,7 @@ def asset_forecast_point(
     capacity_mw: float = 0.0,
     lat: float = 0.0,
     lon: float = 0.0,
+    price_area: str = "",
     bidzone: str = "",
     scenario: str = "median",
     resolution: str = "month",
@@ -118,8 +127,14 @@ def asset_forecast_point(
         Latitude of the asset (decimal degrees).  Bucketed into a band tag.
     lon:
         Longitude of the asset (decimal degrees).  Bucketed into a band tag.
+    price_area:
+        Spot-market price area, e.g. ``"NO1"``, ``"DE"``.  One clearing price
+        per area; primary tag for price joins and dashboard filtering.
+        Pass ``""`` when unknown.
     bidzone:
-        Elspot/bidding-zone code, e.g. ``"NO1"``.  Pass ``""`` when unknown.
+        TSO balancing/control zone, e.g. ``"DE-TenneT"``.  Distinct from
+        ``price_area``: Germany has four bidzones under one price area; the
+        Nordics are mostly 1:1.  Pass ``""`` when unknown or not relevant.
     scenario:
         Forecast scenario: ``"median"``, ``"high"``, or ``"low"``.
     resolution:
@@ -137,7 +152,9 @@ def asset_forecast_point(
         .tag("forecast_type", forecast_type)
         .tag("scenario", scenario)
         .tag("resolution", resolution)
-        # --- geo tags (bounded cardinality) ---
+        # --- market tags (bounded cardinality) ---
+        # price_area = spot market zone (one clearing price); bidzone = TSO balancing zone
+        .tag("price_area", price_area)
         .tag("bidzone", bidzone)
         # --- fields ---
         .field("value_mwh", float(value_mwh))

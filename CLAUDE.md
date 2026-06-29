@@ -30,28 +30,47 @@ Read these before making structural changes:
 
 ## ⛔ Non-negotiable git branching policy
 
-> These rules apply in every session, every time, without exception.
+> **These rules apply in every session, every time, without exception.**
+> This repo does NOT follow the product_develop/product_release pattern used
+> by other Energydesk repos. `develop` is the one and only active branch here.
 
-**The working branch in this repo is `develop`. Never use `product_develop` as a base or PR target.**
+### Branch map
 
-| Branch | Purpose |
-|---|---|
-| `develop` | Active development — all feature PRs target this |
-| `product_develop` | Release staging — promoted from `develop` by humans only |
-| `product_release` | Production — never touched directly |
+| Branch | Purpose | AI may commit? |
+|---|---|---|
+| `develop` | Active development — all feature PRs target this | ✅ via feature branch only |
+| `product_develop` | Release staging — promoted from `develop` by humans only | ❌ never |
+| `product_release` | Production — never touched directly | ❌ never |
 
-At the start of every session that involves any code changes:
+### Mandatory session checklist
 
-1. Pull the latest `develop`
-2. Create and check out a new branch from `develop`:
-   ```
-   git checkout -b feature/<task-name>
-   ```
-3. All commits go to the feature branch only
-4. Open PR targeting **`develop`** — never `product_develop`
-5. The merge is a **human-gated step** — do not merge automatically
+Run these commands before writing a single line of code:
 
-**Commit format:**
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/<task-name>
+```
+
+Then work only on that feature branch.
+
+### Hard rules — no exceptions
+
+1. **Never commit directly to `develop`** — always go through a feature branch + PR.
+2. **Never use `product_develop` as a base or PR target** — even if you see it in `git branch -a` or it looks like "main" from other repos in this org.
+3. **Never push to `product_develop` or `product_release`** for any reason.
+4. **Always open PRs targeting `develop`**.
+5. **Never merge PRs yourself** — merging is a human-gated step.
+
+### Why this differs from other repos
+
+Other Energydesk repos (`energydesk-rpi-venclient`, portal services, etc.) use
+`product_develop` as their active working branch. **This SDK is different** — it has
+a simpler branching model with `develop` as the sole working branch. If you are
+porting a pattern from another repo's CLAUDE.md, do not port the branch names.
+
+### Commit format
+
 - `feat:` — new functionality
 - `fix:` — bug fix
 - `refactor:` — restructuring without behaviour change
@@ -76,7 +95,9 @@ energydeskapi/
     metrics.py             start_metrics_server() — Prometheus /metrics endpoint
   types/
     domain_types.py        MetricDomain, EtrmNamespace, RpiNamespace, InfraNamespace,
-                           DashboardRole, metric_key(), nats_subject()
+                           BackofficeNamespace, DashboardRole,
+                           metric_key(), metric_key_prefix(), nats_subject(),
+                           dashboard_scope_prefixes()
     contract_enum_types.py ContractStatusEnum, ContractTypeEnum, …
     market_enum_types.py   MarketEnum, InstrumentTypeEnum, …
   sdk/
@@ -93,16 +114,25 @@ All services — emitters and consumers — import from here. Never hand-roll me
 
 ```python
 from energydeskapi.types.domain_types import (
-    MetricDomain, EtrmNamespace, RpiNamespace, metric_key, nats_subject
+    MetricDomain, EtrmNamespace, RpiNamespace, BackofficeNamespace,
+    metric_key, metric_key_prefix, nats_subject, dashboard_scope_prefixes,
 )
 
 # Metric key for MetricSnapshot.query_id
 key = metric_key(MetricDomain.ETRM, EtrmNamespace.DATASYNC, "contracts_synced_total")
 # → "etrm.datasync.contracts_synced_total"
 
-# NATS subject for ops event
-subj = nats_subject(MetricDomain.RPI, RpiNamespace.WORKER, "heartbeat.missed")
-# → "ops.event.rpi.worker.heartbeat.missed"
+# NATS subject for an ops event from the VEN server
+subj = nats_subject(MetricDomain.RPI, RpiNamespace.VENSERVER, "registration.ok")
+# → "ops.event.rpi.venserver.registration.ok"
+
+# Prefix for filtering all RPI metrics in a Grafana query
+prefix = metric_key_prefix(MetricDomain.RPI)
+# → "rpi."
+
+# All prefixes a dashboard role may query
+prefixes = dashboard_scope_prefixes(DashboardRole.TRADING_DESK)
+# → ["etrm.trading.", "etrm.marketdata.", "etrm.datasync.", "infra.messaging."]
 ```
 
 When adding a new domain or namespace, add it here first, then use it in the service.

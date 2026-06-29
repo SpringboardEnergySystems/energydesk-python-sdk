@@ -32,7 +32,8 @@ Expected ``asset_meta`` shape
         "lat":         58.46,          # float, optional (0.0 = unknown)
         "lon":         7.92,           # float, optional (0.0 = unknown)
         "capacity_mw": 87.0,           # float, optional (0.0 = unknown)
-        "bidzone":     "NO2",          # str,   optional ("" = unknown)
+        "price_area":  "NO2",          # str,   optional ("" = unknown) — spot market price area (e.g. NO2, DE)
+        "bidzone":     "NO2",          # str,   optional ("" = unknown) — TSO balancing zone (e.g. DE-TenneT)
     }
 
 ``lat``, ``lon``, ``capacity_mw``, and ``bidzone`` are optional and default
@@ -85,6 +86,7 @@ def _base_tags(asset_meta: dict) -> dict:
         "lat":         float(asset_meta.get("lat", 0.0)),
         "lon":         float(asset_meta.get("lon", 0.0)),
         "capacity_mw": float(asset_meta.get("capacity_mw", 0.0)),
+        "price_area":  str(asset_meta.get("price_area", "")),
         "bidzone":     str(asset_meta.get("bidzone", "")),
     }
 
@@ -96,11 +98,14 @@ def _write_forecast(
     forecast_type: str,
     value_key: str,
     scenario: str,
+    price_area: str,
     bidzone: str,
     resolution: str,
 ) -> int:
     """Shared implementation for production and sales forecast writes."""
     tags = _base_tags(asset_meta)
+    if price_area:
+        tags["price_area"] = price_area
     if bidzone:
         tags["bidzone"] = bidzone
 
@@ -129,6 +134,7 @@ def _write_forecast(
                 capacity_mw=tags["capacity_mw"],
                 lat=tags["lat"],
                 lon=tags["lon"],
+                price_area=tags["price_area"],
                 bidzone=tags["bidzone"],
                 scenario=scenario,
                 resolution=resolution,
@@ -163,6 +169,7 @@ def write_production_forecast_to_influx(
     asset_meta: dict,
     writer,
     scenario: str = "median",
+    price_area: str = "",
     bidzone: str = "",
     resolution: str = "month",
 ) -> int:
@@ -181,6 +188,9 @@ def write_production_forecast_to_influx(
     scenario:
         Forecast scenario tag: ``"median"`` (default), ``"high"``, or
         ``"low"``.
+    price_area:
+        Optional spot market price area override (e.g. ``"NO2"``, ``"DE"``).
+        When non-empty, overrides the value in ``asset_meta``.
     bidzone:
         Optional bidding-zone override.  When non-empty, overrides the
         value in ``asset_meta``.
@@ -199,6 +209,7 @@ def write_production_forecast_to_influx(
         forecast_type="production",
         value_key="forecast_production_mwh",
         scenario=scenario,
+        price_area=price_area,
         bidzone=bidzone,
         resolution=resolution,
     )
@@ -209,6 +220,7 @@ def write_sales_forecast_to_influx(
     asset_meta: dict,
     writer,
     scenario: str = "median",
+    price_area: str = "",
     bidzone: str = "",
     resolution: str = "month",
 ) -> int:
@@ -229,6 +241,9 @@ def write_sales_forecast_to_influx(
     scenario:
         Forecast scenario tag: ``"median"`` (default), ``"high"``, or
         ``"low"``.
+    price_area:
+        Optional spot market price area override (e.g. ``"NO2"``, ``"DE"``).
+        When non-empty, overrides the value in ``asset_meta``.
     bidzone:
         Optional bidding-zone override.
     resolution:
@@ -246,6 +261,7 @@ def write_sales_forecast_to_influx(
         forecast_type="sales",
         value_key="forecast_sales_mwh",
         scenario=scenario,
+        price_area=price_area,
         bidzone=bidzone,
         resolution=resolution,
     )
