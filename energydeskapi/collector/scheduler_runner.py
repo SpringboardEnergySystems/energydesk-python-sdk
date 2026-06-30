@@ -106,7 +106,25 @@ async def _job_loop(
         except asyncio.CancelledError:
             raise
         except Exception:
-            logger.exception("Failed to publish job %s", registration.job_type)
+            logger.exception(
+                "Failed to publish job %s — will retry in 30 s", registration.job_type
+            )
+            await asyncio.sleep(30)
+            try:
+                await _publish_job(
+                    bus,
+                    config,
+                    run_tracker,
+                    registration.job_type,
+                    registration.source,
+                    scheduled_for,
+                )
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception(
+                    "Retry also failed for job %s — run lost", registration.job_type
+                )
 
 
 async def _persist_registration(
