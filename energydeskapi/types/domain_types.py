@@ -85,6 +85,8 @@ class RpiNamespace(str, Enum):
                   Source: energydesk-rpi-victronbattery
     AMS         — AMS electricity meter reader.
                   Source: future energydesk-rpi-ams repo
+    GROWATT     — Growatt PV worker (MQTT bridge via grott/ShineMonitor).
+                  Source: energydesk-rpi-growattpv
 
     Cross-cutting namespaces
     ────────────────────────
@@ -104,6 +106,7 @@ class RpiNamespace(str, Enum):
     EKODA      = "ekoda"      # EKODA battery worker
     VICTRON    = "victron"    # Victron battery worker
     AMS        = "ams"        # AMS electricity meter worker
+    GROWATT    = "growatt"    # Growatt PV worker
 
     # ── Cross-cutting ─────────────────────────────────────────────────────
     SINK       = "sink"       # influx-sink confirmed-write counters
@@ -154,6 +157,7 @@ DASHBOARD_ROLE_SCOPES: dict[DashboardRole, list[tuple[MetricDomain, str | None]]
         (MetricDomain.RPI, RpiNamespace.EKODA),
         (MetricDomain.RPI, RpiNamespace.VICTRON),
         (MetricDomain.RPI, RpiNamespace.AMS),
+        (MetricDomain.RPI, RpiNamespace.GROWATT),
         (MetricDomain.RPI, RpiNamespace.SINK),
         (MetricDomain.RPI, RpiNamespace.DISPATCHER),
         (MetricDomain.RPI, RpiNamespace.VENSERVER),
