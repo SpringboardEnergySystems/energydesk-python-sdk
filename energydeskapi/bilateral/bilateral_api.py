@@ -1,4 +1,6 @@
 import logging
+from typing import Any
+
 import pandas as pd
 from energydeskapi.sdk.api_connection import ApiConnection
 
@@ -320,11 +322,11 @@ class BilateralApi:
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/bilateral/contractpricer/capacity/', qry_payload)
         return success, json_res, status_code, error_msg
     @staticmethod
-    def calculate_contract_price(api_connection ,periods, price_area, currency_code,
-                                 curve_model, wacc=0.06, inflation=0,profile_type=ProfileTypeEnum.BASELOAD,
-                                 monthly_profile=get_baseload_months(),
-                                 weekday_profile=get_baseload_weekdays(),
-                                 hours=get_baseload_dailyhours()):
+    def calculate_contract_price(api_connection: ApiConnection ,periods:list[list], price_area: str, currency_code: str,
+                                 curve_model: int, wacc: float=0.06, inflation: float=0,profile_type: ProfileTypeEnum=ProfileTypeEnum.BASELOAD,
+                                 monthly_profile: dict[str, float]=get_baseload_months(),
+                                 weekday_profile: dict[str, float]=get_baseload_weekdays(),
+                                 hours: dict[str, float]=get_baseload_dailyhours()):
         """Fetches hourly price curve
 
         :param api_connection: class with API token for use with API
