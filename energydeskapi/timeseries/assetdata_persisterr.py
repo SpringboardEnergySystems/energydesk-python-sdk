@@ -73,6 +73,7 @@ def save_production_forecast(
     monthly_rows,
     influx_writer=None,
     write_appserver=True,
+    customer_id=None,
 ):
     """Store monthly production forecast for a single asset.
 
@@ -110,6 +111,12 @@ def save_production_forecast(
         When ``False`` the appserver blob write is skipped entirely.
         Useful for the ``--sink influx`` CLI mode where assets are already
         registered and only InfluxDB needs to be populated.
+    customer_id:
+        When given, registers this write as a timeseries catalog instance
+        (energydesk-insight's plans/08_timeseries_api.md) before writing to
+        InfluxDB, tagging every point with the resulting series_key. Omit
+        (the default) to write exactly as before, with no catalog
+        dependency — see write_production_forecast_to_influx().
     """
     res = None
 
@@ -161,6 +168,8 @@ def save_production_forecast(
                 monthly_rows=monthly_rows,
                 asset_meta=asset_meta,
                 writer=influx_writer,
+                customer_id=customer_id,
+                timeseries_date=str(pendulum.parse(timeseries_date, tz='Europe/Oslo').date()),
             )
         except Exception as exc:  # noqa: BLE001
             # InfluxDB failures must never abort the appserver write.
@@ -311,6 +320,7 @@ def generate_production_assets_and_forecasts(api_conn, asset_owner_pk, customer_
                 api_conn, asset_pk, asset_meta, timeseries_date, monthly_rows,
                 influx_writer=influx_writer,
                 write_appserver=True,
+                customer_id=customer_name,
             )
             logger.info("Stored %d monthly forecast points for %s (price_area=%s)",
                         len(monthly_rows), p["name"], asset_meta["price_area"])
@@ -379,6 +389,8 @@ def backfill_influx_from_existing_assets(api_conn, customer_name: str) -> None:
                 monthly_rows=monthly_rows,
                 asset_meta=asset_meta,
                 writer=influx_writer,
+                customer_id=customer_name,
+                timeseries_date=str(pendulum.now(tz="Europe/Oslo").date()),
             )
             total_points += n
             logger.info("  %s (price_area=%s) — wrote %d points",
