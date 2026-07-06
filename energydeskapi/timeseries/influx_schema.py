@@ -100,6 +100,7 @@ def asset_forecast_point(
     bidzone: str = "",
     scenario: str = "median",
     resolution: str = "month",
+    series_key: str | None = None,
 ) -> Point:
     """Return an InfluxDB ``Point`` for the ``asset_forecast`` measurement.
 
@@ -140,6 +141,12 @@ def asset_forecast_point(
     resolution:
         Duration of each data point, e.g. ``"month"`` (default), ``"day"``,
         ``"hour"``.
+    series_key:
+        UUID of the timeseries catalog instance this point belongs to (see
+        energydeskapi.timeseries.catalog_client and energydesk-insight's
+        plans/08_timeseries_api.md). Only set when the caller has registered
+        with the catalog — omitted (``None``) is a valid, common case for
+        writers that don't use the catalog.
     """
     point = (
         Point(ASSET_FORECAST)
@@ -166,4 +173,6 @@ def asset_forecast_point(
         point = point.tag("lat_band", _lat_band(lat))
     if lon != 0.0:
         point = point.tag("lon_band", _lon_band(lon))
+    if series_key:
+        point = point.tag("series_key", series_key)
     return point

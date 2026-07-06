@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timezone
+from typing import Optional
 
 import pendulum
 
@@ -76,6 +77,52 @@ def _is_missing(val) -> bool:
         return False
 
 
+def _register_catalog_instance(
+    *,
+    customer_id: str,
+    timeseries_date: str,
+    forecast_type: str,
+    scenario: str,
+    resolution: str,
+    tags: dict,
+    writer,
+) -> Optional[str]:
+    """
+    Best-effort catalog registration — see energydesk-insight's
+    plans/08_timeseries_api.md section 11 (the sink-conditional rule). This
+    is only ever called from the InfluxDB write path, and a catalog failure
+    (unconfigured, unreachable, etc.) must never block the InfluxDB write
+    itself — it just means the point goes out without a series_key, falling
+    back to tag-scan discovery like before the catalog existed.
+    """
+    try:
+        from energydeskapi.timeseries.catalog_client import get_or_create_definition_and_instance
+        from energydeskapi.timeseries.influx_schema import ASSET_FORECAST
+
+        return get_or_create_definition_and_instance(
+            customer_id=customer_id,
+            name=f"{tags['asset_name']} {forecast_type} forecast",
+            timeseries_type="forecast",
+            unit="MWh",
+            resolution=resolution,
+            timeseries_date=timeseries_date,
+            influx_bucket=writer.bucket,
+            influx_measurement=ASSET_FORECAST,
+            entity_type="asset",
+            entity_id=str(tags["asset_id"]),
+            area=tags.get("price_area") or None,
+            scenario=scenario,
+            instance_metadata_json={"forecast_type": forecast_type},
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(
+            "Catalog registration failed for asset %s (%s, scenario=%s, date=%s) — "
+            "writing to InfluxDB without a series_key. Reason: %s",
+            tags.get("asset_id"), forecast_type, scenario, timeseries_date, exc,
+        )
+        return None
+
+
 def _base_tags(asset_meta: dict) -> dict:
     """Extract and normalise the tag fields from an asset_meta dict."""
     return {
@@ -101,13 +148,37 @@ def _write_forecast(
     price_area: str,
     bidzone: str,
     resolution: str,
+    customer_id: Optional[str] = None,
+    timeseries_date: Optional[str] = None,
 ) -> int:
-    """Shared implementation for production and sales forecast writes."""
+    """
+    Shared implementation for production and sales forecast writes.
+
+    When `customer_id` and `timeseries_date` are both given, this registers
+    one timeseries catalog instance for the whole call (one publication run)
+    and tags every point in it with the resulting series_key — see
+    energydeskapi.timeseries.catalog_client and energydesk-insight's
+    plans/08_timeseries_api.md. Both are optional and default to None:
+    existing callers that don't pass them keep writing exactly as before,
+    with no series_key and no catalog dependency.
+    """
     tags = _base_tags(asset_meta)
     if price_area:
         tags["price_area"] = price_area
     if bidzone:
         tags["bidzone"] = bidzone
+
+    series_key = None
+    if customer_id and timeseries_date:
+        series_key = _register_catalog_instance(
+            customer_id=customer_id,
+            timeseries_date=timeseries_date,
+            forecast_type=forecast_type,
+            scenario=scenario,
+            resolution=resolution,
+            tags=tags,
+            writer=writer,
+        )
 
     points_written = 0
     for row in monthly_rows:
@@ -138,6 +209,7 @@ def _write_forecast(
                 bidzone=tags["bidzone"],
                 scenario=scenario,
                 resolution=resolution,
+                series_key=series_key,
             )
             writer.write_api.write(bucket=writer.bucket, org=writer.org, record=point)
             points_written += 1
@@ -172,6 +244,8 @@ def write_production_forecast_to_influx(
     price_area: str = "",
     bidzone: str = "",
     resolution: str = "month",
+    customer_id: Optional[str] = None,
+    timeseries_date: Optional[str] = None,
 ) -> int:
     """Write monthly production forecast rows to InfluxDB.
 
@@ -196,6 +270,16 @@ def write_production_forecast_to_influx(
         value in ``asset_meta``.
     resolution:
         Duration of each data point (default ``"month"``).
+    customer_id:
+        When given together with ``timeseries_date``, registers this call as
+        one timeseries catalog instance (energydesk-insight's
+        plans/08_timeseries_api.md) and tags every point with the resulting
+        series_key. Omit both (the default) to write exactly as before, with
+        no catalog dependency. Catalog registration is best-effort — failures
+        are logged and never block the InfluxDB write.
+    timeseries_date:
+        Publication/run date for the catalog instance, ``"YYYY-MM-DD"``. See
+        ``customer_id``.
 
     Returns
     -------
@@ -212,6 +296,8 @@ def write_production_forecast_to_influx(
         price_area=price_area,
         bidzone=bidzone,
         resolution=resolution,
+        customer_id=customer_id,
+        timeseries_date=timeseries_date,
     )
 
 
@@ -223,11 +309,15 @@ def write_sales_forecast_to_influx(
     price_area: str = "",
     bidzone: str = "",
     resolution: str = "month",
+    customer_id: Optional[str] = None,
+    timeseries_date: Optional[str] = None,
 ) -> int:
     """Write monthly sales forecast rows to InfluxDB.
 
     Identical to ``write_production_forecast_to_influx`` except the value
     key is ``"forecast_sales_mwh"`` and ``forecast_type`` is ``"sales"``.
+    See that function's docstring for ``customer_id`` / ``timeseries_date``
+    (optional catalog registration).
 
     Parameters
     ----------
@@ -264,4 +354,6 @@ def write_sales_forecast_to_influx(
         price_area=price_area,
         bidzone=bidzone,
         resolution=resolution,
+        customer_id=customer_id,
+        timeseries_date=timeseries_date,
     )
