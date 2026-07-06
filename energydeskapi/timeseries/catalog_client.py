@@ -6,15 +6,18 @@ rule in energydesk-insight's plans/08_timeseries_api.md section 11. Writers
 that only write to the Energydesk REST API or Postgres sinks never import or
 call this module in a way that requires it to be configured.
 
-Each deployed Insight instance is scoped to exactly one catalog database —
-there is no namespace/tenant parameter on the API. A writer that needs the
-shared market-data catalog rather than its own local (customer-scoped)
-catalog talks to a *different* Insight deployment, selected via
-INSIGHT_MARKETDATA_API_URL / INSIGHT_MARKETDATA_API_TOKEN rather than by
-passing anything in the request. Pass `marketdata=True` to target that
-deployment; it falls back to INSIGHT_API_URL/INSIGHT_API_TOKEN when the
-marketdata-specific vars aren't set (the common case where they're the same
-instance, e.g. local dev).
+Insight exposes two identically-shaped catalog route trees —
+/api/timeseries/assetdata/... and /api/timeseries/marketdata/... — each
+fixed to its own catalog database; there is no per-request routing between
+them (see energydesk-insight's insight/api/timeseries_catalog.py). A single
+`marketdata` flag on every function here does double duty: it selects the
+URL path (assetdata/ vs marketdata/) AND, since a deployment serving one
+customer's data doesn't necessarily also serve the shared market-data
+catalog, which Insight deployment to call — INSIGHT_MARKETDATA_API_URL /
+INSIGHT_MARKETDATA_API_TOKEN when set, falling back to
+INSIGHT_API_URL/INSIGHT_API_TOKEN otherwise (the common case where they're
+the same instance, e.g. local dev, or a combined deployment that has both
+DB_ASSETDATA_CATALOG and DB_MARKETDATA_CATALOG configured).
 
 Construction is lazy: importing this module never touches the network or
 raises, even when the relevant env vars are unset. They are only read (and
@@ -61,19 +64,27 @@ def _headers(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
 
+def _catalog_path(path: str, marketdata: bool) -> str:
+    """e.g. _catalog_path("/definitions/", True) -> "/api/timeseries/marketdata/definitions/"."""
+    segment = "marketdata" if marketdata else "assetdata"
+    return f"/api/timeseries/{segment}{path}"
+
+
 def _post(path: str, payload: dict[str, Any], marketdata: bool) -> dict[str, Any]:
     url, token = _config(marketdata)
-    resp = requests.post(f"{url}{path}", json=payload, headers=_headers(token), timeout=_DEFAULT_TIMEOUT)
+    full_path = _catalog_path(path, marketdata)
+    resp = requests.post(f"{url}{full_path}", json=payload, headers=_headers(token), timeout=_DEFAULT_TIMEOUT)
     if resp.status_code >= 300 and resp.status_code != 409:
-        raise CatalogApiError(f"POST {path} -> {resp.status_code}: {resp.text}")
+        raise CatalogApiError(f"POST {full_path} -> {resp.status_code}: {resp.text}")
     return resp.json() if resp.status_code < 300 else {}
 
 
 def _get(path: str, marketdata: bool, params: Optional[dict[str, Any]] = None) -> Any:
     url, token = _config(marketdata)
-    resp = requests.get(f"{url}{path}", params=params, headers=_headers(token), timeout=_DEFAULT_TIMEOUT)
+    full_path = _catalog_path(path, marketdata)
+    resp = requests.get(f"{url}{full_path}", params=params, headers=_headers(token), timeout=_DEFAULT_TIMEOUT)
     if resp.status_code >= 300:
-        raise CatalogApiError(f"GET {path} -> {resp.status_code}: {resp.text}")
+        raise CatalogApiError(f"GET {full_path} -> {resp.status_code}: {resp.text}")
     return resp.json()
 
 
@@ -112,7 +123,7 @@ def get_or_create_definition(
         "default_aggregation": default_aggregation,
         "metadata_json": metadata_json,
     }
-    return _post("/api/timeseries/definitions/", payload, marketdata)
+    return _post("/definitions/", payload, marketdata)
 
 
 def register_instance(
@@ -149,7 +160,7 @@ def register_instance(
         "influx_measurement": influx_measurement,
         "metadata_json": metadata_json,
     }
-    result = _post("/api/timeseries/instances/", payload, marketdata)
+    result = _post("/instances/", payload, marketdata)
     if result:
         return result
 
@@ -157,7 +168,7 @@ def register_instance(
         "Instance already exists for definition=%s date=%s status=%s scenario=%s currency=%s — fetching it.",
         definition_id, timeseries_date, status, scenario, currency,
     )
-    existing = _get("/api/timeseries/instances/", marketdata, params={"definition_id": definition_id})
+    existing = _get("/instances/", marketdata, params={"definition_id": definition_id})
     for inst in existing:
         if (
             inst.get("timeseries_date") == timeseries_date
