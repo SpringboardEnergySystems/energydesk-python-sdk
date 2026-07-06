@@ -108,6 +108,9 @@ def _register_catalog_instance(
             timeseries_date=timeseries_date,
             influx_bucket=writer.bucket,
             influx_measurement=ASSET_FORECAST,
+            # marketdata=False (default) — this writer's bucket
+            # (celsio_assetdata et al.) is always this deployment's own local
+            # (customer-scoped) Insight instance, per INSIGHT_API_URL.
             entity_type="asset",
             entity_id=str(tags["asset_id"]),
             area=tags.get("price_area") or None,
