@@ -4,16 +4,16 @@ InfluxDB line-protocol schema definitions for asset forecast measurements.
 Measurements
 ------------
 asset_forecast
-    A single measurement covering both production and sales forecasts.
-    The ``forecast_type`` tag distinguishes them so cross-type aggregations
-    (e.g. net position = production - sales) can be done with a single Flux
-    query using ``pivot()`` on the tag.
+    A single measurement covering both production and consumption/sales
+    forecasts. The ``asset_type`` tag distinguishes them so cross-type
+    aggregations (e.g. net position = production - sales) can be done with a
+    single Flux query using ``pivot()`` on the tag.
 
 Tag design decisions
 --------------------
 * ``asset_id`` (string form of the Postgres PK) is the stable join key back
   to the appserver database.  Always present.
-* ``asset_name``, ``asset_type``, ``owner`` are denormalised here for
+* ``asset_name``, ``asset_sub_type``, ``owner`` are denormalised here for
   convenience in dashboard label queries.  They may be stale if the asset
   is renamed; treat the ``asset_id`` as authoritative.
 * ``lat`` / ``lon`` are NOT stored as raw floats — high-cardinality float
@@ -32,11 +32,19 @@ Tag design decisions
   has four bidzones under one price area; the Nordics are mostly 1:1.
   Useful for grid-constraint analysis and congestion modelling.  Pass
   ``""`` when unknown or not relevant.
-* ``forecast_type``: ``"production"`` | ``"sales"``.  Using one measurement
-  rather than two makes net-position queries trivial:
+* ``asset_type``: broad classification of the series, e.g. ``"production"`` |
+  ``"consumption"`` | ``"contracts"`` — mirrors the Insight timeseries
+  catalog's ``asset_type`` column (sourced from the appserver's
+  ``asset_category`` field; see energydesk-insight's
+  plans/08_timeseries_api.md). Using one measurement rather than several
+  makes net-position queries trivial:
       |> filter(fn: r => r._measurement == "asset_forecast")
-      |> pivot(rowKey: ["_time","asset_id"], columnKey: ["forecast_type"], valueColumn: "_value")
-      |> map(fn: r => ({ r with net_mwh: r.production - r.sales }))
+      |> pivot(rowKey: ["_time","asset_id"], columnKey: ["asset_type"], valueColumn: "_value")
+      |> map(fn: r => ({ r with net_mwh: r.production - r.consumption }))
+* ``asset_sub_type``: finer classification within ``asset_type``, e.g.
+  ``"hydro"`` | ``"wind"`` | ``"fuels"`` — mirrors the Insight catalog's
+  ``asset_sub_type`` column (sourced from the appserver's ``asset_type``
+  field — note the appserver's field names are one level removed from ours).
 * ``scenario``: ``"median"`` | ``"high"`` | ``"low"`` (P50/P90/P10 or
   equivalent).  Write three points at the same timestamp when all three
   are available; write only ``"median"`` when a single-scenario forecast is
@@ -88,9 +96,9 @@ def asset_forecast_point(
     *,
     asset_id: int,
     asset_name: str,
-    asset_type: str,
+    asset_sub_type: str,
     owner: str,
-    forecast_type: str,
+    asset_type: str,
     value_mwh: float,
     timestamp,
     capacity_mw: float = 0.0,
@@ -111,12 +119,15 @@ def asset_forecast_point(
         tag (InfluxDB tags are always strings).
     asset_name:
         Human-readable asset description, e.g. ``"Iveland kraftverk"``.
-    asset_type:
-        Asset type description, e.g. ``"hydro"`` or ``"wind"``.
+    asset_sub_type:
+        Finer asset classification, e.g. ``"hydro"`` or ``"wind"``. Mirrors
+        the Insight catalog's ``asset_sub_type`` column.
     owner:
         Company name of the asset owner.
-    forecast_type:
-        ``"production"`` or ``"sales"``.
+    asset_type:
+        Broad asset classification, e.g. ``"production"``, ``"consumption"``,
+        or ``"contracts"``. Mirrors the Insight catalog's ``asset_type``
+        column.
     value_mwh:
         Forecast energy in MWh for the period starting at ``timestamp``.
     timestamp:
@@ -153,10 +164,10 @@ def asset_forecast_point(
         # --- identity tags (always set) ---
         .tag("asset_id", str(asset_id))
         .tag("asset_name", asset_name)
-        .tag("asset_type", asset_type)
+        .tag("asset_sub_type", asset_sub_type)
         .tag("owner", owner)
         # --- classification tags ---
-        .tag("forecast_type", forecast_type)
+        .tag("asset_type", asset_type)
         .tag("scenario", scenario)
         .tag("resolution", resolution)
         # --- market tags (bounded cardinality) ---

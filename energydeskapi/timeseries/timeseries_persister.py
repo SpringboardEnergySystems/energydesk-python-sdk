@@ -164,6 +164,12 @@ def _write_forecast(
     plans/08_timeseries_api.md. Both are optional and default to None:
     existing callers that don't pass them keep writing exactly as before,
     with no series_key and no catalog dependency.
+
+    `forecast_type` ("production"/"sales") is written as the InfluxDB
+    `asset_type` tag — this demo path has no appserver asset_category to
+    source it from (unlike celsiodata-service's assetdata_persister.py,
+    which sources it from the real asset classification), so the
+    caller-provided forecast direction is the best available proxy.
     """
     tags = _base_tags(asset_meta)
     if price_area:
@@ -200,9 +206,9 @@ def _write_forecast(
             point = asset_forecast_point(
                 asset_id=tags["asset_id"],
                 asset_name=tags["asset_name"],
-                asset_type=tags["asset_type"],
+                asset_sub_type=tags["asset_type"],
                 owner=tags["owner"],
-                forecast_type=forecast_type,
+                asset_type=forecast_type,
                 value_mwh=float(val),
                 timestamp=ts,
                 capacity_mw=tags["capacity_mw"],
