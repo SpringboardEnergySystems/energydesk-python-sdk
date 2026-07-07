@@ -98,6 +98,8 @@ def get_or_create_definition(
     marketdata: bool = False,
     entity_type: Optional[str] = None,
     entity_id: Optional[str] = None,
+    asset_type: Optional[str] = None,
+    asset_sub_type: Optional[str] = None,
     area: Optional[str] = None,
     default_aggregation: Optional[str] = None,
     metadata_json: Optional[dict[str, Any]] = None,
@@ -106,6 +108,10 @@ def get_or_create_definition(
     Idempotent — the catalog API returns the existing definition if one
     already matches the identity uniqueness constraint (customer_id,
     timeseries_type, entity_type, entity_id, area, unit, resolution, name).
+
+    `asset_type`/`asset_sub_type`: free-text classification for filtering
+    (e.g. "production"/"consumption"/"contracts", "fuels"/"hydro"/"wind") —
+    not part of the identity constraint, purely descriptive/filterable.
 
     `marketdata`: True to target the shared market-data Insight deployment
     (INSIGHT_MARKETDATA_API_URL) instead of this writer's own local instance
@@ -119,6 +125,8 @@ def get_or_create_definition(
         "resolution": resolution,
         "entity_type": entity_type,
         "entity_id": entity_id,
+        "asset_type": asset_type,
+        "asset_sub_type": asset_sub_type,
         "area": area,
         "default_aggregation": default_aggregation,
         "metadata_json": metadata_json,
@@ -196,6 +204,8 @@ def get_or_create_definition_and_instance(
     marketdata: bool = False,
     entity_type: Optional[str] = None,
     entity_id: Optional[str] = None,
+    asset_type: Optional[str] = None,
+    asset_sub_type: Optional[str] = None,
     area: Optional[str] = None,
     scenario: Optional[str] = None,
     currency: Optional[str] = None,
@@ -225,6 +235,8 @@ def get_or_create_definition_and_instance(
         marketdata=marketdata,
         entity_type=entity_type,
         entity_id=entity_id,
+        asset_type=asset_type,
+        asset_sub_type=asset_sub_type,
         area=area,
         default_aggregation=default_aggregation,
         metadata_json=definition_metadata_json,
