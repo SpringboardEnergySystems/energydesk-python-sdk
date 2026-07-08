@@ -1,6 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
+import pytest
+
 from energydeskapi.timeseries.timeseries_persister import write_production_forecast_to_influx
 
 
@@ -29,7 +31,7 @@ def _fake_post(url, json=None, params=None, headers=None, timeout=None):
         resp.json.return_value = {"id": "inst-uuid-1"}
     return resp
 
-
+@pytest.mark.skip(reason="it uses influxdb but we don't have any module for that in Hafslund")
 class TestWriteProductionForecastToInflux(TestCase):
     def test_without_catalog_args_writes_no_series_key(self):
         writer = _FakeWriter()
