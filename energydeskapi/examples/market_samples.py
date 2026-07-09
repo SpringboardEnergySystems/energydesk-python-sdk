@@ -42,15 +42,15 @@ def query_market_prices(api_conn):
 
 def query_product_prices(api_conn, products=['FEUA042026P086','FEUA042026']):
     today = pendulum.today('Europe/Oslo')
-    period_from = today.add(days=-200)
+    period_from = today.add(days=-5)
     period_until = today
     params={ 'page_size':50}
     params['price_date__gte'] = str(period_from)[:10]
     params['price_date__lt'] = str(period_until)[:10]
-    params['product__commodity_definition__instrument_type__code__in'] = ["FUT", 'FWD']
-    params['product__market_place__name__in'] = ["EURONEXT", 'OTC']
+    params['product__commodity_definition__instrument_type__code__in'] = ["FUT"]
+    params['product__market_place__name__in'] = ["ICE"]
     data=DerivativesApi.get_product_prices(api_conn, params)
-    print(json.dumps(data['results'], indent=2))
+    #print(json.dumps(data['results'], indent=2))
 
 def query_market_prices_embedded(api_conn):
     yesterday = pendulum.yesterday('Europe/Oslo')
