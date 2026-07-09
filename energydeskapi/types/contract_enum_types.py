@@ -73,9 +73,11 @@ def is_standard_contract(contract_type: ContractTypeEnum) -> bool:
         ContractTypeEnum.NASDAQ,
         ContractTypeEnum.EEX,
         ContractTypeEnum.EURONEXT,
-        ContractTypeEnum.INTERNAL
+        ContractTypeEnum.ICE_EMISSION_OPTIONS,
+        ContractTypeEnum.INTERNAL,
+        ContractTypeEnum.BILAT_FINANCIAL,
+        ContractTypeEnum.POSITION_TRANSFER
     ]
-
 
 
 class FeeTypeEnum(Enum):
