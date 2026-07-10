@@ -374,3 +374,5 @@ class ApiCache(Borg):
         if api_conn is not None:
             self.api_conn=api_conn
 
+
+type IApiConnection = ApiConnection | ApiTempConnection
