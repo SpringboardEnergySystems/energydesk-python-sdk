@@ -67,9 +67,8 @@ class PortfolioTreeApi:
     json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
     if json_res is None:
       return None
-    #print(json.dumps(json_res, indent=4))
     return create_embedded_tree_for_dropdown(json_res)
-    #return arr
+
 
   @staticmethod
   def get_portfolio_url(api_connection: ApiConnection, portfolio_pk: int):
