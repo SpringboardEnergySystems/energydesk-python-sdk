@@ -2,7 +2,7 @@ import logging
 import traceback
 from datetime import datetime
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Any
 
 import environ
 import pendulum
@@ -79,7 +79,7 @@ def remove_cache_value(cache_name: str, cache_key: str):
         return False
 
 
-def set_cache_value(cache_name: str, cache_key: str, cache_value: any, expiration_time: Optional[timedelta]=None):
+def set_cache_value(cache_name: str, cache_key: str, cache_value: Any, expiration_time: Optional[timedelta]=None):
     r=get_cache()
     if r is not None:
         r.hset(cache_name, cache_key, cache_value)
@@ -130,7 +130,7 @@ def loadfrom_datecache(cache_name: str, date_resolution="%Y/W%V"):
         logger.error("Exception loading from REDIS " + str(execstr))
         return None
 
-def saveto_datecache(cache_name: str,  value: any, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None) -> bool:
+def saveto_datecache(cache_name: str,  value: Any, date_resolution="%Y/W%V", expiration_time: Optional[timedelta] =None) -> bool:
     datekey = current_date_localtime_dt().strftime(date_resolution)
     if is_redis_disabled():
         set_memcache_value(cache_name, datekey, value)
@@ -188,7 +188,7 @@ def loadfrom_staticcache(cache_name):
     return uncompreessed
 
 
-def saveto_staticcache(cache_name,  v):
+def saveto_staticcache(cache_name: str,  v: Any) -> bool:
     if is_redis_disabled():
         #Ignore saving
         return True
