@@ -378,4 +378,4 @@ class ApiCache(Borg):
             self.api_conn=api_conn
 
 
-type IApiConnection = ApiConnection | ApiTempConnection
+IApiConnection = ApiConnection | ApiTempConnection
