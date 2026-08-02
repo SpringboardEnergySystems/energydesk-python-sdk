@@ -1,15 +1,11 @@
-import json
 import copy
+import json
+from operator import itemgetter
+from typing import Any, Optional
 
+from energydeskapi.portfolios.portfolio_api import PortfolioNode
 from energydeskapi.sdk.api_connection import ApiConnection
 
-from energydeskapi.customers.customers_api import CustomersApi
-#from energydeskapi.assets.assets_api import AssetsApi
-#from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
-from operator import itemgetter
-from energydeskapi.portfolios.portfolio_api import PortfolioNode
-from energydeskapi.sdk.common_utils import remove_alpha_num
-from energydeskapi.portfolios.tradingbooks_api import TradingBooksApi
 sample_portfolio_tree=[
   {
     "portfolio_id": 1,
@@ -375,18 +371,17 @@ def convert_embedded_tree_to_jstree(embedded_tree):
     return jstreelist
 
 
-def create_embedded_tree_for_dropdown(flat_tree):
+def create_embedded_tree_for_dropdown(flat_tree: list[dict[str,Any]]) -> list[dict[str,Any]]:
     roots=[]
-    def lookup_node_by_id(id):
+    def lookup_node_by_id(id: int) -> Optional[dict[str, Any]]:
         for p in flat_tree:
             if p['pk']==id:
                 return p
         return None # Not found
 
-    def manage_node(node):
+    def manage_node(node: Optional[dict[str, Any]]) -> Optional[dict[str, Any]]:
         if node is None:
             return None
-
         localnode={
             "portfolio_id":node['pk'],
             "title": str(node['pk']) + " " + node['description'],

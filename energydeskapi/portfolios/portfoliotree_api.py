@@ -1,4 +1,6 @@
 import logging, json
+from typing import Any, Optional
+
 import pandas as pd
 from energydeskapi.sdk.api_connection import ApiConnection
 
@@ -60,14 +62,13 @@ class PortfolioTreeApi:
 
 
   @staticmethod
-  def get_portfolio_tree_for_dropdown(api_connection: ApiConnection, parameters: dict={}):
+  def get_portfolio_tree_for_dropdown(api_connection: ApiConnection, parameters: dict[str, Any]={}) -> Optional[list[dict[str, Any]]]:
     logger.info("Fetching portfolio tree")
     json_res = api_connection.exec_get_url('/api/portfoliomanager/portfolios/embedded/', parameters)
     if json_res is None:
       return None
-    #print(json.dumps(json_res, indent=4))
     return create_embedded_tree_for_dropdown(json_res)
-    #return arr
+
 
   @staticmethod
   def get_portfolio_url(api_connection: ApiConnection, portfolio_pk: int):
