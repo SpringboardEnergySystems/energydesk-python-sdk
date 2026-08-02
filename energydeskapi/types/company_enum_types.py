@@ -11,6 +11,8 @@ class CompanyTypeEnum(Enum):
     TRADING_COMPANY = 7
     SERVICE_COMPANY = 8
     GENERAL_COMPANY = 9
+    POWER_SELLER = 10
+    POWER_PRODUCER = 10
 
 # The company type is the main type of a company, but a company may have several roles (operator, bank) (asset owner, portfolio manager)
 # Role is the most important property in terms of having appropriate access
@@ -87,6 +89,8 @@ def company_type_name(x):
         CompanyTypeEnum.TRADING_COMPANY.value: 'Trading Company',
         CompanyTypeEnum.SERVICE_COMPANY.value: 'Service Company',
         CompanyTypeEnum.GENERAL_COMPANY.value: 'General Company',
+        CompanyTypeEnum.POWER_SELLER.value: 'Power Seller',
+        CompanyTypeEnum.POWER_PRODUCER.value: 'Power Producer',
     }.get(x, 'Domestic')
 
 def user_role_descripton(x):
