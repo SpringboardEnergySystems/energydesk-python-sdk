@@ -12,7 +12,7 @@ class CompanyTypeEnum(Enum):
     SERVICE_COMPANY = 8
     GENERAL_COMPANY = 9
     POWER_SELLER = 10
-    POWER_PRODUCER = 10
+    POWER_PRODUCER = 11
 
 # The company type is the main type of a company, but a company may have several roles (operator, bank) (asset owner, portfolio manager)
 # Role is the most important property in terms of having appropriate access
