@@ -131,7 +131,7 @@ class _api_connection:
             logger.debug("[api_connection] No token available, returning empty auth header")
             return {}
         auth_value = str(self.token_type) + ' ' + str(self.token)
-        logger.debug(f"[api_connection] Authorization header: {self.token_type} {self.token[:30]}... (total length: {len(self.token)})")
+        logger.debug(f"[api_connection] Authorization header: {self.token_type} {self.token[:10]}... (total length: {len(self.token)})")
         return {'Authorization': auth_value}
 
     def exec_post_url_binary(self, trailing_url: str, payload: dict, extra_headers: dict={}) -> Response:
@@ -139,8 +139,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug(f"Calling POST URL binary {server_url}")
-        logger.debug(f"...with payload {payload} and headers {headers}")
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Calling POST URL binary {server_url} with payload {payload} and headers {self.headers_to_string(headers)}")
         return  requests.post(server_url, json=payload,   headers=headers)
 
     def exec_post_url(self, trailing_url: str, payload: dict, extra_headers: dict={}) -> tuple[bool, Optional[list|str], int, Optional[str]]:
@@ -157,8 +157,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug(f"Calling POST URL {server_url}")
-        logger.debug(f"...with payload {payload} and headers {headers}")
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Calling POST URL {server_url} with payload {payload} and headers {self.headers_to_string(headers)}")
         result = requests.post(server_url, json=payload,   headers=headers)
         if result.status_code<210:
             if result.status_code>200 and result.text.strip()=="":
@@ -174,6 +174,9 @@ class _api_connection:
             elif result.status_code==403:
                 raise AuthorizationFailedException("Not authorized: {}".format(result.text))
             return False, None, result.status_code, result.text
+
+    def headers_to_string(self, headers: dict[str, Any]) -> str:
+        return str(headers.keys()) if headers is not None else "None"
 
     def exec_delete_url(self, trailing_url: str,extra_headers: dict={}) -> tuple[bool, Optional[list|str], int, Optional[str]]:
         """Posts content from URL
@@ -217,8 +220,8 @@ class _api_connection:
         for key in extra_headers:
             headers[key]=extra_headers[key]
         server_url= self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
-        logger.debug(f"Calling PATCH URL {server_url}")
-        logger.debug(f"...with payload {payload} and headers {headers}")
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Calling PATCH URL {server_url} with payload {payload} and headers {self.headers_to_string(headers)}")
         result = requests.patch(server_url, json=payload,   headers=headers)
         if result.status_code<202:
             json_data = result.json()
@@ -250,8 +253,8 @@ class _api_connection:
             headers[key]=extra_headers[key]
         server_url: str = self._add_trailing_slash_if_missing(self.get_base_url() + trailing_url)
         logger.info(f"Calling GET URL {server_url}")
-        logger.info(f"[exec_get_url] Headers: Authorization={headers.get('Authorization', 'MISSING')[:50]}...")
-        logger.debug(f"...with headers {headers}")
+        logger.info(f"[exec_get_url] Headers: Authorization={headers.get('Authorization', 'MISSING')[:30]}...")
+        logger.debug(f"...with headers {self.headers_to_string(headers)}")
         if len(parameters.keys())>0:
             req = requests.Request('GET', server_url, headers=headers, params=parameters)
             prepared = req.prepare()
@@ -373,3 +376,6 @@ class ApiCache(Borg):
         Borg.__init__(self)
         if api_conn is not None:
             self.api_conn=api_conn
+
+
+IApiConnection = ApiConnection | ApiTempConnection

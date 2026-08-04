@@ -1,16 +1,59 @@
 
 import pandas as pd
 import numpy as np
+from typing import cast
+
+from energydeskapi.marketdata.product_utils import is_epad_from_series
 
 # Canonical portfolio ID used for all PFE calculations across services.
 # Change this value here when the PFE portfolio changes.
 PFE_PORTFOLIO_ID: int = 35
+
+# Legal price areas for PFE period-view processing. Rows in any other area are
+# dropped before recalculation (see filter_pfe_areas).
+PFE_ALLOWED_AREAS: tuple[str, ...] = ("NO1", "NO2", "NO3", "NO4", "NO5", "SYS")
 
 # Tiny nudge applied to netvol when buys exactly cancel sells (netvol == 0) but
 # cost != 0. Without it, avgcost falls back to 0 and the cost is silently lost
 # from M2M downstream. With it, avgcost becomes huge but
 # M2M = netvol*(price - avgcost) = eps*price - cost ≈ -cost is preserved.
 _NETVOL_EPS: float = 1e-9
+
+
+def assign_position_type(df: pd.DataFrame) -> pd.DataFrame:
+    """Set the ``type`` column ('EPAD' or 'AREA') from each row's structure_type.
+
+    EPAD legs are area-vs-SYS price-differential spreads (CFD,
+    ``StructureTypeEnum.CFD == 2``); system and plain area contracts are PLAIN
+    (== 1). Classification uses the canonical SDK rule
+    (:func:`is_epad_from_series`) on ``structure_type`` -- falling back to the
+    ``instrument`` name when structure_type is absent -- NOT on the area name.
+
+    Area-name heuristics are deliberately avoided: they break the moment the
+    backend changes area naming (e.g. 'SYSNO1' -> 'NO1'), which silently tags
+    every row 'AREA' so :func:`recalculate_sys` extracts no EPAD volume into the
+    SYS leg and the SYS avgcost comes out wrong. Keying on structure_type keeps
+    var-service and the portal classifying the period view identically.
+
+    Returns a copy with the ``type`` column set; the input frame is not mutated.
+    """
+    out = df.copy()
+    structure_type = pd.to_numeric(out.get("structure_type"), errors="coerce") \
+        if "structure_type" in out.columns else pd.Series(np.nan, index=out.index)
+    instrument = out["instrument"] if "instrument" in out.columns \
+        else pd.Series("", index=out.index)
+    epad_mask = is_epad_from_series(instrument, structure_type)
+    out["type"] = np.where(epad_mask.to_numpy(), "EPAD", "AREA")
+    return out
+
+
+def filter_pfe_areas(df: pd.DataFrame, areas=PFE_ALLOWED_AREAS) -> pd.DataFrame:
+    """Drop rows whose ``area`` is not a recognised PFE price area.
+    Returns a copy containing only rows in *areas* (default
+    :data:`PFE_ALLOWED_AREAS`).
+    """
+    mask: pd.Series = df["area"].isin(list(areas))
+    return cast(pd.DataFrame, df[mask].copy())
 
 
 def recalculate_sys(df: pd.DataFrame, combine_area_types: bool=True) -> pd.DataFrame:

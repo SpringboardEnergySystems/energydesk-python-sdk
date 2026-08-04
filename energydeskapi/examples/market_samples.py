@@ -12,6 +12,8 @@ from energydeskapi.marketdata.markets_api import MarketsApi
 from energydeskapi.marketdata.spotprices_api import SpotPricesApi
 from energydeskapi.marketdata.products_api import ProductsApi
 from energydeskapi.moneymarkets.moneymarkets_api import MoneyMarketsApi
+from finance.options.opcalc import asian_76,american,american_76,black_76,black_scholes,merton,garman_kohlhagen,kirks_76
+from finance.options.impl.helpers import assert_close
 from datetime import datetime
 import pendulum
 from energydeskapi.types.market_enum_types import MarketEnum, CommodityTypeEnum, InstrumentTypeEnum
@@ -40,20 +42,45 @@ def query_market_prices(api_conn):
 
 def query_product_prices(api_conn, products=['FEUA042026P086','FEUA042026']):
     today = pendulum.today('Europe/Oslo')
-    period_from = today.add(days=-150)
-    period_until = today.add(days=-110)
-    params={ 'product__market_ticker__in':products,'page_size':1000}
-    data=DerivativesApi.get_closing_prices(api_conn, params)
-    print(json.dumps(data['results'], indent=2))
+    period_from = today.add(days=-5)
+    period_until = today
+    params={ 'page_size':50}
+    params['price_date__gte'] = str(period_from)[:10]
+    params['price_date__lt'] = str(period_until)[:10]
+    params['product__commodity_definition__instrument_type__code__in'] = ["FUT"]
+    params['product__market_place__name__in'] = ["ICE"]
+    data=DerivativesApi.get_product_prices(api_conn, params)
+    #print(json.dumps(data['results'], indent=2))
 
 def query_market_prices_embedded(api_conn):
     yesterday = pendulum.yesterday('Europe/Oslo')
     today = pendulum.today('Europe/Oslo')
-    params={"price_date__gte": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
+    params={"price_date": str(yesterday),"price_date__lt": str(today), 'page_size':1000}
     params={'page_size':1000, 'area_filter__in':['SYS',"NO1"]}
-    jd=DerivativesApi.get_prices_embedded_json(api_conn, params)
+    jd=DerivativesApi.get_prices(api_conn, params)
     print(jd)
 
+def calculate_option_params(api_conn):
+    today = pendulum.today('Europe/Oslo')
+    period_from = today.add(days=0)
+    params={ 'page_size':5000}
+    params['price_date'] = str(period_from)[:10]
+    params['product__market_place__name'] = "ICE"
+    data=DerivativesApi.get_prices_embedded_json(api_conn, params)
+    #print(json.dumps(data['results'], indent=2))
+    for prod in data['results']:
+        ticker =prod['product']['market_ticker']
+        instr_code = prod['product']['commodity_definition']['instrument_type']['code']
+        #print(ticker, instr_code)
+        if instr_code=="EUROPT":
+            pass
+            #print(ticker, instr_code)
+            #bs = black_scholes('c', 3000, 5000, 1, 0.03, 0.4)
+            #print(bs)
+        elif instr_code=="FUT":
+            print(ticker, instr_code)
+            #bs = black_scholes('c', 3000, 5000, 1, 0.03, 0.4)
+            #print(bs)
 def query_market_types(api_conn):
 
     url=MarketsApi.get_market_url(api_conn, MarketEnum.CURRENCY_MARKET)
@@ -101,8 +128,9 @@ def manage_market_products(api_conn, ticker):
 
 
 def market_products(api_conn):
-    params={'page_size':500, 'market_place__in':[ MarketPlaceEnum.ICE.value]}
-    params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
+    params={'page_size':500}
+    #params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
+    params['market_ticker']= "IEUA112026"
     res=ProductsApi.get_market_products_embedded(api_conn, params)
 
     #pd.set_option('display.max_rows', None)
@@ -163,7 +191,8 @@ if __name__ == '__main__':
     api_conn=init_api()
 
     context = {}
-    market_products(api_conn)
+    #market_products(api_conn)
+    query_product_prices(api_conn)
     #get_spot_prices(api_conn)
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__instrument':'2025-01-01'})
     #print(df)
