@@ -21,19 +21,23 @@ logger = logging.getLogger(__name__)
 
 # this uses Apache kafka for python
 class KafkaClientAuthenticated(EventClient):
-    def __init__(self, kafka_host: str, kafka_port: str, kafka_user: str, kafka_password: str,
-                 security_protocol: str = "SASL_PLAINTEXT",
-                 sasl_mechanism: str = "SCRAM-SHA-512",
-                 api_version: tuple = (4, 1, 0)
-                 ):
+    def __init__(self, kafka_host: str, kafka_port: str, kafka_user: str, kafka_password: str):
         super().__init__()
+        # To simplify once we start to use Strimzi
+        env = environ.Env()
+        kafka_use_strimzi = env.bool('KAFKA_USE_STRIMZI', default=False)
+        if kafka_use_strimzi:
+            self.security_protocol = "SASL_PLAINTEXT"
+            self.sasl_mechanism = "SCRAM-SHA-512"
+            self.api_version: tuple = (4, 1, 0)
+        else:
+            self.security_protocol = "SASL_PLAINTEXT"
+            self.sasl_mechanism =  "PLAIN"
+            self.api_version: tuple = (3, 6, 0)
         self.kafka_host=kafka_host
         self.kafka_port=kafka_port
         self.kafka_user=kafka_user
         self.kafka_password=kafka_password
-        self.security_protocol = security_protocol
-        self.sasl_mechanism = sasl_mechanism
-        self.api_version = api_version
         self.client = None
 
 
