@@ -11,7 +11,7 @@ Expected ``monthly_rows`` shape
 Both functions accept a list of dicts with at least these keys::
 
     [
-        {"period": "2026-04", "forecast_production_mwh": 12345.6},
+        {"period": "2026-04", "forecast_production_mw": 45.6},
         ...
     ]
 
@@ -262,7 +262,7 @@ def write_production_forecast_to_influx(
     ----------
     monthly_rows:
         List of dicts, each with ``"period"`` (``"YYYY-MM"``) and
-        ``"forecast_production_mwh"`` (float).  Rows where the value is
+        ``"forecast_production_mw"`` (float).  Rows where the value is
         ``None`` or ``NaN`` are silently skipped.
     asset_meta:
         Asset metadata dict — see module docstring for the expected shape.
@@ -300,7 +300,7 @@ def write_production_forecast_to_influx(
         asset_meta=asset_meta,
         writer=writer,
         forecast_type="production",
-        value_key="forecast_production_mwh",
+        value_key="forecast_production_mw",
         scenario=scenario,
         price_area=price_area,
         bidzone=bidzone,
