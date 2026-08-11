@@ -29,7 +29,7 @@ class PortfolioTreeApi:
       return convert_embedded_tree_to_jstree(json_res)
 
   @staticmethod
-  def save_portfolio_flat_tree(api_connection,comp_key, portfolio_nodes):
+  def save_portfolio_flat_tree(api_connection, comp_key, portfolio_nodes, deleted_ids=None):
       logger.info("Saving portfolio tree (save_portfolio_flat_tree)")
       pnodes = convert_nodes_from_jstree(api_connection, portfolio_nodes)
       dictlist=[]
@@ -37,16 +37,20 @@ class PortfolioTreeApi:
           if p.manager is None or p.manager==0:
             p.manager=comp_key
           dictlist.append(p.get_dict(api_connection))
-      PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist)
+      PortfolioTreeApi.upsert_portfolio_tree_from_flat_dict(api_connection, dictlist, deleted_ids)
       return True
 
 
 
   @staticmethod
-  def upsert_portfolio_tree_from_flat_dict(api_connection: ApiConnection, portfolio_nodes):
+  def upsert_portfolio_tree_from_flat_dict(api_connection: ApiConnection, portfolio_nodes, deleted_ids=None):
+    # deleted_ids is explicit on purpose: a caller sending just a partial set of
+    # nodes (e.g. one new node to attach under an existing parent) must not have
+    # everything else it omitted treated as deleted.
+    payload = portfolio_nodes if not deleted_ids else {"nodes": portfolio_nodes, "deleted_ids": list(deleted_ids)}
 
     success, json_res, status_code, error_msg = api_connection.exec_post_url(
-              '/api/portfoliomanager/portfoliotree-creation/', payload=portfolio_nodes)
+              '/api/portfoliomanager/portfoliotree-creation/', payload=payload)
 
     return success, None
 
