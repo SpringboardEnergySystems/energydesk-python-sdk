@@ -35,6 +35,8 @@ import logging
 import os
 from typing import TYPE_CHECKING, Optional
 
+from matplotlib.pyplot import title
+
 if TYPE_CHECKING:
     from energydeskapi.auth.auth_fastapi import FastAPIOIDCAuth
 
@@ -95,6 +97,9 @@ def setup_oidc(title: str, app: FastAPI) -> Optional[FastAPIOIDCAuth]:
        with a different key or cookie name silently wipes the session on the
        OAuth callback, causing a CSRF state mismatch.
     """
+    cookie_path = os.environ.get("BACKEND_ROOT_PATH", "/")
+    auth = create_auth_from_env(title, app, secret_key=secret_key, cookie_path=cookie_path)
+
     enable_oidc = os.environ.get("ENABLE_OIDC", "false").lower() == "true"
     if not enable_oidc:
         logger.info("OIDC disabled (ENABLE_OIDC != true)")

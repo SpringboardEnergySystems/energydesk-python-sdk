@@ -13,6 +13,7 @@ import threading
 from typing import Optional, Dict, Any, Callable
 import logging
 from energydeskapi.auth.etrm_authorize import authorize_user_etrm
+import re
 logger = logging.getLogger(__name__)
 
 # Server-side token store: sub → access_token
@@ -97,7 +98,12 @@ class FastAPIOIDCAuth:
         if app:
             self.init_app(app, config)
 
-    def init_app(self,  app: FastAPI, config: Optional[Dict[str, Any]] = None):
+    def _cookie_name_from_title(title: str) -> str:
+        """'tradning Desk' → 'trading_desk_session'"""
+        slug = re.sub(r'[^a-Z0-9]+', '_', title.lower()).strip('_')
+        return f"{slug}_session"
+
+    def init_app(self,  app: FastAPI, config: Optional[Dict[str, Any]] = None, cookie_path: str = "/"):
         """Initialize with FastAPI app"""
 
         # Add session middleware.
@@ -106,11 +112,13 @@ class FastAPIOIDCAuth:
         # SameSite=lax is correct here: Azure/Google redirect back to the SAME domain
         # (e.g. hafslund.energydesk.no → hafslund.energydesk.no/clearing/auth/authorize/azure)
         # which is a same-site top-level navigation, so lax allows the cookie to be sent.
+        cookie_name = _cookie_name_from_title(self.title)
         app.add_middleware(
             SessionMiddleware,
             secret_key=self.secret_key,
-            session_cookie="clearing_session",
+            session_cookie=cookie_name,
             max_age=3600 * 24,  # 24 hours
+            path=cookie_path,
         )
 
         # Store app reference for OAuth
