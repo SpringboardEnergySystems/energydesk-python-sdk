@@ -112,8 +112,8 @@ class FastAPIOIDCAuth:
         # SameSite=lax is correct here: Azure/Google redirect back to the SAME domain
         # (e.g. hafslund.energydesk.no → hafslund.energydesk.no/clearing/auth/authorize/azure)
         # which is a same-site top-level navigation, so lax allows the cookie to be sent.
-        cookie_name = _cookie_name_from_title(self.title)
-        app.add_middleware(
+        cookie_name = self._cookie_name_from_title(self.title)
+        app.add_middleware(    
             SessionMiddleware,
             secret_key=self.secret_key,
             session_cookie=cookie_name,
