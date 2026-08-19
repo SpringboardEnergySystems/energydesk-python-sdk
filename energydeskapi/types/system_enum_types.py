@@ -21,6 +21,8 @@ class SystemFeaturesEnum(Enum):
     FEES = 17
     PRODUCTS = 18
     PRICES = 19
+    # related to companies
+    PROFILES = 20
 
 class SystemAccessTypeEnum(Enum):
     READ = 1

@@ -1,4 +1,6 @@
 import logging
+from typing import Optional, Any
+
 import pandas as pd
 #from energydeskapi.sdk.common_utils import parse_enum_type
 import json
@@ -11,7 +13,7 @@ logger = logging.getLogger(__name__)
 class LoadStaticMatrices:
     
     @staticmethod
-    def get_matrices(api_connection: ApiConnection):
+    def get_matrices(api_connection: ApiConnection) -> Optional[list[dict]]:
         logger.info("Fetching matrices")
         json_res=api_connection.exec_get_url('/api/creditrisk/staticmatrix/')
         if json_res is not None:
@@ -24,7 +26,7 @@ class MatrixApi:
     Class for matrix API wrapper
     """
     @staticmethod
-    def update_matrix(api_connection: ApiConnection, matrix):
+    def update_matrix(api_connection: ApiConnection, matrix: dict) -> bool:
         """Updates matrices
 
         :param api_connection: class with API token for use with API
@@ -42,7 +44,7 @@ class MatrixApi:
             return True
 
     @staticmethod
-    def get_matrices(api_connection: ApiConnection):
+    def get_matrices(api_connection: ApiConnection) -> Optional[list[dict]]:
         """Fetching list of companies
 
         :param api_connection: class with API token for use with API
@@ -55,7 +57,7 @@ class MatrixApi:
         return None
 
     @staticmethod
-    def get_matrix(api_connection: ApiConnection, pk: int):
+    def get_matrix(api_connection: ApiConnection, pk: int) -> Optional[dict]:
         """Fetches rated company
 
         :param api_connection: class with API token for use with API
@@ -68,7 +70,7 @@ class MatrixApi:
         return None
     
     @staticmethod
-    def post_matrix(api_connection: ApiConnection, id, payload):
+    def post_matrix(api_connection: ApiConnection, id: int, payload: dict) -> Optional[dict]:
         logger.info("Posting matrix with id " + str(id))
         json_res=api_connection.exec_post_url('/api/creditrisk/staticmatrix/', payload)
         if json_res is not None:
@@ -76,7 +78,7 @@ class MatrixApi:
         return None
 
     @staticmethod
-    def post_matrix_from_excel(api_connection: ApiConnection, name, file_path):
+    def post_matrix_from_excel(api_connection: ApiConnection, name: str, file_path: str) -> bool:
         context = pd.read_excel(file_path)
         json_data = json.loads(context.to_json(orient="records"))
         data = {
