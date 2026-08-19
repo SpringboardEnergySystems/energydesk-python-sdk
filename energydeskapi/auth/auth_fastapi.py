@@ -14,6 +14,8 @@ from typing import Optional, Dict, Any, Callable
 import logging
 from energydeskapi.auth.etrm_authorize import authorize_user_etrm
 import re
+import requests
+import time
 logger = logging.getLogger(__name__)
 
 # Server-side token store: sub → access_token
@@ -29,6 +31,86 @@ _id_token_store: Dict[str, str] = {}
 _id_token_store_lock = threading.Lock()
 
 
+# Server-side refresh_token store: sub → refresh_token
+# Used to silently mint new access/id tokens without a browser round-trip.
+_refresh_token_store: Dict[str, str] = {} 
+_refresh_token_store_lock = threading.Lock()
+
+
+# Server-side token expiry store: sub → id_token 'exp' claim (epoch seconds)
+# Lets _get_id_token() proactively refresh before the token actually expires.
+_token_expiry_store: Dict[str, float] = {}
+_token_expiry_store_lock = threading.Lock()
+
+_google_client_id: Optional[str] = None
+_google_client_secret: Optional[str] = None
+_GOOGLE_TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
+
+
+def refresh_google_token(sub: str) -> Optional[str]:
+    """
+    Attempt to silently refresh the Google id_token for *sub* using its
+    stored refresh_token. Synchronous — calls Google's token endpoint
+    directly via `requests` rather than Authlib's async Starlette client,
+    to stay compatible with the sync call chain in authorization.py.
+
+    Updates _token_store / _id_token_store / _token_expiry_store /
+    _refresh_token_store in place on success.
+
+    Returns the new id_token, or None if there's no refresh_token stored,
+    Google client config is missing, or the refresh itself fails (refresh
+    token revoked/expired — caller falls back to treating the user as
+    needing to re-login).
+    """
+    with _refresh_token_store_lock:
+        refresh_token = _refresh_token_store.get(sub)
+
+    if not refresh_token:
+        logger.warning(f"[refresh] No refresh_token stored for sub={sub}")
+        return None
+    if not _google_client_id or not _google_client_secret:
+        logger.error("[refresh] Google client_id/secret not configured — cannot refresh")
+        return None
+
+    try:
+        resp = requests.post(
+            _GOOGLE_TOKEN_ENDPOINT,
+            data={
+                'client_id': _google_client_id,
+                'client_secret': _google_client_secret,
+                'refresh_token': refresh_token,
+                'grant_type': 'refresh_token',
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        new_token = resp.json()
+    except requests.RequestException as exc:
+        logger.error(f"[refresh] Google token refresh failed for sub={sub}: {exc}")
+        return None
+
+    access_token = new_token.get('access_token')
+    id_token = new_token.get('id_token')
+    expires_in = new_token.get('expires_in')
+
+    if access_token:
+        with _token_store_lock:
+            _token_store[sub] = access_token
+    if id_token:
+        with _id_token_store_lock:
+            _id_token_store[sub] = id_token
+    if expires_in:
+        with _token_expiry_store_lock:
+            _token_expiry_store[sub] = time.time() + float(expires_in)
+    # Google doesn't rotate refresh tokens by default — keep the existing
+    # one unless a new one is explicitly issued.
+    if new_token.get('refresh_token'):
+        with _refresh_token_store_lock:
+            _refresh_token_store[sub] = new_token['refresh_token']
+
+    logger.info(f"[refresh] Refreshed Google token for sub={sub}")
+    return id_token
+
 class FastAPIOIDCAuth:
     """Multi-provider OIDC authentication handler for FastAPI"""
 
@@ -43,6 +125,7 @@ class FastAPIOIDCAuth:
             'name': 'google',
             'server_metadata_url': 'https://accounts.google.com/.well-known/openid-configuration',
             'client_kwargs': {'scope': 'openid email profile'},
+            'authorize_params': {'access_type': 'offline', 'prompt': 'consent'},
             'display_name': 'Google'
         },
         'django': {
@@ -98,9 +181,10 @@ class FastAPIOIDCAuth:
         if app:
             self.init_app(app, config)
 
+    @staticmethod
     def _cookie_name_from_title(title: str) -> str:
-        """'tradning Desk' → 'trading_desk_session'"""
-        slug = re.sub(r'[^a-Z0-9]+', '_', title.lower()).strip('_')
+        """'Trading Desk' → 'trading_desk_session'"""
+        slug = re.sub(r'[^a-z0-9]+', '_', title.lower()).strip('_')
         return f"{slug}_session"
 
     def init_app(self,  app: FastAPI, config: Optional[Dict[str, Any]] = None, cookie_path: str = "/"):
@@ -161,12 +245,20 @@ class FastAPIOIDCAuth:
                 logger.info(f"  - userinfo_endpoint: {template['userinfo_endpoint']}")
                 logger.info(f"  - jwks_uri: {template['jwks_uri']}")
 
+            # Handle Google client_id/client_secret for server-side ID token verification
+            if provider_key == 'google':
+                global _google_client_id, _google_client_secret
+                _google_client_id = provider_config['client_id']
+                _google_client_secret = provider_config['client_secret']
+
             # Register with Authlib for Starlette
             oauth_config = {
                 'client_id': provider_config['client_id'],
                 'client_secret': provider_config['client_secret'],
                 'client_kwargs': template['client_kwargs']
             }
+            if template.get('authorize_params'):
+                oauth_config['authorize_params'] = template['authorize_params']
 
             if template.get('server_metadata_url'):
                 oauth_config['server_metadata_url'] = template['server_metadata_url']
@@ -624,6 +716,26 @@ class FastAPIOIDCAuth:
             else:
                 logger.warning(f"[OAuth callback] Missing access_token or sub for {provider}: access_token={access_token is not None}, sub={sub}")
 
+
+            if provider == 'google' and sub:
+                refresh_token = token.get('refresh_token')
+                if refresh_token:
+                    with _refresh_token_store_lock:
+                        _refresh_token_store[sub] = refresh_token
+                    logger.info(f"[OAuth callback] Stored refresh_token server-side for sub={sub}")
+                else:
+                    logger.warning(
+                        f"[OAuth callback] No refresh_token for sub={sub} — Google only "
+                        "issues one on first consent; needs access_type=offline (+ prompt=consent)"
+                    )
+
+                expires_at = token.get('expires_at')
+                if expires_at is None and token.get('expires_in'):
+                    expires_at = time.time() + float(token['expires_in'])
+                if expires_at:
+                    with _token_expiry_store_lock:
+                        _token_expiry_store[sub] = float(expires_at)
+
             # Store id_token server-side (Google — used for appserver verification)
             id_token = token.get('id_token')
             if id_token and sub and provider == 'google':
@@ -879,6 +991,7 @@ class FastAPIOIDCAuth:
         Returns None if not authenticated, not a Google session, or the
         server-side store has been cleared (e.g. server restart).
         """
+
         user = self.get_current_user(request)
         if not user or user.get('provider') != 'google':
             return None
