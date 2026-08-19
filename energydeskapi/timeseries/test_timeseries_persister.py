@@ -35,7 +35,7 @@ class TestWriteProductionForecastToInflux(TestCase):
         writer = _FakeWriter()
         from energydeskapi.timeseries.timeseries_persister import write_production_forecast_to_influx
         n = write_production_forecast_to_influx(
-            monthly_rows=[{"period": "2026-06", "forecast_production_mwh": 10.0}],
+            monthly_rows=[{"period": "2026-06", "forecast_production_mw": 10.0}],
             asset_meta={"pk": 2, "name": "Other", "asset_type": "wind", "owner": "Acme"},
             writer=writer,
         )
@@ -49,7 +49,7 @@ class TestWriteProductionForecastToInflux(TestCase):
         writer = _FakeWriter()
         from energydeskapi.timeseries.timeseries_persister import write_production_forecast_to_influx
         n = write_production_forecast_to_influx(
-            monthly_rows=[{"period": "2026-06", "forecast_production_mwh": 123.4}],
+            monthly_rows=[{"period": "2026-06", "forecast_production_mw": 123.4}],
             asset_meta={"pk": 1, "name": "Iveland", "asset_type": "hydro", "owner": "Acme", "price_area": "NO1"},
             writer=writer,
             customer_id="celsio",
@@ -65,7 +65,7 @@ class TestWriteProductionForecastToInflux(TestCase):
         writer = _FakeWriter()
         from energydeskapi.timeseries.timeseries_persister import write_production_forecast_to_influx
         n = write_production_forecast_to_influx(
-            monthly_rows=[{"period": "2026-06", "forecast_production_mwh": 1.0}],
+            monthly_rows=[{"period": "2026-06", "forecast_production_mw": 1.0}],
             asset_meta={"pk": 3, "name": "Flaky", "asset_type": "hydro", "owner": "Acme"},
             writer=writer,
             customer_id="celsio",

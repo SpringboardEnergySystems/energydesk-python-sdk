@@ -48,7 +48,7 @@ def get_contract_counterparts(api_conn):
     print(json_contractfilter)
 
 def get_contracts_flat(api_conn):
-    res=ContractsApi.get_contracts_flat(api_conn, {'page_size':50,'marketplace_product__market_place__in':[MarketPlaceEnum.EURONEXT.value]})
+    res=ContractsApi.get_contracts_flat(api_conn, {'page_size':50})
 
     df=pd.DataFrame(data=res['results'])
     #print(df.columns)
@@ -58,7 +58,7 @@ def get_contracts_flat(api_conn):
 
 
 def get_contracts(api_conn):
-    parameters={"page_size":100, "commodity__instrument_type__in":[5]}
+    parameters={"page_size":100}
     json_data = ContractsApi.list_contracts_embedded(api_conn,parameters)
     for rec in json_data['results']:
         print(json.dumps(rec, indent=2))
