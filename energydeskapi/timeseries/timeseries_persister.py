@@ -366,3 +366,75 @@ def write_sales_forecast_to_influx(
         customer_id=customer_id,
         timeseries_date=timeseries_date,
     )
+
+
+def write_consumption_forecast_to_influx(
+    monthly_rows: list[dict],
+    asset_meta: dict,
+    writer,
+    scenario: str = "median",
+    price_area: str = "",
+    bidzone: str = "",
+    resolution: str = "month",
+    customer_id: Optional[str] = None,
+    timeseries_date: Optional[str] = None,
+) -> int:
+    """Write monthly consumption forecast rows to InfluxDB.
+
+    Used for demand-side assets (B2B business loads, household portfolios,
+    industrial sites).  Identical in shape to
+    ``write_production_forecast_to_influx`` except the value key is
+    ``"forecast_consumption_mwh"`` and ``forecast_type`` is ``"consumption"``.
+
+    Note on units
+    -------------
+    Unlike the production writer — which passes an average-MW value into
+    ``value_mwh`` — this writer expects a true **MWh volume** for the period.
+    That makes consumption directly comparable to the ``sellvol`` / ``buyvol``
+    MWh figures returned by the portfoliocalc period view, which is what the
+    Origination "Hedge Coverage" page needs when netting expected customer
+    demand against contracted volume.
+
+    Parameters
+    ----------
+    monthly_rows:
+        List of dicts, each with ``"period"`` (``"YYYY-MM"``) and
+        ``"forecast_consumption_mwh"`` (float, MWh for that month).
+    asset_meta:
+        Asset metadata dict — see module docstring for the expected shape.
+        For consumption assets ``capacity_mw`` should carry the peak load
+        in MW (``peak_kw / 1000``).
+    writer:
+        An ``_InfluxWriter`` instance (from ``build_influx_sink()``).
+    scenario:
+        Forecast scenario tag: ``"median"`` (default), ``"high"``, or ``"low"``.
+    price_area:
+        Optional spot market price area override (e.g. ``"NO1"``, ``"NO2"``).
+        When non-empty, overrides the value in ``asset_meta``.
+    bidzone:
+        Optional bidding-zone override.
+    resolution:
+        Duration of each data point (default ``"month"``).
+    customer_id:
+        See ``write_production_forecast_to_influx``.
+    timeseries_date:
+        See ``write_production_forecast_to_influx``.
+
+    Returns
+    -------
+    int
+        Number of points successfully written.
+    """
+    return _write_forecast(
+        monthly_rows=monthly_rows,
+        asset_meta=asset_meta,
+        writer=writer,
+        forecast_type="consumption",
+        value_key="forecast_consumption_mwh",
+        scenario=scenario,
+        price_area=price_area,
+        bidzone=bidzone,
+        resolution=resolution,
+        customer_id=customer_id,
+        timeseries_date=timeseries_date,
+    )
