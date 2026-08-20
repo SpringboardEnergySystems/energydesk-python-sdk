@@ -15,7 +15,6 @@ class EvictionCache[K, T]:
         self.cache: dict[K, CacheEntry[T]] = {}
         self._max_size = max_size
 
-
     def put(self, key: K, value: T) -> None:
         self.cache[key] = CacheEntry(value=value, last_accessed=datetime.now())
         self._evict_old_entries()
@@ -40,3 +39,6 @@ class EvictionCache[K, T]:
             for i in range(len(self.cache) - self._max_size):
                 key, entry = sorted_entries[i]
                 del self.cache[key]
+
+    def keys_in_cache(self) -> list[K]:
+        return list(self.cache.keys())
