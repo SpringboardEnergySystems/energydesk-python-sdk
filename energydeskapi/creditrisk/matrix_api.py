@@ -26,7 +26,7 @@ class MatrixApi:
     Class for matrix API wrapper
     """
     @staticmethod
-    def update_matrix(api_connection: ApiConnection, matrix: dict) -> bool:
+    def update_matrix(api_connection: ApiConnection, pk: int, matrix: dict) -> bool:
         """Updates matrices
 
         :param api_connection: class with API token for use with API
@@ -35,12 +35,12 @@ class MatrixApi:
         :type user: str, required
         """
          #If rated_company[0] is zero, we should send a POST command in stead; and/or use a different function for it
-        success, json_res, status_code, error_msg = api_connection.exec_patch_url('/api/creditrisk/staticmatrix/', matrix)
+        success, json_res, status_code, error_msg = api_connection.exec_patch_url(f'/api/creditrisk/staticmatrix/{pk}/', matrix)
         if json_res is None:
-            logger.error("Problems updating matrix " + str(matrix))
+            logger.error(f"Problems updating matrix {pk}: {matrix}")
             return False
         else:
-            logger.info("Updated matrix")
+            logger.info(f"Updated matrix {pk}")
             return True
 
     @staticmethod
