@@ -13,11 +13,23 @@ them (see energydesk-insight's insight/api/timeseries_catalog.py). A single
 `marketdata` flag on every function here does double duty: it selects the
 URL path (assetdata/ vs marketdata/) AND, since a deployment serving one
 customer's data doesn't necessarily also serve the shared market-data
-catalog, which Insight deployment to call — INSIGHT_MARKETDATA_API_URL /
-INSIGHT_MARKETDATA_API_TOKEN when set, falling back to
-INSIGHT_API_URL/INSIGHT_API_TOKEN otherwise (the common case where they're
-the same instance, e.g. local dev, or a combined deployment that has both
-DB_ASSETDATA_CATALOG and DB_MARKETDATA_CATALOG configured).
+catalog, which Insight deployment to call — POD_INSIGHTMARKETDATA_URL when
+set, falling back to POD_INSIGHT_URL otherwise (the common case where
+they're the same instance, e.g. local dev, or a combined deployment that
+has both DB_ASSETDATA_CATALOG and DB_MARKETDATA_CATALOG configured).
+
+Authentication follows SERVICE-AUTH.md (energydesk-ai-context): services
+are reached via POD_*_URL env vars and authenticate service-to-service with
+the shared API_INTERNAL_POD_TOKEN. Catalog registration only ever happens
+from writers / background jobs — the sink-conditional rule guarantees there
+is no user context — so the pod token is the correct primary credential
+here, not a fallback. (Contrast with user-initiated paths such as loading
+contracts from the appserver, where the user's own bearer token must be
+forwarded end-to-end.)
+
+The pre-SERVICE-AUTH env vars (INSIGHT_MARKETDATA_API_URL/_TOKEN and
+INSIGHT_API_URL/_TOKEN) are still honoured as deprecated fallbacks, with a
+warning logged, until all deployments have migrated.
 
 Construction is lazy: importing this module never touches the network or
 raises, even when the relevant env vars are unset. They are only read (and
@@ -40,7 +52,7 @@ _DEFAULT_TIMEOUT = 10
 
 
 class CatalogNotConfiguredError(RuntimeError):
-    """Raised when the relevant INSIGHT_*_API_URL / INSIGHT_*_API_TOKEN are not set at call time."""
+    """Raised when the relevant POD_*_URL / API_INTERNAL_POD_TOKEN are not set at call time."""
 
 
 class CatalogApiError(RuntimeError):
@@ -48,14 +60,46 @@ class CatalogApiError(RuntimeError):
 
 
 def _config(marketdata: bool) -> tuple[str, str]:
+    # SERVICE-AUTH.md convention: POD_*_URL for service addresses,
+    # API_INTERNAL_POD_TOKEN as the shared service-to-service credential.
     if marketdata:
-        url = os.getenv("INSIGHT_MARKETDATA_API_URL", "") or os.getenv("INSIGHT_API_URL", "")
-        token = os.getenv("INSIGHT_MARKETDATA_API_TOKEN", "") or os.getenv("INSIGHT_API_TOKEN", "")
+        url = os.getenv("POD_INSIGHTMARKETDATA_URL", "") or os.getenv("POD_INSIGHT_URL", "")
     else:
-        url = os.getenv("INSIGHT_API_URL", "")
-        token = os.getenv("INSIGHT_API_TOKEN", "")
+        url = os.getenv("POD_INSIGHT_URL", "")
+    token = os.getenv("API_INTERNAL_POD_TOKEN", "")
+
+    # ── Deprecated fallbacks (pre-SERVICE-AUTH naming) ────────────────────
+    # Remove once all deployments have migrated to POD_*_URL /
+    # API_INTERNAL_POD_TOKEN in GitOps.
+    if not url:
+        if marketdata:
+            legacy_url = os.getenv("INSIGHT_MARKETDATA_API_URL", "") or os.getenv("INSIGHT_API_URL", "")
+        else:
+            legacy_url = os.getenv("INSIGHT_API_URL", "")
+        if legacy_url:
+            logger.warning(
+                "Timeseries catalog: using deprecated INSIGHT_*_API_URL env var — "
+                "migrate this deployment to POD_INSIGHTMARKETDATA_URL / POD_INSIGHT_URL (see SERVICE-AUTH.md)."
+            )
+            url = legacy_url
+    if not token:
+        if marketdata:
+            legacy_token = os.getenv("INSIGHT_MARKETDATA_API_TOKEN", "") or os.getenv("INSIGHT_API_TOKEN", "")
+        else:
+            legacy_token = os.getenv("INSIGHT_API_TOKEN", "")
+        if legacy_token:
+            logger.warning(
+                "Timeseries catalog: using deprecated INSIGHT_*_API_TOKEN env var — "
+                "migrate this deployment to API_INTERNAL_POD_TOKEN (see SERVICE-AUTH.md)."
+            )
+            token = legacy_token
+
     if not url or not token:
-        var_hint = "INSIGHT_MARKETDATA_API_URL/_TOKEN (or INSIGHT_API_URL/_TOKEN)" if marketdata else "INSIGHT_API_URL/INSIGHT_API_TOKEN"
+        var_hint = (
+            "POD_INSIGHTMARKETDATA_URL (or POD_INSIGHT_URL) and API_INTERNAL_POD_TOKEN"
+            if marketdata
+            else "POD_INSIGHT_URL and API_INTERNAL_POD_TOKEN"
+        )
         raise CatalogNotConfiguredError(f"{var_hint} must be set to use the timeseries catalog client.")
     return url.rstrip("/"), token
 
@@ -114,8 +158,8 @@ def get_or_create_definition(
     not part of the identity constraint, purely descriptive/filterable.
 
     `marketdata`: True to target the shared market-data Insight deployment
-    (INSIGHT_MARKETDATA_API_URL) instead of this writer's own local instance
-    (INSIGHT_API_URL). See module docstring.
+    (POD_INSIGHTMARKETDATA_URL) instead of this writer's own local instance
+    (POD_INSIGHT_URL). See module docstring.
     """
     payload = {
         "customer_id": customer_id,
@@ -220,7 +264,7 @@ def get_or_create_definition_and_instance(
     (instance id, as a string) to tag InfluxDB points with.
 
     `marketdata=True` targets the shared market-data Insight deployment
-    (INSIGHT_MARKETDATA_API_URL, falling back to INSIGHT_API_URL if unset)
+    (POD_INSIGHTMARKETDATA_URL, falling back to POD_INSIGHT_URL if unset)
     instead of this writer's own local instance — e.g. a forward-curves
     worker needs the shared catalog even when deployed inside a customer's
     namespace. Both the definition and instance calls use the same value so
