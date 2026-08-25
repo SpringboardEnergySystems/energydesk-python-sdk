@@ -28,13 +28,13 @@ class ScheduledJob:
         self.is_active = None
 
     def get_dict(self, api_conn):
-        dict = {'pk':self.pk}
-        if self.job_definition_pk  != 0: dict['job_definition'] = SchedulerApi.get_job_definition_url(api_conn,self.job_definition_pk)
-        if self.crontab is not None: dict['crontab'] = self.crontab
-        if self.dynamic_parameter is not None: dict['dynamic_parameter'] = self.dynamic_parameter
-        if self.dynamic_config is not None: dict['dynamic_config'] = self.dynamic_config
-        if self.is_active is not None: dict['is_active'] = self.is_active
-        return dict
+        dc = {'pk':self.pk}
+        if self.job_definition_pk  != 0: dc['job_definition'] = SchedulerApi.get_job_definition_url(api_conn,self.job_definition_pk)
+        if self.crontab is not None: dc['crontab'] = self.crontab
+        if self.dynamic_parameter is not None: dc['dynamic_parameter'] = self.dynamic_parameter
+        if self.dynamic_config is not None: dc['dynamic_config'] = self.dynamic_config
+        if self.is_active is not None: dc['is_active'] = self.is_active
+        return dc
 
 class ScheduledJobExecution:
     def __init__(self):
