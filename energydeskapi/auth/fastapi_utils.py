@@ -35,6 +35,8 @@ import logging
 import os
 from typing import TYPE_CHECKING, Optional
 
+from matplotlib.pyplot import title
+
 if TYPE_CHECKING:
     from energydeskapi.auth.auth_fastapi import FastAPIOIDCAuth
 
