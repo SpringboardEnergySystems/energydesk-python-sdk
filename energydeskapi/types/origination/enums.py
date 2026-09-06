@@ -105,3 +105,20 @@ def offer_status_description(x: OfferStatusEnum) -> str:
 #: Offer statuses that mean an offer can still be acted on (mirrors
 #: ContractOffer.is_open on the appserver).
 OPEN_OFFER_STATUSES = (OfferStatusEnum.PUBLISHED, OfferStatusEnum.VIEWED)
+
+
+class ApprovalDecisionEnum(str, Enum):
+    """Mirrors origination.models.APPROVAL_CHOICES (DealApproval.decision)."""
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    WITHDRAWN = "WITHDRAWN"
+
+
+def approval_decision_description(x: ApprovalDecisionEnum) -> str:
+    return {
+        ApprovalDecisionEnum.PENDING: "Pending",
+        ApprovalDecisionEnum.APPROVED: "Approved",
+        ApprovalDecisionEnum.REJECTED: "Rejected",
+        ApprovalDecisionEnum.WITHDRAWN: "Withdrawn",
+    }[x]
