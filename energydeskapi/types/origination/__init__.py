@@ -1,9 +1,11 @@
 from energydeskapi.types.origination.enums import (
+    ApprovalDecisionEnum,
     ContractFamilyEnum,
     DealStatusEnum,
     OfferKindEnum,
     OfferStatusEnum,
     OPEN_OFFER_STATUSES,
+    approval_decision_description,
     contract_family_description,
     deal_status_description,
     offer_kind_description,
@@ -14,11 +16,13 @@ from energydeskapi.types.origination.profile import Profile, ProfilePeriod
 from energydeskapi.types.origination.pricing import Decomposition, MerchantBaseline, Pricing, Scenario
 
 __all__ = [
+    "ApprovalDecisionEnum",
     "ContractFamilyEnum",
     "DealStatusEnum",
     "OfferKindEnum",
     "OfferStatusEnum",
     "OPEN_OFFER_STATUSES",
+    "approval_decision_description",
     "contract_family_description",
     "deal_status_description",
     "offer_kind_description",

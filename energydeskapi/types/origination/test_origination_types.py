@@ -3,6 +3,7 @@ from unittest import TestCase
 from pydantic import ValidationError
 
 from energydeskapi.types.origination import (
+    ApprovalDecisionEnum,
     ContractFamilyEnum,
     DealStatusEnum,
     OfferKindEnum,
@@ -12,6 +13,7 @@ from energydeskapi.types.origination import (
     Profile,
     ProfilePeriod,
     Terms,
+    approval_decision_description,
     contract_family_description,
     deal_status_description,
     offer_kind_description,
@@ -24,7 +26,7 @@ from energydeskapi.types.origination.terms import RuleObject
 # rename/removal on the appserver side breaks this test instead of silently
 # drifting. Keep these lists in sync with:
 #   energydesk/apps/portfoliomanager/models.py::CONTRACT_FAMILY_CHOICES
-#   energydesk/apps/origination/models.py::DEAL_STATUS_CHOICES / OFFER_KIND_CHOICES / OFFER_STATUS_CHOICES
+#   energydesk/apps/origination/models.py::DEAL_STATUS_CHOICES / OFFER_KIND_CHOICES / OFFER_STATUS_CHOICES / APPROVAL_CHOICES
 DJANGO_CONTRACT_FAMILY_VALUES = {
     "STANDARD", "FINANCIAL_BILATERAL", "PHYSICAL_STRUCTURED",
     "CERTIFICATE", "CAPACITY", "FX", "TRANSFER",
@@ -37,6 +39,7 @@ DJANGO_OFFER_KIND_VALUES = {"INDICATIVE", "FIRM"}
 DJANGO_OFFER_STATUS_VALUES = {
     "PUBLISHED", "VIEWED", "ACCEPTED", "DECLINED", "COUNTERED", "EXPIRED", "WITHDRAWN",
 }
+DJANGO_APPROVAL_DECISION_VALUES = {"PENDING", "APPROVED", "REJECTED", "WITHDRAWN"}
 
 
 class TestEnumsMirrorDjangoChoices(TestCase):
@@ -52,6 +55,9 @@ class TestEnumsMirrorDjangoChoices(TestCase):
     def test_offer_status_enum_matches_django(self):
         self.assertEqual({e.value for e in OfferStatusEnum}, DJANGO_OFFER_STATUS_VALUES)
 
+    def test_approval_decision_enum_matches_django(self):
+        self.assertEqual({e.value for e in ApprovalDecisionEnum}, DJANGO_APPROVAL_DECISION_VALUES)
+
     def test_open_offer_statuses_are_a_subset(self):
         self.assertTrue(set(OPEN_OFFER_STATUSES).issubset(set(OfferStatusEnum)))
 
@@ -64,6 +70,8 @@ class TestEnumsMirrorDjangoChoices(TestCase):
             self.assertIsInstance(offer_kind_description(e), str)
         for e in OfferStatusEnum:
             self.assertIsInstance(offer_status_description(e), str)
+        for e in ApprovalDecisionEnum:
+            self.assertIsInstance(approval_decision_description(e), str)
 
 
 class TestTerms(TestCase):
