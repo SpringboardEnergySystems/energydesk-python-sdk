@@ -37,6 +37,7 @@ logger = logging.getLogger(__name__)
 # Cache TTL in seconds (env-configurable, default 5 min)
 _CACHE_TTL: int = int(os.getenv('APPSERVER_PROFILE_CACHE_TTL_SECONDS', '300'))
 _CACHE_SESSION_KEY = 'appserver_profile_cache'
+_REFRESH_SKEW_SECONDS: int = int(os.getenv('GOOGLE_TOKEN_REFRESH_SKEW_SECONDS', '60'))
 
 
 # ---------------------------------------------------------------------------
@@ -140,15 +141,41 @@ def _store_cached_profile(request: Request, sub: str, profile: Dict[str, Any]) -
 # ---------------------------------------------------------------------------
 
 def _get_id_token(request: Request, sub: str) -> Optional[str]:
-    """Retrieve the Google id_token from the SDK's server-side store."""
+    """
+    Retrieve the Google id_token from the SDK's server-side store.
+
+    Proactively refreshes it first if it's expired or within
+    _REFRESH_SKEW_SECONDS of expiring, so callers never hand a stale
+    token to the appserver.
+    """
     try:
-        from energydeskapi.auth.auth_fastapi import _id_token_store, _id_token_store_lock
-        with _id_token_store_lock:
-            return _id_token_store.get(sub)
+        from energydeskapi.auth.auth_fastapi import (
+            _id_token_store, _id_token_store_lock,
+            _token_expiry_store, _token_expiry_store_lock,
+            refresh_google_token,
+        )
     except ImportError:
-        logger.error("[authz] Cannot import _id_token_store from SDK")
+        logger.error("[authz] Cannot import token stores from SDK")
         return None
 
+    with _token_expiry_store_lock:
+        expires_at = _token_expiry_store.get(sub)
+
+    if expires_at is not None and (expires_at - time.time()) < _REFRESH_SKEW_SECONDS:
+        logger.info(
+            f"[authz] id_token for sub={sub} expires in "
+            f"{expires_at - time.time():.0f}s — refreshing proactively"
+        )
+        new_id_token = refresh_google_token(sub)
+        if new_id_token:
+            return new_id_token
+        logger.warning(
+            f"[authz] Proactive refresh failed for sub={sub} — falling back to "
+            "cached (possibly stale) id_token; reactive 401 retry is the last resort"
+        )
+
+    with _id_token_store_lock:
+        return _id_token_store.get(sub)
 
 def authorize_session_user(
     session_user: Dict[str, Any],
