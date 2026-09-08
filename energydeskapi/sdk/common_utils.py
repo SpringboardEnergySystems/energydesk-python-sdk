@@ -1,6 +1,6 @@
 import logging
 from os.path import join, dirname
-from typing import Optional, TypeVar, Any, AnyStr
+from typing import Optional, TypeVar, Any, AnyStr, Callable
 
 from dotenv import load_dotenv
 import environ
@@ -140,3 +140,10 @@ def split_in_chunks(items: list[T], size: int) -> list[list[T]]:
 
 def flatten_nested2_list(nested_list: list[list[T]]) -> list[T]:
     return [item for simple_lost in nested_list for item in simple_lost]
+
+
+O = TypeVar("O")
+R = TypeVar("R")
+
+def optional_map(opt: Optional[O], fn: Callable[[O], R]) -> Optional[R]:
+    return fn(opt) if opt is not None else None

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from energydeskapi.sdk.common_utils import split_in_chunks, not_nones_in_list, not_nones_in_dict_values, \
-    optional_to_list, flatten_nested2_list
+    optional_to_list, flatten_nested2_list, optional_map
 
 
 class TestCommonUtils(TestCase):
@@ -22,3 +22,8 @@ class TestCommonUtils(TestCase):
 
     def test_flatten_nested2_list(self):
         self.assertListEqual(flatten_nested2_list([[1,2,3], [4,5,6], [7]]), [1,2,3,4,5,6,7])
+
+    def test_optional_map(self):
+        self.assertEqual(optional_map(None, lambda x: x*2), None)
+        self.assertEqual(optional_map(3, lambda x: x*2), 6)
+        self.assertEqual(optional_map("ciao", lambda x: x.upper()), "CIAO")
