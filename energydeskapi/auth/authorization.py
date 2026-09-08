@@ -57,6 +57,14 @@ class AuthorizedUser:
     oauth_provider: str
     full_name: str
     raw_session: Dict[str, Any] = field(default_factory=dict)
+    # True when we could not even ask the appserver whether this user is
+    # registered, because the id_token needed to make that call is gone
+    # (typically: server restart cleared the in-memory token store, but the
+    # browser's session cookie survived). This is a *session* problem, not an
+    # authorization verdict — the fix is "log in again", not "contact an
+    # admin". Kept distinct from is_registered=False so callers can return
+    # 401 (please re-authenticate) instead of 403 (you are not entitled).
+    needs_reauth: bool = False
 
     @classmethod
     def unregistered(cls, session_user: Dict[str, Any]) -> "AuthorizedUser":
@@ -73,6 +81,20 @@ class AuthorizedUser:
             full_name=session_user.get("name", ""),
             raw_session=session_user,
         )
+
+    @classmethod
+    def session_expired(cls, session_user: Dict[str, Any]) -> "AuthorizedUser":
+        """
+        Return an AuthorizedUser for a session whose id_token is unavailable
+        server-side (restart cleared the in-memory store, refresh failed,
+        etc). Shaped like `unregistered()` for callers that only check
+        `is_registered`, but flagged with `needs_reauth=True` so callers that
+        care about the distinction can send the user back through
+        `/auth/login` instead of telling them to contact an admin.
+        """
+        user = cls.unregistered(session_user)
+        user.needs_reauth = True
+        return user
 
     @classmethod
     def from_appserver(cls, profile: Dict[str, Any], session_user: Dict[str, Any]) -> "AuthorizedUser":
@@ -106,6 +128,7 @@ class AuthorizedUser:
             "is_registered": self.is_registered,
             "oauth_provider": self.oauth_provider,
             "full_name": self.full_name,
+            "needs_reauth": self.needs_reauth,
         }
 
 
@@ -205,9 +228,9 @@ def authorize_session_user(
     if not id_token:
         logger.warning(
             f"[authz] {email}: no id_token available (server-side store may have been "
-            "cleared after a restart) — treating as unregistered until next login"
+            "cleared after a restart) — session needs re-authentication"
         )
-        return AuthorizedUser.unregistered(session_user)
+        return AuthorizedUser.session_expired(session_user)
 
     try:
         from energydeskapi.auth.etrm_authorize import authorize_user_google
@@ -281,6 +304,12 @@ def require_registered_user(
     FastAPI dependency — requires the user to be authenticated AND registered
     (present in the Django DB with an active account).
     """
+    if auth.needs_reauth:
+        raise HTTPException(
+            status_code=401,
+            detail="Your session has expired. Please log in again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     if not auth.is_registered or not auth.is_active:
         raise HTTPException(
             status_code=403,

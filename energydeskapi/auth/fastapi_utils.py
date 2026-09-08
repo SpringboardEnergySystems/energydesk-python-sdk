@@ -39,8 +39,56 @@ if TYPE_CHECKING:
     from energydeskapi.auth.auth_fastapi import FastAPIOIDCAuth
 
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 logger = logging.getLogger(__name__)
+
+
+def register_api_exception_handlers(app: FastAPI) -> None:
+    """
+    Translate the SDK's ``ApiConnection`` auth exceptions into the right HTTP
+    status codes, instead of letting them fall through to FastAPI's generic
+    unhandled-exception 500.
+
+    ``exec_get_url`` / ``exec_post_url`` / ``exec_patch_url`` / ``exec_delete_url``
+    (in ``energydeskapi.sdk.api_connection``) already raise a distinct exception
+    per appserver response:
+
+    * ``TokenException``               — appserver said 401 (bad/expired/missing
+                                          token — the caller's session needs a
+                                          fresh login).
+    * ``AuthorizationFailedException`` — appserver said 403 (authenticated, but
+                                          not entitled to this resource).
+
+    Without this handler, an uncaught instance of either becomes an opaque 500,
+    which a frontend cannot distinguish from a real server bug — so it neither
+    redirects to login (for the 401 case) nor shows a "not authorized" message
+    (for the 403 case). Call this once per service, right after ``setup_oidc``
+    (or standalone if a service builds its own ``ApiConnection`` without OIDC).
+    """
+    from energydeskapi.sdk.api_connection import (
+        AuthorizationFailedException,
+        TokenException,
+    )
+
+    @app.exception_handler(TokenException)
+    async def _token_exception_handler(request: Request, exc: TokenException):
+        logger.info("[auth] %s %s -> 401 (%s)", request.method, request.url.path, exc)
+        return JSONResponse(
+            status_code=401,
+            content={"detail": str(exc) or "Authentication required. Please log in again."},
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    @app.exception_handler(AuthorizationFailedException)
+    async def _authorization_failed_handler(request: Request, exc: AuthorizationFailedException):
+        logger.info("[auth] %s %s -> 403 (%s)", request.method, request.url.path, exc)
+        return JSONResponse(
+            status_code=403,
+            content={"detail": str(exc) or "Not authorized for this resource."},
+        )
+
+    logger.info("Registered TokenException(401) / AuthorizationFailedException(403) handlers")
 
 
 def register_forwarded_prefix_middleware(app: FastAPI) -> None:
@@ -108,6 +156,7 @@ def setup_oidc(title: str, app: FastAPI) -> Optional[FastAPIOIDCAuth]:
             logger.info("✓ OIDC enabled for '%s'", title)
         else:
             logger.warning("⚠ OIDC enabled but no providers configured — check GOOGLE_CLIENT_ID / AZURE_CLIENT_ID")
+        register_api_exception_handlers(app)
         return auth
     except ImportError as exc:
         logger.warning("OIDC unavailable — missing dependency: %s", exc)
