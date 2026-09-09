@@ -145,5 +145,10 @@ def flatten_nested2_list(nested_list: list[list[T]]) -> list[T]:
 O = TypeVar("O")
 R = TypeVar("R")
 
+# applies the function to the optional value if it is not None, otherwise returns None
 def optional_map(opt: Optional[O], fn: Callable[[O], R]) -> Optional[R]:
     return fn(opt) if opt is not None else None
+
+# applies the function to the optional value if it is not None, otherwise returns the default value
+def optional_map_or(opt: Optional[O], fn: Callable[[O], R], default: R) -> R:
+    return fn(opt) if opt is not None else default
