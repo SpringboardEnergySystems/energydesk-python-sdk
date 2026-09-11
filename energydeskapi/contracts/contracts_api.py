@@ -826,7 +826,7 @@ class ContractsApi:
         :param parameters: parameters to filter contract filters
         :type parameters: str
         """
-        parameters_with_page_size = parameters | {'page_size' : '30'} if "page_size" not in parameters else parameters
+        parameters_with_page_size = parameters | {'page_size' : '50'} if "page_size" not in parameters else parameters
         json_res = api_connection.exec_get_url('/api/portfoliomanager/contractfilters/', parameters_with_page_size)
         return json_res
 
