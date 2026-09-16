@@ -8,6 +8,7 @@ from energydeskapi.derivation.params import (
     EuropeanOptionParams,
     OutsideWindowPolicy,
     RuleParams,
+    WeightedSumParams,
 )
 
 
@@ -73,3 +74,13 @@ class TestDerivationRuleDiscriminatedUnion(TestCase):
     def test_unknown_rule_type_rejected(self):
         with self.assertRaises(ValidationError):
             TypeAdapter(RuleParams).validate_python({"rule_type": "NOT_A_REAL_TYPE"})
+
+    def test_weighted_sum_rule_shape(self):
+        """Plan 22 section 4.3: WEIGHTED_SUM's params_json is deliberately empty."""
+        rule = DerivationRule.model_validate({
+            "name": "Power exposure (gross)",
+            "asset_group": "power_exposure",
+            "params": {"rule_type": "WEIGHTED_SUM"},
+        })
+        self.assertIsInstance(rule.params, WeightedSumParams)
+        self.assertEqual(rule.params.outside_window, OutsideWindowPolicy.PASS_THROUGH)

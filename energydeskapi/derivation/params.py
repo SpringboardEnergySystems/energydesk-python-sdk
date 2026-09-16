@@ -29,6 +29,7 @@ __all__ = [
     "FixedOffsetParams",
     "EuropeanOptionParams",
     "AsianOptionParams",
+    "WeightedSumParams",
     "RuleParams",
     "DerivationRule",
 ]
@@ -40,6 +41,7 @@ class RuleType(str, Enum):
     FIXED_OFFSET = "FIXED_OFFSET"
     EUROPEAN_OPTION = "EUROPEAN_OPTION"
     ASIAN_OPTION = "ASIAN_OPTION"
+    WEIGHTED_SUM = "WEIGHTED_SUM"
 
 
 class OutsideWindowPolicy(str, Enum):
@@ -129,12 +131,26 @@ class AsianOptionParams(BaseModel):
         return _fraction(self.portion_pct)
 
 
+class WeightedSumParams(BaseModel):
+    """
+    Composite rule (Plan 22 section 4.3): ``params_json`` is deliberately
+    empty -- weights and required-ness live on each input's selector
+    (section 4.2 ``{ordinal, selector, weight, required}``), which is Step
+    D's rule-store concern, not this schema's. Kept as its own model (rather
+    than reusing e.g. PercentageParams) so the discriminated union has a
+    real member for ``rule_type == WEIGHTED_SUM``.
+    """
+    rule_type: Literal[RuleType.WEIGHTED_SUM] = RuleType.WEIGHTED_SUM
+    outside_window: OutsideWindowPolicy = OutsideWindowPolicy.PASS_THROUGH
+
+
 RuleParams = Union[
     PercentageParams,
     MonthlyPercentageParams,
     FixedOffsetParams,
     EuropeanOptionParams,
     AsianOptionParams,
+    WeightedSumParams,
 ]
 
 

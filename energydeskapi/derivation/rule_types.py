@@ -19,8 +19,9 @@ separate here is deliberate, not an oversight.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
+from typing import Dict, Optional, Sequence
 
 from finance.options.opcalc import asian_76, black_76
 
@@ -35,6 +36,9 @@ __all__ = [
     "european_option",
     "AsianOptionResult",
     "asian_option",
+    "WeightedSumInput",
+    "WeightedSumResult",
+    "weighted_sum",
 ]
 
 
@@ -200,3 +204,51 @@ def asian_option(
         rebate_fraction=rebate_fraction,
         residual_fraction=1.0 - rebate_fraction,
     )
+
+
+@dataclass(frozen=True)
+class WeightedSumInput:
+    """One resolved input to a WEIGHTED_SUM rule (Plan 22 section 4.2/D15).
+
+    ``value`` is ``None`` when the resolver found no instance for this input
+    at the requested as-of -- this dataclass carries that fact rather than
+    the caller substituting 0.0, so ``weighted_sum`` can tell "resolved to
+    zero" apart from "not resolved at all"."""
+    name: str
+    value: Optional[float]
+    weight: float = 1.0
+    required: bool = True
+
+
+@dataclass(frozen=True)
+class WeightedSumResult:
+    value: float
+    contributions: Dict[str, float] = field(default_factory=dict)  # name -> weight * value actually used (0.0 for an unresolved optional input)
+
+
+def weighted_sum(inputs: Sequence[WeightedSumInput]) -> WeightedSumResult:
+    """
+    Sigma weight_i * x_i over resolved inputs (Plan 22 section 4.3 WEIGHTED_SUM;
+    D10's "sum the B2C heat-sales assets" is exactly this with a tag-predicate
+    selector resolving each input -- selection is Step D/E's job, this
+    function only combines already-resolved values).
+
+    A required input with no resolved value raises -- the deliberate break
+    from periodview_loader.py, where a missing asset silently shrinks the
+    exposure (Plan 22 D15). An optional input with no resolved value
+    contributes 0 and is recorded in ``contributions``, not silently dropped.
+    """
+    if not inputs:
+        raise ValueError("weighted_sum requires at least one input")
+    total = 0.0
+    contributions: Dict[str, float] = {}
+    for inp in inputs:
+        if inp.value is None:
+            if inp.required:
+                raise ValueError(f"required input '{inp.name}' has no resolved value")
+            contributions[inp.name] = 0.0
+            continue
+        contribution = inp.weight * inp.value
+        contributions[inp.name] = contribution
+        total += contribution
+    return WeightedSumResult(value=total, contributions=contributions)
