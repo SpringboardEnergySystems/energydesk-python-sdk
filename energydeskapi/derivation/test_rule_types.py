@@ -2,11 +2,13 @@ from datetime import date
 from unittest import TestCase
 
 from energydeskapi.derivation.rule_types import (
+    WeightedSumInput,
     asian_option,
     european_option,
     fixed_offset,
     monthly_percentage,
     percentage,
+    weighted_sum,
 )
 
 
@@ -125,3 +127,38 @@ class TestAsianOption(TestCase):
             delivery_period=date(2027, 1, 1), volatility=0.30, rate=0.02, portion=0.05,
         )
         self.assertAlmostEqual(result.rebate_fraction + result.residual_fraction, 1.0)
+
+
+class TestWeightedSum(TestCase):
+    """
+    Plan 22 section 4.3/D15/section 11: the composite rule type -- e.g. R1
+    "B2C gross" summing tag-matched sub-assets, or R5's mixed +1/-1 weights.
+    """
+
+    def test_sums_weighted_values(self):
+        result = weighted_sum([
+            WeightedSumInput(name="b2c_1", value=100.0, weight=1.0),
+            WeightedSumInput(name="b2c_2", value=50.0, weight=1.0),
+            WeightedSumInput(name="turbin", value=20.0, weight=-1.0),
+        ])
+        self.assertAlmostEqual(result.value, 130.0)
+        self.assertEqual(result.contributions, {"b2c_1": 100.0, "b2c_2": 50.0, "turbin": -20.0})
+
+    def test_missing_required_input_raises(self):
+        with self.assertRaises(ValueError):
+            weighted_sum([
+                WeightedSumInput(name="b2c_1", value=100.0, weight=1.0, required=True),
+                WeightedSumInput(name="b2c_2", value=None, weight=1.0, required=True),
+            ])
+
+    def test_missing_optional_input_contributes_zero_and_is_recorded(self):
+        result = weighted_sum([
+            WeightedSumInput(name="b2c_1", value=100.0, weight=1.0, required=True),
+            WeightedSumInput(name="turbin", value=None, weight=1.0, required=False),
+        ])
+        self.assertAlmostEqual(result.value, 100.0)
+        self.assertEqual(result.contributions["turbin"], 0.0)
+
+    def test_no_inputs_raises(self):
+        with self.assertRaises(ValueError):
+            weighted_sum([])
