@@ -1,113 +1,49 @@
+"""
+DEPRECATED - removed with appserver EDSK-929 (2024).
+
+MasterAgreementApi targeted /api/portfoliomanager/mastercontractagreements/,
+an endpoint that no longer exists - portfoliomanager.MasterContractAgreement
+was dropped in migration 0021_delete_mastercontractagreement with no data
+to carry over. The concept was revived, with a Contract link and commercial
+content, as energydesk.apps.agreements.MasterAgreement
+(plans/customer_account_model.md step 1, merged).
+
+Use energydeskapi.agreements.agreements_api.AgreementsApi instead. This
+module is kept only so `import energydeskapi.contracts.masteragreement_api`
+does not break for any caller still holding a reference to it; every method
+raises immediately.
+"""
 import logging
-import pandas as pd
-from energydeskapi.sdk.api_connection import ApiConnection
 
 logger = logging.getLogger(__name__)
 
+_REMOVED_MESSAGE = (
+    "MasterAgreementApi was removed with appserver EDSK-929 (2024); "
+    "the endpoint it called no longer exists. "
+    "Use energydeskapi.agreements.agreements_api.AgreementsApi instead."
+)
+
 
 class MasterContractAgreement:
-    def __init__(self):
-        self.pk = 0
-        self.title = ""
-        self.created_at = None
-        self.contract_owner = None
-        self.counterpart = None
-        self.contract_info = ""
-        self.phone = None
-        self.email = None
-        self.email_contract_documents = False
-        self.signed_contract_url_ref = None
-
-    def get_dict(self, api_conn):
-        dict = {}
-        dict['pk'] = self.pk
-        if self.title is not None:
-            dict['title'] = self.title
-        if self.created_at is not None:
-            dict['created_at'] = self.created_at
-        if self.contract_owner is not None:
-            dict['contract_owner'] = self.contract_owner
-        if self.counterpart is not None:
-            dict['counterpart'] = self.counterpart
-        if self.contract_info is not None:
-            dict['contract_info'] = self.contract_info
-        if self.phone is not None:
-            dict['phone'] = self.phone
-        if self.email is not None:
-            dict['email'] = self.email
-        if self.email_contract_documents is not False:
-            dict['email_contract_documents'] = self.email_contract_documents
-        if self.signed_contract_url_ref is not None:
-            dict['signed_contract_url_ref'] = self.signed_contract_url_ref
-        return dict
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError(_REMOVED_MESSAGE)
 
 
 class MasterAgreementApi:
-    """Class for Master contract agreements API
-
-    """
+    """Deprecated - see module docstring."""
 
     @staticmethod
-    def get_master_agreements(api_connection: ApiConnection, parameters: dict={}):
-        """Fetches master contract agreements
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        """
-        logger.info("Fetching master agreement")
-        json_res = api_connection.exec_get_url(
-            '/api/portfoliomanager/mastercontractagreements/', parameters)
-        if json_res is not None:
-            return json_res
-        return None
+    def get_master_agreements(*args, **kwargs):
+        raise NotImplementedError(_REMOVED_MESSAGE)
 
     @staticmethod
-    def get_master_agreements_embedded(api_connection: ApiConnection, parameters: dict={}):
-        """Fetches master contract agreements
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        """
-        logger.info("Fetching master agreement")
-        json_res = api_connection.exec_get_url(
-            '/api/portfoliomanager/mastercontractagreements/embedded/', parameters)
-        if json_res is not None:
-            return json_res
-        return None
+    def get_master_agreements_embedded(*args, **kwargs):
+        raise NotImplementedError(_REMOVED_MESSAGE)
 
     @staticmethod
-    def get_master_agreements_by_key(api_connection: ApiConnection, masteragreement_pk: int):
-        """Fetches master contract agreement from pk
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        :param masteragreement_pk: key to master contract agreement
-        :type masteragreement_pk: required
-        """
-        logger.info("Loading master agreement with pk " +
-                    str(masteragreement_pk))
-        json_res = api_connection.exec_get_url('/api/portfoliomanager/mastercontractagreements/'
-                                               + str(masteragreement_pk) + "/")
-        if json_res is None:
-            return None
-        return json_res
+    def get_master_agreements_by_key(*args, **kwargs):
+        raise NotImplementedError(_REMOVED_MESSAGE)
 
     @staticmethod
-    def upsert_master_agreement(api_connection: ApiConnection, master_agreement: MasterContractAgreement):
-        """Creates/Updates master contract agreements
-
-        :param api_connection: class with API token for use with API
-        :type api_connection: str, required
-        :param master_agreement: master contract agreement object
-        :type master_agreement: str, required
-        """
-        logger.info("Upserting master agreement")
-        payload = master_agreement.get_dict(api_connection)
-        key = int(payload['pk'])
-        if key > 0:
-            success, returned_data, status_code, error_msg = api_connection.exec_patch_url(
-                '/api/portfoliomanager/mastercontractagreements/' + str(payload['pk']) + "/", payload)
-        else:
-            success, returned_data, status_code, error_msg = api_connection.exec_post_url(
-                '/api/portfoliomanager/mastercontractagreements/', payload)
-        return success, returned_data, status_code, error_msg
+    def upsert_master_agreement(*args, **kwargs):
+        raise NotImplementedError(_REMOVED_MESSAGE)
