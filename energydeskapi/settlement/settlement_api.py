@@ -128,5 +128,5 @@ class SettlementApi:
         id, json_res = SettlementApi.get_product_result_view(api_connection, parameters)
         if json_res is None:
             return None, None
-        df = pd.read_json(json_res, orient="table")
+        df = pd.read_json(io.StringIO(json_res), orient="table")
         return id, df
