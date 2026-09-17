@@ -17,6 +17,8 @@ class PeriodViewGroupingEnum(Enum):
     ASSET = "asset"
     TRADEID = "trade_id"
     MARKET = "market"
+    TRADINGBOOK = "trading_book"
+    ASSETTYPE = "asset_type"
 
 
 class ParametersEnum(Enum):
