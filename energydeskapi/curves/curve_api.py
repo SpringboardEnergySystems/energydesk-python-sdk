@@ -92,17 +92,17 @@ class CurveApi:
         return success, None, status_code, error_msg
 
     @staticmethod
-
-    def get_curves_on_date(api_connection ,price_date):
+    def get_curves_on_date(api_connection: ApiConnection ,price_date: str):
         logger.info("Fetching curves")
         json_res = api_connection.exec_get_url('/api/curvemanager/listcurves/', {'price_date':price_date})
         return json_res
+
     @staticmethod
-    def upload_forward_curve(api_connection ,price_date, price_area,
-                                currency_code, forward_curve_model,
-                                period_prices,
-                                period_resolution=PeriodResolutionEnum.HOURLY.value,
-                                market_name=MarketEnum.NORDIC_POWER.name,
+    def upload_forward_curve(api_connection: ApiConnection ,price_date: str, price_area: str,
+                                currency_code: str, forward_curve_model: str,
+                                period_prices: list[dict],
+                                period_resolution: str=PeriodResolutionEnum.HOURLY.value,
+                                market_name: str=MarketEnum.NORDIC_POWER.name,
                                 convert_to_other_currencies:bool=False
                              ):
 
