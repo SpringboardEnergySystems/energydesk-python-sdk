@@ -103,7 +103,7 @@ class CurveApi:
                                 period_prices,
                                 period_resolution=PeriodResolutionEnum.HOURLY.value,
                                 market_name=MarketEnum.NORDIC_POWER.name,
-                                convert_to_other_currencies:bool=True
+                                convert_to_other_currencies:bool=False
                              ):
 
         payload={
