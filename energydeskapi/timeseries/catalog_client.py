@@ -178,6 +178,37 @@ def get_or_create_definition(
     return _post("/definitions/", payload, marketdata)
 
 
+def instance_exists(
+    *,
+    definition_id: str,
+    timeseries_date: str,
+    status: str = "official",
+    scenario: Optional[str] = None,
+    currency: Optional[str] = None,
+    engine: Optional[str] = None,
+    marketdata: bool = False,
+) -> bool:
+    """
+    True if an active (non-superseded) instance already matches this
+    identity. Lets an idempotent writer skip redoing the *expensive* part of
+    a re-run -- the InfluxDB write itself, potentially thousands of points
+    for one row -- not just the (cheap) registration call, which
+    register_instance() already makes idempotent on its own.
+
+    Same params as register_instance(); does one GET, no write.
+    """
+    existing = _get("/instances/", marketdata, params={"definition_id": definition_id, "engine": engine})
+    for inst in existing:
+        if (
+            inst.get("timeseries_date") == timeseries_date
+            and inst.get("status") == status
+            and inst.get("scenario") == scenario
+            and inst.get("currency") == currency
+        ):
+            return True
+    return False
+
+
 def register_instance(
     *,
     definition_id: str,
