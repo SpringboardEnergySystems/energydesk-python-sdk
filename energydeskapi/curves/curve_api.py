@@ -102,7 +102,9 @@ class CurveApi:
                                 currency_code, forward_curve_model,
                                 period_prices,
                                 period_resolution=PeriodResolutionEnum.HOURLY.value,
-                               market_name=MarketEnum.NORDIC_POWER.name):
+                                market_name=MarketEnum.NORDIC_POWER.name,
+                                convert_to_other_currencies:bool=True
+                             ):
 
         payload={
             'market_name': market_name,
@@ -111,7 +113,8 @@ class CurveApi:
             'forward_curve_model': forward_curve_model,
             'period_resolution':period_resolution,
             'currency_code':currency_code,
-            'periods':period_prices#period_prices_df.to_json(orient='records',date_format='iso')
+            'periods':period_prices, #period_prices_df.to_json(orient='records',date_format='iso')
+            'convert_to_other_currencies':convert_to_other_currencies
         }
         print(payload)
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/curvemanager/upload-forwardcurve/', payload)
