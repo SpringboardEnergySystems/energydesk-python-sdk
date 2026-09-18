@@ -188,15 +188,23 @@ def register_instance(
     status: str = "official",
     scenario: Optional[str] = None,
     currency: Optional[str] = None,
+    engine: Optional[str] = None,
     metadata_json: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
     """
     Register one publication run. Returns the created instance (with its
     `id` — the series_key to write to InfluxDB). If an instance already
     exists for this (definition_id, timeseries_date, status, scenario,
-    currency), the catalog API returns 409 — this falls back to fetching
-    the existing instance rather than erroring, so re-running the same
-    publication is idempotent.
+    currency, engine), the catalog API returns 409 — this falls back to
+    fetching the existing instance rather than erroring, so re-running the
+    same publication is idempotent.
+
+    `engine`: which solver/downloader produced this publication (e.g.
+    "python" | "julia" | "priceit" for forward curves) — a first-class
+    field as of d8e3f1a9c4b7 (energydesk-insight), not something to bury in
+    `metadata_json`. One definition can have concurrent instances from
+    several engines on the same date; omitting `engine` is correct only for
+    instances with no such concept (forecasts, period-view snapshots).
 
     `marketdata`: see get_or_create_definition. Must match whatever value was
     used to create `definition_id` — mismatching would target a different
@@ -208,6 +216,7 @@ def register_instance(
         "status": status,
         "scenario": scenario,
         "currency": currency,
+        "engine": engine,
         "influx_bucket": influx_bucket,
         "influx_measurement": influx_measurement,
         "metadata_json": metadata_json,
@@ -217,21 +226,23 @@ def register_instance(
         return result
 
     logger.info(
-        "Instance already exists for definition=%s date=%s status=%s scenario=%s currency=%s — fetching it.",
-        definition_id, timeseries_date, status, scenario, currency,
+        "Instance already exists for definition=%s date=%s status=%s scenario=%s currency=%s engine=%s — fetching it.",
+        definition_id, timeseries_date, status, scenario, currency, engine,
     )
-    existing = _get("/instances/", marketdata, params={"definition_id": definition_id})
+    existing = _get("/instances/", marketdata, params={"definition_id": definition_id, "engine": engine})
     for inst in existing:
         if (
             inst.get("timeseries_date") == timeseries_date
             and inst.get("status") == status
             and inst.get("scenario") == scenario
             and inst.get("currency") == currency
+            and inst.get("engine") == engine
         ):
             return inst
     raise CatalogApiError(
         f"Instance registration returned 409 but no matching existing instance was found "
-        f"for definition={definition_id} date={timeseries_date} status={status} scenario={scenario} currency={currency}"
+        f"for definition={definition_id} date={timeseries_date} status={status} scenario={scenario} "
+        f"currency={currency} engine={engine}"
     )
 
 
@@ -253,6 +264,7 @@ def get_or_create_definition_and_instance(
     area: Optional[str] = None,
     scenario: Optional[str] = None,
     currency: Optional[str] = None,
+    engine: Optional[str] = None,
     status: str = "official",
     default_aggregation: Optional[str] = None,
     definition_metadata_json: Optional[dict[str, Any]] = None,
@@ -294,6 +306,7 @@ def get_or_create_definition_and_instance(
         status=status,
         scenario=scenario,
         currency=currency,
+        engine=engine,
         metadata_json=instance_metadata_json,
     )
     return str(instance["id"])
