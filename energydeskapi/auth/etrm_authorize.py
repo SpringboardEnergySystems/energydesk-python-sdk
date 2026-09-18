@@ -59,6 +59,27 @@ def authorize_user_etrm(token: str) -> Tuple[Optional[int], Optional[str]]:
     return None, None
 
 
+def authorize_user_django(token: str) -> Optional[dict]:
+    """
+    Resolve a Django-issued bearer token against the appserver's own profile
+    endpoint (``GET /api/energydesk/get-user-profile/``).
+
+    Unlike Google, a Django OAuth session already carries a Django-compatible
+    token (stored in ``session['user']['token']``) — there is no separate
+    id_token exchange or server-side id_token store involved, so this can
+    call the appserver directly with that token.
+
+    Returns the raw profile dict (keys: ``username``, ``first_name``,
+    ``last_name``, ``role``, ``role_pk``, ``is_platform_admin``), or ``None``
+    if the token is invalid/expired or the appserver is unreachable.
+    """
+    try:
+        return _get_users_api_profile(token)
+    except Exception as exc:
+        logger.error(f"[appserver] ❌ get-user-profile call failed: {exc}")
+        return None
+
+
 def authorize_user_google(id_token: str) -> Tuple[Optional[str], Optional[int], bool]:
     """
     Resolve a Google ID token against the appserver.

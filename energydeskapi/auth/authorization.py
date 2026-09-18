@@ -1,20 +1,32 @@
 """
 Shared authorization module for Energydesk FastAPI services.
 
-Authentication is handled by Google OIDC (via FastAPIOIDCAuth).
-This module handles *authorization* — given an already-authenticated Google
-session it resolves the user's role and ``is_platform_admin`` flag from the
-central Django appserver, caches the result in the session, and exposes
-FastAPI dependencies that every service can use.
+Authentication is handled by FastAPIOIDCAuth, which supports both Google and
+Django OIDC providers. This module handles *authorization* — given an
+already-authenticated session (either provider) it resolves the user's role
+and ``is_platform_admin`` flag from the central Django appserver, caches the
+result in the session, and exposes FastAPI dependencies that every service
+can use.
 
-Flow
-----
+Flow (Google)
+-------------
 1. Google OIDC callback → SDK stores id_token server-side (_id_token_store)
    and writes a lightweight session cookie (email, sub, provider).
 2. First request after login → authorize_session_user() calls the appserver's
    POST /api/energydesk/resolve-google-token/ with the id_token.
 3. Appserver verifies the Google signature, looks up the Django Account by
    email, and returns role + is_platform_admin.
+
+Flow (Django)
+-------------
+1. Django OAuth callback → SDK writes the Django-issued token directly into
+   the session (session['user']['token']) — there is no separate id_token
+   store for this provider.
+2. First request after login → authorize_session_user() calls the appserver's
+   GET /api/energydesk/get-user-profile/ with that token.
+3. Appserver resolves the profile from the token's own Django auth.
+
+Both flows share the rest:
 4. Result is cached in the session under 'appserver_profile_cache' with a
    timestamp.  Subsequent requests use the cache
    (TTL = APPSERVER_PROFILE_CACHE_TTL_SECONDS, default 300 s).
@@ -205,10 +217,13 @@ def authorize_session_user(
     request: Request,
 ) -> AuthorizedUser:
     """
-    Resolve an authenticated Google session to an AuthorizedUser.
+    Resolve an authenticated OAuth session (Google or Django) to an
+    AuthorizedUser.
 
     1. Check session cache (TTL = APPSERVER_PROFILE_CACHE_TTL_SECONDS).
-    2. On cache miss: call appserver via authorize_user_google().
+    2. On cache miss: call the appserver — via authorize_user_google() for a
+       Google id_token, or authorize_user_django() for a Django session
+       token (see _authorize_via_appserver()).
     3. Cache successful result; return unregistered on failure/404.
     """
     email = (session_user.get('email') or '').lower()
@@ -224,26 +239,83 @@ def authorize_session_user(
         return AuthorizedUser.from_appserver(cached, session_user)
 
     # 2. Appserver lookup
+    provider = session_user.get('provider', 'google')
+    if provider == 'django':
+        profile = _authorize_django_session(session_user, email)
+    else:
+        profile = _authorize_google_session(request, sub, email, session_user)
+
+    if profile is None:
+        return AuthorizedUser.session_expired(session_user)
+    if profile is False:
+        logger.info(f"[authz] {email} authenticated but NOT registered in Django")
+        return AuthorizedUser.unregistered(session_user)
+
+    _store_cached_profile(request, sub, profile)
+    logger.info(
+        f"[authz] {email} → role={profile.get('role')}, "
+        f"is_platform_admin={profile.get('is_platform_admin')}"
+    )
+    return AuthorizedUser.from_appserver(profile, session_user)
+
+
+def _authorize_django_session(session_user: Dict[str, Any], email: str):
+    """
+    Resolve a Django OAuth session.
+
+    The Django token lives directly in the session (no separate id_token
+    store — see get_user_bearer_token() in fastapi_utils.py), so there is no
+    "store cleared after restart" failure mode here: missing token just means
+    the session itself was never fully populated and needs a fresh login.
+
+    Returns the appserver profile dict, ``False`` if the appserver reports
+    the user as unregistered, or ``None`` if there is no token to use (needs
+    re-authentication).
+    """
+    token = session_user.get('token') or session_user.get('access_token')
+    if not token:
+        logger.warning(
+            f"[authz] {email}: no Django token in session — session needs re-authentication"
+        )
+        return None
+
+    try:
+        from energydeskapi.auth.etrm_authorize import authorize_user_django
+        profile = authorize_user_django(token)
+    except Exception as exc:
+        logger.error(f"[authz] appserver call failed for {email}: {exc}")
+        return False
+
+    return profile if profile is not None else False
+
+
+def _authorize_google_session(request: Request, sub: str, email: str, session_user: Dict[str, Any]):
+    """
+    Resolve a Google OAuth session via its server-side id_token.
+
+    Returns the appserver profile dict, ``False`` if the appserver reports
+    the user as unregistered, or ``None`` if the id_token is unavailable
+    (e.g. a restart cleared the in-memory store — needs re-authentication).
+    """
     id_token = _get_id_token(request, sub)
     if not id_token:
         logger.warning(
             f"[authz] {email}: no id_token available (server-side store may have been "
             "cleared after a restart) — session needs re-authentication"
         )
-        return AuthorizedUser.session_expired(session_user)
+        return None
 
     try:
         from energydeskapi.auth.etrm_authorize import authorize_user_google
         role, role_pk, is_platform_admin = authorize_user_google(id_token)
     except Exception as exc:
         logger.error(f"[authz] appserver call failed for {email}: {exc}")
-        return AuthorizedUser.unregistered(session_user)
+        return False
 
     if role is None:
-        logger.info(f"[authz] {email} authenticated but NOT registered in Django")
-        return AuthorizedUser.unregistered(session_user)
+        return False
 
-    profile = {
+    return {
         'username': email,
         'first_name': session_user.get('name', ''),
         'last_name': '',
@@ -251,9 +323,6 @@ def authorize_session_user(
         'role_pk': role_pk,
         'is_platform_admin': is_platform_admin,
     }
-    _store_cached_profile(request, sub, profile)
-    logger.info(f"[authz] {email} → role={role}, is_platform_admin={is_platform_admin}")
-    return AuthorizedUser.from_appserver(profile, session_user)
 
 
 # ---------------------------------------------------------------------------
