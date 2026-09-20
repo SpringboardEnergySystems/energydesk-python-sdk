@@ -641,24 +641,21 @@ class FastAPIOIDCAuth:
             if provider not in self.providers:
                 raise HTTPException(status_code=400, detail='Invalid provider')
 
-            # Get root_path from X-Forwarded-Prefix header (set by Ingress)
+            # Get root_path from X-Forwarded-Prefix header (set by Ingress) — empty for
+            # services that own their whole hostname (e.g. dsotools) rather than sharing
+            # one behind a path prefix.
             root_path = request.scope.get("root_path", "")
 
-            # Build redirect URI with prefix
-            # request.url_for gives us the path without prefix, so we need to add it
-            base_redirect_uri = str(request.url_for('authorize', provider=provider))
-
-            # If there's a root_path, we need to build the full URL manually
-            if root_path:
-                # Get the scheme from X-Forwarded-Proto header (Ingress sets this to https)
-                # The internal request.url.scheme will be http (pod-to-pod), but external is https
-                scheme = request.headers.get('X-Forwarded-Proto', request.url.scheme)
-                netloc = request.url.netloc
-                redirect_uri = f"{scheme}://{netloc}{root_path}/auth/authorize/{provider}"
-                logger.info(f"OAuth redirect URI with prefix: {redirect_uri} (scheme from X-Forwarded-Proto: {scheme})")
-            else:
-                redirect_uri = base_redirect_uri
-                logger.info(f"OAuth redirect URI (no prefix): {redirect_uri}")
+            # Always build the redirect URI manually rather than via request.url_for(),
+            # which inherits the internal pod-to-pod scheme (http) from the ASGI scope.
+            # Ingress/Gateway terminates TLS and forwards plain HTTP, so without this
+            # correction a root_path-less service (no X-Forwarded-Prefix) would send the
+            # OAuth provider an "http://" redirect_uri even though the site is https —
+            # a mismatch most providers reject outright, silently breaking login.
+            scheme = request.headers.get('X-Forwarded-Proto', request.url.scheme)
+            netloc = request.url.netloc
+            redirect_uri = f"{scheme}://{netloc}{root_path}/auth/authorize/{provider}"
+            logger.info(f"OAuth redirect URI: {redirect_uri} (root_path={root_path!r}, scheme from X-Forwarded-Proto: {scheme})")
 
             return await self.providers[provider].authorize_redirect(request, redirect_uri)
 
