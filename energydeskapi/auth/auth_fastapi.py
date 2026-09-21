@@ -46,6 +46,51 @@ _google_client_id: Optional[str] = None
 _google_client_secret: Optional[str] = None
 _GOOGLE_TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
 
+# The single FastAPIOIDCAuth instance a service process creates. Lets
+# energydeskapi.auth.session.auth_template_context() list available
+# providers without each service threading the instance through by hand.
+_active_instance: Optional["FastAPIOIDCAuth"] = None
+
+
+def get_active_oidc_auth() -> Optional["FastAPIOIDCAuth"]:
+    return _active_instance
+
+
+def _decode_jwt_exp(token: str) -> Optional[float]:
+    """
+    Best-effort extraction of the 'exp' claim from a JWT access/id token,
+    without verifying the signature — only used to know when to proactively
+    refresh, never to authorize. Returns None for opaque (non-JWT) tokens,
+    e.g. Django OAuth Toolkit's default access tokens.
+    """
+    if not token or token.count('.') != 2:
+        return None
+    try:
+        import base64
+        import json
+        payload_b64 = token.split('.')[1]
+        payload_b64 += '=' * (-len(payload_b64) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64))
+        exp = payload.get('exp')
+        return float(exp) if exp is not None else None
+    except Exception as exc:
+        logger.debug(f"[auth] Could not decode JWT exp claim: {exc}")
+        return None
+
+
+def refresh_token_for_provider(provider: str, sub: str) -> Optional[str]:
+    """
+    Dispatch a silent token refresh to the right provider.
+
+    Returns the new id_token/access_token on success, or None if refresh
+    isn't supported for this provider yet (Azure/Django — see the SDK's
+    unification plan Step 6) or the refresh itself failed.
+    """
+    if provider == 'google':
+        return refresh_google_token(sub)
+    logger.info(f"[refresh] No refresh implementation for provider={provider} yet (sub={sub})")
+    return None
+
 
 def refresh_google_token(sub: str) -> Optional[str]:
     """
@@ -171,7 +216,19 @@ class FastAPIOIDCAuth:
         """
         self.oauth = OAuth()
         self.providers = {}
-        self.secret_key = secret_key or os.urandom(24).hex()
+        if secret_key:
+            self.secret_key = secret_key
+        else:
+            self.secret_key = os.urandom(24).hex()
+            logger.error(
+                f"[{title}] No OIDC_SECRET_KEY configured — generated a random "
+                "session-signing key for this process only. Every pod and every "
+                "restart will get a DIFFERENT key, so the OAuth state/nonce cookie "
+                "signed by one pod will fail verification on another, surfacing as "
+                "'Authorization failed' for whichever provider's callback happens "
+                "to land elsewhere. Set OIDC_SECRET_KEY to a stable, per-service "
+                "value in the environment to fix this."
+            )
         self.app = app
         self.title = title
         self.allow_guest = allow_guest
@@ -189,6 +246,12 @@ class FastAPIOIDCAuth:
 
     def init_app(self,  app: FastAPI, config: Optional[Dict[str, Any]] = None, cookie_path: str = "/"):
         """Initialize with FastAPI app"""
+
+        # Each service creates exactly one FastAPIOIDCAuth; track it so
+        # energydeskapi.auth.session can render available_providers without
+        # every service having to thread the instance through by hand.
+        global _active_instance
+        _active_instance = self
 
         # Add session middleware.
         # NOTE: Do NOT use same_site="none" without https_only=True — browsers reject
@@ -585,6 +648,14 @@ class FastAPIOIDCAuth:
                             <h2>Authentication Required</h2>
                             <p>Please sign in via one of these services</p>
             '''
+            if request.query_params.get('reason') == 'expired':
+                html += '''
+                            <div style="margin: -10px 0 20px; padding: 12px 16px; background: #fff3cd;
+                                        border: 1px solid #ffe69c; border-radius: 6px; color: #664d03;
+                                        font-size: 14px; text-align: center;">
+                                <i class="fa fa-clock-o"></i> Your session expired — please sign in again.
+                            </div>
+                '''
 
             # Add provider buttons with icons
             provider_icons = {
@@ -729,12 +800,23 @@ class FastAPIOIDCAuth:
                         "issues one on first consent; needs access_type=offline (+ prompt=consent)"
                     )
 
+            # Track expiry for every provider, not just Google, so
+            # resolve_session() can tell an about-to-expire session from a
+            # freshly-issued one regardless of provider. Prefer the token
+            # response's own expires_at/expires_in; fall back to decoding the
+            # JWT 'exp' claim (Azure access tokens are JWTs; Django's default
+            # opaque tokens aren't — expiry just stays unknown for those).
+            if sub:
                 expires_at = token.get('expires_at')
                 if expires_at is None and token.get('expires_in'):
                     expires_at = time.time() + float(token['expires_in'])
+                if expires_at is None:
+                    expires_at = _decode_jwt_exp(access_token) if access_token else None
                 if expires_at:
                     with _token_expiry_store_lock:
                         _token_expiry_store[sub] = float(expires_at)
+                else:
+                    logger.info(f"[OAuth callback] No expiry available for sub={sub} provider={provider}")
 
             # Store id_token server-side (Google — used for appserver verification)
             id_token = token.get('id_token')
@@ -752,6 +834,7 @@ class FastAPIOIDCAuth:
                 'picture': user_info.get('picture') or user_info.get('avatar'),
                 'authenticated': True,
                 'token_ref': sub,  # reference key into _token_store
+                'issued_at': time.time(),  # for SESSION_ABSOLUTE_LIFETIME_SECONDS checks
             }
             # Also keep the token in-session for Django (small token, backward compat)
             if provider == 'django':
