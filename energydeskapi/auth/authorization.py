@@ -95,6 +95,18 @@ class AuthorizedUser:
             raw_session=session_user,
         )
 
+    def __bool__(self) -> bool:
+        """
+        False for an unregistered/inactive user, so every existing
+        `if not auth:` / `auth and ...` check across the services — most of
+        which pre-date resolve_session()/require_page_session() — already
+        redirects instead of rendering a page as logged-in with an empty
+        role. `get_authorized_user()` already returns None (falsy) for no
+        session at all; this covers the "authenticated but not registered"
+        case that previously stayed truthy.
+        """
+        return self.is_registered and self.is_active
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "email": self.email,
@@ -177,15 +189,38 @@ def _get_id_token(request: Request, sub: str) -> Optional[str]:
     with _id_token_store_lock:
         return _id_token_store.get(sub)
 
+def _get_access_token(request: Request, sub: str, session_user: Dict[str, Any]) -> Optional[str]:
+    """
+    Retrieve an Azure/Django access token for *sub*.
+
+    Mirrors FastAPIOIDCAuth.get_current_user_role()'s resolution order: prefer
+    the in-session token (Django, backward-compat), then fall back to the
+    SDK's server-side token store (Azure).
+    """
+    token = session_user.get('access_token')
+    if token:
+        return token
+    try:
+        from energydeskapi.auth.auth_fastapi import _token_store, _token_store_lock
+    except ImportError:
+        logger.error("[authz] Cannot import _token_store from SDK")
+        return None
+    with _token_store_lock:
+        return _token_store.get(sub)
+
+
 def authorize_session_user(
     session_user: Dict[str, Any],
     request: Request,
 ) -> AuthorizedUser:
     """
-    Resolve an authenticated Google session to an AuthorizedUser.
+    Resolve an authenticated OAuth session (Google, Azure, or Django) to an
+    AuthorizedUser.
 
     1. Check session cache (TTL = APPSERVER_PROFILE_CACHE_TTL_SECONDS).
-    2. On cache miss: call appserver via authorize_user_google().
+    2. On cache miss: call the appserver — Google sessions via
+       authorize_user_google() (id_token), Azure/Django via
+       authorize_user_etrm() (access token).
     3. Cache successful result; return unregistered on failure/404.
     """
     email = (session_user.get('email') or '').lower()
@@ -193,6 +228,7 @@ def authorize_session_user(
         return AuthorizedUser.unregistered(session_user)
 
     sub = session_user.get('sub') or session_user.get('token_ref') or email
+    provider = session_user.get('provider')
 
     # 1. Cache hit
     cached = _load_cached_profile(request, sub)
@@ -200,25 +236,54 @@ def authorize_session_user(
         logger.debug(f"[authz] {email} resolved from session cache")
         return AuthorizedUser.from_appserver(cached, session_user)
 
-    # 2. Appserver lookup
-    id_token = _get_id_token(request, sub)
-    if not id_token:
-        logger.warning(
-            f"[authz] {email}: no id_token available (server-side store may have been "
-            "cleared after a restart) — treating as unregistered until next login"
-        )
-        return AuthorizedUser.unregistered(session_user)
+    # 2. Appserver lookup — Google uses its own id_token-verifying endpoint;
+    # Azure/Django go through the general ETRM bearer-token endpoint, same as
+    # the Gen 1 (auth_fastapi.get_current_user_role) path already did. Prior
+    # to this fix, this function only ever tried the Google path, so any
+    # Azure/Django session silently resolved to unregistered here.
+    if provider == 'google':
+        id_token = _get_id_token(request, sub)
+        if not id_token:
+            logger.warning(
+                f"[authz] {email}: no id_token available (server-side store may have been "
+                "cleared after a restart) — treating as unregistered until next login"
+            )
+            return AuthorizedUser.unregistered(session_user)
 
-    try:
-        from energydeskapi.auth.etrm_authorize import authorize_user_google
-        role, role_pk, is_platform_admin = authorize_user_google(id_token)
-    except Exception as exc:
-        logger.error(f"[authz] appserver call failed for {email}: {exc}")
-        return AuthorizedUser.unregistered(session_user)
+        try:
+            from energydeskapi.auth.etrm_authorize import authorize_user_google
+            role, role_pk, is_platform_admin = authorize_user_google(id_token)
+        except Exception as exc:
+            logger.error(f"[authz] appserver call failed for {email}: {exc}")
+            return AuthorizedUser.unregistered(session_user)
 
-    if role is None:
-        logger.info(f"[authz] {email} authenticated but NOT registered in Django")
-        return AuthorizedUser.unregistered(session_user)
+        if role is None:
+            logger.info(f"[authz] {email} authenticated but NOT registered in Django")
+            return AuthorizedUser.unregistered(session_user)
+    else:
+        token = _get_access_token(request, sub, session_user)
+        if not token:
+            logger.warning(
+                f"[authz] {email} (provider={provider}): no access token available "
+                "(server-side store may have been cleared after a restart) — "
+                "treating as unregistered until next login"
+            )
+            return AuthorizedUser.unregistered(session_user)
+
+        try:
+            from energydeskapi.auth.etrm_authorize import authorize_user_etrm
+            role_pk, role = authorize_user_etrm(token)
+        except Exception as exc:
+            logger.error(f"[authz] appserver call failed for {email} (provider={provider}): {exc}")
+            return AuthorizedUser.unregistered(session_user)
+
+        if role is None or role_pk is None:
+            logger.info(f"[authz] {email} authenticated via {provider} but NOT registered in Django")
+            return AuthorizedUser.unregistered(session_user)
+        # The ETRM profile endpoint doesn't surface is_platform_admin the way
+        # resolve-google-token does — same limitation Gen 1 has always had for
+        # these two providers, not a regression introduced here.
+        is_platform_admin = False
 
     profile = {
         'username': email,
@@ -229,7 +294,7 @@ def authorize_session_user(
         'is_platform_admin': is_platform_admin,
     }
     _store_cached_profile(request, sub, profile)
-    logger.info(f"[authz] {email} → role={role}, is_platform_admin={is_platform_admin}")
+    logger.info(f"[authz] {email} ({provider}) → role={role}, is_platform_admin={is_platform_admin}")
     return AuthorizedUser.from_appserver(profile, session_user)
 
 
@@ -252,26 +317,24 @@ def get_authorized_user(request: Request) -> Optional[AuthorizedUser]:
     """
     FastAPI dependency — returns an AuthorizedUser if the request carries a
     valid OAuth session, otherwise returns None.
+
+    Thin wrapper over session.resolve_session() — ANONYMOUS and EXPIRED both
+    return None here (this function has no way to signal "expired" to a
+    caller expecting Optional[AuthorizedUser]; use require_page_session or
+    require_api_session directly where that distinction matters).
     """
-    session_user = _get_oauth_session(request)
-    if not session_user:
-        return None
-    return authorize_session_user(session_user, request)
+    from energydeskapi.auth.session import resolve_session, SessionState
+    resolved = resolve_session(request)
+    return resolved.user if resolved.state == SessionState.VALID else None
 
 
 def require_authenticated_user(request: Request) -> AuthorizedUser:
     """
     FastAPI dependency — requires a valid OAuth session.
-    Redirects to /auth/login if not authenticated.
+    Redirects to /auth/login if not authenticated or expired.
     """
-    session_user = _get_oauth_session(request)
-    if not session_user:
-        root_path = request.scope.get("root_path", "")
-        raise HTTPException(
-            status_code=307,
-            headers={"Location": f"{root_path}/auth/login?next={request.url.path}"},
-        )
-    return authorize_session_user(session_user, request)
+    from energydeskapi.auth.session import require_page_session
+    return require_page_session(request)
 
 
 def require_registered_user(
