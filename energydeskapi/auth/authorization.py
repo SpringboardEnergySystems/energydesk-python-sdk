@@ -1,12 +1,12 @@
 """
 Shared authorization module for Energydesk FastAPI services.
 
-Authentication is handled by FastAPIOIDCAuth, which supports both Google and
-Django OIDC providers. This module handles *authorization* — given an
-already-authenticated session (either provider) it resolves the user's role
-and ``is_platform_admin`` flag from the central Django appserver, caches the
-result in the session, and exposes FastAPI dependencies that every service
-can use.
+Authentication is handled by FastAPIOIDCAuth, which supports Google, Django,
+Azure AD, and any other configured OIDC provider. This module handles
+*authorization* — given an already-authenticated session (any provider) it
+resolves the user's role and ``is_platform_admin`` flag from the central
+Django appserver, caches the result in the session, and exposes FastAPI
+dependencies that every service can use.
 
 Flow (Google)
 -------------
@@ -26,7 +26,20 @@ Flow (Django)
    GET /api/energydesk/get-user-profile/ with that token.
 3. Appserver resolves the profile from the token's own Django auth.
 
-Both flows share the rest:
+Flow (Azure AD and other bearer-JWT providers)
+-----------------------------------------------
+1. OAuth callback → SDK stores the access token server-side (generic
+   per-sub _token_store, populated for every provider) and writes a
+   lightweight session cookie (email, sub, provider).
+2. First request after login → authorize_session_user() calls the same
+   GET /api/energydesk/get-user-profile/ endpoint the Django flow uses.
+3. Appserver's JWTEnergydeskAuthentication decodes the JWT's claims
+   (without verifying its signature) and looks up the Django Account by the
+   email claim — see _authorize_bearer_token_session's docstring for why
+   this is safe and why no separate Azure-specific verification endpoint
+   is needed.
+
+All three flows share the rest:
 4. Result is cached in the session under 'appserver_profile_cache' with a
    timestamp.  Subsequent requests use the cache
    (TTL = APPSERVER_PROFILE_CACHE_TTL_SECONDS, default 300 s).
@@ -217,13 +230,15 @@ def authorize_session_user(
     request: Request,
 ) -> AuthorizedUser:
     """
-    Resolve an authenticated OAuth session (Google or Django) to an
-    AuthorizedUser.
+    Resolve an authenticated OAuth session (Google, Django, Azure AD, or any
+    other configured provider) to an AuthorizedUser.
 
     1. Check session cache (TTL = APPSERVER_PROFILE_CACHE_TTL_SECONDS).
     2. On cache miss: call the appserver — via authorize_user_google() for a
        Google id_token, or authorize_user_django() for a Django session
-       token (see _authorize_via_appserver()).
+       token or any other provider's bearer JWT (Azure AD included — see
+       _authorize_bearer_token_session's docstring for why the same call
+       works for both).
     3. Cache successful result; return unregistered on failure/404.
     """
     email = (session_user.get('email') or '').lower()
@@ -242,8 +257,20 @@ def authorize_session_user(
     provider = session_user.get('provider', 'google')
     if provider == 'django':
         profile = _authorize_django_session(session_user, email)
-    else:
+    elif provider == 'google':
         profile = _authorize_google_session(request, sub, email, session_user)
+    else:
+        # Azure AD and any other OIDC provider whose access token is a real
+        # JWT the appserver can validate itself (see
+        # _authorize_bearer_token_session's docstring). Previously this
+        # fell into the `else` branch above and was routed through
+        # _authorize_google_session, which only Google's OAuth callback
+        # ever populates (_id_token_store) — every non-Google, non-Django
+        # session was permanently treated as needing re-auth, even
+        # immediately after a successful login. Confirmed live 2026-09-21
+        # against Celsio/Hafslund's Azure-authenticated users in
+        # energydesk-insight.
+        profile = _authorize_bearer_token_session(sub, email, provider)
 
     if profile is None:
         return AuthorizedUser.session_expired(session_user)
@@ -276,6 +303,60 @@ def _authorize_django_session(session_user: Dict[str, Any], email: str):
     if not token:
         logger.warning(
             f"[authz] {email}: no Django token in session — session needs re-authentication"
+        )
+        return None
+
+    try:
+        from energydeskapi.auth.etrm_authorize import authorize_user_django
+        profile = authorize_user_django(token)
+    except Exception as exc:
+        logger.error(f"[authz] appserver call failed for {email}: {exc}")
+        return False
+
+    return profile if profile is not None else False
+
+
+def _authorize_bearer_token_session(sub: str, email: str, provider: str):
+    """
+    Resolve a session authenticated by a provider whose OAuth access token
+    is itself a real JWT the appserver can validate on its own — Azure AD
+    today, and any future provider added the same way.
+
+    Unlike Google, there is no dedicated appserver-side token-verification
+    endpoint for these providers (no ``resolve-<provider>-token/`` that
+    checks the JWT's cryptographic signature). None is needed: appserver's
+    ``GET /api/energydesk/get-user-profile/`` already accepts any JWT-shaped
+    bearer token via ``JWTEnergydeskAuthentication``
+    (energydesk/apps/auth/jwt_auth.py) — it decodes the token's claims
+    *without* verifying the signature and instead checks the email claim
+    against the ``Account`` table ("valid" means "a real, active account",
+    not "cryptographically genuine"). ``authorize_user_django()`` (despite
+    the name) is exactly this call, already used for genuinely
+    Django-issued tokens — it works identically here since appserver's own
+    authentication class never distinguishes who issued the JWT.
+
+    The token itself lives in the SDK's generic, per-``sub`` ``_token_store``
+    (populated by every provider's OAuth callback in auth_fastapi.py, not
+    just Azure's) — the same store ``get_user_bearer_token()`` already reads
+    for this same "Azure / other OIDC" case.
+
+    Returns the appserver profile dict, ``False`` if the appserver reports
+    the user as unregistered, or ``None`` if there is no token to use (e.g.
+    a restart cleared the in-memory store — needs re-authentication).
+    """
+    try:
+        from energydeskapi.auth.auth_fastapi import _token_store, _token_store_lock
+        with _token_store_lock:
+            token = _token_store.get(sub)
+    except Exception as exc:
+        logger.debug(f"[authz] Could not read _token_store for sub={sub}: {exc}")
+        token = None
+
+    if not token:
+        logger.warning(
+            f"[authz] {email}: no access token available for provider={provider} "
+            "(server-side store may have been cleared after a restart) — "
+            "session needs re-authentication"
         )
         return None
 
