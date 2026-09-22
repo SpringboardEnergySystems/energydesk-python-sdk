@@ -142,6 +142,19 @@ class AuthorizedUser:
             raw_session=session_user,
         )
 
+    def __bool__(self) -> bool:
+        """
+        False for an unregistered/inactive/needs-reauth user, so every
+        existing `if not auth:` / `auth and ...` check across the services —
+        most of which pre-date resolve_session()/require_page_session() —
+        already redirects instead of rendering a page as logged-in with an
+        empty role. `get_authorized_user()` already returns None (falsy) for
+        no session at all; this covers "authenticated but not registered"
+        and "session expired, needs re-login" cases that previously stayed
+        truthy.
+        """
+        return self.is_registered and self.is_active and not self.needs_reauth
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "email": self.email,
@@ -425,26 +438,24 @@ def get_authorized_user(request: Request) -> Optional[AuthorizedUser]:
     """
     FastAPI dependency — returns an AuthorizedUser if the request carries a
     valid OAuth session, otherwise returns None.
+
+    Thin wrapper over session.resolve_session() — ANONYMOUS and EXPIRED both
+    return None here (this function has no way to signal "expired" to a
+    caller expecting Optional[AuthorizedUser]; use require_page_session or
+    require_api_session directly where that distinction matters).
     """
-    session_user = _get_oauth_session(request)
-    if not session_user:
-        return None
-    return authorize_session_user(session_user, request)
+    from energydeskapi.auth.session import resolve_session, SessionState
+    resolved = resolve_session(request)
+    return resolved.user if resolved.state == SessionState.VALID else None
 
 
 def require_authenticated_user(request: Request) -> AuthorizedUser:
     """
     FastAPI dependency — requires a valid OAuth session.
-    Redirects to /auth/login if not authenticated.
+    Redirects to /auth/login if not authenticated or expired.
     """
-    session_user = _get_oauth_session(request)
-    if not session_user:
-        root_path = request.scope.get("root_path", "")
-        raise HTTPException(
-            status_code=307,
-            headers={"Location": f"{root_path}/auth/login?next={request.url.path}"},
-        )
-    return authorize_session_user(session_user, request)
+    from energydeskapi.auth.session import require_page_session
+    return require_page_session(request)
 
 
 def require_registered_user(
