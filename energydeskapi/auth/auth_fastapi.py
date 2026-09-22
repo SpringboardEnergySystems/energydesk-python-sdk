@@ -712,21 +712,47 @@ class FastAPIOIDCAuth:
             if provider not in self.providers:
                 raise HTTPException(status_code=400, detail='Invalid provider')
 
+            # If OAUTH_REDIRECT_URI_<PROVIDER> (see below) happens to overlap
+            # this exact path — e.g. a customer's Azure AD app is registered
+            # against ".../auth/login/azure" from before this SDK settled on
+            # "/auth/authorize/{provider}" — the IdP redirects the browser
+            # straight back here with ?code=&state=, not to a separate alias
+            # route (Starlette matches this parameterized route before any
+            # later-registered static one at the same path, so a plain alias
+            # would never actually be reached). Detect that and delegate to
+            # the real callback handler instead of starting a fresh OAuth
+            # round trip.
+            if request.query_params.get('code') or request.query_params.get('error'):
+                return await authorize(request, provider)
+
             # Get root_path from X-Forwarded-Prefix header (set by Ingress) — empty for
             # services that own their whole hostname (e.g. dsotools) rather than sharing
             # one behind a path prefix.
             root_path = request.scope.get("root_path", "")
 
-            # Always build the redirect URI manually rather than via request.url_for(),
-            # which inherits the internal pod-to-pod scheme (http) from the ASGI scope.
-            # Ingress/Gateway terminates TLS and forwards plain HTTP, so without this
-            # correction a root_path-less service (no X-Forwarded-Prefix) would send the
-            # OAuth provider an "http://" redirect_uri even though the site is https —
-            # a mismatch most providers reject outright, silently breaking login.
-            scheme = request.headers.get('X-Forwarded-Proto', request.url.scheme)
-            netloc = request.url.netloc
-            redirect_uri = f"{scheme}://{netloc}{root_path}/auth/authorize/{provider}"
-            logger.info(f"OAuth redirect URI: {redirect_uri} (root_path={root_path!r}, scheme from X-Forwarded-Proto: {scheme})")
+            # Override for an IdP app registration that already has a fixed redirect
+            # URI on file (e.g. a customer's Azure AD app registered against
+            # "/auth/login/azure" from before this SDK settled on "/auth/authorize/
+            # {provider}") and re-registering it isn't immediate. Set
+            # OAUTH_REDIRECT_URI_<PROVIDER> to the exact URL the IdP has on file;
+            # _register_routes() below adds a matching callback alias for its path,
+            # since Azure/Google will redirect the browser there directly. Leave unset
+            # to keep this SDK's own "/auth/authorize/{provider}" path.
+            override = os.environ.get(f"OAUTH_REDIRECT_URI_{provider.upper()}")
+            if override:
+                redirect_uri = override
+                logger.info(f"OAuth redirect URI (override via OAUTH_REDIRECT_URI_{provider.upper()}): {redirect_uri}")
+            else:
+                # Always build the redirect URI manually rather than via request.url_for(),
+                # which inherits the internal pod-to-pod scheme (http) from the ASGI scope.
+                # Ingress/Gateway terminates TLS and forwards plain HTTP, so without this
+                # correction a root_path-less service (no X-Forwarded-Prefix) would send the
+                # OAuth provider an "http://" redirect_uri even though the site is https —
+                # a mismatch most providers reject outright, silently breaking login.
+                scheme = request.headers.get('X-Forwarded-Proto', request.url.scheme)
+                netloc = request.url.netloc
+                redirect_uri = f"{scheme}://{netloc}{root_path}/auth/authorize/{provider}"
+                logger.info(f"OAuth redirect URI: {redirect_uri} (root_path={root_path!r}, scheme from X-Forwarded-Proto: {scheme})")
 
             return await self.providers[provider].authorize_redirect(request, redirect_uri)
 
@@ -856,6 +882,34 @@ class FastAPIOIDCAuth:
             # Redirect to the original page or dashboard
             root_path = request.scope.get("root_path", "")
             return RedirectResponse(url=f'{root_path}/portal/')
+
+        # Legacy callback aliases for any provider whose redirect URI was
+        # overridden (OAUTH_REDIRECT_URI_<PROVIDER> above) to a path other than
+        # this SDK's own "/auth/authorize/{provider}". The IdP redirects the
+        # browser straight to whatever redirect_uri was sent during /authorize,
+        # so that exact path must also be served here — Authlib itself doesn't
+        # care which route it runs on: authorize_access_token() re-reads the
+        # redirect_uri it needs from the session state saved by authorize_redirect()
+        # (keyed by the OAuth "state" param), not from the current request's path.
+        from urllib.parse import urlparse as _urlparse
+        for _provider_key in self.providers.keys():
+            _override = os.environ.get(f"OAUTH_REDIRECT_URI_{_provider_key.upper()}")
+            if not _override:
+                continue
+            _override_path = _urlparse(_override).path
+            if not _override_path or _override_path == f"/auth/authorize/{_provider_key}":
+                continue
+
+            def _make_legacy_authorize(bound_provider: str):
+                async def _legacy_authorize(request: Request):
+                    return await authorize(request, provider=bound_provider)
+                return _legacy_authorize
+
+            app.add_api_route(
+                _override_path, _make_legacy_authorize(_provider_key),
+                methods=["GET"], include_in_schema=False,
+            )
+            logger.info(f"Registered legacy OAuth callback alias {_override_path!r} -> provider={_provider_key}")
 
         @app.get('/auth/logout')
         async def logout(request: Request):
