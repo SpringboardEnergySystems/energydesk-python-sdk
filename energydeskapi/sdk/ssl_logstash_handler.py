@@ -1,8 +1,21 @@
 import logging
 import socket
 import ssl
+import sys
+import time
 import json
 # Problems with the original logger and SSL
+
+
+def _console_warning(message: str) -> None:
+    """Write a warning directly to stderr, bypassing `logging` to avoid recursion
+    back into this handler's own failure path."""
+    try:
+        sys.stderr.write(message + "\n")
+        sys.stderr.flush()
+    except Exception:
+        pass
+
 
 class SSLTCPLogstashHandler(logging.Handler):
     """
@@ -11,9 +24,10 @@ class SSLTCPLogstashHandler(logging.Handler):
     Compatible with LogstashFormatterVersion1 from python-logstash.
     """
 
-    def __init__(self, host, port, message_type='python-logstash', tags=None, 
+    def __init__(self, host, port, message_type='python-logstash', tags=None,
                  version=1, ssl_enable=True, ssl_verify=True, timeout=5, fqdn=False,
-                 customer=None, environment=None, appname=None):
+                 customer=None, environment=None, appname=None,
+                 retry_initial=1.0, retry_max=60.0):
         """
         Initialize the SSL TCP Logstash handler.
         
@@ -43,12 +57,20 @@ class SSLTCPLogstashHandler(logging.Handler):
         self.fqdn = fqdn
         self.sock = None
         self._fallback_formatter = None
-        
+
         # Store customer, environment, appname as explicit fields
         self.customer = customer
         self.environment = environment
         self.appname = appname
-        
+
+        # Backoff state: while self.sock is None, emit() drops records until
+        # _retry_at without attempting a connection.
+        self._retry_initial = retry_initial
+        self._retry_max = retry_max
+        self._retry_delay = retry_initial
+        self._retry_at = 0.0
+        self._dropped = 0
+
         # Try to use the standard LogstashFormatterVersion1 if available
         try:
             from logstash.formatter import LogstashFormatterVersion1
@@ -170,38 +192,43 @@ class SSLTCPLogstashHandler(logging.Handler):
     
     def emit(self, record):
         """
-        Emit a log record.
-        
+        Emit a log record. Never raises: connection failures are absorbed into
+        a backoff window so a Logstash outage costs one dropped record per
+        call, not a blocked or crashed caller.
+
         Args:
             record: Python LogRecord
         """
+        now = time.monotonic()
+        if self.sock is None and now < self._retry_at:
+            self._dropped += 1
+            return
         try:
-            # Create logstash message
-            message = self.makeLogstashMessage(record)
-            
-            # Convert to JSON and add newline
-            data = json.dumps(message) + '\n'
-            
-            # Ensure socket is connected
             if self.sock is None:
                 self.sock = self.makeSocket()
-            
-            # Send data
+                self._on_connected()
+            data = json.dumps(self.makeLogstashMessage(record)) + '\n'
             self.sock.sendall(data.encode('utf-8'))
-            
-        except (BrokenPipeError, ConnectionError, OSError, socket.error) as e:
-            # Connection lost, try to reconnect once
-            self.sock = None
-            try:
-                self.sock = self.makeSocket()
-                message = self.makeLogstashMessage(record)
-                data = json.dumps(message) + '\n'
-                self.sock.sendall(data.encode('utf-8'))
-            except Exception:
-                # If reconnection fails, let it propagate
-                raise
-        except Exception as e:
+        except (BrokenPipeError, ConnectionError, OSError, socket.error):
+            self._on_failure(now)
+        except Exception:
             self.handleError(record)
+
+    def _on_failure(self, now):
+        """Record a connection/send failure: drop the socket and back off
+        exponentially before the next connection attempt."""
+        self.sock = None
+        self._retry_at = now + self._retry_delay
+        if self._retry_delay == self._retry_initial:
+            _console_warning(f"Logstash {self.host}:{self.port} unreachable; retrying with backoff")
+        self._retry_delay = min(self._retry_delay * 2, self._retry_max)
+
+    def _on_connected(self):
+        """Reset backoff state after a successful (re)connect."""
+        if self._dropped:
+            _console_warning(f"Logstash connection restored; {self._dropped} records dropped during outage")
+        self._dropped = 0
+        self._retry_delay = self._retry_initial
     
     def close(self):
         """Close the socket connection."""
