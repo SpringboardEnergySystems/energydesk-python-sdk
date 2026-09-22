@@ -70,5 +70,5 @@ def system_features_description(x):
         SystemFeaturesEnum.PRODUCTS: "Products",
         SystemFeaturesEnum.PRICES: "Prices",
         SystemFeaturesEnum.PROFILES: "Profiles",
-        SystemFeaturesEnum.VTN_ACCESS: "VTN Access (Flexgateway VEN/partner administration)"
+        SystemFeaturesEnum.VTN_ACCESS: "VTN Access (Flexgateway VTN admin)"
     }[x]
