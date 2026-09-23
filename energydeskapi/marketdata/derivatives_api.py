@@ -1,13 +1,13 @@
-from typing import Optional, Union
-
-import requests
-import logging
-import pandas as pd
 import json
+import logging
+from typing import Optional, Union, Any
+
+import pandas as pd
+import requests
 
 from energydeskapi.sdk.api_connection import ApiConnection
+from energydeskapi.types.market_enum_types import MarketPlaceEnum
 
-from energydeskapi.types.market_enum_types import MarketEnum, MarketPlaceEnum
 logger = logging.getLogger(__name__)
 #  Change
 class DerivativesApi:
@@ -16,7 +16,7 @@ class DerivativesApi:
     """
 
     @staticmethod
-    def fetch_markets(api_connection: ApiConnection, market_place=MarketPlaceEnum.NASDAQ_OMX.name):
+    def fetch_markets(api_connection: ApiConnection, market_place: str=MarketPlaceEnum.NASDAQ_OMX.name) -> list[str]:
         """Fetches markets
 
         :param api_connection: class with API token for use with API
@@ -68,7 +68,7 @@ class DerivativesApi:
         return None
 
     @staticmethod
-    def fetch_product_prices(base_url, token: str, market_place: str, market_name: str, area: Optional[str]=None):
+    def fetch_product_prices(base_url, token: str, market_place: str, market_name: str, area: Optional[str]=None) -> Optional[pd.DataFrame]:
         """Fetches product prices
 
         :param base_url: prefix of the URL
@@ -100,7 +100,7 @@ class DerivativesApi:
         return df
 
     @staticmethod
-    def get_prices_flatlist(api_connection: ApiConnection, parameters: dict={}):
+    def get_prices_flatlist(api_connection: ApiConnection, parameters: dict={}) -> Optional[list[dict[str,Any]]]:
         jsondata= api_connection.exec_get_url('/api/markets/productprices/flatlist/', parameters)
         if jsondata is None:
             return None
@@ -117,20 +117,20 @@ class DerivativesApi:
         return json_res
 
     @staticmethod
-    def get_prices_embedded_json(api_connection: ApiConnection, parameters: dict={}):
+    def get_prices_embedded_json(api_connection: ApiConnection, parameters: dict={}) -> Optional[dict[str, Any]]:
         jsondata= api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if jsondata is None:
             return None
         return jsondata
     @staticmethod
-    def get_closing_prices(api_connection: ApiConnection, parameters: dict={}):
+    def get_closing_prices(api_connection: ApiConnection, parameters: dict={}) -> Optional[dict[str, Any]]:
         jsondata= api_connection.exec_get_url('/api/markets/productprices/closing/', parameters)
         if jsondata is None:
             return None
         return jsondata
 
     @staticmethod
-    def get_product_prices(api_connection: ApiConnection, parameters: dict={}):
+    def get_product_prices(api_connection: ApiConnection, parameters: dict={}) -> Optional[dict[str, Any]]:
         jsondata= api_connection.exec_get_url('/api/markets/productprices/embedded/', parameters)
         if jsondata is None:
             return None
