@@ -23,6 +23,9 @@ class SystemFeaturesEnum(Enum):
     PRICES = 19
     # related to companies
     PROFILES = 20
+    # VTN (Virtual Top Node) administration — OpenADR VEN/partner provisioning
+    # in Flexgateway (create/manage VENs, partners, partner_clients mappings)
+    VTN_ACCESS = 21
 
 class SystemAccessTypeEnum(Enum):
     READ = 1
@@ -66,5 +69,6 @@ def system_features_description(x):
         SystemFeaturesEnum.FEES: "Fees",
         SystemFeaturesEnum.PRODUCTS: "Products",
         SystemFeaturesEnum.PRICES: "Prices",
-        SystemFeaturesEnum.PROFILES: "Profiles"
+        SystemFeaturesEnum.PROFILES: "Profiles",
+        SystemFeaturesEnum.VTN_ACCESS: "VTN Access (Flexgateway VTN admin)"
     }[x]

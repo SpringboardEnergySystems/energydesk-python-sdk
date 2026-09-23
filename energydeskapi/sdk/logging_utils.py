@@ -1,13 +1,61 @@
 from typing import Optional, Any
 
+import atexit
 import logging
 import os
+import queue
 import environ
-from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler, QueueHandler, QueueListener
 from dataclasses import dataclass
 from energydeskapi.sdk.common_utils import load_class_from_string
 from energydeskapi.sdk.ssl_logstash_handler import SSLTCPLogstashHandler
 logger = logging.getLogger(__name__)
+
+
+class HealthProbeFilter(logging.Filter):
+    """Drops Kubernetes liveness/readiness/health-check request log lines."""
+    PATHS = ("/health", "/liveness", "/readiness", "kube-probe")
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage()
+        return not any(p in msg for p in self.PATHS)
+
+
+class UvicornAccessFieldsFilter(logging.Filter):
+    """Unpacks uvicorn.access's positional args into named record attributes
+    (client_addr, method, path, http_version, status_code) so they become
+    top-level, filterable fields in Logstash/Kibana instead of buried in the
+    formatted message string."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if record.name == "uvicorn.access" and isinstance(record.args, tuple) and len(record.args) == 5:
+            record.client_addr, record.method, record.path, record.http_version, record.status_code = record.args
+        return True
+
+
+class _DroppingQueueHandler(QueueHandler):
+    """QueueHandler that drops records instead of blocking when the queue is
+    full, and preserves exc_info/args on the queued record so the downstream
+    handler (running on the listener thread) can still format tracebacks and
+    read the uvicorn.access fields unpacked by UvicornAccessFieldsFilter."""
+
+    def __init__(self, q):
+        super().__init__(q)
+        self.dropped = 0
+
+    def enqueue(self, record):
+        try:
+            self.queue.put_nowait(record)
+        except queue.Full:
+            self.dropped += 1
+
+    def prepare(self, record):
+        # The base QueueHandler.prepare() formats the message and clears
+        # exc_info/args, which is meant for crossing a process boundary. This
+        # queue stays within one process (feeding a listener thread), so pass
+        # the record through unchanged — the listener's handler still needs
+        # exc_info for tracebacks and args for UvicornAccessFieldsFilter.
+        return record
 
 
 @dataclass(frozen=True)
@@ -58,6 +106,41 @@ def get_loglevel_to_str(level: int) -> str:
     if level==logging.ERROR:
         return "ERROR"
     return "INFO"
+
+# Tracks the currently-running QueueListener so a repeated setup_service_logging()
+# call (logging.basicConfig(force=True) replaces root handlers each time) stops the
+# old listener thread instead of leaking it.
+_active_queue_listener: Optional[QueueListener] = None
+
+
+def _stop_active_queue_listener() -> None:
+    global _active_queue_listener
+    if _active_queue_listener is not None:
+        try:
+            _active_queue_listener.stop()
+        except Exception:
+            pass
+        _active_queue_listener = None
+
+
+def create_tcp_handler_queued(handler: logging.Handler) -> logging.Handler:
+    """Wraps a (typically slow/blocking) handler with a QueueHandler backed by a
+    QueueListener running on its own thread, so callers only ever enqueue —
+    all socket I/O happens off the caller's thread. Records are dropped (and
+    counted) rather than blocking the caller when the queue fills up."""
+    global _active_queue_listener
+    _stop_active_queue_listener()
+    maxsize = int(os.environ.get("LOGSTASH_QUEUE_MAXSIZE", "10000"))
+    q = queue.Queue(maxsize=maxsize)
+    listener = QueueListener(q, handler, respect_handler_level=True)
+    listener.start()
+    atexit.register(listener.stop)
+    _active_queue_listener = listener
+
+    queue_handler = _DroppingQueueHandler(q)
+    queue_handler.setLevel(handler.level)
+    return queue_handler
+
 
 def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console_level: int=logging.INFO, enable_logstash_conf:LogstashConfig=None):
     console_level=get_loglevel_from_str(get_environment_value("OVERRIDE_CONSOLE_LOGLEVEL", get_loglevel_to_str(console_level)))
@@ -132,6 +215,8 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
                 print(f"    Note: Using plain TCP - explicit fields not available (use SSL for explicit fields)")
             
             handler.setLevel(get_loglevel_from_str(loglev))
+            handler.addFilter(HealthProbeFilter())
+            handler.addFilter(UvicornAccessFieldsFilter())
             print(f"  ✓ Logstash handler created for {host}:{port}")
             print(f"    Tags: {enable_logstash_conf.customer}, {enable_logstash_conf.environment}, {enable_logstash_conf.appname}")
             if ssl_enabled:
@@ -151,6 +236,7 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
         filelogger.setLevel(file_level)
         formatter_file = logging.Formatter(get_logfile_format(servicetag))
         filelogger.setFormatter(formatter_file)
+        filelogger.addFilter(HealthProbeFilter())
         return filelogger
 
     def valid_handlers(handlers_with_possible_none: list[Optional[logging.Handler]]) -> list[logging.Handler]:
@@ -159,6 +245,13 @@ def setup_service_logging(servicetag: str, file_level: int=logging.INFO, console
     file_handler = create_file_handler()
     console_handler = create_console_handler()
     tcp_handler = create_tcp_handler(enable_logstash_conf.host, enable_logstash_conf.port) if enable_logstash_conf is not None else None
+    if tcp_handler is not None:
+        # Queue in front of the (potentially slow/blocking) network handler so
+        # application threads — including the uvicorn event loop — only ever
+        # enqueue; all Logstash socket I/O runs on the listener thread.
+        tcp_handler = create_tcp_handler_queued(tcp_handler)
+    else:
+        _stop_active_queue_listener()
     print(f"file_handler: {file_handler}")
     print(f"console_handler: {console_handler}")
     print(f"tcp_handler: {tcp_handler}")
