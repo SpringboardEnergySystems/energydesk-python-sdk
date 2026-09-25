@@ -42,15 +42,15 @@ def query_market_prices(api_conn):
 
 def query_product_prices(api_conn, products=['FEUA042026P086','FEUA042026']):
     today = pendulum.today('Europe/Oslo')
-    period_from = today.add(days=-5)
-    period_until = today
+    period_from = today.add(days=0)
+    period_until = today.add(days=-110)
     params={ 'page_size':50}
-    params['price_date__gte'] = str(period_from)[:10]
-    params['price_date__lt'] = str(period_until)[:10]
-    params['product__commodity_definition__instrument_type__code__in'] = ["FUT"]
-    params['product__market_place__name__in'] = ["ICE"]
-    data=DerivativesApi.get_product_prices(api_conn, params)
-    #print(json.dumps(data['results'], indent=2))
+    #params = {'product__commodity_definition__instrument_type__code': "EUROPT",'product__market_place__description': "ICE (Intercontinental Exchange)", 'page_size': 1000}
+    #params['product__market_ticker'] = "IEUA112026"
+    params['price_date'] = str(period_from)[:10]
+    params['product__market_place__name'] = "ICE"
+    data=DerivativesApi.get_prices_embedded_json(api_conn, params)
+    print(json.dumps(data['results'], indent=2))
 
 def query_market_prices_embedded(api_conn):
     yesterday = pendulum.yesterday('Europe/Oslo')
@@ -126,17 +126,16 @@ def manage_market_products(api_conn, ticker):
         res=ProductsApi.generate_market_product_from_ticker(api_conn,MarketPlaceEnum.NASDAQ_OMX, ticker)
         print(res)
 
-
 def market_products(api_conn):
     params={'page_size':500}
-    #params['commodity_definition__instrument_type__code']=InstrumentTypeEnum.EUROPT.name
-    params['market_ticker']= "IEUA112026"
+    params['product__market_place__name__in'] = ["Euronext", 'EEX']
+    params['traded_from__ge'] = str(pendulum.today('Europe/Oslo'))
     res=ProductsApi.get_market_products_embedded(api_conn, params)
 
-    #pd.set_option('display.max_rows', None)
-    #print(df)
-    #print(df[['product_code','generic_product_code','price_basis_code']])
-    print(json.dumps(res['results'], indent=2))
+    txt=json.dumps(res['results'], indent=2)
+    open("./market_products.json", "w").write(txt)
+
+
 
 
 def get_market_types(api_conn):
@@ -191,8 +190,8 @@ if __name__ == '__main__':
     api_conn=init_api()
 
     context = {}
-    #market_products(api_conn)
-    query_product_prices(api_conn)
+    market_products(api_conn)
+    #calculate_option_params(api_conn)
     #get_spot_prices(api_conn)
     #df=ProductsApi.get_market_products_df(api_conn, {'page_size':500, 'commodity_definition__instrument':'2025-01-01'})
     #print(df)
