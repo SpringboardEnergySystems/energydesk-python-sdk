@@ -18,7 +18,7 @@ lists of these.
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -41,6 +41,41 @@ class MarginAccountEmbedded(BaseModel):
     csa_independent_amount: Optional[float] = None
     csa_mta: Optional[float] = None
     payment_netting: Optional[bool] = None
+
+
+class AmortizationScheduleStep(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    date: date
+    remaining_pct: float                   # 0..100, remaining after this step
+
+
+class CollateralAssetWrite(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    account: int                           # MarginAccount pk
+    asset_type: str                        # CollateralAssetTypeEnum code
+    nominal_amount: float
+    currency: str
+    haircut_pct: Optional[float] = None    # 0..1
+
+    # See energydeskapi.types.margining.enums.CollateralDirectionEnum /
+    # AmortizationTypeEnum for the vocabularies. All optional - server
+    # defaults are direction=POSTED, amortization_type=NONE.
+    direction: Optional[str] = None                                   # CollateralDirectionEnum code
+    amortization_type: Optional[str] = None                           # AmortizationTypeEnum code
+    amortization_schedule: Optional[List[AmortizationScheduleStep]] = None
+    linked_asset: Optional[int] = None     # asset (plant/project) pk, per FK convention
+    notional_percent: Optional[float] = None
+
+    valid_from: Optional[date] = None
+    valid_until: Optional[date] = None
+
+
+class CollateralAssetEmbedded(CollateralAssetWrite):
+    model_config = ConfigDict(extra="allow")
+
+    pk: int
 
 
 class MarginRequirementWrite(BaseModel):
