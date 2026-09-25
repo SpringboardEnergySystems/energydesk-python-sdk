@@ -11,6 +11,7 @@ against Celsio/Hafslund's Azure-authenticated users in energydesk-insight.
 """
 from __future__ import annotations
 
+import importlib
 from unittest.mock import MagicMock
 
 import pytest
@@ -35,7 +36,9 @@ def clean_token_stores():
     auth_fastapi._token_store.clear()
     auth_fastapi._id_token_store.clear()
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_azure_session_resolves_via_the_generic_token_store(monkeypatch):
     """The real fix: an Azure session's token lives in _token_store (by
     sub), not _id_token_store (Google-only) -- and gets sent to the same
@@ -61,7 +64,9 @@ def test_azure_session_resolves_via_the_generic_token_store(monkeypatch):
     assert user.role == "Trader"
     assert user.needs_reauth is False
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_azure_session_with_no_stored_token_needs_reauth(monkeypatch):
     """Confirmed live: not present -- this must resolve to session_expired
     (needs_reauth=True, a 401 "please log in again"), not silently
@@ -73,7 +78,9 @@ def test_azure_session_with_no_stored_token_needs_reauth(monkeypatch):
     assert user.needs_reauth is True
     assert user.is_registered is False
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_azure_session_never_reads_the_google_only_id_token_store(monkeypatch):
     """Even if a (mismatched, coincidental) value sits in _id_token_store
     under the same sub, an Azure session must not use it -- that store is
@@ -95,6 +102,9 @@ def test_azure_session_never_reads_the_google_only_id_token_store(monkeypatch):
     assert user.needs_reauth is True
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_django_session_dispatch_is_unaffected_by_the_azure_branch(monkeypatch):
     captured = {}
 
@@ -113,6 +123,9 @@ def test_django_session_dispatch_is_unaffected_by_the_azure_branch(monkeypatch):
     assert user.is_registered is True
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_google_session_dispatch_is_unaffected_by_the_azure_branch(monkeypatch):
     """Google still resolves via _id_token_store, exactly as before --
     the new elif branch must not have changed this path's behaviour."""
@@ -136,6 +149,9 @@ def test_google_session_dispatch_is_unaffected_by_the_azure_branch(monkeypatch):
     assert user.is_registered is True
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_default_provider_unset_still_treated_as_google():
     """authorize_session_user()'s own default is provider='google' when the
     session carries none at all -- unaffected by adding the azure branch,

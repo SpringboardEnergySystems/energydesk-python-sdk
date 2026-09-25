@@ -17,6 +17,7 @@ URI on file. Two failure modes covered here:
 """
 from __future__ import annotations
 
+import importlib
 import os
 
 import pytest
@@ -39,7 +40,9 @@ def _build_app(monkeypatch, override_uri: str) -> FastAPI:
     FastAPIOIDCAuth("Test App", app, AZURE_CONFIG, secret_key="testsecret")
     return app
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_login_provider_uses_the_override_as_redirect_uri(monkeypatch):
     app = _build_app(monkeypatch, "https://elvia.energydesk.no/auth/login/azure")
     client = TestClient(app, follow_redirects=False)
@@ -50,7 +53,9 @@ def test_login_provider_uses_the_override_as_redirect_uri(monkeypatch):
     location = resp.headers["location"]
     assert "redirect_uri=https%3A%2F%2Felvia.energydesk.no%2Fauth%2Flogin%2Fazure" in location
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_callback_at_a_colliding_override_path_reaches_the_callback_handler(monkeypatch):
     """The override ("/auth/login/azure") is the SAME path pattern as the
     SDK's own initiate route -- login_provider() must recognize an incoming
@@ -69,7 +74,9 @@ def test_callback_at_a_colliding_override_path_reaches_the_callback_handler(monk
     assert resp.status_code == 401
     assert "mismatching_state" in resp.text or "state" in resp.text.lower()
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_callback_at_a_non_colliding_override_path_is_reachable(monkeypatch):
     """A custom override path with no collision must be served by the
     alias route _register_routes() adds for it."""
@@ -81,7 +88,9 @@ def test_callback_at_a_non_colliding_override_path_is_reachable(monkeypatch):
     assert resp.status_code == 401
     assert "mismatching_state" in resp.text or "state" in resp.text.lower()
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_no_override_keeps_the_default_redirect_uri(monkeypatch):
     app = FastAPI()
     FastAPIOIDCAuth("Test App", app, AZURE_CONFIG, secret_key="testsecret")

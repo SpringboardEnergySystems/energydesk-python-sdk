@@ -8,6 +8,7 @@ authorize_session_user()'s needs_reauth signal into SessionState.EXPIRED.
 """
 from __future__ import annotations
 
+import importlib
 import time
 
 import pytest
@@ -38,12 +39,17 @@ def clean_token_stores():
     auth_fastapi._id_token_store.clear()
     auth_fastapi._token_expiry_store.clear()
 
-
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_no_session_is_anonymous():
     res = session.resolve_session(_FakeRequest())
     assert res.state == session.SessionState.ANONYMOUS
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_valid_google_session_resolves(monkeypatch):
     auth_fastapi._id_token_store["sub123"] = "fake.id.token"
     auth_fastapi._token_expiry_store["sub123"] = time.time() + 3600
@@ -60,6 +66,9 @@ def test_valid_google_session_resolves(monkeypatch):
     assert res.user.role == "Trader"
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_azure_session_with_missing_token_is_expired():
     """No entry in _token_store for this sub -- authorize_session_user()
     returns needs_reauth=True, which resolve_session() must turn into
@@ -75,6 +84,9 @@ def test_azure_session_with_missing_token_is_expired():
     assert "user" not in r.session
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_azure_session_with_stored_token_is_valid_and_preserves_admin(monkeypatch):
     auth_fastapi._token_store["sub-az"] = "azure.jwt.token"
 
@@ -93,6 +105,9 @@ def test_azure_session_with_stored_token_is_valid_and_preserves_admin(monkeypatc
     assert res.user.is_admin is True
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_absolute_lifetime_exceeded_is_expired():
     r = _FakeRequest({"user": {
         "provider": "google", "email": "e@f.com", "name": "E F", "sub": "sub123",
@@ -104,6 +119,9 @@ def test_absolute_lifetime_exceeded_is_expired():
     assert res.reason == "absolute_lifetime"
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_require_page_session_redirects_with_reason_expired():
     r = _FakeRequest({"user": {
         "provider": "azure", "email": "g@h.com", "name": "G H", "sub": "sub-missing",
@@ -115,6 +133,9 @@ def test_require_page_session_redirects_with_reason_expired():
     assert "reason=expired" in exc_info.value.headers["Location"]
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_require_page_session_no_reason_when_anonymous():
     r = _FakeRequest()
     with pytest.raises(HTTPException) as exc_info:
@@ -123,6 +144,9 @@ def test_require_page_session_no_reason_when_anonymous():
     assert "reason=expired" not in exc_info.value.headers["Location"]
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_require_api_session_401_not_authenticated_when_anonymous():
     with pytest.raises(HTTPException) as exc_info:
         session.require_api_session(_FakeRequest())
@@ -130,6 +154,9 @@ def test_require_api_session_401_not_authenticated_when_anonymous():
     assert exc_info.value.detail["code"] == "not_authenticated"
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_require_api_session_401_session_expired_when_token_missing():
     r = _FakeRequest({"user": {
         "provider": "azure", "email": "i@j.com", "name": "I J", "sub": "sub-gone",
@@ -141,6 +168,9 @@ def test_require_api_session_401_session_expired_when_token_missing():
     assert exc_info.value.detail["code"] == "session_expired"
 
 
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
 def test_require_api_session_403_not_registered(monkeypatch):
     auth_fastapi._id_token_store["sub-unreg"] = "fake.id.token"
     import energydeskapi.auth.etrm_authorize as etrm_authorize
