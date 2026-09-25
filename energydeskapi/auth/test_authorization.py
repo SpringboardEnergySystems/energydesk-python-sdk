@@ -12,14 +12,15 @@ against Celsio/Hafslund's Azure-authenticated users in energydesk-insight.
 from __future__ import annotations
 
 import importlib
-from unittest.mock import MagicMock
 
-import pytest
-from fastapi import Request
+try:
+    import pytest
+    from fastapi import Request
 
-from energydeskapi.auth import authorization as authz
-from energydeskapi.auth import auth_fastapi
-
+    from energydeskapi.auth import authorization as authz
+    from energydeskapi.auth import auth_fastapi
+except:
+    pytest.skip("fastapi not installed", allow_module_level=True)
 
 def _fake_request() -> Request:
     """A Request whose .session is a plain dict, matching what

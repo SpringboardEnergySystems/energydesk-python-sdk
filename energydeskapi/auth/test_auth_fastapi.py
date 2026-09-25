@@ -21,9 +21,12 @@ import importlib
 import os
 
 import pytest
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
 
+try:
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+except:
+    pytest.skip("fastapi not installed", allow_module_level=True)
 from energydeskapi.auth.auth_fastapi import FastAPIOIDCAuth
 
 AZURE_CONFIG = {"azure": {"client_id": "fake-client-id", "client_secret": "fake-secret", "tenant": "common"}}

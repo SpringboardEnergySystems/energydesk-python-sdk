@@ -11,12 +11,14 @@ from __future__ import annotations
 import importlib
 import time
 
-import pytest
-from fastapi import HTTPException
+try:
+    import pytest
+    from fastapi import HTTPException
 
-from energydeskapi.auth import auth_fastapi
-from energydeskapi.auth import session
-
+    from energydeskapi.auth import auth_fastapi
+    from energydeskapi.auth import session
+except:
+    pytest.skip("fastapi not installed", allow_module_level=True)
 
 class _FakeRequest:
     """A request-like object with a plain-dict .session, matching what
