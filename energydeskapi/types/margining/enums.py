@@ -84,3 +84,29 @@ def collateral_asset_type_description(x: CollateralAssetTypeEnum) -> str:
         CollateralAssetTypeEnum.PARENT_GUARANTEE: "Parent guarantee",
         CollateralAssetTypeEnum.BOND: "Bond",
     }[x]
+
+
+class CollateralDirectionEnum(str, Enum):
+    POSTED = "POSTED"
+    RECEIVED = "RECEIVED"
+
+
+def collateral_direction_description(x: CollateralDirectionEnum) -> str:
+    return {
+        CollateralDirectionEnum.POSTED: "Posted (we placed it with the counterparty / GCM)",
+        CollateralDirectionEnum.RECEIVED: "Received (the counterparty placed it with us)",
+    }[x]
+
+
+class AmortizationTypeEnum(str, Enum):
+    NONE = "NONE"
+    LINEAR = "LINEAR"
+    SCHEDULE = "SCHEDULE"
+
+
+def amortization_type_description(x: AmortizationTypeEnum) -> str:
+    return {
+        AmortizationTypeEnum.NONE: "None (static)",
+        AmortizationTypeEnum.LINEAR: "Linear between valid_from and valid_until",
+        AmortizationTypeEnum.SCHEDULE: "Explicit schedule of remaining percentages",
+    }[x]
