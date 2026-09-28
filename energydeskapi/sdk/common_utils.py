@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 from os.path import join, dirname
 from typing import Optional, TypeVar, Any, AnyStr, Callable
 
@@ -152,3 +153,8 @@ def optional_map(opt: Optional[O], fn: Callable[[O], R]) -> Optional[R]:
 # applies the function to the optional value if it is not None, otherwise returns the default value
 def optional_map_or(opt: Optional[O], fn: Callable[[O], R], default: R) -> R:
     return fn(opt) if opt is not None else default
+
+E = TypeVar("E", bound=Enum)
+
+def enums_to_values(enums: list[E]) -> list[Any]:
+    return [e.value for e in enums]
