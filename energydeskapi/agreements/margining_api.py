@@ -39,9 +39,92 @@ class MarginingApi:
         return api_connection.exec_get_url(suburl, params)
 
     @staticmethod
+    def get_margin_account(api_connection: ApiConnection, margin_account_pk: int) -> Any:
+        logger.info("Loading margin account %s", margin_account_pk)
+        return api_connection.exec_get_url(f"/api/agreements/margin-accounts/{margin_account_pk}/")
+
+    @staticmethod
+    def upsert_margin_account(api_connection: ApiConnection, payload: dict, margin_account_pk: Optional[int] = None):
+        """Creates/updates a MarginAccount. PATCHes when margin_account_pk
+        is given, otherwise POSTs a new row (same upsert shape as
+        CounterPartsApi.upsert_counterpart_allowances)."""
+        if margin_account_pk:
+            logger.info("Updating margin account %s", margin_account_pk)
+            return api_connection.exec_patch_url(f"/api/agreements/margin-accounts/{margin_account_pk}/", payload)
+        logger.info("Creating margin account")
+        return api_connection.exec_post_url("/api/agreements/margin-accounts/", payload)
+
+    @staticmethod
+    def get_margin_account_url(api_connection: ApiConnection, margin_account_pk: int) -> str:
+        return api_connection.get_base_url() + f"/api/agreements/margin-accounts/{margin_account_pk}/"
+
+    @staticmethod
     def get_margin_account_collateral(api_connection: ApiConnection, margin_account_pk: int) -> Any:
         logger.info("Loading collateral for margin account %s", margin_account_pk)
         return api_connection.exec_get_url(f"/api/agreements/margin-accounts/{margin_account_pk}/collateral/")
+
+    @staticmethod
+    def get_collateral_assets(api_connection: ApiConnection, parameters: Optional[dict] = None) -> Any:
+        """List collateral assets, filtered by any query params the
+        viewset supports (account, direction, is_active-style
+        validity-at-date, linked_asset, ...)."""
+        params = dict(parameters or {})
+        logger.info("Listing collateral assets (filters=%s)", params)
+        return api_connection.exec_get_url("/api/agreements/collateral-assets/", params)
+
+    @staticmethod
+    def get_collateral_asset(api_connection: ApiConnection, collateral_asset_pk: int) -> Any:
+        logger.info("Loading collateral asset %s", collateral_asset_pk)
+        return api_connection.exec_get_url(f"/api/agreements/collateral-assets/{collateral_asset_pk}/")
+
+    @staticmethod
+    def upsert_collateral_asset(
+        api_connection: ApiConnection, payload: dict, collateral_asset_pk: Optional[int] = None,
+    ):
+        """Creates/updates a CollateralAsset. Body is an
+        energydeskapi.types.margining.CollateralAssetWrite-shaped dict
+        (direction, amortization_type, amortization_schedule,
+        linked_asset, notional_percent are all optional)."""
+        if collateral_asset_pk:
+            logger.info("Updating collateral asset %s", collateral_asset_pk)
+            return api_connection.exec_patch_url(f"/api/agreements/collateral-assets/{collateral_asset_pk}/", payload)
+        logger.info("Creating collateral asset")
+        return api_connection.exec_post_url("/api/agreements/collateral-assets/", payload)
+
+    @staticmethod
+    def get_collateral_asset_url(api_connection: ApiConnection, collateral_asset_pk: int) -> str:
+        return api_connection.get_base_url() + f"/api/agreements/collateral-assets/{collateral_asset_pk}/"
+
+    @staticmethod
+    def get_margin_requirements(api_connection: ApiConnection, parameters: Optional[dict] = None) -> Any:
+        """List margin requirements, filtered by any query params the
+        viewset supports (account, as_of, component, source, ...)."""
+        params = dict(parameters or {})
+        logger.info("Listing margin requirements (filters=%s)", params)
+        return api_connection.exec_get_url("/api/agreements/margin-requirements/", params)
+
+    @staticmethod
+    def get_margin_requirement(api_connection: ApiConnection, margin_requirement_pk: int) -> Any:
+        logger.info("Loading margin requirement %s", margin_requirement_pk)
+        return api_connection.exec_get_url(f"/api/agreements/margin-requirements/{margin_requirement_pk}/")
+
+    @staticmethod
+    def upsert_margin_requirement(
+        api_connection: ApiConnection, payload: dict, margin_requirement_pk: Optional[int] = None,
+    ):
+        """Creates/updates a single MarginRequirement. For batch
+        write-back of many rows in one call, use
+        post_margin_requirements instead."""
+        if margin_requirement_pk:
+            logger.info("Updating margin requirement %s", margin_requirement_pk)
+            return api_connection.exec_patch_url(
+                f"/api/agreements/margin-requirements/{margin_requirement_pk}/", payload)
+        logger.info("Creating margin requirement")
+        return api_connection.exec_post_url("/api/agreements/margin-requirements/", payload)
+
+    @staticmethod
+    def get_margin_requirement_url(api_connection: ApiConnection, margin_requirement_pk: int) -> str:
+        return api_connection.get_base_url() + f"/api/agreements/margin-requirements/{margin_requirement_pk}/"
 
     @staticmethod
     def post_margin_requirements(api_connection: ApiConnection, requirements: list[dict]):
