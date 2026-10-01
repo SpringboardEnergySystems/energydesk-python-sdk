@@ -26,6 +26,9 @@ class SystemFeaturesEnum(Enum):
     # VTN (Virtual Top Node) administration — OpenADR VEN/partner provisioning
     # in Flexgateway (create/manage VENs, partners, partner_clients mappings)
     VTN_ACCESS = 21
+    # Origination deal-package drafting (energydesk.apps.origination) —
+    # DealPackage create / add_leg, gated per Plan 28 D-P
+    ORIGINATION = 22
 
 class SystemAccessTypeEnum(Enum):
     READ = 1
@@ -70,5 +73,6 @@ def system_features_description(x):
         SystemFeaturesEnum.PRODUCTS: "Products",
         SystemFeaturesEnum.PRICES: "Prices",
         SystemFeaturesEnum.PROFILES: "Profiles",
-        SystemFeaturesEnum.VTN_ACCESS: "VTN Access (Flexgateway VTN admin)"
+        SystemFeaturesEnum.VTN_ACCESS: "VTN Access (Flexgateway VTN admin)",
+        SystemFeaturesEnum.ORIGINATION: "Origination (deal package drafting)"
     }[x]
