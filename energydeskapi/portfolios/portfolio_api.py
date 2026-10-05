@@ -148,13 +148,13 @@ class PortfoliosApi:
 
 
     @staticmethod
-    def get_equivalent_tickers(api_connection: ApiConnection, target_date: date, tickers_to_map: list[str]) -> dict[str, str]:
+    def get_equivalent_tickers(api_connection: ApiConnection, target_date: date, tickers_to_map: list[str], mappers_to_apply: Optional[list[str]]= None) -> dict[str, str]:
         """Loads equivalent tickers (e.g. SYOSLMFEB-26 => OSBMFEB-26
         """
         success, json_res, status_code, error_msg = api_connection.exec_post_url('/api/portfoliomanager/equivalent-tickers/', {
             'target_date': target_date.isoformat(),
             'tickers_to_map': tickers_to_map
-        })
+        } | ({"mappers_to_apply": mappers_to_apply} if mappers_to_apply is not None else {}))
         if success:
             return {m['ticker_to_map']: m['equivalent_ticker'] for m in json_res['mapped_tickers']}
         else:
