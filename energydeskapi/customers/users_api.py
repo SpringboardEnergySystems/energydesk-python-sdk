@@ -24,6 +24,7 @@ class User:
         self.company_registry_number: Optional[str]=None
         self.password: Optional[str]=None
         self.authentication_type: Optional[str]=None
+        self.is_active: Optional[bool]=None
 
     def get_dict(self):
         dict = {}
@@ -46,6 +47,7 @@ class User:
         if self.company_registry_number is not None: dict['company_registry_number'] = self.company_registry_number
         if self.is_super_user is not None: dict['is_super_user'] = self.is_super_user
         if self.authentication_type is not None: dict['authentication_type'] = self.authentication_type
+        if self.is_active is not None: dict['is_active'] = self.is_active
         return dict
 
 class UserGroup:
@@ -240,6 +242,24 @@ class UsersApi:
         if success is None:
             logger.error(error_msg)
         return success, json_res, status_code, error_msg
+
+    @staticmethod
+    def deactivate_user(api_connection: ApiConnection, pk: int):
+        """Deactivates a user profile (sets is_active=False).
+
+        Users are never hard-deleted (the Console's Users admin page: "Users
+        are deactivated, never deleted"). Thin wrapper around update_user —
+        added because User.get_dict() did not previously expose is_active.
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param pk: user key
+        :type pk: int, required
+        """
+        user = User()
+        user.pk = pk
+        user.is_active = False
+        return UsersApi.update_user(api_connection, pk, user)
 
     @staticmethod
     def get_users(api_connection: ApiConnection, parameters: dict={}):
@@ -597,6 +617,69 @@ class UsersApi:
         if success:
             return "User feature access successfully deleted", status_code
         return None
+
+    @staticmethod
+    def set_user_group_feature_matrix(api_connection: ApiConnection, group_pk: int, grants: list[dict]) -> dict:
+        """Replaces the entire permission matrix for a user group in one call.
+
+        Added for the Console's permission matrix page
+        (plans/20261002-console-scope-and-architecture.md, "Permission
+        matrix data"), which needs to save a whole group's diff — potentially
+        many changed cells — in one request rather than one upsert/delete
+        round-trip per changed cell. Composes the existing per-entry
+        endpoints (embedded list, upsert, delete) rather than adding a new
+        appserver endpoint, so it works against any appserver already
+        running this SDK version.
+
+        :param api_connection: class with API token for use with API
+        :type api_connection: str, required
+        :param group_pk: user group key
+        :type group_pk: int, required
+        :param grants: the complete set of grants the group should have
+            afterwards, as [{"system_feature": int, "system_access_type": int}, ...].
+            Any existing grant for this group not present in `grants` is
+            revoked; any entry present but not yet granted is created.
+        :type grants: list, required
+        :returns: {"created": [...], "deleted": [pk, ...], "errors": [...]}
+        """
+        current = UsersApi.get_user_feature_access_for_user_group(api_connection, group_pk) or {}
+        existing = current.get('results', current) if isinstance(current, dict) else current
+
+        def _as_pk(value):
+            return value['pk'] if isinstance(value, dict) else value
+
+        existing_by_key = {}
+        for entry in existing or []:
+            feature = _as_pk(entry.get('system_feature'))
+            access_type = _as_pk(entry.get('system_access_type'))
+            existing_by_key[(feature, access_type)] = entry.get('pk') or entry.get('id')
+
+        wanted_keys = {(g['system_feature'], g['system_access_type']) for g in grants}
+
+        created, deleted, errors = [], [], []
+
+        for feature, access_type in wanted_keys - existing_by_key.keys():
+            ufa = UserFeatureAccess()
+            ufa.group = group_pk
+            ufa.system_feature = feature
+            ufa.system_access_type = access_type
+            result = UsersApi.upsert_user_feature_access(api_connection, ufa)
+            if result is None:
+                errors.append({"system_feature": feature, "system_access_type": access_type, "action": "create"})
+            else:
+                created.append(result)
+
+        for feature, access_type in existing_by_key.keys() - wanted_keys:
+            pk = existing_by_key[(feature, access_type)]
+            if not pk:
+                continue
+            result = UsersApi.delete_user_feature_access(api_connection, pk)
+            if result is None:
+                errors.append({"system_feature": feature, "system_access_type": access_type, "action": "delete"})
+            else:
+                deleted.append(pk)
+
+        return {"created": created, "deleted": deleted, "errors": errors}
 
     @staticmethod
     def get_user_url(api_connection: ApiConnection, user_pk: int) -> str:
