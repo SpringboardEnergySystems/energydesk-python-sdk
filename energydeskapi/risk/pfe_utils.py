@@ -5,10 +5,6 @@ from typing import cast
 
 from energydeskapi.marketdata.product_utils import is_epad_from_series
 
-# Canonical portfolio ID used for all PFE calculations across services.
-# Change this value here when the PFE portfolio changes.
-PFE_PORTFOLIO_ID: int = 35
-
 # Legal price areas for PFE period-view processing. Rows in any other area are
 # dropped before recalculation (see filter_pfe_areas).
 PFE_ALLOWED_AREAS: tuple[str, ...] = ("NO1", "NO2", "NO3", "NO4", "NO5", "SYS")
