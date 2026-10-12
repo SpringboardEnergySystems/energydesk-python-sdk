@@ -366,13 +366,22 @@ class ContractFilter:
         self.user=None
         self.description=None
         self.filters=None
+        self.shared_with_groups: list[str] = []
+        self.version = None
+        self.updated_at = None
+        self.source_filter = None
+        self.source_snapshot = None
     def get_dict(self):
-        dict = {}
-        dict['pk']=self.pk
-        if self.user is not None: dict['user'] = self.user
-        if self.description is not None: dict['description'] = self.description
-        if self.filters is not None: dict['filters'] = self.filters
-        return dict
+        dc: Dict[str, Any] = {'pk': self.pk}
+        if self.user is not None: dc['user'] = self.user
+        if self.description is not None: dc['description'] = self.description
+        if self.filters is not None: dc['filters'] = self.filters
+        if self.shared_with_groups is not None and len(self.shared_with_groups) > 0: dc['shared_with_groups'] = self.shared_with_groups
+        if self.version is not None: dc['version'] = self.version
+        if self.updated_at is not None: dc['updated_at'] = self.updated_at
+        if self.source_filter is not None: dc['source_filter'] = self.source_filter
+        if self.source_snapshot is not None: dc['source_snapshot'] = self.source_snapshot
+        return dc
 
 
 class ContractsApi:
