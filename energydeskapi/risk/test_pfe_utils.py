@@ -80,6 +80,18 @@ class TestRecalculateSysWithEpad(TestCase):
         self.assertAlmostEqual(sys["netvol"], -160.0, places=6)
         self.assertAlmostEqual(sys["avgcost"], 25.0, places=6)
 
+    def test_row_coming_from_adhoc_pfe(self):
+        df = pd.DataFrame([{
+            'month': pd.to_datetime('2026-11-01'),
+            'netvol': 15840.0,
+            'avgcost': 11.0,
+            'area': 'NO1',
+            'type': 'EPAD',
+            'period': pd.to_datetime('2026-11-01')
+        }])
+
+        out = recalculate_sys(df)
+
     def test_exact_cancellation_preserves_cost_via_nudge(self):
         rows = _new_style_rows()
         rows.loc[rows["area"] == "SYS", "netvol"] = 60.0   # cancels the EPAD vol
