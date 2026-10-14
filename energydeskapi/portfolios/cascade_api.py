@@ -78,6 +78,21 @@ class CascadeApi:
         return json_res
 
     @staticmethod
+    def list_cascade_positions(api_connection: ApiConnection, params: dict[str, Any]) -> list[dict]:
+        """The positions a cascade of one trading book starts from, per symbol: buypos, sellpos (negative), netpos,
+        avgcost (the product view's definitions), the last close on or before the cascade date and the number of
+        contracts skipped because an earlier cascade already linked them. A flat position (netpos 0) is not cascaded
+        by position.
+
+        ``params``: trading_book (int), cascade_date (YYYY-MM-DD), contract_type, period_from, market_place and
+        optionally ticker_contains - the same meaning as for simulate_cascade.
+        """
+        json_res = api_connection.exec_get_url(f"{CASCADING_URL}/positions/", params)
+        if json_res is None:  # exec_get_url does not expose the status of a failed GET
+            raise CascadeApiError(None, "Loading cascade positions failed")
+        return json_res
+
+    @staticmethod
     def undo_cascade(api_connection: ApiConnection, process_id: int, simulation: bool) -> dict:
         """Reverses a cascade process. ``simulation`` is required: True only reports what would be deleted."""
         logger.info(f"Undoing cascade process {process_id} (simulation: {simulation})")

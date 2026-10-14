@@ -70,3 +70,17 @@ def test_non_json_error_text_is_kept_as_detail():
 def test_failed_list_raises():
     with pytest.raises(CascadeApiError):
         CascadeApi.list_cascade_processes(connection(get=None))
+
+
+def test_positions_are_fetched_with_the_params_untouched():
+    params = {"trading_book": 10, "cascade_date": "2026-12-31", "contract_type": "FUTURE", "period_from": "QUARTER",
+              "market_place": "EEX"}
+    rows = [{"ticker": "ENOQ1-27", "netpos": 6.0, "avgcost": 36.7}]
+    conn = connection(get=rows)
+    assert CascadeApi.list_cascade_positions(conn, params) == rows
+    conn.exec_get_url.assert_called_once_with("/api/portfoliomanager/cascading/positions/", params)
+
+
+def test_failed_positions_raise():
+    with pytest.raises(CascadeApiError):
+        CascadeApi.list_cascade_positions(connection(get=None), {"trading_book": 10})
