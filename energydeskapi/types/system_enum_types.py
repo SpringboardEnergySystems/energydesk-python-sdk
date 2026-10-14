@@ -29,6 +29,9 @@ class SystemFeaturesEnum(Enum):
     # Origination deal-package drafting (energydesk.apps.origination) —
     # DealPackage create / add_leg, gated per Plan 28 D-P
     ORIGINATION = 22
+    # Cascading of QUARTER/YEAR contracts into months/quarters via REST API
+    # (energydesk appserver portfoliomanager/cascading/*), EDETRM-78
+    CASCADING = 23
 
 class SystemAccessTypeEnum(Enum):
     READ = 1
@@ -74,5 +77,6 @@ def system_features_description(x):
         SystemFeaturesEnum.PRICES: "Prices",
         SystemFeaturesEnum.PROFILES: "Profiles",
         SystemFeaturesEnum.VTN_ACCESS: "VTN Access (Flexgateway VTN admin)",
-        SystemFeaturesEnum.ORIGINATION: "Origination (deal package drafting)"
+        SystemFeaturesEnum.ORIGINATION: "Origination (deal package drafting)",
+        SystemFeaturesEnum.CASCADING: "Contract Cascading"
     }[x]
