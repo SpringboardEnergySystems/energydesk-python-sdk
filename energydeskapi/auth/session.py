@@ -57,6 +57,25 @@ class ResolvedSession:
     reason: str = ""  # for logs: token_missing, token_expired, refresh_failed, absolute_lifetime
 
 
+def _provider_token_present(session_user: dict, sub: str) -> bool:
+    """True if the server-side token that backs this session still exists.
+
+    Google sessions use the id_token store, Django sessions carry their token in
+    the session itself, and every other provider (Azure AD, ...) uses the generic
+    token store. These in-memory stores are emptied by a restart or rollout.
+    """
+    provider = session_user.get('provider')
+    if provider == 'django':
+        return True
+    from energydeskapi.auth import auth_fastapi
+    if provider == 'google':
+        store, lock = auth_fastapi._id_token_store, auth_fastapi._id_token_store_lock
+    else:
+        store, lock = auth_fastapi._token_store, auth_fastapi._token_store_lock
+    with lock:
+        return bool(store.get(sub))
+
+
 def resolve_session(request: Request) -> ResolvedSession:
     """
     Decide whether the current request carries a valid session, per the
@@ -66,7 +85,9 @@ def resolve_session(request: Request) -> ResolvedSession:
     2. Session older than SESSION_ABSOLUTE_LIFETIME_SECONDS → EXPIRED.
     3. Token within TOKEN_REFRESH_SKEW_SECONDS of expiring → try to refresh;
        EXPIRED on failure or when the provider has no refresh implementation.
-    4. Resolve the role via authorize_session_user(). If the provider token
+    4. Resolve the role via authorize_session_user() and confirm the provider token
+       is still in the server-side store (the profile cache can outlive it).
+       If the provider token
        turned out to be missing from the server-side store — a pod restart
        or rollout, before the Redis-backed store lands — it comes back with
        `needs_reauth=True` (authorization.py's own AuthorizedUser.session_expired())
@@ -103,6 +124,11 @@ def resolve_session(request: Request) -> ResolvedSession:
             return ResolvedSession(state=SessionState.EXPIRED, reason=reason)
 
     user = authorize_session_user(session_user, request)
+    if not user.needs_reauth and not _provider_token_present(session_user, sub):
+        # authorize_session_user() answers from the cached profile in the session
+        # cookie without touching the token store, so after a restart it reports a
+        # valid user whose every later appserver call fails with "Token is invalid".
+        user.needs_reauth = True
     if user.needs_reauth:
         logger.info(f"[session] {session_user.get('email')} (provider={provider}): token missing from store")
         request.session.clear()
