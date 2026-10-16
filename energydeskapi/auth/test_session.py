@@ -186,3 +186,25 @@ def test_require_api_session_403_not_registered(monkeypatch):
         session.require_api_session(r)
     assert exc_info.value.status_code == 403
     assert exc_info.value.detail["code"] == "not_registered"
+
+
+@pytest.mark.skipif(
+    not importlib.util.find_spec("httpx2"), reason="requires the httpx2 library"
+)
+@pytest.mark.parametrize("provider", ["google", "azure"])
+def test_cached_profile_does_not_mask_missing_token(provider):
+    """Profile cache hit + empty token store (server restart) must be EXPIRED,
+    not VALID -- otherwise every appserver call 401s with 'Token is invalid'."""
+    from energydeskapi.auth import authorization
+    r = _FakeRequest({"user": {
+        "provider": provider, "email": "e@f.com", "name": "E F", "sub": "subC",
+        "authenticated": True, "token_ref": "subC", "issued_at": time.time(),
+    }})
+    authorization._store_cached_profile(r, "subC", {
+        "username": "e@f.com", "first_name": "E", "last_name": "F",
+        "role": "Administrator", "role_pk": 1, "is_platform_admin": False,
+    })
+    res = session.resolve_session(r)
+    assert res.state == session.SessionState.EXPIRED
+    assert res.reason == "token_missing"
+    assert "user" not in r.session
