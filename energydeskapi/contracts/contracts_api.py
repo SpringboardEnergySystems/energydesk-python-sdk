@@ -357,7 +357,27 @@ class ContractTag:
         ct.is_active = d['is_active']
         return ct
 
+# this weill be removed before the end of 2006 in favor of the new ContractFilterShared class
 class ContractFilter:
+    """ Class for contract filters
+
+    """
+    def __init__(self):
+        self.pk=0
+        self.user=None
+        self.description=None
+        self.filters=None
+    def get_dict(self):
+        dict = {}
+        dict['pk']=self.pk
+        if self.user is not None: dict['user'] = self.user
+        if self.description is not None: dict['description'] = self.description
+        if self.filters is not None: dict['filters'] = self.filters
+        return dict
+
+
+
+class ContractFilterShared:
     """ Class for contract filters
 
     """
@@ -382,6 +402,7 @@ class ContractFilter:
         if self.source_filter is not None: dc['source_filter'] = self.source_filter
         if self.source_snapshot is not None: dc['source_snapshot'] = self.source_snapshot
         return dc
+
 
 
 class ContractsApi:
@@ -450,7 +471,7 @@ class ContractsApi:
 
 
     @staticmethod
-    def upsert_contract_filters(api_connection: ApiConnection, filter: ContractFilter) -> tuple[bool, dict, int, str]:
+    def upsert_contract_filters(api_connection: ApiConnection, filter: ContractFilter|ContractFilterShared) -> tuple[bool, dict, int, str]:
         """Registers/Updates contract filters
 
         :param api_connection: class with API token for use with API
