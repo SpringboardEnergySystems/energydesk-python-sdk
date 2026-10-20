@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from energydeskapi.collector.nats_client import NatsBus
-    from energydeskapi.collector.protocols import ApiSink, InfluxSink, PostgresSink
+    from energydeskapi.collector.protocols import ApiSink, InfluxSink, PostgresSink, TimescaleSink
 
 
 @dataclass(frozen=True)
@@ -22,9 +22,9 @@ class SinkBundle:
 
     Typical factory setups
     ----------------------
-    *Collector service* (Influx + Postgres)::
+    *Collector service* (Influx and/or Timescale + Postgres)::
 
-        sinks = SinkBundle(influx=influx_store, postgres=pg_store)
+        sinks = SinkBundle(influx=influx_store, timescale=ts_store, postgres=pg_store)
 
     *Syncer* (API + NATS bus for metric events)::
 
@@ -36,6 +36,10 @@ class SinkBundle:
     """
 
     influx: "InfluxSink | None" = None
+    # Synchronous TimescaleDB writer (series catalog + hypertables) — the
+    # successor to ``influx`` for time-series points. Workers that only write
+    # Postgres/API are unaffected: the field defaults to None.
+    timescale: "TimescaleSink | None" = None
     # asyncpg Pool / PgStore — for direct domain-data DB writes from handlers.
     postgres: "PostgresSink | None" = None
     # ApiConnection / ApiTempConnection — for writing via the Energydesk REST API.

@@ -16,6 +16,20 @@ class InfluxSink(Protocol):
 
 
 @runtime_checkable
+class TimescaleSink(Protocol):
+    """Structural protocol for a synchronous TimescaleDB time-series writer.
+
+    ``rows`` are plain mappings (series identity + ``ts`` + ``value``); the
+    concrete store (e.g. ``TimescaleStore`` in the collector service) maps them
+    onto its hypertables and returns the number of rows written. Synchronous
+    on purpose — handlers call it via ``run_in_executor`` like the sync Influx
+    writer. The SDK carries no dependency on psycopg2.
+    """
+
+    def write_points(self, rows: Iterable[Any]) -> int: ...
+
+
+@runtime_checkable
 class PostgresSink(Protocol):
     """Minimal async Postgres interface for job handlers.
 
