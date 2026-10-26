@@ -841,9 +841,12 @@ class FastAPIOIDCAuth:
                 else:
                     logger.info(f"[OAuth callback] No expiry available for sub={sub} provider={provider}")
 
-            # Store id_token server-side (Google — used for appserver verification)
+            # Store id_token server-side. Google: used for appserver verification.
+            # Azure: the access token requested with 'openid email profile' is a
+            # Microsoft Graph token whose signature third parties cannot verify
+            # (nonce-bound); the ID token (aud = our client id) is the verifiable one.
             id_token = token.get('id_token')
-            if id_token and sub and provider == 'google':
+            if id_token and sub and provider in ('google', 'azure'):
                 with _id_token_store_lock:
                     _id_token_store[sub] = id_token
                 logger.debug(f"Stored id_token server-side for sub={sub}")

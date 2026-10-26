@@ -184,7 +184,13 @@ def get_user_bearer_token(request: Request) -> Optional[str]:
        validate it on a subset of endpoints — we never send it here.
     2. **Django / password auth** — token stored directly in
        ``session['user']['token']``.
-    3. **Azure / other OIDC** — access token from the SDK's ``_token_store``
+    3. **Azure OIDC** — returns the Azure *ID token* from ``_id_token_store``
+       when present. The Azure access token (``openid email profile`` scope) is a
+       Microsoft Graph token with a nonce-bound signature that no service but
+       Graph can verify; the ID token (``aud`` = our client id) can be verified
+       against the tenant's JWKS. Falls back to the access token for sessions
+       created before the ID token was stored.
+    4. **Other OIDC** — access token from the SDK's ``_token_store``
        keyed by ``sub`` / ``token_ref``.
 
     Returns ``None`` for anonymous or expired sessions; callers should fall
@@ -212,6 +218,27 @@ def get_user_bearer_token(request: Request) -> Optional[str]:
                 )
             except Exception as exc:
                 logger.debug("[etrm_auth] Could not retrieve Google ID token: %s", exc)
+
+    if provider == "azure":
+        sub = user.get("sub") or user.get("token_ref")
+        if sub:
+            try:
+                from energydeskapi.auth.auth_fastapi import (
+                    _id_token_store,
+                    _id_token_store_lock,
+                )
+                with _id_token_store_lock:
+                    id_token = _id_token_store.get(sub)
+                if id_token:
+                    logger.debug("[etrm_auth] Azure ID token resolved for sub=%s…", sub[:8])
+                    return id_token
+                logger.warning(
+                    "[etrm_auth] Azure ID token not found for sub=%s… — falling back to the access token "
+                    "(a Graph token that services cannot verify); user may need to re-login.",
+                    sub[:8],
+                )
+            except Exception as exc:
+                logger.debug("[etrm_auth] Could not retrieve Azure ID token: %s", exc)
 
     token = user.get("token") or user.get("access_token")
     if token:
