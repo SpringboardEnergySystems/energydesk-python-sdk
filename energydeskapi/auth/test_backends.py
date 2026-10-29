@@ -7,19 +7,23 @@ httpx path beyond what FastAPI itself needs, via ``fastapi.testclient``).
 """
 from __future__ import annotations
 
-import asyncio
-import time
-import warnings
+try:
+    import asyncio
+    import time
+    import warnings
 
-import pytest
+    import pytest
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-pytest.importorskip("fastapi")
-pytest.importorskip("authlib")
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    pytest.importorskip("fastapi")
+    pytest.importorskip("authlib")
 
-from authlib.jose import JsonWebKey, jwt  # noqa: E402
-from fastapi import Depends, FastAPI  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
+    from authlib.jose import JsonWebKey, jwt  # noqa: E402
+    from fastapi import Depends, FastAPI  # noqa: E402
+    from fastapi.testclient import TestClient  # noqa: E402
+except:
+    pytest.skip("fastapi not installed", allow_module_level=True)
+
 
 from energydeskapi.auth import backends  # noqa: E402
 from energydeskapi.auth.backends import (  # noqa: E402
