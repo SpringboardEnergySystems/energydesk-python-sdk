@@ -29,7 +29,7 @@ Read these before making structural changes:
 
 ---
 
-## Identity backends (planned 2026-10-29, branch `feature/auth-backends`)
+## Identity backends (branch `feature/auth-backends`)
 
 The plan lives in the Flexgateway repo:
 `energydesk-flexgateway-service/plans/standalone_identity_and_order_management.md`, section
@@ -119,7 +119,8 @@ energydeskapi/
                            make_registration_gate() — resolves a session to a role
     session.py             resolve_session() / require_page_session() / require_api_session()
     etrm_authorize.py      the appserver calls (get-user-profile, resolve-google-token)
-    backends.py            (planned) UserDirectory / BearerVerifier protocols and implementations
+    backends.py            UserDirectory / BearerVerifier protocols and implementations,
+                           require_bearer(), AUTH_BACKEND / BEARER_VERIFIERS env wiring
   collector/
     nats_client.py         NatsBus — connect, ensure_stream, publish_json, kv_*
     sinks.py               SinkBundle — carries api, bus, influx, postgres into handlers

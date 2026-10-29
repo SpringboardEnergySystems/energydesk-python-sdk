@@ -264,6 +264,52 @@ Then visit:
 - `http://localhost:8000/api/me/role` - See role information
 - `http://localhost:8000/auth/login` - Login page
 
+## Backends
+
+Who is registered, and which bearer tokens are valid, are answered by pluggable backends
+(`energydeskapi/auth/backends.py`). The default is the Django appserver and behaves exactly as
+described above. Selected by environment:
+
+| Variable | Meaning |
+|---|---|
+| `AUTH_BACKEND` | `appserver` (default) or `local`. Selects the user directory. |
+| `BEARER_VERIFIERS` | Comma list, in order: `introspection`, `jwks`, `pod-token`. Default `introspection,pod-token`. |
+| `AUTH_JWKS_ISSUERS` | JSON list `[{"issuer": ..., "audience": ..., "jwks_url": ...}]`, used by `jwks`. |
+
+With `AUTH_BACKEND=local` the SDK owns no users: the service registers a resolver at startup and
+`authorize_session_user()` / `make_registration_gate()` ask it. For Google sessions the SDK first
+verifies the id_token itself (signature against Google's JWKS, issuer, `aud` = `GOOGLE_CLIENT_ID`,
+expiry) and passes the *verified* email to the resolver; a token that fails verification means
+"log in again". `ENERGYDESK_URL` / `ENERGYDESK_TOKEN` are then not needed.
+
+```python
+from energydeskapi.auth.backends import register_local_resolver
+
+def resolve_local_user(email: str, provider: str, sub: str) -> dict | None:
+    row = db.query(User).filter(func.lower(User.email) == email.lower(), User.is_active).first()
+    if row is None:
+        return None                      # authenticated, but not registered
+    return {"username": row.email, "first_name": row.first_name, "last_name": row.last_name,
+            "role": row.group.name, "role_pk": 0, "is_platform_admin": row.group.is_admin}
+
+register_local_resolver(resolve_local_user)   # once, at startup
+```
+
+Pod-to-pod and machine routes use `require_bearer`, which returns the token's claims or answers
+401 (missing/invalid token) / 403 (missing scope):
+
+```python
+from energydeskapi.auth.backends import BearerClaims, require_bearer
+
+@app.post("/orders")
+async def submit(claims: BearerClaims = Depends(require_bearer("nodes:orders"))): ...
+```
+
+`JwksVerifier` validates signature, `iss`, `aud`, `exp` and `nbf`, caches the JWKS by `kid` and
+refetches once on an unknown `kid`. A caller using the shared `API_INTERNAL_POD_TOKEN`
+(`pod-token`) holds scope `internal`, which satisfies every `require_bearer` scope; this is a
+migration aid, drop `pod-token` from `BEARER_VERIFIERS` when it is no longer needed.
+
 ## Security Notes
 
 1. **Session security**: Use a strong `secret_key` for session encryption
