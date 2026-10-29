@@ -4,8 +4,9 @@ Shared authorization module for Energydesk FastAPI services.
 Authentication is handled by FastAPIOIDCAuth, which supports Google, Django,
 Azure AD, and any other configured OIDC provider. This module handles
 *authorization* — given an already-authenticated session (any provider) it
-resolves the user's role and ``is_platform_admin`` flag from the central
-Django appserver, caches the result in the session, and exposes FastAPI
+resolves the user's role and ``is_platform_admin`` flag from the configured
+user directory (backends.py: the central Django appserver by default, or a
+service-owned directory with AUTH_BACKEND=local), caches the result in the session, and exposes FastAPI
 dependencies that every service can use.
 
 Flow (Google)
@@ -56,6 +57,8 @@ from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
 
 from fastapi import Request, HTTPException, Depends
+
+from energydeskapi.auth.backends import get_user_directory
 
 logger = logging.getLogger(__name__)
 
@@ -238,6 +241,36 @@ def _get_id_token(request: Request, sub: str) -> Optional[str]:
     with _id_token_store_lock:
         return _id_token_store.get(sub)
 
+def _provider_token(
+    request: Optional[Request], session_user: Dict[str, Any], sub: str, refresh: bool = True,
+) -> Optional[str]:
+    """
+    The provider credential the SDK holds server-side for this session, or None.
+
+    Google: the id_token from _id_token_store (refreshed first when about to expire,
+    unless ``refresh`` is False).
+    Django: the token the OAuth callback wrote into the session itself.
+    Anything else (Azure AD, ...): the access token in the generic per-sub _token_store,
+    which every provider's OAuth callback populates. A provider never reads another's store.
+    """
+    provider = session_user.get('provider', 'google')
+    if provider == 'google':
+        if not refresh:
+            from energydeskapi.auth.auth_fastapi import _id_token_store, _id_token_store_lock
+            with _id_token_store_lock:
+                return _id_token_store.get(sub)
+        return _get_id_token(request, sub)
+    if provider == 'django':
+        return session_user.get('token') or session_user.get('access_token')
+    try:
+        from energydeskapi.auth.auth_fastapi import _token_store, _token_store_lock
+        with _token_store_lock:
+            return _token_store.get(sub)
+    except Exception as exc:
+        logger.debug(f"[authz] Could not read _token_store for sub={sub}: {exc}")
+        return None
+
+
 def authorize_session_user(
     session_user: Dict[str, Any],
     request: Request,
@@ -247,11 +280,11 @@ def authorize_session_user(
     other configured provider) to an AuthorizedUser.
 
     1. Check session cache (TTL = APPSERVER_PROFILE_CACHE_TTL_SECONDS).
-    2. On cache miss: call the appserver — via authorize_user_google() for a
-       Google id_token, or authorize_user_django() for a Django session
+    2. On cache miss: ask the configured user directory (AUTH_BACKEND, see
+       backends.py). The appserver directory calls authorize_user_google() for
+       a Google id_token and authorize_user_django() for a Django session
        token or any other provider's bearer JWT (Azure AD included — see
-       _authorize_bearer_token_session's docstring for why the same call
-       works for both).
+       etrm_authorize.py); the local directory calls the service's resolver.
     3. Cache successful result; return unregistered on failure/404.
     """
     email = (session_user.get('email') or '').lower()
@@ -266,29 +299,20 @@ def authorize_session_user(
         logger.debug(f"[authz] {email} resolved from session cache")
         return AuthorizedUser.from_appserver(cached, session_user)
 
-    # 2. Appserver lookup
+    # 2. Directory lookup
     provider = session_user.get('provider', 'google')
-    if provider == 'django':
-        profile = _authorize_django_session(session_user, email)
-    elif provider == 'google':
-        profile = _authorize_google_session(request, sub, email, session_user)
-    else:
-        # Azure AD and any other OIDC provider whose access token is a real
-        # JWT the appserver can validate itself (see
-        # _authorize_bearer_token_session's docstring). Previously this
-        # fell into the `else` branch above and was routed through
-        # _authorize_google_session, which only Google's OAuth callback
-        # ever populates (_id_token_store) — every non-Google, non-Django
-        # session was permanently treated as needing re-auth, even
-        # immediately after a successful login. Confirmed live 2026-09-21
-        # against Celsio/Hafslund's Azure-authenticated users in
-        # energydesk-insight.
-        profile = _authorize_bearer_token_session(sub, email, provider)
+    profile = get_user_directory().resolve_user(
+        email=email,
+        provider=provider,
+        sub=sub,
+        token=_provider_token(request, session_user, sub),
+        name=session_user.get('name', ''),
+    )
 
     if profile is None:
         return AuthorizedUser.session_expired(session_user)
     if profile is False:
-        logger.info(f"[authz] {email} authenticated but NOT registered in Django")
+        logger.info(f"[authz] {email} authenticated but NOT registered")
         return AuthorizedUser.unregistered(session_user)
 
     _store_cached_profile(request, sub, profile)
@@ -297,126 +321,6 @@ def authorize_session_user(
         f"is_platform_admin={profile.get('is_platform_admin')}"
     )
     return AuthorizedUser.from_appserver(profile, session_user)
-
-
-def _authorize_django_session(session_user: Dict[str, Any], email: str):
-    """
-    Resolve a Django OAuth session.
-
-    The Django token lives directly in the session (no separate id_token
-    store — see get_user_bearer_token() in fastapi_utils.py), so there is no
-    "store cleared after restart" failure mode here: missing token just means
-    the session itself was never fully populated and needs a fresh login.
-
-    Returns the appserver profile dict, ``False`` if the appserver reports
-    the user as unregistered, or ``None`` if there is no token to use (needs
-    re-authentication).
-    """
-    token = session_user.get('token') or session_user.get('access_token')
-    if not token:
-        logger.warning(
-            f"[authz] {email}: no Django token in session — session needs re-authentication"
-        )
-        return None
-
-    try:
-        from energydeskapi.auth.etrm_authorize import authorize_user_django
-        profile = authorize_user_django(token)
-    except Exception as exc:
-        logger.error(f"[authz] appserver call failed for {email}: {exc}")
-        return False
-
-    return profile if profile is not None else False
-
-
-def _authorize_bearer_token_session(sub: str, email: str, provider: str):
-    """
-    Resolve a session authenticated by a provider whose OAuth access token
-    is itself a real JWT the appserver can validate on its own — Azure AD
-    today, and any future provider added the same way.
-
-    Unlike Google, there is no dedicated appserver-side token-verification
-    endpoint for these providers (no ``resolve-<provider>-token/`` that
-    checks the JWT's cryptographic signature). None is needed: appserver's
-    ``GET /api/energydesk/get-user-profile/`` already accepts any JWT-shaped
-    bearer token via ``JWTEnergydeskAuthentication``
-    (energydesk/apps/auth/jwt_auth.py) — it decodes the token's claims
-    *without* verifying the signature and instead checks the email claim
-    against the ``Account`` table ("valid" means "a real, active account",
-    not "cryptographically genuine"). ``authorize_user_django()`` (despite
-    the name) is exactly this call, already used for genuinely
-    Django-issued tokens — it works identically here since appserver's own
-    authentication class never distinguishes who issued the JWT.
-
-    The token itself lives in the SDK's generic, per-``sub`` ``_token_store``
-    (populated by every provider's OAuth callback in auth_fastapi.py, not
-    just Azure's) — the same store ``get_user_bearer_token()`` already reads
-    for this same "Azure / other OIDC" case.
-
-    Returns the appserver profile dict, ``False`` if the appserver reports
-    the user as unregistered, or ``None`` if there is no token to use (e.g.
-    a restart cleared the in-memory store — needs re-authentication).
-    """
-    try:
-        from energydeskapi.auth.auth_fastapi import _token_store, _token_store_lock
-        with _token_store_lock:
-            token = _token_store.get(sub)
-    except Exception as exc:
-        logger.debug(f"[authz] Could not read _token_store for sub={sub}: {exc}")
-        token = None
-
-    if not token:
-        logger.warning(
-            f"[authz] {email}: no access token available for provider={provider} "
-            "(server-side store may have been cleared after a restart) — "
-            "session needs re-authentication"
-        )
-        return None
-
-    try:
-        from energydeskapi.auth.etrm_authorize import authorize_user_django
-        profile = authorize_user_django(token)
-    except Exception as exc:
-        logger.error(f"[authz] appserver call failed for {email}: {exc}")
-        return False
-
-    return profile if profile is not None else False
-
-
-def _authorize_google_session(request: Request, sub: str, email: str, session_user: Dict[str, Any]):
-    """
-    Resolve a Google OAuth session via its server-side id_token.
-
-    Returns the appserver profile dict, ``False`` if the appserver reports
-    the user as unregistered, or ``None`` if the id_token is unavailable
-    (e.g. a restart cleared the in-memory store — needs re-authentication).
-    """
-    id_token = _get_id_token(request, sub)
-    if not id_token:
-        logger.warning(
-            f"[authz] {email}: no id_token available (server-side store may have been "
-            "cleared after a restart) — session needs re-authentication"
-        )
-        return None
-
-    try:
-        from energydeskapi.auth.etrm_authorize import authorize_user_google
-        role, role_pk, is_platform_admin = authorize_user_google(id_token)
-    except Exception as exc:
-        logger.error(f"[authz] appserver call failed for {email}: {exc}")
-        return False
-
-    if role is None:
-        return False
-
-    return {
-        'username': email,
-        'first_name': session_user.get('name', ''),
-        'last_name': '',
-        'role': role,
-        'role_pk': role_pk,
-        'is_platform_admin': is_platform_admin,
-    }
 
 
 # ---------------------------------------------------------------------------
@@ -501,9 +405,13 @@ def make_registration_gate(root_path_fallback: str = ""):
     """
     Return a post_auth_hook callable for FastAPIOIDCAuth.set_post_auth_hook().
 
-    Rejects users whose email is NOT in the Django DB by redirecting them to
-    the portal home with ?auth_error=not_registered.  Registered users pass
-    through transparently.
+    Rejects users whose email is NOT registered in the configured user
+    directory (AUTH_BACKEND: the Django DB, or the service's own users) by
+    redirecting them to the portal home with ?auth_error=not_registered.
+    Registered users pass through transparently. Applies to every provider.
+
+    Fails open when the directory cannot say (unreachable, no credential held
+    yet); fails closed only on an explicit "not registered".
 
     Usage in server.py::
 
@@ -513,8 +421,6 @@ def make_registration_gate(root_path_fallback: str = ""):
     """
     def _check_registration(request, session_user):
         from urllib.parse import quote as _quote
-        from energydeskapi.auth.etrm_authorize import authorize_user_google
-        from energydeskapi.auth.auth_fastapi import _id_token_store, _id_token_store_lock
 
         email = (session_user.get("email") or "").lower()
         sub = session_user.get("sub") or ""
@@ -530,27 +436,25 @@ def make_registration_gate(root_path_fallback: str = ""):
             logger.warning(f"[auth-gate] No email claim in session — letting through")
             return None  # no email claim — let through for a clear error later
 
-        with _id_token_store_lock:
-            id_token = _id_token_store.get(sub)
-            store_keys = list(_id_token_store.keys())
-
-        logger.info(f"[auth-gate]    id_token found = {bool(id_token)}")
-        logger.info(f"[auth-gate]    id_token_store has {len(store_keys)} entries")
-
-        if not id_token:
-            logger.warning(f"[auth-gate] No id_token for sub={sub} email={email} — allowing through")
-            return None  # fail open; authorization deps will catch it on next page load
-
         try:
-            logger.info(f"[auth-gate]    Calling authorize_user_google for {email} ...")
-            role, role_pk, is_platform_admin = authorize_user_google(id_token)
-            logger.info(f"[auth-gate]    Result: role={role}, role_pk={role_pk}, is_platform_admin={is_platform_admin}")
+            token = _provider_token(request, session_user, sub, refresh=False)
+            logger.info(f"[auth-gate]    provider token found = {bool(token)}")
+            profile = get_user_directory().resolve_user(
+                email=email, provider=provider, sub=sub, token=token,
+                name=session_user.get("name", ""),
+            )
         except Exception as exc:
-            logger.warning(f"[auth-gate] appserver call failed for {email}: {exc} — allowing through")
-            return None  # fail open on network errors
+            logger.warning(f"[auth-gate] directory call failed for {email}: {exc} — allowing through")
+            return None  # fail open on errors
 
-        if role is not None:
-            logger.info(f"[auth-gate] ✅ {email} registered — role={role}, role_pk={role_pk}")
+        if profile is None:
+            # No credential to ask with, or the directory is unreachable. Authorization
+            # dependencies will catch it on the next page load.
+            logger.warning(f"[auth-gate] directory could not resolve {email} — allowing through")
+            return None
+
+        if profile is not False:
+            logger.info(f"[auth-gate] ✅ {email} registered — role={profile.get('role')}, role_pk={profile.get('role_pk')}")
             return None  # registered → proceed with session creation
 
         root_path = request.scope.get("root_path", root_path_fallback)
