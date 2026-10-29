@@ -13,6 +13,7 @@ Key responsibilities:
 - **Collector framework** — `NatsBus`, `SinkBundle`, `WorkerConfig`, job registry, worker runner, NATS utilities used by all collector/worker services
 - **Domain types** — `energydeskapi.types.domain_types`: the single source of truth for metric domains, namespaces, and dashboard roles shared across all services
 - **Enum types** — contract, market, and other domain enums used across services
+- **Auth for FastAPI services** — `energydeskapi.auth`: OIDC login (`FastAPIOIDCAuth`), session authorization (`authorization.py`, `session.py`) and bearer verification shared by every pod
 
 ---
 
@@ -25,6 +26,32 @@ Read these before making structural changes:
 
 - **Platform-level architecture**
   `https://github.com/SpringboardEnergySystems/energydesk-ai-context/blob/main/ARCHITECTURE.md`
+
+---
+
+## Identity backends (branch `feature/auth-backends`)
+
+The plan lives in the Flexgateway repo:
+`energydesk-flexgateway-service/plans/standalone_identity_and_order_management.md`, section
+"1. SDK: identity backends". Read it before touching `energydeskapi/auth/`.
+
+What it changes here, in one paragraph: `FastAPIOIDCAuth` already runs the whole OIDC login
+itself; the appserver is only consulted afterwards in `authorization.py` to answer "is this
+email registered, which role". That call and the bearer introspection Flexgateway does in
+`openadr/vtn_auth.py` become two small protocols in a new `energydeskapi/auth/backends.py`:
+a `UserDirectory` (`AppserverDirectory` = today's code; `LocalDirectory` = a resolver callable
+the service registers) and a `BearerVerifier` (`IntrospectionVerifier`, `JwksVerifier`,
+`PodTokenVerifier`, composed by `VerifierChain`), selected with `AUTH_BACKEND=appserver|local`
+and `BEARER_VERIFIERS=...`. A `require_bearer(*scopes)` dependency replaces ad-hoc
+`API_INTERNAL_POD_TOKEN` checks in services.
+
+Rules that hold while implementing:
+- `AUTH_BACKEND=appserver` must behave exactly as before; `energydeskapi/auth/test_authorization.py`
+  passes unchanged.
+- `AuthorizedUser`, the session cache and every `require_*` dependency keep their signatures.
+- Local verification always validates signature, issuer, audience and expiry. Never reproduce the
+  appserver's unsigned-claim lookup (`_authorize_bearer_token_session`'s docstring explains it).
+- The SDK never owns a user table; `LocalDirectory` only calls the resolver the service gives it.
 
 ---
 
@@ -85,6 +112,15 @@ porting a pattern from another repo's CLAUDE.md, do not port the branch names.
 
 ```
 energydeskapi/
+  auth/
+    auth_fastapi.py        FastAPIOIDCAuth — OIDC login (Azure, Google, Django) with authlib;
+                           session cookie + process-local token stores
+    authorization.py       AuthorizedUser, authorize_session_user(), require_* dependencies,
+                           make_registration_gate() — resolves a session to a role
+    session.py             resolve_session() / require_page_session() / require_api_session()
+    etrm_authorize.py      the appserver calls (get-user-profile, resolve-google-token)
+    backends.py            UserDirectory / BearerVerifier protocols and implementations,
+                           require_bearer(), AUTH_BACKEND / BEARER_VERIFIERS env wiring
   collector/
     nats_client.py         NatsBus — connect, ensure_stream, publish_json, kv_*
     sinks.py               SinkBundle — carries api, bus, influx, postgres into handlers
